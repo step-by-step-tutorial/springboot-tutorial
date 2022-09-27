@@ -1,4 +1,4 @@
-# Springboot Tutorial
+# Spring Boot Tutorial
 
 ### Prerequisites
 
@@ -15,6 +15,12 @@ mvn clean package -DskipTests=true
 
 ```bash
 mvn  test
+```
+
+### Run
+
+```bash
+mvn  spring-boot:run
 ```
 
 ## Steps
