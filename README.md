@@ -5,28 +5,10 @@
 * Java 17
 * Maven 3
 
-### Build
-
-```bash
-mvn clean package -DskipTests=true
-```
-
-### Test
-
-```bash
-mvn  test
-```
-
-### Run
-
-```bash
-mvn  spring-boot:run
-```
-
 ## Steps
 
 * [step 001: hello-world](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/hello-world)
-* step 002: profile
+* [step 002: profile](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/profile)
 * step 003: properties
 * step 004: listener
 * step 005: rdbms-h2
