@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.tutorial.springboot</groupId>
-	<artifactId>step-001-helloworld</artifactId>
+	<artifactId>helloworld</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<java.version>17</java.version>
