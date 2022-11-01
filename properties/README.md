@@ -1,6 +1,6 @@
 ## Description
 
-This sample is about working with properties in Spring Boot.
+This sample is about working with yaml and properties in Spring Boot.
 
 ### Prerequisites
 
