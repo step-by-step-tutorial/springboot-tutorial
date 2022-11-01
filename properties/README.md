@@ -1,0 +1,26 @@
+## Description
+
+This sample is about working with properties in Spring Boot.
+
+### Prerequisites
+
+* Java 17
+* Maven 3
+
+### Build
+
+```bash
+mvn clean package -DskipTests=true
+```
+
+### Test
+
+```bash
+mvn  test
+```
+
+### Run
+
+```bash
+mvn  spring-boot:run
+```
