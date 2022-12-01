@@ -12,6 +12,6 @@ public class MessageListener {
 
   @EventListener
   void onMessage(MessageEvent event) {
-    logger.info("received message: {}", event.getText());
+    logger.info("received message: {}", event.text());
   }
 }

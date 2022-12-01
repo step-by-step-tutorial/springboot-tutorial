@@ -1,45 +1,29 @@
-## Description
+# <p align="center"> Profile </p>
 
 This sample is about working with profiles in Spring Boot. The Profiles provide a possibility to categorized classes in
 order to use for specific goals, for example define specific classes only for test environment, etc.
 
-#### How is it possible to specify active profile?
+### How is it possible to specify active profile?
 
-**JVM**
+#### JVM
 
 ```shell
 java -jar application.jar -Dspring.profiles.active=profile-name
 ```
 
-**ENV**
+#### ENV
 
-```shell
-# Windows
-setx export SPRING_PROFILES_ACTIVE=profile-name
+```dotenv
+SPRING_PROFILES_ACTIVE=profile-name
 ```
 
-```shell
-# Linux
-export SPRING_PROFILES_ACTIVE=profile-name
-```
-
-**Properties File**
+#### Properties
 
 ```properties
 spring.config.activate.on-profile=profile-name
 ```
 
-**Yaml File**
-
-```yaml
-spring:
-  config:
-    activate:
-      on-profile:
-        - profile-name
-```
-
-**Maven**
+#### Maven
 
 ```xml
 
@@ -55,45 +39,48 @@ spring:
 mvn clean package -P profile-name
 ```
 
-**Test environment**
+#### Test Environment
 
 Use `@ActiveProfiles("profile-name")` on top of test class.
 
 ```java
-
+// sample
 @ActiveProfiles("profile-name")
 class Test {
 
 }
 ```
 
+### Description
 In this sample there are two profiles named **dev** and **test**.
 
-* if, do not set active profile, spring container scans all classes do not use @Profile
-* if active profile set to **dev**, spring container scans all decorated classes with @Profile("dev") and classes do not
-  use @Profile
-* if active profile set to **test**, spring container scans all decorated classes with @Profile("test") and classes do
-  not use @Profile
+* if, do not set active profile, spring container scans all classes do not use `@Profile`
+* if active profile set to **dev**, spring container scans all decorated classes with `@Profile("dev")` and classes do not
+  use `@Profile`
+* if active profile set to **test**, spring container scans all decorated classes with `@Profile("test")` and classes do
+  not use `@Profile`
 
-### Prerequisites
+## Prerequisites
 
 * Java 17
 * Maven 3
 
-### Build
+## Build
 
 ```bash
 mvn clean package -DskipTests=true
 ```
 
-### Test
+## Test
 
 ```bash
 mvn  test
 ```
 
-### Run
+## Run
 
 ```bash
 mvn  spring-boot:run
 ```
+
+**<p align="center"> [Top](#Profile) </p>**

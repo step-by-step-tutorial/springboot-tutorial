@@ -15,7 +15,7 @@ public class MessagePublisher {
 
   public void publish(MessageEvent event) {
     publisher.publishEvent(event);
-    logger.info("sent message: {}", event.getText());
+    logger.info("sent message: {}", event.text());
   }
 
 }
