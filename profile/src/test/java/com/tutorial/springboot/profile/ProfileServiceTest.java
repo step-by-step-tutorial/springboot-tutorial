@@ -1,7 +1,7 @@
 package com.tutorial.springboot.profile;
 
-import static com.tutorial.springboot.profile.ProfileEnum.DEV;
-import static com.tutorial.springboot.profile.ProfileEnum.TEST;
+import static com.tutorial.springboot.profile.ProfileConstant.DEV;
+import static com.tutorial.springboot.profile.ProfileConstant.TEST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@DisplayName("test active profiles")
+@DisplayName("Active Profile Tests")
 class ProfileServiceTest {
 
   @Nested

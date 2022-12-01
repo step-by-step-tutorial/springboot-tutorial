@@ -4,11 +4,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile(ProfileEnum.TEST)
+@Profile(ProfileConstant.TEST)
 public class TestProfileService implements ProfileService {
 
   @Override
   public String getProfile() {
-    return ProfileEnum.TEST;
+    return ProfileConstant.TEST;
   }
 }

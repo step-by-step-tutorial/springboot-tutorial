@@ -10,7 +10,7 @@
 * [step 001: hello-world](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/hello-world)
 * [step 002: profile](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/profile)
 * [step 003: properties](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/properties)
-* step 004: listener
+* [step 004: listener](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/listener)
 * step 005: rdbms-h2
 * step 006: rdbms-mysql
 * step 007: rdbms-postgres
@@ -27,21 +27,30 @@
 * step 018: rest-hateoas
 * step 019: websocket
 * step 020: webflux
-* step 021: security-authentication-basic
-* step 022: security-authentication-inmemory
-* step 023: security-authentication-user-service
-* step 024: security-authentication-ldap
-* step 025: security-authentication-remember-me
-* step 026: security-authentication-csrf
-* step 027: security-authentication-cors
-* step 028: security-authentication-xss
-* step 029: security-authentication-mfa
-* step 030: security-authentication-open-id
-* step 031: security-authorization-rbac
-* step 032: security-authorization-abac
-* step 033: security-authorization-acl
-* step 034: oauth-authorization-code
-* step 035: oauth-password
-* step 036: oauth-client-credentials
-* step 037: oauth-Implicit
+* step 021: ELK
+* step 022: security-authentication-basic
+* step 023: security-authentication-inmemory
+* step 024: security-authentication-user-service
+* step 025: security-authentication-ldap
+* step 026: security-authentication-remember-me
+* step 027: security-authentication-csrf
+* step 028: security-authentication-cors
+* step 029: security-authentication-xss
+* step 030: security-authentication-mfa
+* step 031: security-authentication-open-id
+* step 032: security-authorization-rbac
+* step 033: security-authorization-abac
+* step 034: security-authorization-acl
+* step 035: oauth-authorization-code
+* step 036: oauth-password
+* step 037: oauth-client-credentials
+* step 038: oauth-Implicit
 
+### Build and Test
+
+```shell
+mvn -f hello-world/pom.xml clean package
+mvn -f profile/pom.xml clean package
+mvn -f properties/pom.xml clean package
+mvn -f listener/pom.xml clean package
+```

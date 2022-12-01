@@ -1,6 +1,6 @@
 package com.tutorial.springboot.profile;
 
-public interface ProfileEnum {
+public interface ProfileConstant {
 
   String DEV = "dev";
 
