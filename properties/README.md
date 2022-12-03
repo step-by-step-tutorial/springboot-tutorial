@@ -1,4 +1,4 @@
-## <p align="cenetr">Properties</p>
+## <p align="center">Properties</p>
 
 This sample is about working with yaml and properties in Spring Boot.
 
