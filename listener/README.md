@@ -31,7 +31,7 @@ public class SampleEvent extends ApplicationEvent {
 ### Listener
 
 There are two method to implement a listener, annotation driven and programmatically. Also, it is possible to have async
-(@Async) and transactional (@TransactionalEventListener) listener.
+listener with using `@Async`.
 
 #### Annotation Driven
 
@@ -42,6 +42,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class SampleListener {
 
+  @EventListener
+  void onMessage(SampleEvent event) {
+
+  }
+}
+```
+
+```java
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SampleListener {
+
+  @Async
   @EventListener
   void onMessage(SampleEvent event) {
 
@@ -68,7 +84,7 @@ class SampleListener implements ApplicationListener<SampleEvent> {
 
 ```java
 ApplicationEventPublisher publisher;
-    publisher.publishEvent(event);
+publisher.publishEvent(event);
 ```
 
 ## Prerequisites
