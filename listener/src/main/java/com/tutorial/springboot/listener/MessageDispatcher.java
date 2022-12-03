@@ -7,13 +7,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessagePublisher {
-  private final Logger logger = LoggerFactory.getLogger(MessagePublisher.class.getSimpleName());
+public class MessageDispatcher {
+  private final Logger logger = LoggerFactory.getLogger(MessageDispatcher.class.getSimpleName());
 
   @Autowired
   private ApplicationEventPublisher publisher;
 
-  public void publish(MessageEvent event) {
+  public void dispatch(MessageEvent event) {
     publisher.publishEvent(event);
     logger.info("sent message: {}", event.text());
   }
