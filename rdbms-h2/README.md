@@ -23,4 +23,6 @@ mvn  test
 mvn  spring-boot:run
 ```
 
+see [localhost:8080/h2-console](localhost:8080/h2-console)
+
 **<p align="center"> [Top](#RDBMS-H2) </p>**
