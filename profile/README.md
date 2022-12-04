@@ -3,9 +3,9 @@
 This sample is about working with profiles in Spring Boot. The Profiles provide a possibility to categorized classes in
 order to use for specific goals, for example define specific classes only for test environment, etc.
 
-For classes use `@Profile` annotation and for applying profile mechanism on `application.yml` file there are two 
+For classes use `@Profile` annotation and for applying profile mechanism on `application.yml` file there are two
 solutions, one is, use `---` and `spring.config.activate.on-profile=profile-name` together and the other one is create
-another `application.yml` or `application.properties` include profile name with hyphen as separator, for example 
+another `application.yml` or `application.properties` include profile name with hyphen as separator, for example
 `application-test.yml`.
 
 ### How is it possible to specify active profile?

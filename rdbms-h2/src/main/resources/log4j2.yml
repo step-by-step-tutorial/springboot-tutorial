@@ -1,0 +1,54 @@
+Configuration:
+  name: Default
+  appenders:
+    Console:
+      name: LogToConsole
+      PatternLayout:
+        Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+  #    RollingFile:
+  #      - name: LogToRollingFile
+  #        fileName: logs/app.log
+  #        filePattern: "logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz"
+  #        PatternLayout:
+  #          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+  #        Policies:
+  #          SizeBasedTriggeringPolicy:
+  #            size: 10MB
+  #        DefaultRollOverStrategy:
+  #          max: 10
+  Loggers:
+    logger:
+      - name: com.tutorial.springboot.h2
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+      - name: org.hibernate
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+      - name: org.hibernate.type
+        level: trace
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+      - name: org.hibernate.stat
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+      - name: org.hibernate.SQL
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+      - name: org.hibernate.cache
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+  Root:
+    level: error
+    AppenderRef:
+      ref: LogToConsole

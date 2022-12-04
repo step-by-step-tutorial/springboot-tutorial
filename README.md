@@ -11,7 +11,7 @@
 * [step 002: profile](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/profile)
 * [step 003: properties](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/properties)
 * [step 004: listener](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/listener)
-* step 005: rdbms-h2
+* [step 005: rdbms-h2](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/rdbms-h2)
 * step 006: rdbms-mysql
 * step 007: rdbms-postgres
 * step 008: rdbms-oracle
@@ -30,7 +30,7 @@
 * step 021: ELK
 * step 022: security-authentication-basic
 * step 023: security-authentication-inmemory
-* step 024: security-authentication-user-service
+* step 024: security-authentication-domainEntity-service
 * step 025: security-authentication-ldap
 * step 026: security-authentication-remember-me
 * step 027: security-authentication-csrf
@@ -53,6 +53,7 @@ mvn -f hello-world/pom.xml clean package
 mvn -f profile/pom.xml clean package
 mvn -f properties/pom.xml clean package
 mvn -f listener/pom.xml clean package
+mvn -f rdbms-h2/pom.xml clean package
 ```
 
 **<p align="center"> [Top](#Spring-Boot-Tutorial) </p>**
