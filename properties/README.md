@@ -1,6 +1,7 @@
 ## <p align="center">Properties</p>
 
-This sample is about working with yaml and properties in Spring Boot.
+This sample is about working with yml and properties in Spring Boot. Also, the sample is using java `record` class for 
+binging externalized properties.
 
 ### Prerequisites
 

@@ -11,21 +11,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class DataPropertiesTest {
 
-  private final DataProperties underTest;
-
   @Autowired
-  DataPropertiesTest(DataProperties underTest) {
-    this.underTest = underTest;
-  }
+  private DataProperties underTest;
 
   @Test
   void givenDefaultPropertySourceFactory_WhenLoadedContext_ThenPropertiesInjected() {
     assertNotNull(underTest);
 
-    assertEquals(1, underTest.getId());
-    assertEquals("colorInfo", underTest.getName());
+    assertEquals(1, underTest.id());
+    assertEquals("colorInfo", underTest.name());
 
-    LocalDateTime dateTime = LocalDateTime.parse(underTest.getDateTime());
+    LocalDateTime dateTime = LocalDateTime.parse(underTest.dateTime());
 
     assertEquals(2022, dateTime.getYear());
     assertEquals(1, dateTime.getMonthValue());
@@ -34,7 +30,7 @@ class DataPropertiesTest {
     assertEquals(0, dateTime.getMinute());
     assertEquals(0, dateTime.getSecond());
 
-    String[] colors = underTest.getColors();
+    String[] colors = underTest.colors();
 
     assertEquals("red", colors[0]);
     assertEquals("green", colors[1]);

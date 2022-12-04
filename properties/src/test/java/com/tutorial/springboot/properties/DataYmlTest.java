@@ -9,23 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DataYamlTest {
-
-  private final DataYaml underTest;
+class DataYmlTest {
 
   @Autowired
-  DataYamlTest(DataYaml underTest) {
-    this.underTest = underTest;
-  }
+  private DataYaml underTest;
 
   @Test
   void givenYamlPropertySourceFactory_WhenLoadedContext_ThenYamlPropertiesInjected() {
     assertNotNull(underTest);
 
-    assertEquals(1, underTest.getId());
-    assertEquals("colorInfo", underTest.getName());
+    assertEquals(1, underTest.id());
+    assertEquals("colorInfo", underTest.name());
 
-    LocalDateTime dateTime = LocalDateTime.parse(underTest.getDateTime());
+    LocalDateTime dateTime = LocalDateTime.parse(underTest.dateTime());
 
     assertEquals(2022, dateTime.getYear());
     assertEquals(1, dateTime.getMonthValue());
@@ -34,7 +30,7 @@ class DataYamlTest {
     assertEquals(0, dateTime.getMinute());
     assertEquals(0, dateTime.getSecond());
 
-    String[] colors = underTest.getColors();
+    String[] colors = underTest.colors();
 
     assertEquals("red", colors[0]);
     assertEquals("green", colors[1]);

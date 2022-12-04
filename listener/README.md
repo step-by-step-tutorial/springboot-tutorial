@@ -1,20 +1,21 @@
 # <p align="center">Listener</p>
 
 This sample is about working event and event listener in Spring Boot. There are three concepts `event`, `listener` and
-`publisher` for the [event driven](https://github.com/oss-academy/article/blob/main/event-driven.md) mechanism.
+`publish` for the [event driven](https://github.com/oss-academy/article/blob/main/event-driven.md) mechanism.
 
-### Event
+## Event
 
-There are two mechanism in Spring to define event.
+There are two mechanism in Spring to define an event. One solution is, create a java bean and another one is, create a
+class extended from `ApplicationEvent`.
 
-**POJO**
+**Java Bean**
 
 ```java
 public class SampleEvent {
 }
 ```
 
-**Extend from `ApplicationEvent`**
+**ApplicationEvent**
 
 ```java
 
@@ -28,12 +29,12 @@ public class SampleEvent extends ApplicationEvent {
 }
 ```
 
-### Listener
+## Listener
 
 There are two method to implement a listener, annotation driven and programmatically. Also, it is possible to have async
 listener with using `@Async`.
 
-#### Annotation Driven
+### Annotation Driven
 
 ```java
 import org.springframework.context.event.EventListener;
@@ -44,7 +45,6 @@ public class SampleListener {
 
   @EventListener
   void onMessage(SampleEvent event) {
-
   }
 }
 ```
@@ -60,12 +60,11 @@ public class SampleListener {
   @Async
   @EventListener
   void onMessage(SampleEvent event) {
-
   }
 }
 ```
 
-#### Programmatically
+### Programmatically
 
 ```java
 import org.springframework.context.ApplicationListener;
@@ -75,16 +74,31 @@ class SampleListener implements ApplicationListener<SampleEvent> {
 
   @Override
   public void onApplicationEvent(SampleEvent event) {
-    // handle UserCreatedEvent
   }
 }
 ```
 
-### Publisher
+## Publisher
+
+Publisher is used to publish/dispatch events and spring has a class named `ApplicationEventPublisher` to do that.
 
 ```java
-ApplicationEventPublisher publisher;
-publisher.publishEvent(event);
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SampleDispatcher {
+
+  @Autowired
+  private ApplicationEventPublisher publisher;
+
+  public void dispatch(SampleEvent event) {
+    publisher.publishEvent(event);
+  }
+
+}
 ```
 
 ## Prerequisites
