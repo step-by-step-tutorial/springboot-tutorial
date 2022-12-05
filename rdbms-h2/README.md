@@ -15,16 +15,19 @@ There are a few alternatives for H2, therefore you can read the
 
 </p>
 
-## How To Use
+## How To Use in Spring Boot
 
 ### dependency
 
 ```xml
-
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
 <dependency>
     <groupId>com.h2database</groupId>
     <artifactId>h2</artifactId>
-    <version>...</version>
+    <scope>runtime</scope>
 </dependency>
 ```
 
