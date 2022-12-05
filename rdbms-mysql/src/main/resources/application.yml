@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    username: user
+    password: password
+    url: jdbc:mysql:${MYSQL_HOST:localhost}:3306/springboot_tutorial
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: MYSQL
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
