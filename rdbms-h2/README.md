@@ -3,7 +3,7 @@
 <p align="justify">
 
 H2 is a light relational database implemented by java to use for embedded, in-memory and server mode. It is proper to
-use as a test database or cache for application. Also, it is able to work with file instead of memory. For more
+use as a test database for testing or cache for an application. Also, it is able to work with file instead of memory. For more
 information about H2 go to the [website of H2](https://www.h2database.com/html/main.html).
 
 </p>
