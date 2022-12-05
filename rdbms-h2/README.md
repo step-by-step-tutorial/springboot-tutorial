@@ -10,7 +10,7 @@ information about H2 go to the [website of H2](https://www.h2database.com/html/m
 
 <p align="justify">
 
-There are a few alternatives for H2, therefore you can read the
+There are a few alternatives for H2, therefore I suggest you to read the
 [article](https://github.com/oss-academy/article/blob/main/java-in-memory-db.md#Java-In-Memory-Database).
 
 </p>
@@ -86,6 +86,6 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-After running see H2 web console [localhost:8080/h2-console](localhost:8080/h2-console).
+After running, see H2 web console [localhost:8080/h2-console](localhost:8080/h2-console).
 
 **<p align="center"> [Top](#RDBMS-H2) </p>**
