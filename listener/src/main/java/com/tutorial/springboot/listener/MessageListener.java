@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessageListener {
 
-  private final Logger logger = LoggerFactory.getLogger(MessageListener.class.getSimpleName());
+    private final Logger logger = LoggerFactory.getLogger(MessageListener.class.getSimpleName());
 
-  @EventListener
-  void onMessage(MessageEvent event) {
-    logger.info("received message: {}", event.text());
-  }
+    @EventListener
+    void onMessage(MessageEvent event) {
+        logger.info("received message: {}", event.text());
+    }
 }

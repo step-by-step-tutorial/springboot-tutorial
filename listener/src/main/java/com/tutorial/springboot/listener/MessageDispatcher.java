@@ -8,14 +8,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MessageDispatcher {
-  private final Logger logger = LoggerFactory.getLogger(MessageDispatcher.class.getSimpleName());
+    private final Logger logger = LoggerFactory.getLogger(MessageDispatcher.class.getSimpleName());
 
-  @Autowired
-  private ApplicationEventPublisher publisher;
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
-  public void dispatch(MessageEvent event) {
-    publisher.publishEvent(event);
-    logger.info("sent message: {}", event.text());
-  }
+    public void dispatch(MessageEvent event) {
+        publisher.publishEvent(event);
+        logger.info("sent message: {}", event.text());
+    }
 
 }

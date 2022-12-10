@@ -26,21 +26,21 @@ There are a few alternatives for H2, therefore I suggest you to read the
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-jpa</artifactId>
 </dependency>
+
 <dependency>
-<groupId>com.h2database</groupId>
-<artifactId>h2</artifactId>
-<scope>runtime</scope>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
 </dependency>
 ```
 
 ### Spring Boot Configuration
 
 ```yaml
-spring:
   datasource:
     username: sa
     password: ''
-    url: jdbc:h2:mem:rdbms_h2
+    url: jdbc:h2:mem:${DATABASE_NAME:springboot_tutorial}
     driver-class-name: org.h2.Driver
   data:
     jpa:
@@ -55,14 +55,13 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
         generate_statistics: true
         format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
   h2:
     console:
       enabled: true
-      path: "/h2-console"
+      path: ${H2_CONSOLE:/h2-console}
 ```
 
 ## Prerequisites

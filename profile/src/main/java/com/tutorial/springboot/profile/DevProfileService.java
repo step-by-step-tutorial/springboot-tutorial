@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 @Profile(ProfileConstant.DEV)
 public class DevProfileService implements ProfileService {
 
-  @Override
-  public String getProfile() {
-    return ProfileConstant.DEV;
-  }
+    @Override
+    public String getProfile() {
+        return ProfileConstant.DEV;
+    }
 }
