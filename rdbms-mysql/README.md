@@ -5,6 +5,7 @@
 This tutorial is included [mysql](https://www.mysql.com/) configuration for test and none test environment.
 
 Some parameters can be included in mysql URL connection are follows.
+
 * useUnicode=true
 * useJDBCCompliantTimezoneShift=true
 * useLegacyDatetimeCode=false
@@ -14,8 +15,50 @@ Some parameters can be included in mysql URL connection are follows.
 </p>
 
 **Example**
+
 ```yaml
 url: jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&pinGlobalTxToPhysicalConnection=TRUE
+```
+
+## Install MySQL on Docker
+
+Execute the `docker compose  up -d` command to install MySQL and SQL developer named adminer.
+
+```yaml
+version: "3.8"
+
+services:
+  mysql:
+    container_name: mysql
+    hostname: mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=springboot_tutorial
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+```
+In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use 
+the following properties in the login page.
+
+```yaml
+System: MySQL
+Server: mysql:3306
+Username: user
+Password: password
+Database: springboot_tutorial
 ```
 
 ## How To Use in Spring Boot
@@ -81,6 +124,7 @@ spring:
 
 * Java 17
 * Maven 3
+* Docker
 
 ## Build
 
