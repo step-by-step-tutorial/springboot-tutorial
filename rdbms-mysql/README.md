@@ -84,7 +84,7 @@ Database: springboot_tutorial
 
 ```
 
-### Spring Boot Configuration
+### Spring Boot Properties
 
 ```yaml
 spring:
