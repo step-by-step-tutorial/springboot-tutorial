@@ -61,7 +61,7 @@ Password: password
 Database: springboot_tutorial
 ```
 
-## How To Use in Spring Boot
+## How To Config Spring Boot
 
 ### Dependency
 
