@@ -34,15 +34,13 @@ services:
     image: mysql:8.0
     ports:
       - "3306:3306"
-    expose:
-      - "3306"
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=springboot_tutorial
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./conf.d:/etc/mysql/conf.d:ro"
+      - "./docker/mysql:/etc/mysql/conf.d"
 
   adminer:
     image: adminer
@@ -89,8 +87,8 @@ Database: springboot_tutorial
 ```yaml
 spring:
   datasource:
-    username: { $DATABASE_NAME:user }
-    password: { $DATABASE_PASSWORD:password }
+    username: ${DATABASE_NAME:user}
+    password: ${DATABASE_PASSWORD:password}
     url: jdbc:mysql:${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:springboot_tutorial}
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
@@ -105,6 +103,9 @@ spring:
     hibernate:
       ddl-auto: update
     properties:
+      javax:
+        persistence:
+          create-database-schemas: true
       hibernate:
         generate_statistics: true
         format_sql: true
@@ -118,6 +119,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
 ```
 
 ## Prerequisites

@@ -2,15 +2,15 @@ spring:
   datasource:
     username: ${DATABASE_NAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:mysql:${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:springboot_tutorial}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:springboot_tutorial}
+    driver-class-name: org.postgresql.Driver
   data:
     jpa:
       repositories:
         enabled: true
   jpa:
-    database: MYSQL
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
     show-sql: true
     hibernate:

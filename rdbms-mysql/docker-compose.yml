@@ -7,18 +7,18 @@ services:
     image: mysql:8.0
     ports:
       - "3306:3306"
-    expose:
-      - "3306"
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=springboot_tutorial
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./conf.d:/etc/mysql/conf.d:ro"
+      - "./docker/mysql:/etc/mysql/conf.d"
 
   adminer:
+    container_name: adminer
+    hostname: adminer
     image: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "8585:8080"
