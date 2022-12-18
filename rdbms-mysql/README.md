@@ -14,7 +14,7 @@ Some parameters can be included in mysql URL connection are follows.
 
 </p>
 
-**Example**
+**URL Example**
 
 ```yaml
 url: jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&pinGlobalTxToPhysicalConnection=TRUE
@@ -22,7 +22,7 @@ url: jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useUnicode=true&useJDBCComplia
 
 ## Install MySQL on Docker
 
-Execute the `docker compose  up -d` command to install MySQL and SQL developer named adminer.
+Execute the `docker compose  up -d` command to install MySQL and a SQL developer named adminer.
 
 ```yaml
 version: "3.8"
