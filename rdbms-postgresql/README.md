@@ -47,7 +47,7 @@ services:
     ports:
       - "8585:8080"
 ```
-In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use 
+In order to connect to MySQL via adminer brows [http://localhost:8585](http://localhost:8080/) via web browser and use 
 the following properties in the login page.
 
 ```yaml
