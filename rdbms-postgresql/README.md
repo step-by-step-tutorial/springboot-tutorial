@@ -41,12 +41,11 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
       - "./docker/pgadmin:/var/lib/pgadmin"
-
   adminer:
     image: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "8585:8080"
 ```
 In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use 
 the following properties in the login page.

@@ -41,12 +41,13 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./docker/mysql:/etc/mysql/conf.d"
-
   adminer:
+    container_name: adminer
+    hostname: adminer
     image: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "8585:8080"
 ```
 In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use 
 the following properties in the login page.

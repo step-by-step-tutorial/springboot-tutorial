@@ -28,7 +28,6 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
       - "./docker/pgadmin:/var/lib/pgadmin"
-
   adminer:
     image: adminer
     restart: always
