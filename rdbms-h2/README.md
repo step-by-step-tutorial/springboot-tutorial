@@ -12,7 +12,7 @@ information about H2 go to the [website of H2](https://www.h2database.com/html/m
 <p align="justify">
 
 There are a few alternatives for H2, therefore I suggest you to read the
-[article](https://github.com/oss-academy/article/blob/main/java-in-memory-db.md#Java-In-Memory-Database).
+[article](https://github.com/oss-academy/article/blob/main/inmemory-db/README.md).
 
 </p>
 
