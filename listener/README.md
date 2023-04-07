@@ -1,7 +1,7 @@
 # <p align="center">Listener</p>
 
 This sample is about working event and event listener in Spring Boot. There are three concepts `event`, `listener` and
-`publish` for the [event driven](https://github.com/oss-academy/article/blob/main/event-driven.md) mechanism.
+`publish` for the [event driven](https://github.com/oss-academy/article/blob/main/event-driven/README.md) mechanism.
 
 ## Event
 
@@ -80,7 +80,7 @@ class SampleListener implements ApplicationListener<SampleEvent> {
 
 ## Publisher
 
-Publisher is used to publish/dispatch events and spring has a class named `ApplicationEventPublisher` to do that.
+Publisher is used to publish/dispatch events and, spring has a class named `ApplicationEventPublisher` to do that.
 
 ```java
 
@@ -103,8 +103,8 @@ public class SampleDispatcher {
 
 ## Prerequisites
 
-* Java 17
-* Maven 3
+* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
 
 ## Build
 

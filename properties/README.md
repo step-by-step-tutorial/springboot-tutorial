@@ -31,7 +31,7 @@ public record DataProperties(int number, String string, String dateTime, String[
 
 **YML**
 
-For yml file you have to define a source factory
+For yml file you have to define a source factory.
 
 ```yaml
 prefix:
@@ -84,8 +84,8 @@ public record DataYaml(int number, String string, String dateTime, String[] arra
 
 ## Prerequisites
 
-* Java 17
-* Maven 3
+* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
 
 ## Build
 

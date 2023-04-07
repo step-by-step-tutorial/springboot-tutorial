@@ -4,7 +4,7 @@
 
 This tutorial is included [mysql](https://www.mysql.com/) configuration for test and none test environment.
 
-Some parameters can be included in mysql URL connection are follows.
+Some parameters can be included in mysql URL connection are as follows.
 
 * useUnicode=true
 * useJDBCCompliantTimezoneShift=true
@@ -47,7 +47,7 @@ services:
     image: adminer
     restart: always
     ports:
-      - "8585:8080"
+      - "8080:8080"
 ```
 In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use 
 the following properties in the login page.
@@ -125,9 +125,9 @@ spring:
 
 ## Prerequisites
 
-* Java 17
-* Maven 3
-* Docker
+* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Docker](https://www.docker.com/)
 
 ## Build
 

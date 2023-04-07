@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is included [postgresql](https://www.postgresql.org/) configuration for test and none test environment.
+This tutorial is included [PostgreSQL](https://www.postgresql.org/) configuration for test and none test environment.
 
 </p>
 
@@ -34,7 +34,7 @@ services:
     image: dpage/pgadmin4
     restart: unless-stopped
     ports:
-      - "5050:80"
+      - "8081:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: "password"
@@ -45,10 +45,10 @@ services:
     image: adminer
     restart: always
     ports:
-      - "8585:8080"
+      - "8080:8080"
 ```
-In order to connect to MySQL via adminer brows [http://localhost:8585](http://localhost:8080/) via web browser and use 
-the following properties in the login page.
+In order to connect to PostgreSQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and
+use the following properties in the login page.
 
 ```yaml
 System: PostgreSQL
@@ -57,7 +57,7 @@ Username: user
 Password: password
 Database: springboot_tutorial
 ```
-In order to connect to PostgreSQL via pgadmin brows [http://localhost:5050](http://localhost:5050/) via web browser and
+In order to connect to PostgreSQL via pgadmin brows [http://localhost:8081](http://localhost:8081/) via web browser and
 use the following properties in the add server popup.
 
 ```properties
@@ -131,9 +131,9 @@ spring:
 
 ## Prerequisites
 
-* Java 17
-* Maven 3
-* Docker
+* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Docker](https://www.docker.com/)
 
 ## Build
 

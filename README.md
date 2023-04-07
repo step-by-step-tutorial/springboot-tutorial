@@ -6,8 +6,9 @@
 
 ## Prerequisites
 
-* Java 17
-* Maven 3
+* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html) 
+* [Docker](https://www.docker.com/)
 
 ## Steps
 
@@ -21,8 +22,8 @@
 * step 008: rdbms-oracle
 * step 009: redis
 * step 010: reactive-redis
-* step 011: mongo
-* step 012: reactive-mongo
+* step 011: mongodb
+* step 012: reactive-mongodb
 * step 013: messaging-apache-active-mq
 * step 014: messaging-rabbit-mq
 * step 015: messaging-kafka

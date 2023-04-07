@@ -4,8 +4,7 @@
 
 H2 is a light relational database implemented by java to use for embedded, in-memory and server mode. It is proper to
 use as a test database for testing or cache for an application. Also, it is able to work with file instead of memory.
-For more
-information about H2 go to the [website of H2](https://www.h2database.com/html/main.html).
+For more information about H2 go to the [website of H2](https://www.h2database.com/html/main.html).
 
 </p>
 
@@ -18,7 +17,7 @@ There are a few alternatives for H2, therefore I suggest you to read the
 
 ## How To Use in Spring Boot
 
-### dependency
+### Dependency
 
 ```xml
 
@@ -65,8 +64,8 @@ There are a few alternatives for H2, therefore I suggest you to read the
 
 ## Prerequisites
 
-* Java 17
-* Maven 3
+* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
 
 ## Build
 

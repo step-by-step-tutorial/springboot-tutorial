@@ -41,7 +41,7 @@ spring.config.activate.on-profile=profile-name
 ```
 
 ```shell
-mvn clean package -P profile-name
+mvn lifecycle -P profile-name
 ```
 
 **Test Environment**
@@ -67,8 +67,8 @@ In this sample there are two profiles named **dev** and **test**.
 
 ## Prerequisites
 
-* Java 17
-* Maven 3
+* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
 
 ## Build
 
