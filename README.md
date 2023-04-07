@@ -12,15 +12,15 @@
 
 ## Steps
 
-* [step 001: hello-world](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/hello-world)
-* [step 002: profile](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/profile)
-* [step 003: properties](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/properties)
-* [step 004: listener](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/listener)
-* [step 005: rdbms-h2](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/rdbms-h2)
-* [step 006: rdbms-mysql](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/rdbms-mysql)
-* [step 007: rdbms-postgresql](https://github.com/step-by-step-tutorial/springboot-tutorial/tree/main/rdbms-postgresql)
+* [step 001: hello-world](hello-world)
+* [step 002: profile](profile)
+* [step 003: properties](properties)
+* [step 004: listener](listener)
+* [step 005: rdbms-h2](rdbms-h2)
+* [step 006: rdbms-mysql](rdbms-mysql)
+* [step 007: rdbms-postgresql](rdbms-postgresql)
 * step 008: rdbms-oracle
-* step 009: nosql-redis
+* step 009: [nosql-redis](nosql-redis)
 * step 010: nosql-reactive-redis
 * step 011: nosql-mongodb
 * step 012: nosql-reactive-mongodb
