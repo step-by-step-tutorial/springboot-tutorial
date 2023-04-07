@@ -7,7 +7,7 @@ services:
     image: postgres:13.9-alpine
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
