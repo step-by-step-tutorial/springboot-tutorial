@@ -20,7 +20,7 @@
 * [step 006: rdbms-mysql](rdbms-mysql)
 * [step 007: rdbms-postgresql](rdbms-postgresql)
 * step 008: rdbms-oracle
-* step 009: [nosql-redis](nosql-redis)
+* [step 009: nosql-redis](nosql-redis)
 * step 010: nosql-reactive-redis
 * step 011: nosql-mongodb
 * step 012: nosql-reactive-mongodb
@@ -35,7 +35,7 @@
 * step 021: ELK
 * step 022: security-authentication-basic
 * step 023: security-authentication-inmemory
-* step 024: security-authentication-sampleEntity-service
+* step 024: security-authentication-UserEntity-service
 * step 025: security-authentication-ldap
 * step 026: security-authentication-remember-me
 * step 027: security-authentication-csrf
@@ -59,6 +59,9 @@ mvn -f profile/pom.xml clean package
 mvn -f properties/pom.xml clean package
 mvn -f listener/pom.xml clean package
 mvn -f rdbms-h2/pom.xml clean package
+mvn -f rdbms-mysql/pom.xml clean package
+mvn -f rdbms-postgresql/pom.xml clean package
+mvn -f nosql-redis/pom.xml clean package
 ```
 
 **<p align="center"> [Top](#Spring-Boot-Tutorial) </p>**

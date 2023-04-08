@@ -1,7 +1,7 @@
-package com.tutorial.springboot.rdbmsmysql;
+package com.tutorial.springboot.rdbmspostgresql;
 
-import com.tutorial.springboot.rdbmsmysql.domain.SampleEntity;
-import com.tutorial.springboot.rdbmsmysql.repository.SampleRepository;
+import com.tutorial.springboot.rdbmspostgresql.domain.SampleEntity;
+import com.tutorial.springboot.rdbmspostgresql.repository.SampleRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -10,7 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SampleRepositoryTest {
 
     @Container
-    static PostgreSQLContainer<?> postgresql = new PostgreSQLContainer<>("postgres:13.9-alpine")
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("springboot_tutorial")
             .withUsername("user")
             .withPassword("password");
@@ -37,20 +37,20 @@ class SampleRepositoryTest {
 
     @DynamicPropertySource
     static void registerMySQLProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgresql::getJdbcUrl);
-        registry.add("spring.datasource.username", postgresql::getUsername);
-        registry.add("spring.datasource.password", postgresql::getPassword);
-        registry.add("spring.datasource.driver-class-name", postgresql::getDriverClassName);
+        registry.add("spring.datasource.url", mysql::getJdbcUrl);
+        registry.add("spring.datasource.username", mysql::getUsername);
+        registry.add("spring.datasource.password", mysql::getPassword);
+        registry.add("spring.datasource.driver-class-name", mysql::getDriverClassName);
     }
 
     @BeforeAll
     static void beforeAll() {
-        postgresql.start();
+        mysql.start();
     }
 
     @AfterAll
     static void afterAll() {
-        postgresql.stop();
+        mysql.stop();
     }
 
     static class Stub {

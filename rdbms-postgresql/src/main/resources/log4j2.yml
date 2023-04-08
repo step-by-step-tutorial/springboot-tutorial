@@ -7,7 +7,7 @@ Configuration:
         Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
   Loggers:
     logger:
-      - name: com.tutorial.springboot.h2
+      - name: com.tutorial.springboot.rdbmspostgresql
         level: debug
         additivity: false
         AppenderRef:

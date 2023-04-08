@@ -1,4 +1,4 @@
-package com.tutorial.springboot.rdbmsmysql;
+package com.tutorial.springboot.rdbmspostgresql;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

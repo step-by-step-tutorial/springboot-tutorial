@@ -1,4 +1,4 @@
-package com.tutorial.springboot.rdbmsmysql.domain;
+package com.tutorial.springboot.rdbmspostgresql.domain;
 
 import jakarta.persistence.*;
 
@@ -83,7 +83,7 @@ public class SampleEntity {
 
     @Override
     public String toString() {
-        return "Domain Entity: {"
+        return "Sample Entity: {"
                 + "id:" + id
                 + ", username:" + name
                 + ", code:" + code
