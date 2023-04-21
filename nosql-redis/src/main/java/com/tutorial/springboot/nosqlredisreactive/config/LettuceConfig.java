@@ -1,4 +1,4 @@
-package com.tutorial.springboot.nosqlredis.config;
+package com.tutorial.springboot.nosqlredisreactive.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

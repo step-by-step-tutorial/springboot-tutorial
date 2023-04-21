@@ -1,4 +1,4 @@
-package com.tutorial.springboot.nosqlredis.domain;
+package com.tutorial.springboot.nosqlredisreactive.domain;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

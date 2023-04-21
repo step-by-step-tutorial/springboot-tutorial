@@ -1,12 +1,11 @@
-# <p align="center">NoSQL Redis</p>
+# <p align="center">NoSQL Reactive Redis</p>
 
 <p align="justify">
 
 This tutorial is included [Redis](https://redis.io/) configuration for test and none test environment. This tutorial 
-uses two libraries to create connection factories for making connection to the Redis.
+uses [Lettuce](https://lettuce.io/) to create connection factories for making connection to the Redis.
 
-* [Jedis](https://redis.io/docs/clients/java/)
-* [Lettuce](https://lettuce.io/)
+
 
 </p>
 
@@ -35,15 +34,11 @@ services:
 
 <dependency>
     <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
+    <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
 </dependency>
 <dependency>
     <groupId>io.lettuce</groupId>
     <artifactId>lettuce-core</artifactId>
-</dependency>
-<dependency>
-    <groupId>redis.clients</groupId>
-    <artifactId>jedis</artifactId>
 </dependency>
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
@@ -53,7 +48,6 @@ services:
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
 </dependency>
-
 <dependency>
     <groupId>com.github.kstyrc</groupId>
     <artifactId>embedded-redis</artifactId>
@@ -98,4 +92,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#nosql-redis) </p>**
+**<p align="center"> [Top](#nosql-reactive-redis) </p>**

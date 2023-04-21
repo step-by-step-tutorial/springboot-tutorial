@@ -21,9 +21,9 @@
 * [step 007: rdbms-postgresql](rdbms-postgresql)
 * step 008: rdbms-oracle
 * [step 009: nosql-redis](nosql-redis)
-* step 010: nosql-reactive-redis
+* step 010: nosql-redis-reactive
 * step 011: nosql-mongodb
-* step 012: nosql-reactive-mongodb
+* step 012: nosql-mongodb-reactive
 * step 013: messaging-apache-active-mq
 * step 014: messaging-rabbit-mq
 * step 015: messaging-kafka
@@ -62,6 +62,7 @@ mvn -f rdbms-h2/pom.xml clean package
 mvn -f rdbms-mysql/pom.xml clean package
 mvn -f rdbms-postgresql/pom.xml clean package
 mvn -f nosql-redis/pom.xml clean package
+mvn -f nosql-redis-reactivr/pom.xml clean package
 ```
 
 **<p align="center"> [Top](#Spring-Boot-Tutorial) </p>**

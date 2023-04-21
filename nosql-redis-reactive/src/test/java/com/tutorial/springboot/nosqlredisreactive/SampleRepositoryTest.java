@@ -1,31 +1,25 @@
-package com.tutorial.springboot.nosqlredis;
+package com.tutorial.springboot.nosqlredisreactive;
 
-import com.tutorial.springboot.nosqlredis.domain.SampleModel;
-import com.tutorial.springboot.nosqlredis.repository.SampleRepository;
+import com.tutorial.springboot.nosqlredisreactive.domain.SampleModel;
+import com.tutorial.springboot.nosqlredisreactive.repository.SampleRepository;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import redis.clients.jedis.JedisPool;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("jedis")
 @DisplayName("Sample Repository Tests")
 class SampleRepositoryTest {
 
     private static RedisServer redisServer;
-
-    private static JedisPool jedisPool;
 
     private static final Logger logger = LoggerFactory.getLogger(SampleRepositoryTest.class);
 
@@ -44,7 +38,6 @@ class SampleRepositoryTest {
         try {
             redisServer = new RedisServer();
             redisServer.start();
-            jedisPool = new JedisPool();
         } catch (IOException exception) {
             logger.error(exception.getMessage());
         }
@@ -53,17 +46,16 @@ class SampleRepositoryTest {
     @AfterAll
     public static void tearDown() {
         try {
-            jedisPool.close();
             redisServer.stop();
         } catch (Exception exception) {
             logger.error(exception.getMessage());
         }
     }
 
-    private String provideGivenId(SampleModel givenModel) {
-        Optional<String> id = underTest.save(givenModel);
+    private String givenId(SampleModel givenModel) {
+        var id = underTest.save(givenModel);
         if (id.isPresent()) {
-            UUID uuid = UUID.fromString(id.get());
+            var uuid = UUID.fromString(id.get());
             assertNotNull(uuid);
             return uuid.toString();
         } else {
@@ -85,7 +77,7 @@ class SampleRepositoryTest {
             assertNotNull(result);
             assertTrue(result.isPresent());
             result.ifPresent(id -> {
-                UUID uuid = UUID.fromString(id);
+                var uuid = UUID.fromString(id);
                 assertNotNull(uuid);
             });
         }
@@ -99,9 +91,9 @@ class SampleRepositoryTest {
         @DisplayName("find one model by ID")
         void givenId_whenInvokeFindById_thenReturnsPersistedModel() {
             var givenModel = Stub.SAMPLE;
-            var givenId = provideGivenId(givenModel);
+            var givenId = givenId(givenModel);
 
-            var result = underTest.findById(givenId);
+            var result = underTest.findByKey(givenId);
 
             assertNotNull(result);
             assertTrue(result.isPresent());
@@ -121,9 +113,9 @@ class SampleRepositoryTest {
         @DisplayName("update one model by new values")
         void givenModel_whenInvokeUpdate_thenTupleWillBeUpdated() {
             var givenModel = Stub.SAMPLE;
-            var givenId = provideGivenId(givenModel);
+            var givenId = givenId(givenModel);
 
-            Optional<SampleModel> beforeUpdate = underTest.findById(givenId);
+            var beforeUpdate = underTest.findByKey(givenId);
             assertNotNull(beforeUpdate);
             assertTrue(beforeUpdate.isPresent());
             beforeUpdate.ifPresent(model -> {
@@ -136,7 +128,7 @@ class SampleRepositoryTest {
             givenModel.setCode(2);
             underTest.update(givenModel);
 
-            var afterUpdate = underTest.findById(givenId);
+            var afterUpdate = underTest.findByKey(givenId);
             assertNotNull(afterUpdate);
             assertTrue(afterUpdate.isPresent());
             afterUpdate.ifPresent(model -> {
@@ -145,7 +137,6 @@ class SampleRepositoryTest {
                 assertEquals(givenModel.getDatetime(), model.getDatetime());
             });
         }
-
     }
 
     @Nested
@@ -155,14 +146,13 @@ class SampleRepositoryTest {
         @DisplayName("delete one model by ID")
         void givenId_whenInvokeDeleteById_thenTupleWillBeDeletedFromDatabase() {
 
-            var givenId = provideGivenId(Stub.SAMPLE);
+            var givenId = givenId(Stub.SAMPLE);
 
             underTest.deleteById(givenId);
 
-            var afterDelete = underTest.findById(givenId);
+            var afterDelete = underTest.findByKey(givenId);
             assertTrue(afterDelete.isEmpty());
         }
-
     }
 
 }

@@ -1,4 +1,4 @@
-package com.tutorial.springboot.nosqlredis.domain;
+package com.tutorial.springboot.nosqlredisreactive.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;

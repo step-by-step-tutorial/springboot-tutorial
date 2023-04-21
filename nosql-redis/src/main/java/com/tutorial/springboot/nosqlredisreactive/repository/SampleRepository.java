@@ -1,7 +1,7 @@
-package com.tutorial.springboot.nosqlredis.repository;
+package com.tutorial.springboot.nosqlredisreactive.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutorial.springboot.nosqlredis.domain.SampleModel;
+import com.tutorial.springboot.nosqlredisreactive.domain.SampleModel;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

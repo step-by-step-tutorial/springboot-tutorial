@@ -1,4 +1,4 @@
-package com.tutorial.springboot.nosqlredis;
+package com.tutorial.springboot.nosqlredisreactive;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
