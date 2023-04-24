@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is included [PostgreSQL](https://www.postgresql.org/) configuration for test and none test environment.
+This tutorial is included [PostgreSQL database](https://www.postgresql.org/) configuration for test and none test environment.
 
 </p>
 

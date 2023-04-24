@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is included [mysql](https://www.mysql.com/) configuration for test and none test environment.
+This tutorial is included [MySQL database](https://www.mysql.com/) configuration for test and none test environment.
 
 Some parameters can be included in mysql URL connection are as follows.
 
