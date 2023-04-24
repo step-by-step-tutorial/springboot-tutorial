@@ -1,7 +1,7 @@
 package com.tutorial.springboot.nosqlredisreactive.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutorial.springboot.nosqlredisreactive.domain.SampleModel;
+import com.tutorial.springboot.nosqlredisreactive.entity.SampleModel;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,19 +90,10 @@ public class SampleRepository {
     }
 
     public List<SampleModel> findAll() {
-
-        return template.opsForHash()
-                .entries("*")
-                .map(Map.Entry::getValue)
-                .map(item -> {
-                    try {
-                        return mapper.readValue(String.valueOf(item), SampleModel.class);
-                    } catch (Exception exception) {
-                        logger.error(exception.getMessage());
-                        return new SampleModel();
-                    }
-                })
-                .collectList()
-                .block();
+        return findAll(
+                template.keys("*")
+                        .collectList()
+                        .block()
+        );
     }
 }

@@ -16,7 +16,7 @@ class DataYmlTest {
     private DataYaml underTest;
 
     @Test
-    void givenYamlPropertySourceFactory_WhenLoadedContext_ThenYamlPropertiesInjected() {
+    void GivenYamlPropertySourceFactory_WhenLoadedContext_ThenYamlPropertiesInjected() {
         assertNotNull(underTest);
 
         assertEquals(1, underTest.id());

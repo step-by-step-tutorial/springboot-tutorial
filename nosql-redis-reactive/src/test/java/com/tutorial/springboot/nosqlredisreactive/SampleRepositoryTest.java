@@ -1,6 +1,6 @@
 package com.tutorial.springboot.nosqlredisreactive;
 
-import com.tutorial.springboot.nosqlredisreactive.domain.SampleModel;
+import com.tutorial.springboot.nosqlredisreactive.entity.SampleModel;
 import com.tutorial.springboot.nosqlredisreactive.repository.SampleRepository;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -16,21 +16,39 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@DisplayName("Sample Repository Tests")
+@DisplayName("nosql-redis-reactive: {@link SampleRepository} unit tests")
 class SampleRepositoryTest {
 
-    private static RedisServer redisServer;
+    static RedisServer redisServer;
 
-    private static final Logger logger = LoggerFactory.getLogger(SampleRepositoryTest.class);
+    static final Logger logger = LoggerFactory.getLogger(SampleRepositoryTest.class);
 
     @Autowired
-    private SampleRepository underTest;
+    SampleRepository underTest;
 
+    /**
+     * This class includes Stubs data.
+     */
     static class Stub {
-        static SampleModel SAMPLE = SampleModel.create()
+        static SampleModel SAMPLE_MODEL = SampleModel.create()
                 .setName("test")
                 .setCode(1)
                 .setDatetime(LocalDateTime.now());
+    }
+
+    /**
+     * This method executes final-all query then return the ID of first tuple, otherwise return {@value "invalid"} as a
+     * {@link String} value.
+     *
+     * @return ID of first tuple, otherwise return {@value "invalid"} as a {@link String} value
+     */
+    private String givenId() {
+        return underTest.findAll()
+                .stream()
+                .map(SampleModel::getId)
+                .findFirst()
+                .orElse("invalid");
+
     }
 
     @BeforeAll
@@ -52,25 +70,13 @@ class SampleRepositoryTest {
         }
     }
 
-    private String givenId(SampleModel givenModel) {
-        var id = underTest.save(givenModel);
-        if (id.isPresent()) {
-            var uuid = UUID.fromString(id.get());
-            assertNotNull(uuid);
-            return uuid.toString();
-        } else {
-            fail();
-            return "invalid";
-        }
-    }
-
     @Nested
     @DisplayName("save nested tests")
     class SaveTest {
         @Test
         @DisplayName("save an model")
-        void givenModel_whenInvokeSave_thenReturnsPersistedModel() {
-            var givenModel = Stub.SAMPLE;
+        void GivenModel_WhenInvokeSaveMethod_ThenReturnsPersistedModel() {
+            var givenModel = Stub.SAMPLE_MODEL;
 
             var result = underTest.save(givenModel);
 
@@ -87,11 +93,17 @@ class SampleRepositoryTest {
     @DisplayName("find nested tests")
     class FindTest {
 
+        @BeforeEach
+        void prepareData() {
+            SaveTest saveTest = new SaveTest();
+            saveTest.GivenModel_WhenInvokeSaveMethod_ThenReturnsPersistedModel();
+        }
+
         @Test
-        @DisplayName("find one model by ID")
-        void givenId_whenInvokeFindById_thenReturnsPersistedModel() {
-            var givenModel = Stub.SAMPLE;
-            var givenId = givenId(givenModel);
+        @DisplayName("find one model by Key")
+        void GivenId_WhenInvokeFindByKeyMethod_ThenReturnsPersistedModel() {
+            var givenModel = Stub.SAMPLE_MODEL;
+            var givenId = givenId();
 
             var result = underTest.findByKey(givenId);
 
@@ -108,19 +120,24 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("update nested tests")
     class UpdateTest {
+        @BeforeEach
+        void prepareData() {
+            SaveTest saveTest = new SaveTest();
+            saveTest.GivenModel_WhenInvokeSaveMethod_ThenReturnsPersistedModel();
+        }
 
         @Test
         @DisplayName("update one model by new values")
-        void givenModel_whenInvokeUpdate_thenTupleWillBeUpdated() {
-            var givenModel = Stub.SAMPLE;
-            var givenId = givenId(givenModel);
+        void GivenModel_WhenInvokeUpdateMethod_ThenTupleWillBeUpdated() {
+            var givenModel = Stub.SAMPLE_MODEL;
+            var givenId = givenId();
 
             var beforeUpdate = underTest.findByKey(givenId);
             assertNotNull(beforeUpdate);
             assertTrue(beforeUpdate.isPresent());
             beforeUpdate.ifPresent(model -> {
-                assertEquals(givenModel.getName(), model.getName());
-                assertEquals(givenModel.getCode(), model.getCode());
+                assertEquals("test", model.getName());
+                assertEquals(1, model.getCode());
                 assertEquals(givenModel.getDatetime(), model.getDatetime());
             });
 
@@ -142,11 +159,17 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("delete nested tests")
     class DeleteTest {
+        @BeforeEach
+        void prepareData() {
+            SaveTest saveTest = new SaveTest();
+            saveTest.GivenModel_WhenInvokeSaveMethod_ThenReturnsPersistedModel();
+        }
+
         @Test
         @DisplayName("delete one model by ID")
-        void givenId_whenInvokeDeleteById_thenTupleWillBeDeletedFromDatabase() {
+        void GivenId_WhenInvokeDeleteByIdMethod_ThenTupleWillBeDeletedFromDatabase() {
 
-            var givenId = givenId(Stub.SAMPLE);
+            var givenId = givenId();
 
             underTest.deleteById(givenId);
 

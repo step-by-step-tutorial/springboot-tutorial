@@ -11,10 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @RecordApplicationEvents
+@DisplayName("listener: {@link MessageDispatcher} unit tests")
 class DispatcherTest {
 
     @Autowired
-    private MessageDispatcher dispatcher;
+    private MessageDispatcher underTest;
 
     @Autowired
     private MessageDispatcherWatcher watcher;
@@ -25,11 +26,11 @@ class DispatcherTest {
     }
 
     @Test
-    @DisplayName("when an event published then listener should receive the event")
-    void whenAnEventPublishedThenDispatcherShouldSendTheEvent() {
-        var givenMessageEvent = new MessageEvent("Dispatcher:Test Message");
-        dispatcher.dispatch(givenMessageEvent);
+    @DisplayName("when an event is dispatched then the event is accessible in the environment")
+    void whenEventDispatch_ThenEventShouldBePublishedThroughoutEnvironment() {
+        var givenMessageEvent = new MessageEvent("Dispatcher: Test Message");
 
+        underTest.dispatch(givenMessageEvent);
 
         assertEquals(1, watcher.getEvents().size());
         assertEquals(1, watcher.getEvents().get(1).key);
@@ -37,13 +38,13 @@ class DispatcherTest {
     }
 
     @Test
-    @DisplayName("when an event published then listener should receive the event")
-    void whenTwoEventPublishedThenDispatcherShouldSendTwoEvent() {
-        var givenMessageEvent1 = new MessageEvent("Dispatcher:Test Message 1");
-        var givenMessageEvent2 = new MessageEvent("Dispatcher:Test Message 2");
+    @DisplayName("when two events are dispatched then the events are accessible in the environment")
+    void whenTwoEventsDispatch_ThenEventsShouldBePublishedThroughoutEnvironment() {
+        var givenMessageEvent1 = new MessageEvent("Dispatcher: Test Message 1");
+        var givenMessageEvent2 = new MessageEvent("Dispatcher: Test Message 2");
 
-        dispatcher.dispatch(givenMessageEvent1);
-        dispatcher.dispatch(givenMessageEvent2);
+        underTest.dispatch(givenMessageEvent1);
+        underTest.dispatch(givenMessageEvent2);
 
 
         assertEquals(2, watcher.getEvents().size());

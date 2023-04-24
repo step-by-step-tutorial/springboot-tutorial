@@ -25,7 +25,7 @@ class ProfileServiceTest {
         private DefaultProfileBean bean;
 
         @Test
-        void givenDefaultAsProfile_WhenLoadContext_ThenInjectDefaultProfileService() {
+        void GivenDefaultAsProfile_WhenLoadContext_ThenInjectDefaultProfileService() {
             assertNull(profileService);
             assertNotNull(bean);
             assertEquals("", bean.getProfile());
@@ -44,7 +44,7 @@ class ProfileServiceTest {
         private DefaultProfileBean bean;
 
         @Test
-        void givenTestAsProfile_WhenLoadContext_ThenInjectTestProfileService() {
+        void GivenTestAsProfile_WhenLoadContext_ThenInjectTestProfileService() {
             assertNotNull(profileService);
             assertEquals(TEST, profileService.getProfile());
             assertNotNull(bean);
@@ -64,7 +64,7 @@ class ProfileServiceTest {
         private DefaultProfileBean bean;
 
         @Test
-        void givenDevAsProfile_WhenLoadContext_ThenInjectDevProfileService() {
+        void GivenDevAsProfile_WhenLoadContext_ThenInjectDevProfileService() {
             assertNotNull(profileService);
             assertEquals(DEV, profileService.getProfile());
             assertNotNull(bean);

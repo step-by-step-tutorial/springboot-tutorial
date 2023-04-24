@@ -41,7 +41,7 @@ public class MessageListenerWatcher {
         events.replace(keyGenerator.get(), new KeyValue<>(keyGenerator.getAndIncrement(), event));
     }
 
-    class KeyValue<T, V> {
+    static class KeyValue<T, V> {
         public T key;
 
         public V value;

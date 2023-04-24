@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@DisplayName("listener: {@link MessageListener} unit tests")
 class ListenerTest {
 
     @Autowired
@@ -24,8 +25,8 @@ class ListenerTest {
     }
 
     @Test
-    @DisplayName("when an event published then listener should receive the event")
-    void whenAnEventPublishedThenListenerShouldReceiveTheEvent() {
+    @DisplayName("when an event is published then the listener should receive the event")
+    void whenEventPublish_ThenListenerShouldReceiveTheEvent() {
         var givenMessageEvent = new MessageEvent("Listener:Test Message");
 
         publisher.publishEvent(givenMessageEvent);
@@ -36,8 +37,8 @@ class ListenerTest {
     }
 
     @Test
-    @DisplayName("when an event published then listener should receive the event")
-    void whenTwoEventsPublishedThenListenerShouldReceiveTwoEvents() {
+    @DisplayName("when two events are published then listener should receive the events")
+    void whenTwoEventsPublish_ThenListenerShouldReceiveTwoEvents() {
         var givenMessageEvent1 = new MessageEvent("Listener:Test Message 1");
         var givenMessageEvent2 = new MessageEvent("Listener:Test Message 2");
 

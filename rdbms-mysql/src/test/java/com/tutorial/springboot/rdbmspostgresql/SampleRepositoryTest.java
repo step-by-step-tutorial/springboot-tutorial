@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rdbmspostgresql;
 
-import com.tutorial.springboot.rdbmspostgresql.domain.SampleEntity;
+import com.tutorial.springboot.rdbmspostgresql.entity.SampleEntity;
 import com.tutorial.springboot.rdbmspostgresql.repository.SampleRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,41 +23,44 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
-@DisplayName("Sample Repository Tests")
+@DisplayName("rdbms-mysql: {@link SampleRepository} unit tests")
 class SampleRepositoryTest {
 
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
+    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("springboot_tutorial")
             .withUsername("user")
             .withPassword("password");
-    ;
+
     @Autowired
-    private SampleRepository underTest;
+    SampleRepository underTest;
 
     @DynamicPropertySource
     static void registerMySQLProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mysql::getJdbcUrl);
-        registry.add("spring.datasource.username", mysql::getUsername);
-        registry.add("spring.datasource.password", mysql::getPassword);
-        registry.add("spring.datasource.driver-class-name", mysql::getDriverClassName);
+        registry.add("spring.datasource.url", mySQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", mySQLContainer::getUsername);
+        registry.add("spring.datasource.password", mySQLContainer::getPassword);
+        registry.add("spring.datasource.driver-class-name", mySQLContainer::getDriverClassName);
+    }
+
+    /**
+     * This class includes Stubs data.
+     */
+    static class Stub {
+        static SampleEntity SAMPLE_ENTITY = SampleEntity.create()
+                .setName("test")
+                .setCode(1)
+                .setDatetime(LocalDateTime.now());
     }
 
     @BeforeAll
     static void beforeAll() {
-        mysql.start();
+        mySQLContainer.start();
     }
 
     @AfterAll
     static void afterAll() {
-        mysql.stop();
-    }
-
-    static class Stub {
-        static SampleEntity SAMPLE = SampleEntity.create()
-                .setName("test")
-                .setCode(1)
-                .setDatetime(LocalDateTime.now());
+        mySQLContainer.stop();
     }
 
     @Nested
@@ -65,16 +68,16 @@ class SampleRepositoryTest {
     class SaveTest {
         @Test
         @DisplayName("save an entity")
-        void givenEntityWhenInvokeSaveThenReturnsPersistedEntity() {
-            var givenEntity = Stub.SAMPLE;
+        void GivenEntity_WhenInvokeSaveMethod_ThenReturnsPersistedEntity() {
+            var givenEntity = Stub.SAMPLE_ENTITY;
 
             var result = underTest.save(givenEntity);
 
             assertNotNull(result);
             assertEquals(1L, result.getId());
-            assertEquals(Stub.SAMPLE.getName(), result.getName());
-            assertEquals(Stub.SAMPLE.getCode(), result.getCode());
-            assertEquals(Stub.SAMPLE.getDatetime(), result.getDatetime());
+            assertEquals(Stub.SAMPLE_ENTITY.getName(), result.getName());
+            assertEquals(Stub.SAMPLE_ENTITY.getCode(), result.getCode());
+            assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), result.getDatetime());
         }
     }
 
@@ -84,22 +87,21 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE);
+            underTest.save(Stub.SAMPLE_ENTITY);
         }
 
         @Test
         @DisplayName("find one entity by ID")
-        void givenIdWhenInvokeFindByIdThenReturnsPersistedEntity() {
-
+        void GivenId_WhenInvokeFindByIdMethod_ThenReturnsPersistedEntity() {
             var givenId = 1L;
 
             var result = underTest.findById(givenId);
 
             assertTrue(result.isPresent());
             result.ifPresent(entity -> {
-                assertEquals(Stub.SAMPLE.getName(), entity.getName());
-                assertEquals(Stub.SAMPLE.getCode(), entity.getCode());
-                assertEquals(Stub.SAMPLE.getDatetime(), entity.getDatetime());
+                assertEquals(Stub.SAMPLE_ENTITY.getName(), entity.getName());
+                assertEquals(Stub.SAMPLE_ENTITY.getCode(), entity.getCode());
+                assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
             });
         }
     }
@@ -110,16 +112,16 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE);
+            underTest.save(Stub.SAMPLE_ENTITY);
         }
 
         @Test
         @DisplayName("update one entity by new values")
-        void givenEntityWhenTransactionIsClosedThenTupleWillBeUpdated() {
+        void GivenEntity_WhenTransactionIsClosedMethod_ThenTupleWillBeUpdated() {
             var givenId = 1L;
-            var givenEntity = underTest.findById(givenId);
 
-            givenEntity.ifPresent(entity -> {
+            var result = underTest.findById(givenId);
+            result.ifPresent(entity -> {
                 entity.setName("updated_test");
                 entity.setCode(2);
             });
@@ -128,15 +130,16 @@ class SampleRepositoryTest {
         }
 
         @AfterEach
-        void assertionCheck() {
+        void afterUpdate() {
             var givenId = 1L;
+
             var result = underTest.findById(givenId);
 
             assertTrue(result.isPresent());
             result.ifPresent(entity -> {
                 assertEquals("updated_test", entity.getName());
                 assertEquals(2, entity.getCode());
-                assertEquals(Stub.SAMPLE.getDatetime(), entity.getDatetime());
+                assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
             });
         }
     }
@@ -147,22 +150,19 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE);
+            underTest.save(Stub.SAMPLE_ENTITY);
         }
 
         @Test
         @DisplayName("delete one entity by ID")
-        void givenIdWhenInvokeDeleteByIdThenTupleWillBeDeletedFromDatabase() {
+        void GivenId_WhenInvokeDeleteByIdMethod_ThenTupleWillBeDeletedFromDatabase() {
             var givenId = 1L;
+
             underTest.deleteById(givenId);
-            assertTrue(true);
+
+            var afterDelete = underTest.findById(givenId);
+            assertTrue(afterDelete.isEmpty());
         }
 
-        @AfterEach
-        void assertionCheck() {
-            var givenId = 1L;
-            var result = underTest.findById(givenId);
-            assertTrue(result.isEmpty());
-        }
     }
 }

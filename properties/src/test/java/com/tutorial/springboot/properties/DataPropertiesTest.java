@@ -16,7 +16,7 @@ class DataPropertiesTest {
     private DataProperties underTest;
 
     @Test
-    void givenDefaultPropertySourceFactory_WhenLoadedContext_ThenPropertiesInjected() {
+    void GivenDefaultPropertySourceFactory_WhenLoadedContext_ThenPropertiesInjected() {
         assertNotNull(underTest);
 
         assertEquals(1, underTest.id());

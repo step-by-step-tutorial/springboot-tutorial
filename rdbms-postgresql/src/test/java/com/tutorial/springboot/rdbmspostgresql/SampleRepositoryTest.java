@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rdbmspostgresql;
 
-import com.tutorial.springboot.rdbmspostgresql.domain.SampleEntity;
+import com.tutorial.springboot.rdbmspostgresql.entity.SampleEntity;
 import com.tutorial.springboot.rdbmspostgresql.repository.SampleRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
-@DisplayName("Sample Repository Tests")
+@DisplayName("rdbms-postgresql: {@link SampleRepository} unit tests")
 class SampleRepositoryTest {
 
     @Container
@@ -32,8 +32,6 @@ class SampleRepositoryTest {
             .withUsername("user")
             .withPassword("password");
     ;
-    @Autowired
-    private SampleRepository underTest;
 
     @DynamicPropertySource
     static void registerPostgreSQLProperties(DynamicPropertyRegistry registry) {
@@ -42,6 +40,9 @@ class SampleRepositoryTest {
         registry.add("spring.datasource.password", postgresql::getPassword);
         registry.add("spring.datasource.driver-class-name", postgresql::getDriverClassName);
     }
+
+    @Autowired
+    SampleRepository underTest;
 
     @BeforeAll
     static void beforeAll() {
@@ -53,28 +54,32 @@ class SampleRepositoryTest {
         postgresql.stop();
     }
 
+    /**
+     * This class includes Stubs data.
+     */
     static class Stub {
-        static SampleEntity SAMPLE = SampleEntity.create()
+        static SampleEntity SAMPLE_ENTITY = SampleEntity.create()
                 .setName("test")
                 .setCode(1)
                 .setDatetime(LocalDateTime.now());
     }
-
+    
     @Nested
     @DisplayName("save nested tests")
     class SaveTest {
+
         @Test
         @DisplayName("save an entity")
-        void givenEntityWhenInvokeSaveThenReturnsPersistedEntity() {
-            var givenEntity = Stub.SAMPLE;
+        void GivenEntity_WhenInvokeSaveMethod_ThenReturnsPersistedEntity() {
+            var givenEntity = Stub.SAMPLE_ENTITY;
 
             var result = underTest.save(givenEntity);
 
             assertNotNull(result);
             assertEquals(1L, result.getId());
-            assertEquals(Stub.SAMPLE.getName(), result.getName());
-            assertEquals(Stub.SAMPLE.getCode(), result.getCode());
-            assertEquals(Stub.SAMPLE.getDatetime(), result.getDatetime());
+            assertEquals(Stub.SAMPLE_ENTITY.getName(), result.getName());
+            assertEquals(Stub.SAMPLE_ENTITY.getCode(), result.getCode());
+            assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), result.getDatetime());
         }
     }
 
@@ -84,12 +89,12 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE);
+            underTest.save(Stub.SAMPLE_ENTITY);
         }
 
         @Test
         @DisplayName("find one entity by ID")
-        void givenIdWhenInvokeFindByIdThenReturnsPersistedEntity() {
+        void GivenId_WhenInvokeFindByIdMethod_ThenReturnsPersistedEntity() {
 
             var givenId = 1L;
 
@@ -97,9 +102,9 @@ class SampleRepositoryTest {
 
             assertTrue(result.isPresent());
             result.ifPresent(entity -> {
-                assertEquals(Stub.SAMPLE.getName(), entity.getName());
-                assertEquals(Stub.SAMPLE.getCode(), entity.getCode());
-                assertEquals(Stub.SAMPLE.getDatetime(), entity.getDatetime());
+                assertEquals(Stub.SAMPLE_ENTITY.getName(), entity.getName());
+                assertEquals(Stub.SAMPLE_ENTITY.getCode(), entity.getCode());
+                assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
             });
         }
     }
@@ -110,16 +115,16 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE);
+            underTest.save(Stub.SAMPLE_ENTITY);
         }
 
         @Test
         @DisplayName("update one entity by new values")
-        void givenEntityWhenTransactionIsClosedThenTupleWillBeUpdated() {
+        void GivenEntity_WhenTransactionIsClosedMethod_ThenTupleWillBeUpdated() {
             var givenId = 1L;
-            var givenEntity = underTest.findById(givenId);
 
-            givenEntity.ifPresent(entity -> {
+            var result = underTest.findById(givenId);
+            result.ifPresent(entity -> {
                 entity.setName("updated_test");
                 entity.setCode(2);
             });
@@ -128,7 +133,7 @@ class SampleRepositoryTest {
         }
 
         @AfterEach
-        void assertionCheck() {
+        void afterUpdate() {
             var givenId = 1L;
             var result = underTest.findById(givenId);
 
@@ -136,7 +141,7 @@ class SampleRepositoryTest {
             result.ifPresent(entity -> {
                 assertEquals("updated_test", entity.getName());
                 assertEquals(2, entity.getCode());
-                assertEquals(Stub.SAMPLE.getDatetime(), entity.getDatetime());
+                assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
             });
         }
     }
@@ -147,22 +152,19 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE);
+            underTest.save(Stub.SAMPLE_ENTITY);
         }
 
         @Test
         @DisplayName("delete one entity by ID")
-        void givenIdWhenInvokeDeleteByIdThenTupleWillBeDeletedFromDatabase() {
+        void GivenId_WhenInvokeDeleteByIdMethod_ThenTupleWillBeDeletedFromDatabase() {
             var givenId = 1L;
+
             underTest.deleteById(givenId);
-            assertTrue(true);
+
+            var afterDelete = underTest.findById(givenId);
+            assertTrue(afterDelete.isEmpty());
         }
 
-        @AfterEach
-        void assertionCheck() {
-            var givenId = 1L;
-            var result = underTest.findById(givenId);
-            assertTrue(result.isEmpty());
-        }
     }
 }

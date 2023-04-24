@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import static java.util.Objects.requireNonNull;
+
 @Component
 public class MessageListener {
 
@@ -12,6 +14,8 @@ public class MessageListener {
 
     @EventListener
     void onMessage(MessageEvent event) {
+        requireNonNull(event);
+
         logger.info("received message: {}", event.text());
     }
 }
