@@ -10,7 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.OracleContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -23,21 +23,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
-@DisplayName("rdbms-mysql: {@link SampleRepository} unit tests")
+@DisplayName("rdbms-oracle: {@link SampleRepository} unit tests")
 class SampleRepositoryTest {
 
     @Container
-    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0")
-            .withDatabaseName("springboot_tutorial")
-            .withUsername("user")
+    static OracleContainer oracleContainer = new OracleContainer("gvenzl/oracle-xe:21-slim-faststart")
             .withPassword("password");
+
 
     @DynamicPropertySource
     static void registerMySQLProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mySQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", mySQLContainer::getUsername);
-        registry.add("spring.datasource.password", mySQLContainer::getPassword);
-        registry.add("spring.datasource.driver-class-name", mySQLContainer::getDriverClassName);
+        registry.add("spring.datasource.url", oracleContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", oracleContainer::getUsername);
+        registry.add("spring.datasource.password", oracleContainer::getPassword);
+        registry.add("spring.datasource.driver-class-name", oracleContainer::getDriverClassName);
     }
 
     @Autowired
@@ -55,12 +54,12 @@ class SampleRepositoryTest {
 
     @BeforeAll
     static void beforeAll() {
-        mySQLContainer.start();
+        oracleContainer.start();
     }
 
     @AfterAll
     static void afterAll() {
-        mySQLContainer.stop();
+        oracleContainer.stop();
     }
 
     @Nested
