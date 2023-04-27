@@ -125,7 +125,7 @@ spring:
       - test
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
 
 ```
 

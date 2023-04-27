@@ -78,13 +78,13 @@ spring:
 ## Build
 
 ```bash
-mvn clean package -DskipTests=true
+mvn clean package -DskipTests=true 
 ```
 
 ## Test
 
 ```bash
-mvn  test
+mvn test
 ```
 
 ## Run

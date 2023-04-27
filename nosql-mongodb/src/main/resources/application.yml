@@ -13,3 +13,5 @@ spring:
   config:
     activate:
       on-profile: test
+
+---

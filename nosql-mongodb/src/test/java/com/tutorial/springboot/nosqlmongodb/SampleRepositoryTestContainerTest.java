@@ -3,6 +3,8 @@ package com.tutorial.springboot.nosqlmongodb;
 import com.tutorial.springboot.nosqlmongodb.document.SampleDocument;
 import com.tutorial.springboot.nosqlmongodb.repository.SampleRepository;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @DataMongoTest
-@ActiveProfiles("test")
+@ActiveProfiles("dockerized-mongodb")
 @DisplayName("nosql-mongodb: {@link SampleRepository} unit tests")
-class SampleRepositoryTest {
+class SampleRepositoryTestContainerTest {
 
     @Container
     static final MongoDBContainer mongoDbContainer = new MongoDBContainer("mongo:5.0.16");
