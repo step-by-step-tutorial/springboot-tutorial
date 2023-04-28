@@ -10,7 +10,6 @@ System.out.println("Hello World!");
 
 ## Dependency
 ```xml
-
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter</artifactId>

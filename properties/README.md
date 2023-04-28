@@ -29,7 +29,7 @@ public record DataProperties(int number, String string, String dateTime, String[
 }
 ```
 
-**YML**
+**YAML**
 
 For yml file you have to define a source factory.
 
@@ -80,6 +80,19 @@ import org.springframework.context.annotation.PropertySource;
 public record DataYaml(int number, String string, String dateTime, String[] array) {
 
 }
+```
+
+## Dependency
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
 ```
 
 ## Prerequisites

@@ -39,14 +39,54 @@ oracle/database:21.3.0-xe
 step-7: docker stop/start oracle-xe-21c
 ```
 
-
 ## How To Config Spring Boot
 
 ### Dependency
 
-The Oracle database driver should be downloaded and install manually.
+The Oracle database driver should
+be [downloaded](https://www.oracle.com/de/database/technologies/appdev/jdbc-downloads.html) and install manually with
+following command.
+
+**Linux/Unix**
+
+```shell
+#!/usr/bin/env bash
+
+mvn install:install-file \
+-Dfile=path/ojdbc11.jar \
+-DgroupId=com.oracle \
+-DartifactId=ojdbc11 \
+-Dversion=21c \
+-Dpackaging=jar
+```
+
+**Windows**
+
+```shell
+mvn install:install-file ^
+-Dfile=./ojdbc11.jar ^
+-DgroupId=com.oracle ^
+-DartifactId=ojdbc11 ^
+-Dversion=21c ^
+-Dpackaging=jar ^
+-DgeneratePom=true
+
+```
 
 ```xml
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-bom</artifactId>
+            <version>1.18.0</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+<dependencies>
 
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -59,9 +99,15 @@ The Oracle database driver should be downloaded and install manually.
 </dependency>
 <dependency>
     <groupId>org.testcontainers</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
     <artifactId>oracle</artifactId>
     <scope>test</scope>
 </dependency>
+</dependencies>
 
 ```
 

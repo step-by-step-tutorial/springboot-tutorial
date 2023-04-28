@@ -15,7 +15,7 @@ There are a few alternatives for H2, therefore I suggest you to read the
 
 </p>
 
-## How To Use in Spring Boot
+## How To Config Spring Boot
 
 ### Dependency
 
