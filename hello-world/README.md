@@ -8,6 +8,20 @@ System.out.println("Hello World!");
 
 ```
 
+## Dependency
+```xml
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
 ## Prerequisites
 
 * [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
@@ -31,4 +45,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center">[Top](#Hello-World)</p>**
+**<p align="center">[Top](#hello-world)</p>**
