@@ -1,7 +1,7 @@
-package com.tutorial.springboot.nosqlmongodb;
+package com.tutorial.springboot.nosqlmongodbreactive;
 
-import com.tutorial.springboot.nosqlmongodb.document.SampleDocument;
-import com.tutorial.springboot.nosqlmongodb.repository.SampleRepository;
+import com.tutorial.springboot.nosqlmongodbreactive.document.SampleDocument;
+import com.tutorial.springboot.nosqlmongodbreactive.repository.SampleRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 @DataMongoTest
 @ActiveProfiles("test")
-@DisplayName("nosql-mongodb: {@link SampleRepository} unit tests")
+@DisplayName("nosql-mongodb-reactive: {@link SampleRepository} unit tests")
 class SampleRepositoryTestContainerTest {
 
     @Container
@@ -60,11 +60,16 @@ class SampleRepositoryTestContainerTest {
      *
      * @return ID of first tuple, otherwise return {@value "invalid"} as a {@link String} value
      */
-    String givenMeId() {
-        var documents = underTest.findAll();
-        assertNotNull(documents);
+    String giveMeId() {
+        var documents = underTest.findAll()
+                .collectList()
+                .blockOptional();
 
-        return documents.stream()
+        assertNotNull(documents);
+        assertTrue(documents.isPresent());
+
+        return documents.get()
+                .stream()
                 .map(SampleDocument::getId)
                 .findFirst()
                 .orElse("invalid");
@@ -84,10 +89,11 @@ class SampleRepositoryTestContainerTest {
         void GivenDocument_WhenInvokeSaveMethod_ThenReturnsPersistedDocument() {
             var givenDocument = Stub.SAMPLE_DOCUMENT;
 
-            var actual = underTest.save(givenDocument);
+            var actual = underTest.save(givenDocument).blockOptional();
 
             assertNotNull(actual);
-            assertNotNull(actual.getId());
+            assertTrue(actual.isPresent());
+            actual.ifPresent(document -> assertNotNull(document.getId()));
         }
     }
 
@@ -98,18 +104,17 @@ class SampleRepositoryTestContainerTest {
         @BeforeEach
         void prepareData() {
             assertNotNull(underTest);
-
-            underTest.save(Stub.SAMPLE_DOCUMENT);
+            underTest.save(Stub.SAMPLE_DOCUMENT).block();
         }
 
         @Test
         @DisplayName("find one document by ID")
         void GivenId_WhenInvokeFindByIdMethod_ThenReturnsPersistedDocument() {
-            var givenId = givenMeId();
+            var givenId = giveMeId();
 
             var expectedDocument = Stub.SAMPLE_DOCUMENT;
 
-            var actual = underTest.findById(givenId);
+            var actual = underTest.findById(givenId).blockOptional();
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());

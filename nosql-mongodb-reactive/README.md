@@ -1,4 +1,4 @@
-# <p align="center">NoSQL MongoDB</p>
+# <p align="center">NoSQL Reactive MongoDB</p>
 
 <p align="justify">
 
@@ -64,7 +64,7 @@ services:
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
     </dependency>
     <dependency>
         <groupId>org.testcontainers</groupId>
@@ -117,4 +117,4 @@ mvn test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#nosql-mongodb) </p>**
+**<p align="center"> [Top](#nosql-reactive-mongodb) </p>**

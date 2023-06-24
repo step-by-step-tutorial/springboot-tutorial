@@ -80,11 +80,11 @@ class SampleRepositoryTest {
         void GivenModel_WhenInvokeSaveMethod_ThenReturnsPersistedModel() {
             var givenModel = Stub.SAMPLE_MODEL;
 
-            var result = underTest.save(givenModel);
+            var actual = underTest.save(givenModel);
 
-            assertNotNull(result);
-            assertTrue(result.isPresent());
-            result.ifPresent(id -> {
+            assertNotNull(actual);
+            assertTrue(actual.isPresent());
+            actual.ifPresent(id -> {
                 var uuid = UUID.fromString(id);
                 assertNotNull(uuid);
             });
@@ -108,11 +108,11 @@ class SampleRepositoryTest {
 
             var expectedModel = Stub.SAMPLE_MODEL;
 
-            var result = underTest.findById(givenId);
+            var actual = underTest.findById(givenId);
 
-            assertNotNull(result);
-            assertTrue(result.isPresent());
-            result.ifPresent(model -> {
+            assertNotNull(actual);
+            assertTrue(actual.isPresent());
+            actual.ifPresent(model -> {
                 Assertions.assertEquals(expectedModel.getName(), model.getName());
                 Assertions.assertEquals(expectedModel.getCode(), model.getCode());
                 Assertions.assertEquals(expectedModel.getDatetime(), model.getDatetime());

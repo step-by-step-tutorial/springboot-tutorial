@@ -23,7 +23,7 @@
 * [step 009: nosql-redis](nosql-redis)
 * [step 010: nosql-redis-reactive](nosql-redis-reactive)
 * [step 011: nosql-mongodb](nosql-mongodb)
-* step 012: nosql-mongodb-reactive
+* [step 012: nosql-mongodb-reactive](nosql-mongodb-reactive)
 * step 013: messaging-apache-active-mq
 * step 014: messaging-rabbit-mq
 * step 015: messaging-kafka
@@ -64,6 +64,7 @@ mvn -f rdbms-postgresql/pom.xml clean package
 mvn -f nosql-redis/pom.xml clean package
 mvn -f nosql-redis-reactivr/pom.xml clean package
 mvn -f nosql-mongodb/pom.xml clean package
+mvn -f nosql-mongodb-reactive/pom.xml clean package
 ```
 
-**<p align="center"> [Top](#Spring-Boot-Tutorial) </p>**
+**<p align="center"> [Top](#spring-boot-tutorial) </p>**

@@ -37,13 +37,13 @@ class SampleRepositoryTest {
         void GivenEntity_WhenInvokeSaveMethod_ThenReturnsPersistedEntity() {
             var givenEntity = Stub.SAMPLE_ENTITY;
 
-            var result = underTest.save(givenEntity);
+            var actual = underTest.save(givenEntity);
 
-            assertNotNull(result);
-            assertEquals(1L, result.getId());
-            assertEquals(Stub.SAMPLE_ENTITY.getName(), result.getName());
-            assertEquals(Stub.SAMPLE_ENTITY.getCode(), result.getCode());
-            assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), result.getDatetime());
+            assertNotNull(actual);
+            assertEquals(1L, actual.getId());
+            assertEquals(Stub.SAMPLE_ENTITY.getName(), actual.getName());
+            assertEquals(Stub.SAMPLE_ENTITY.getCode(), actual.getCode());
+            assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), actual.getDatetime());
         }
     }
 
@@ -62,10 +62,10 @@ class SampleRepositoryTest {
 
             var givenId = 1L;
 
-            var result = underTest.findById(givenId);
+            var actual = underTest.findById(givenId);
 
-            assertTrue(result.isPresent());
-            result.ifPresent(entity -> {
+            assertTrue(actual.isPresent());
+            actual.ifPresent(entity -> {
                 assertEquals(Stub.SAMPLE_ENTITY.getName(), entity.getName());
                 assertEquals(Stub.SAMPLE_ENTITY.getCode(), entity.getCode());
                 assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
@@ -89,8 +89,8 @@ class SampleRepositoryTest {
             var givenName = "updated_test";
             var givenCode = 2;
 
-            var result = underTest.findById(givenId);
-            result.ifPresent(entity -> {
+            var actual = underTest.findById(givenId);
+            actual.ifPresent(entity -> {
                 entity.setName(givenName);
                 entity.setCode(givenCode);
             });
@@ -102,9 +102,9 @@ class SampleRepositoryTest {
         void afterUpdate() {
             var givenId = 1L;
 
-            var result = underTest.findById(givenId);
-            assertTrue(result.isPresent());
-            result.ifPresent(entity -> {
+            var actual = underTest.findById(givenId);
+            assertTrue(actual.isPresent());
+            actual.ifPresent(entity -> {
                 assertEquals("updated_test", entity.getName());
                 assertEquals(2, entity.getCode());
                 assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
