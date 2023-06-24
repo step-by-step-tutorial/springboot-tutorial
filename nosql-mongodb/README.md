@@ -2,11 +2,7 @@
 
 <p align="justify">
 
-This tutorial is included [MongoDB](https://www.mongodb.com/) configuration for test and none test environment. This tutorial 
-uses two libraries to create connection factories for making connection to the Redis.
-
-* [Jedis](https://redis.io/docs/clients/java/)
-* [Lettuce](https://lettuce.io/)
+This tutorial is included [MongoDB](https://www.mongodb.com/) configuration for test and none test environment.
 
 </p>
 
