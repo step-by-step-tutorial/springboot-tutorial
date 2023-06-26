@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      username: root
-      password: root
+      username: ${MONGO_DB_USER:root}
+      password: ${MONGO_DB_PASS:root}
       host: ${MONGO_DB_HOST:localhost}
       port: ${MONGO_DB_PORT:27017}
       database: ${MONGO_DB_NAME:springboot_tutorial}

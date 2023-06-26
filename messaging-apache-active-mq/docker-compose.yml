@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+
+  active-mq-artemis:
+    image: apache/activemq-artemis
+    build:
+      context: ./
+      dockerfile: activemq-artemis-docker/Dockerfile
+    container_name: active-mq-artemis
+    hostname: active-mq-artemis
+    restart: always
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    volumes:
+      - ~/springboot-tutorial-docker:/opt/sbs-springboot-tutorial
+

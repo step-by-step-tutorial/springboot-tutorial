@@ -1,0 +1,32 @@
+spring:
+  artemis:
+    mode: native
+    host: ${ACTIVE_MQ_HOST:localhost}
+    port: ${ACTIVE_MQ_PORT:61616}
+    user: ${ACTIVE_MQ_USER:artemis}
+    password: ${ACTIVE_MQ_PASS:artemis}
+  jms:
+    pub-sub-domain: true
+
+queue:
+  main-queue: mainQueue
+  ack-queue: ackQueue
+
+logging:
+  level:
+    org:
+      springframework:
+        jms: DEBUG
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  artemis:
+    mode: embedded
+    embedded:
+      enabled: true
+      queues: mainQueue,ackQueue
+    host: localhost
+    port: 61616
+---
