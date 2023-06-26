@@ -38,9 +38,9 @@ public class StringMessageHandler {
                 .ifPresentOrElse(
                         body -> {
                             logger.info("message processing succeeded: {}", body);
-                            ackMessagePublisher.sendMessage(new AckMessage(AckStatus.ACCEPTED, body.id()));
+                            ackMessagePublisher.publish(new AckMessage(AckStatus.ACCEPTED, body.id()));
                         },
-                        () -> ackMessagePublisher.sendMessage(new AckMessage(AckStatus.FAILED, extractCorrelationId(message)))
+                        () -> ackMessagePublisher.publish(new AckMessage(AckStatus.FAILED, extractCorrelationId(message)))
                 );
     }
 

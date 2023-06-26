@@ -22,7 +22,7 @@ public class StringMessagePublisher {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    public void sendMessage(StringMessage message) {
+    public void publish(StringMessage message) {
         requireNonNull(message);
         jmsTemplate.send(mainQueue, createSerializableMessage(message));
         logger.info("message sent to {}: {}", mainQueue, message);

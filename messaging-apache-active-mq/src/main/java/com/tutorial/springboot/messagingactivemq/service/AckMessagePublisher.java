@@ -22,7 +22,7 @@ public class AckMessagePublisher {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    public void sendMessage(AckMessage message) {
+    public void publish(AckMessage message) {
         requireNonNull(message);
         jmsTemplate.send(ackQueue, createSerializableMessage(message));
         logger.info("ack sent to {}: {}", ackQueue, message);
