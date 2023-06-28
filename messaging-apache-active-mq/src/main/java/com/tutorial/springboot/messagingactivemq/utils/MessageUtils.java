@@ -50,7 +50,7 @@ public final class MessageUtils {
         try {
             return message.getJMSDestination().toString();
         } catch (JMSException e) {
-            logger.error("correlation Id does not exist for the reason that: {}", e.getMessage());
+            logger.error("destination does not exist for the reason that: {}", e.getMessage());
             return null;
         }
     }
