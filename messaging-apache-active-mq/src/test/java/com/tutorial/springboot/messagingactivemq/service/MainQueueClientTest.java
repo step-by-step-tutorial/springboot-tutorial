@@ -1,5 +1,6 @@
 package com.tutorial.springboot.messagingactivemq.service;
 
+import com.tutorial.springboot.messagingactivemq.StubData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class MainQueueClientTest {
         var expectedException = NullPointerException.class;
         var expectedExceptionMessage = "message should not be null";
 
-        var actual = assertThrows(expectedException, () -> underTest.publish(givenMessage));
+        var actual = assertThrows(expectedException, () -> underTest.push(givenMessage));
 
         assertNotNull(actual);
         assertEquals(expectedExceptionMessage, actual.getMessage());
@@ -54,7 +55,7 @@ class MainQueueClientTest {
                 .when(jmsTemplate)
                 .send(anyString(), any());
 
-        underTest.publish(givenMessage);
+        underTest.push(givenMessage);
 
         verify(jmsTemplate, times(1)).send(anyString(), any());
     }

@@ -27,7 +27,7 @@ public class MainQueueClient {
         this.jmsTemplate = jmsTemplate;
     }
 
-    public void publish(MessageHolder message) {
+    public void push(MessageHolder message) {
         requireNonNull(message, "message should not be null");
         jmsTemplate.send(destination, createSerializableMessage(message));
         logger.info("message sent to {}: {}", destination, message);

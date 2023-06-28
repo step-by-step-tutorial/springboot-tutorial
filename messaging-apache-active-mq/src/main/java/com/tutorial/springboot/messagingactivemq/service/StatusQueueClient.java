@@ -27,7 +27,7 @@ public class StatusQueueClient {
         this.jmsTemplate = jmsTemplate;
     }
 
-    public void publish(Status message) {
+    public void push(Status message) {
         requireNonNull(message);
         jmsTemplate.send(destination, createSerializableMessage(message));
         logger.info("ack sent to {}: {}", destination, message);

@@ -1,5 +1,6 @@
 package com.tutorial.springboot.messagingactivemq.service;
 
+import com.tutorial.springboot.messagingactivemq.StubData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ class MainQueueClientWithEmbeddedQueueTest {
         var expectedException = NullPointerException.class;
         var expectedExceptionMessage = "message should not be null";
 
-        var actual = assertThrows(expectedException, () -> underTest.publish(givenMessage));
+        var actual = assertThrows(expectedException, () -> underTest.push(givenMessage));
 
         assertNotNull(actual);
         assertEquals(expectedExceptionMessage, actual.getMessage());
@@ -35,7 +36,7 @@ class MainQueueClientWithEmbeddedQueueTest {
     void messageShouldBePushedToTheQueue() {
         var givenMessage = StubData.FAKE_MESSAGE;
 
-        assertDoesNotThrow(() -> underTest.publish(givenMessage));
+        assertDoesNotThrow(() -> underTest.push(givenMessage));
     }
 
 }

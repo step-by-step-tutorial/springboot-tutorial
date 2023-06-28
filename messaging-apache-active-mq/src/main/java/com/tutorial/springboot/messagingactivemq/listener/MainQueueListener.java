@@ -34,15 +34,15 @@ public class MainQueueListener {
 
     @JmsListener(destination = "${queue.main-queue}")
     public void onMessage(Message message) {
-        requireNonNull(message);
+        requireNonNull(message, "message should not be null");
         logger.info("message received from {}", destination);
         extractBody(message, MessageHolder.class)
                 .ifPresentOrElse(
                         body -> {
                             logger.info("message processing succeeded: {}", body);
-                            statusQueueClient.publish(new Status(Acknowledge.ACCEPTED, body.id()));
+                            statusQueueClient.push(new Status(Acknowledge.ACCEPTED, body.id()));
                         },
-                        () -> statusQueueClient.publish(new Status(Acknowledge.FAILED, extractCorrelationId(message)))
+                        () -> statusQueueClient.push(new Status(Acknowledge.FAILED, extractCorrelationId(message)))
                 );
     }
 
