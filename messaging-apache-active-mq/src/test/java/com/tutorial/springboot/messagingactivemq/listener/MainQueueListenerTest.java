@@ -1,6 +1,8 @@
 package com.tutorial.springboot.messagingactivemq.listener;
 
 import com.tutorial.springboot.messagingactivemq.StubData;
+import com.tutorial.springboot.messagingactivemq.message.Acknowledge;
+import com.tutorial.springboot.messagingactivemq.message.Status;
 import com.tutorial.springboot.messagingactivemq.service.StatusQueueClient;
 import com.tutorial.springboot.messagingactivemq.utils.MessageUtils;
 import jakarta.jms.Message;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 import static com.tutorial.springboot.messagingactivemq.StubData.FAKE_MESSAGE;
 import static com.tutorial.springboot.messagingactivemq.utils.MessageUtils.extractBody;
+import static com.tutorial.springboot.messagingactivemq.utils.MessageUtils.extractCorrelationId;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -66,11 +69,17 @@ class MainQueueListenerTest {
     void shouldSendAcceptedStatusIfTheMessageWasProcessedSuccessful() {
         var givenMessage = mock(Message.class);
         messageUtils.when(() -> extractBody(any(), any())).thenReturn(Optional.of(FAKE_MESSAGE));
+        messageUtils.when(() -> extractCorrelationId(any())).thenReturn("fake correlation Id");
+        doNothing()
+                .when(statusQueueClient)
+                .push(new Status(Acknowledge.ACCEPTED, "fake correlation Id"));
+
 
         assertDoesNotThrow(() -> underTest.onMessage(givenMessage));
 
         messageUtils.verify(() -> extractBody(any(), any()), times(1));
-        verify(statusQueueClient, times(1)).push(any());
+        messageUtils.verify(() -> extractCorrelationId(any()), times(1));
+        verify(statusQueueClient, times(1)).push(new Status(Acknowledge.ACCEPTED, "fake correlation Id"));
     }
 
     @Test
@@ -78,11 +87,16 @@ class MainQueueListenerTest {
     void shouldSendFailedStatusIfTheMessageWasNotProcessedSuccessful() {
         var givenMessage = mock(Message.class);
         messageUtils.when(() -> extractBody(any(), any())).thenReturn(Optional.empty());
+        messageUtils.when(() -> extractCorrelationId(any())).thenReturn("fake correlation Id");
+        doNothing()
+                .when(statusQueueClient)
+                .push(new Status(Acknowledge.FAILED, "fake correlation Id"));
 
         assertDoesNotThrow(() -> underTest.onMessage(givenMessage));
 
         messageUtils.verify(() -> extractBody(any(), any()), times(1));
-        verify(statusQueueClient, times(1)).push(any());
+        messageUtils.verify(() -> extractCorrelationId(any()), times(1));
+        verify(statusQueueClient, times(1)).push(new Status(Acknowledge.FAILED, "fake correlation Id"));
     }
 
 }

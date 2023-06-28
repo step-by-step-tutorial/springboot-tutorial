@@ -3,7 +3,6 @@ package com.tutorial.springboot.messagingactivemq.utils;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.ObjectMessage;
-import jakarta.jms.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.MessageCreator;
@@ -41,6 +40,15 @@ public final class MessageUtils {
     public static String extractCorrelationId(Message message) {
         try {
             return message.getJMSCorrelationID();
+        } catch (JMSException e) {
+            logger.error("correlation Id does not exist for the reason that: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static String extractDestination(Message message) {
+        try {
+            return message.getJMSDestination().toString();
         } catch (JMSException e) {
             logger.error("correlation Id does not exist for the reason that: {}", e.getMessage());
             return null;

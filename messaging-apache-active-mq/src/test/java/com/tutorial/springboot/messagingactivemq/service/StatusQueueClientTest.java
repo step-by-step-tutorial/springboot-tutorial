@@ -2,9 +2,6 @@ package com.tutorial.springboot.messagingactivemq.service;
 
 import com.tutorial.springboot.messagingactivemq.StubData;
 import com.tutorial.springboot.messagingactivemq.utils.MessageUtils;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.Session;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,25 +14,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.TestPropertySources;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Optional;
-
-import static com.tutorial.springboot.messagingactivemq.StubData.FAKE_MESSAGE;
 import static com.tutorial.springboot.messagingactivemq.utils.MessageUtils.createSerializableMessage;
-import static com.tutorial.springboot.messagingactivemq.utils.MessageUtils.extractBody;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit test of main queue client")
-class MainQueueClientTest {
+@DisplayName("unit test of status queue client")
+class StatusQueueClientTest {
 
     @InjectMocks
-    private MainQueueClient underTest;
+    private StatusQueueClient underTest;
 
     @Mock
     private JmsTemplate jmsTemplate;
@@ -56,7 +49,7 @@ class MainQueueClientTest {
     @Test
     @DisplayName("should throw NullPointerException if message is null")
     void shouldThrowNullPointerExceptionIfMessageIsNull() {
-        var givenMessage = StubData.NULL_MESSAGE;
+        var givenMessage = StubData.NULL_STATUS;
 
         var expectedException = NullPointerException.class;
         var expectedExceptionMessage = "message should not be null";
@@ -71,7 +64,7 @@ class MainQueueClientTest {
     @Test
     @DisplayName("message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
-        var givenMessage = StubData.FAKE_MESSAGE;
+        var givenMessage = StubData.FAKE_STATUS;
         var givenMessageCreator = mock(MessageCreator.class);
         messageUtils.when(() -> createSerializableMessage(any())).thenReturn(givenMessageCreator);
 
@@ -84,5 +77,4 @@ class MainQueueClientTest {
         messageUtils.verify(() -> createSerializableMessage(any()), times(1));
         verify(jmsTemplate, times(1)).send("fake queue", givenMessageCreator);
     }
-
 }
