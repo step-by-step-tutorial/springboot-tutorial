@@ -10,23 +10,31 @@ spring:
 
 queue:
   main-queue: mainQueue
-  ack-queue: ackQueue
+  status-queue: statusQueue
 
 logging:
   level:
     org:
       springframework:
         jms: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: embedded
+  artemis:
+    mode: embedded
+    embedded:
+      enabled: true
+      queues: mainQueue,statusQueue
+    host: localhost
+    port: 61616
+
 ---
 spring:
   config:
     activate:
       on-profile: test
-  artemis:
-    mode: embedded
-    embedded:
-      enabled: true
-      queues: mainQueue,ackQueue
-    host: localhost
-    port: 61616
+
 ---

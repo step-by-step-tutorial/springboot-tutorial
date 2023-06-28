@@ -1,8 +1,6 @@
 package com.tutorial.springboot.messagingactivemq.message;
 
-import java.io.Serializable;
-
-public enum AckStatus {
+public enum Acknowledge {
     ACCEPTED,
     FAILED,
 }
