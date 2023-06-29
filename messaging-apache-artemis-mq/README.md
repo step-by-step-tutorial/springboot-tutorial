@@ -9,7 +9,8 @@ one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial
 
 ## Install Active MQ Artemis on Docker
 
-Execute the `docker compose  up -d` command to install Artemis on docker.
+create docker-compose.yml, Dockerfile and start.sh file in a directory the execute the `docker compose  up -d` command
+to install Artemis on docker, also, you can use the following commands.
 
 **Help**
 ```shell
@@ -23,7 +24,7 @@ docker rm artemis --force
 docker image rm apache/activemq-artemis:latest
 
 # install and deploy artemis
-docker compose --file .\docker\docker-compose.yml --project-name artemis up --build -d
+docker compose --file docker-compose.yml --project-name artemis up --build -d
 ```
 
 **Docker Compose file**
@@ -43,11 +44,9 @@ services:
       - "61616:61616"
       - "8161:8161"
 #    volumes:
-##     "-~/your local host path: exported volumes in docker file"
+##     - ~/your local host path: exported volumes in docker file
 #      - ~/broker:/opt/broker
 #      - ~/broker:/opt/artemis
-
-
 ```
 **Docker File**
 ```dockerfile
