@@ -41,6 +41,7 @@ RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y libaio1
 RUN rm -rf /var/lib/apt/lists/*
+# download and install apache active mq artemis
 RUN curl -L https://downloads.apache.org/activemq/activemq-artemis/$APP_VERSION/apache-artemis-$APP_VERSION-bin.tar.gz -o artemis.tar.gz
 RUN tar -xzf artemis.tar.gz --strip-components=1 -C $APP_HOME
 RUN rm artemis.tar.gz
