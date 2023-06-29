@@ -1,12 +1,11 @@
 version: '3.8'
 
 services:
-
   artemis:
     image: apache/activemq-artemis
     build:
       context: ./
-      dockerfile: docker-file/Dockerfile
+      dockerfile: Dockerfile
     container_name: artemis
     hostname: artemis
     restart: always
@@ -15,6 +14,6 @@ services:
       - "8161:8161"
 #    volumes:
 ##     "-~/your local host path: exported volumes in docker file"
-#      - ~/springboot-tutorial-docker:/opt/broker
-#      - ~/springboot-tutorial-docker:/opt/artemis
+#      - ~/docker:/opt/broker
+#      - ~/docker:/opt/artemis
 

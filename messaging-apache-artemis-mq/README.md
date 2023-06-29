@@ -9,8 +9,47 @@ one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial
 
 ## Install Active MQ Artemis on Docker
 
-Execute the `docker compose  up -d` command to install Artemis.
+Execute the `docker compose  up -d` command to install Artemis on docker.
 
+**Help**
+```shell
+# check if docker was install on your machine
+docker --version
+docker-compose --version
+docker-machine --version
+
+# remove current container and image
+docker rm artemis --force
+docker image rm apache/activemq-artemis:latest
+
+# install and deploy artemis
+docker compose --file .\docker\docker-compose.yml --project-name artemis up --build -d
+```
+
+**Docker Compose file**
+```yaml
+version: '3.8'
+
+services:
+  artemis:
+    image: apache/activemq-artemis
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: artemis
+    hostname: artemis
+    restart: always
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+#    volumes:
+##     "-~/your local host path: exported volumes in docker file"
+#      - ~/broker:/opt/broker
+#      - ~/broker:/opt/artemis
+
+
+```
+**Docker File**
 ```dockerfile
 FROM openjdk:11
 MAINTAINER samanalishiri@gmail.com
@@ -59,7 +98,7 @@ RUN curl -L https://downloads.apache.org/activemq/activemq-artemis/$APP_VERSION/
 RUN tar -xzf artemis.tar.gz --strip-components=1 -C $APP_HOME
 RUN rm artemis.tar.gz
 
-COPY /docker-file/start.sh $WORK_DIRECTORY
+COPY ./start.sh $WORK_DIRECTORY
 RUN chmod 755 -R $WORK_DIRECTORY/start.sh
 
 # Web Server

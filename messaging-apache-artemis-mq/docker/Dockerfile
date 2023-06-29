@@ -45,7 +45,7 @@ RUN curl -L https://downloads.apache.org/activemq/activemq-artemis/$APP_VERSION/
 RUN tar -xzf artemis.tar.gz --strip-components=1 -C $APP_HOME
 RUN rm artemis.tar.gz
 
-COPY /docker-file/start.sh $WORK_DIRECTORY
+COPY ./start.sh $WORK_DIRECTORY
 RUN chmod 755 -R $WORK_DIRECTORY/start.sh
 
 # Web Server
