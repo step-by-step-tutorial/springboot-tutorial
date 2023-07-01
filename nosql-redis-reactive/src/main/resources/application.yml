@@ -5,3 +5,12 @@ spring:
       port: ${REDIS_PORT:6379}
       repositories:
         enabled: false
+  redis:
+    ssl: false
+    timeout: 2000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1

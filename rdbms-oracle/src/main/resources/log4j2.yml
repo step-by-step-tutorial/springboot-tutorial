@@ -7,7 +7,7 @@ Configuration:
         Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
   Loggers:
     logger:
-      - name: com.tutorial.springboot.rdbmsmysql
+      - name: com.tutorial.springboot.rdbms_oracle
         level: debug
         additivity: false
         AppenderRef:

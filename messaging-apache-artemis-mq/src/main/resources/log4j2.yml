@@ -7,7 +7,7 @@ Configuration:
         Pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
   Loggers:
     logger:
-      - name: com.tutorial.springboot.messagingapacheactivemq
+      - name: com.tutorial.springboot.messaging_apache_artemis_mq
         level: debug
         additivity: false
         AppenderRef:

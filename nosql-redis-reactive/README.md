@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is included [Redis](https://redis.io/) configuration for test and none test environment. This tutorial 
+This tutorial is included [Redis](https://redis.io/) configuration for test and none test environment. This tutorial
 uses [Lettuce](https://lettuce.io/) to create connection factories for making connection to the Redis.
 
 
@@ -11,19 +11,18 @@ uses [Lettuce](https://lettuce.io/) to create connection factories for making co
 
 ## Install Redis on Docker
 
-Execute the `docker compose  up -d` command to install Redis.
+Execute the `docker compose  up -d` command to install the Redis.
 
 ```yaml
 version: "3.8"
 
 services:
   redis:
+    image: redis:latest
     container_name: redis
     hostname: redis
-    image: redis:latest
     ports:
       - "6379:6379"
-
 ```
 
 ## How To Config Spring Boot
@@ -32,29 +31,36 @@ services:
 
 ```xml
 
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
-</dependency>
-<dependency>
-    <groupId>io.lettuce</groupId>
-    <artifactId>lettuce-core</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-core</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.lettuce</groupId>
+        <artifactId>lettuce-core</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+    </dependency>
+</dependencies>
+```
+
+### Test Dependency
+
+```xml
+
 <dependency>
     <groupId>com.github.kstyrc</groupId>
     <artifactId>embedded-redis</artifactId>
     <version>0.6</version>
     <scope>test</scope>
 </dependency>
-
 ```
 
 ### Spring Boot Properties
@@ -65,7 +71,17 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-
+      repositories:
+        enabled: false
+  redis:
+    ssl: false
+    timeout: 2000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1
 ```
 
 ## Prerequisites

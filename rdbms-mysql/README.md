@@ -22,34 +22,36 @@ url: jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useUnicode=true&useJDBCComplia
 
 ## Install MySQL on Docker
 
-Execute the `docker compose  up -d` command to install MySQL and a SQL developer named adminer.
+Execute the `docker compose  up -d` command to install MySQL 8.0 and a SQL developer named adminer.
 
 ```yaml
 version: "3.8"
 
 services:
   mysql:
+    image: mysql:8.0
     container_name: mysql
     hostname: mysql
-    image: mysql:8.0
+    restart: always
     ports:
       - "3306:3306"
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=springboot_tutorial
+      - MYSQL_DATABASE=test_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./docker/mysql:/etc/mysql/conf.d"
   adminer:
+    image: adminer
     container_name: adminer
     hostname: adminer
-    image: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "5050:8080"
 ```
-In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use 
+
+In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use
 the following properties in the login page.
 
 ```yaml
@@ -66,26 +68,35 @@ Database: springboot_tutorial
 
 ```xml
 
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+</dependencies>
+```
+
+### Test Dependency
+
+```xml
+
 <dependencyManagement>
     <dependencies>
-    <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>testcontainers-bom</artifactId>
-        <version>1.18.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-bom</artifactId>
+            <version>1.18.0</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
 </dependencyManagement>
 <dependencies>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.mysql</groupId>
-    <artifactId>mysql-connector-j</artifactId>
-    <scope>runtime</scope>
-</dependency>
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>junit-jupiter</artifactId>

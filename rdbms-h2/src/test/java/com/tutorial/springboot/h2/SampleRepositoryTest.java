@@ -13,62 +13,76 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@DisplayName("rdbms-h2: {@link SampleRepository} unit tests")
+@DisplayName("unit tests of sample repository")
 class SampleRepositoryTest {
 
     @Autowired
-    SampleRepository underTest;
+    SampleRepository systemUnderTest;
 
     /**
-     * This class includes Stubs data.
+     * This class includes Stub data.
      */
-    static class Stub {
-        static SampleEntity SAMPLE_ENTITY = SampleEntity.create()
-                .setName("test")
+    static class StubFactory {
+        static final LocalDateTime NOW = LocalDateTime.now();
+        static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
+        static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
+                .setName("stub name")
                 .setCode(1)
-                .setDatetime(LocalDateTime.now());
+                .setDatetime(NOW);
+
     }
 
     @Nested
-    @DisplayName("save nested tests")
+    @DisplayName("save nested unit tests")
     class SaveTest {
+
         @Test
         @DisplayName("save an entity")
-        void GivenEntity_WhenInvokeSaveMethod_ThenReturnsPersistedEntity() {
-            var givenEntity = Stub.SAMPLE_ENTITY;
+        void shouldReturnEntityWithIdBySuccessfulSave() {
+            final var givenEntity = StubFactory.SAMPLE_ENTITY;
 
-            var actual = underTest.save(givenEntity);
+            final var expectedId = 1L;
+            final var expectedName = "stub name";
+            final var expectedCode = 1;
+            final var expectedDatetime = StubFactory.NOW;
+
+            final var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
-            assertEquals(1L, actual.getId());
-            assertEquals(Stub.SAMPLE_ENTITY.getName(), actual.getName());
-            assertEquals(Stub.SAMPLE_ENTITY.getCode(), actual.getCode());
-            assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), actual.getDatetime());
+            assertEquals(expectedId, actual.getId());
+            assertEquals(expectedName, actual.getName());
+            assertEquals(expectedCode, actual.getCode());
+            assertEquals(expectedDatetime, actual.getDatetime());
         }
     }
 
     @Nested
-    @DisplayName("find nested tests")
+    @DisplayName("find nested unit tests")
     class FindTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFactory.SAMPLE_ENTITY);
         }
 
         @Test
-        @DisplayName("find one entity by ID")
-        void GivenId_WhenInvokeFindByIdMethod_ThenReturnsPersistedEntity() {
+        @DisplayName("find one entity by Id")
+        void shouldReturnEntityByGivenId() {
+            final var givenId = 1L;
 
-            var givenId = 1L;
+            final var expectedId = 1L;
+            final var expectedName = "stub name";
+            final var expectedCode = 1;
+            final var expectedDatetime = StubFactory.NOW;
 
-            var actual = underTest.findById(givenId);
+            final var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
             actual.ifPresent(entity -> {
-                assertEquals(Stub.SAMPLE_ENTITY.getName(), entity.getName());
-                assertEquals(Stub.SAMPLE_ENTITY.getCode(), entity.getCode());
-                assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
+                assertEquals(expectedId, entity.getId());
+                assertEquals(expectedName, entity.getName());
+                assertEquals(expectedCode, entity.getCode());
+                assertEquals(expectedDatetime, entity.getDatetime());
             });
         }
     }
@@ -79,57 +93,59 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFactory.SAMPLE_ENTITY);
         }
 
         @Test
         @DisplayName("update one entity by new values")
-        void GivenEntity_WhenTransactionIsClosedMethod_ThenTupleWillBeUpdated() {
-            var givenId = 1L;
-            var givenName = "updated_test";
-            var givenCode = 2;
+        void shouldUpdateDatabaseBySuccessfulUpdate() {
+            final var givenId = 1L;
+            final var givenNewName = "updated stub name";
+            final var givenNewCode = 2;
+            final var givenNewDatetime = StubFactory.TOMORROW;
 
-            var actual = underTest.findById(givenId);
-            actual.ifPresent(entity -> {
-                entity.setName(givenName);
-                entity.setCode(givenCode);
+            final var expectedName = "updated stub name";
+            final var expectedCode = 2;
+            final var expectedDatetime = StubFactory.TOMORROW;
+
+            assertDoesNotThrow(() -> {
+                final var actual = systemUnderTest.findById(givenId);
+                actual.ifPresent(entity -> {
+                    entity.setName(givenNewName);
+                    entity.setCode(givenNewCode);
+                    entity.setDatetime(givenNewDatetime);
+                });
             });
 
-            assertTrue(true);
-        }
+            var actual = systemUnderTest.findById(givenId);
 
-        @AfterEach
-        void afterUpdate() {
-            var givenId = 1L;
-
-            var actual = underTest.findById(givenId);
             assertTrue(actual.isPresent());
             actual.ifPresent(entity -> {
-                assertEquals("updated_test", entity.getName());
-                assertEquals(2, entity.getCode());
-                assertEquals(Stub.SAMPLE_ENTITY.getDatetime(), entity.getDatetime());
+                assertEquals(expectedName, entity.getName());
+                assertEquals(expectedCode, entity.getCode());
+                assertEquals(expectedDatetime, entity.getDatetime());
             });
         }
     }
 
     @Nested
-    @DisplayName("delete nested tests")
+    @DisplayName("delete nested unit tests")
     class DeleteTest {
 
         @BeforeEach
         void initDatabase() {
-            underTest.save(Stub.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFactory.SAMPLE_ENTITY);
         }
 
         @Test
-        @DisplayName("delete one entity by ID")
-        void GivenId_WhenInvokeDeleteByIdMethod_ThenTupleWillBeDeletedFromDatabase() {
-            var givenId = 1L;
+        @DisplayName("delete one entity by Id")
+        void shouldDeleteTupleFromDatabaseByGivenId() {
+            final var givenId = 1L;
 
-            underTest.deleteById(givenId);
+            assertDoesNotThrow(() -> systemUnderTest.deleteById(givenId));
+            final var actual = systemUnderTest.findById(givenId);
 
-            var afterDelete = underTest.findById(givenId);
-            assertTrue(afterDelete.isEmpty());
+            assertTrue(actual.isEmpty());
         }
 
     }

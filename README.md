@@ -15,7 +15,7 @@
 * [step 001: hello-world](hello-world)
 * [step 002: profile](profile)
 * [step 003: properties](properties)
-* [step 004: listener](listener)
+* [step 004: event-processor](event-processor)
 * [step 005: rdbms-h2](rdbms-h2)
 * [step 006: rdbms-mysql](rdbms-mysql)
 * [step 007: rdbms-postgresql](rdbms-postgresql)
@@ -25,7 +25,7 @@
 * [step 011: nosql-mongodb](nosql-mongodb)
 * [step 012: nosql-mongodb-reactive](nosql-mongodb-reactive)
 * [step 013: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
-* step 014: messaging-rabbit-mq
+* [step 014: messaging-rabbit-mq](messaging-rabbit-mq)
 * step 015: messaging-kafka
 * step 016: rest
 * step 017: rest-exception-handling
@@ -65,6 +65,8 @@ mvn -f nosql-redis/pom.xml clean package
 mvn -f nosql-redis-reactivr/pom.xml clean package
 mvn -f nosql-mongodb/pom.xml clean package
 mvn -f nosql-mongodb-reactive/pom.xml clean package
+mvn -f messaging-apache-artemis-mq/pom.xml clean package
+mvn -f messaging-rabbit-mq/pom.xml clean package
 ```
 
 **<p align="center"> [Top](#spring-boot-tutorial) </p>**

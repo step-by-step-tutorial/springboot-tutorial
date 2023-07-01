@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.profile.ProfileConstant.DEV;
-import static com.tutorial.springboot.profile.ProfileConstant.TEST;
+import static com.tutorial.springboot.profile.ProfileName.DEV;
+import static com.tutorial.springboot.profile.ProfileName.TEST;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Active Profile Tests")
+@DisplayName("unit tests of active profile")
 class ProfileServiceTest {
 
     @Nested
@@ -19,56 +19,58 @@ class ProfileServiceTest {
     @DisplayName("when it does not use profile")
     class DefaultProfileLoader {
         @Autowired(required = false)
-        private ProfileService profileService;
+        private ProfileService beanUnderActiveProfile;
 
         @Autowired
-        private DefaultProfileBean bean;
+        private DefaultProfileService beanWithoutProfile;
 
         @Test
-        void GivenDefaultAsProfile_WhenLoadContext_ThenInjectDefaultProfileService() {
-            assertNull(profileService);
-            assertNotNull(bean);
-            assertEquals("", bean.getProfile());
+        void shouldOnlyLoadBeansWithoutProfile() {
+            assertNull(beanUnderActiveProfile);
+
+            assertNotNull(beanWithoutProfile);
+            assertTrue(beanWithoutProfile.getProfile().isBlank());
         }
     }
 
     @Nested
     @SpringBootTest
     @ActiveProfiles(TEST)
-    @DisplayName("when it use test profile")
+    @DisplayName("when it uses test profile")
     class TestProfileLoader {
         @Autowired
-        private ProfileService profileService;
+        private ProfileService beanUnderActiveProfile;
 
         @Autowired
-        private DefaultProfileBean bean;
+        private DefaultProfileService beanWithoutProfile;
 
         @Test
-        void GivenTestAsProfile_WhenLoadContext_ThenInjectTestProfileService() {
-            assertNotNull(profileService);
-            assertEquals(TEST, profileService.getProfile());
-            assertNotNull(bean);
-            assertEquals("", bean.getProfile());
+        void shouldLoadBeanUnderTestProfileAndWithoutProfile() {
+            assertNotNull(beanUnderActiveProfile);
+            assertEquals(TEST, beanUnderActiveProfile.getProfile());
+
+            assertNotNull(beanWithoutProfile);
+            assertTrue(beanWithoutProfile.getProfile().isBlank());
         }
     }
 
     @Nested
     @SpringBootTest
     @ActiveProfiles(DEV)
-    @DisplayName("when it use dev profile")
+    @DisplayName("when it uses dev profile")
     class DevProfileLoader {
         @Autowired
-        private ProfileService profileService;
+        private ProfileService beanUnderActiveProfile;
 
         @Autowired
-        private DefaultProfileBean bean;
+        private DefaultProfileService beanWithoutProfile;
 
         @Test
-        void GivenDevAsProfile_WhenLoadContext_ThenInjectDevProfileService() {
-            assertNotNull(profileService);
-            assertEquals(DEV, profileService.getProfile());
-            assertNotNull(bean);
-            assertEquals("", bean.getProfile());
+        void shouldLoadBeanUnderDevProfileAndWithoutProfile() {
+            assertNotNull(beanUnderActiveProfile);
+            assertEquals(DEV, beanUnderActiveProfile.getProfile());
+            assertNotNull(beanWithoutProfile);
+            assertTrue(beanWithoutProfile.getProfile().isBlank());
         }
     }
 }

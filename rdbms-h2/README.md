@@ -8,28 +8,23 @@ For more information about H2 go to the [website of H2](https://www.h2database.c
 
 </p>
 
-<p align="justify">
-
-There are a few alternatives for H2, therefore I suggest you to read the
-[article](https://github.com/oss-academy/article/blob/main/inmemory-db/README.md).
-
-</p>
-
 ## How To Config Spring Boot
 
 ### Dependency
 
 ```xml
 
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.h2database</groupId>
-    <artifactId>h2</artifactId>
-    <scope>runtime</scope>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+</dependencies>
 ```
 
 ### Spring Boot Configuration

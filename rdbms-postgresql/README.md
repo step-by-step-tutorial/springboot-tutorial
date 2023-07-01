@@ -2,7 +2,8 @@
 
 <p align="justify">
 
-This tutorial is included [PostgreSQL database](https://www.postgresql.org/) configuration for test and none test environment.
+This tutorial is included [PostgreSQL database](https://www.postgresql.org/) configuration for test and none test
+environment.
 
 </p>
 
@@ -15,26 +16,26 @@ version: "3.8"
 
 services:
   postgresql:
+    image: postgres:13.9-alpine
     container_name: postgresql
     hostname: postgresql
-    image: postgres:13.9-alpine
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: springboot_tutorial
+      POSTGRES_DB: test_db
       PGDATA: /data/postgres
     volumes:
       - "./docker/postgresql:/data/postgres"
   pgadmin:
+    image: dpage/pgadmin4
     container_name: pgadmin
     hostname: pgadmin
-    image: dpage/pgadmin4
-    restart: unless-stopped
+    restart: always
     ports:
-      - "8081:80"
+      - "5050:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: "password"
@@ -43,10 +44,13 @@ services:
       - "./docker/pgadmin:/var/lib/pgadmin"
   adminer:
     image: adminer
+    container_name: adminer
+    hostname: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "5051:8080"
 ```
+
 In order to connect to PostgreSQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and
 use the following properties in the login page.
 
@@ -57,19 +61,37 @@ Username: user
 Password: password
 Database: springboot_tutorial
 ```
+
 In order to connect to PostgreSQL via pgadmin brows [http://localhost:8081](http://localhost:8081/) via web browser and
 use the following properties in the add server popup.
 
 ```properties
-hostname: postgresql
-port: 5432
-Username: user
-Password: password
+hostname:postgresql
+port:5432
+Username:user
+Password:password
 ```
 
 ## How To Config Spring Boot
 
 ### Dependency
+
+```xml
+
+<dependencies>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+    </dependency>
+</dependencies>
+```
+
+### Test Dependency
 
 ```xml
 
@@ -85,15 +107,6 @@ Password: password
     </dependencies>
 </dependencyManagement>
 <dependencies>
-
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-</dependency>
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>junit-jupiter</artifactId>
@@ -105,7 +118,6 @@ Password: password
     <scope>test</scope>
 </dependency>
 </dependencies>
-
 ```
 
 ### Spring Boot Properties

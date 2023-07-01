@@ -6,7 +6,6 @@ This tutorial is included [MongoDB](https://www.mongodb.com/) configuration for 
 
 </p>
 
-
 ## Install MongoDB on Docker
 
 Execute the `docker compose  up -d` command to install MongoDB.
@@ -46,6 +45,18 @@ services:
 
 ```xml
 
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+</dependencies>
+```
+
+### Test Dependency
+
+```xml
+
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -58,20 +69,16 @@ services:
     </dependencies>
 </dependencyManagement>
 <dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-mongodb</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>mongodb</artifactId>
-        <scope>test</scope>
-    </dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>mongodb</artifactId>
+    <scope>test</scope>
+</dependency>
 </dependencies>
 ```
 

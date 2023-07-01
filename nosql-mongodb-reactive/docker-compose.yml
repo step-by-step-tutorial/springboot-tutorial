@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   mongo:
     image: mongo
     container_name: mongo
@@ -12,7 +11,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-
   mongo-express:
     image: mongo-express
     container_name: mongo-express

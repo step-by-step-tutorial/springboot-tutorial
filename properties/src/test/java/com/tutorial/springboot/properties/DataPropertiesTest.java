@@ -1,5 +1,6 @@
 package com.tutorial.springboot.properties;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,20 +11,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
+@DisplayName("unit tests of properties")
 class DataPropertiesTest {
 
     @Autowired
-    private DataProperties underTest;
+    DataProperties systemUnderTest;
 
     @Test
     void GivenDefaultPropertySourceFactory_WhenLoadedContext_ThenPropertiesInjected() {
-        assertNotNull(underTest);
+        assertNotNull(systemUnderTest);
 
-        assertEquals(1, underTest.id());
-        assertEquals("colorInfo", underTest.name());
+        assertEquals(1, systemUnderTest.id());
+        assertEquals("colorInfo", systemUnderTest.name());
 
-        LocalDateTime dateTime = LocalDateTime.parse(underTest.dateTime());
-
+        final var dateTime = LocalDateTime.parse(systemUnderTest.dateTime());
         assertEquals(2022, dateTime.getYear());
         assertEquals(1, dateTime.getMonthValue());
         assertEquals(1, dateTime.getDayOfMonth());
@@ -31,8 +32,7 @@ class DataPropertiesTest {
         assertEquals(0, dateTime.getMinute());
         assertEquals(0, dateTime.getSecond());
 
-        String[] colors = underTest.colors();
-
+        final var colors = systemUnderTest.colors();
         assertEquals("red", colors[0]);
         assertEquals("green", colors[1]);
         assertEquals("blue", colors[2]);

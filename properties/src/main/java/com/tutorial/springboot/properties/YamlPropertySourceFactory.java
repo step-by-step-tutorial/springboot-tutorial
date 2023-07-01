@@ -15,6 +15,9 @@ public class YamlPropertySourceFactory implements PropertySourceFactory {
         YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
         factory.setResources(resource.getResource());
 
-        return new PropertiesPropertySource(requireNonNull(resource.getResource().getFilename()), requireNonNull(factory.getObject()));
+        return new PropertiesPropertySource(
+                requireNonNull(resource.getResource().getFilename()),
+                requireNonNull(factory.getObject())
+        );
     }
 }

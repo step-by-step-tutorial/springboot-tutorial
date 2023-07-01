@@ -9,7 +9,7 @@ one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial
 
 ## Install Active MQ Artemis on Docker
 
-Create docker-compose.yml, Dockerfile and start.sh file in a directory the execute the `docker compose  up -d` command
+Create docker-compose.yml, Dockerfile and start.sh file in a directory then execute the `docker compose  up -d` command
 to install Artemis on docker, also, you can use the following commands.
 
 **Help**
@@ -141,6 +141,9 @@ fi
 
 exec  "${BROKER_HOME}"/bin/artemis run
 ```
+
+### Web Console
+Open [http://localhost:8161](http://localhost:8161/) in the browser.
 
 ## How To Config Spring Boot
 

@@ -2,24 +2,24 @@ version: "3.8"
 
 services:
   postgresql:
+    image: postgres:13.9-alpine
     container_name: postgresql
     hostname: postgresql
-    image: postgres:13.9-alpine
     restart: always
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: springboot_tutorial
+      POSTGRES_DB: test_db
       PGDATA: /data/postgres
     volumes:
       - "./docker/postgresql:/data/postgres"
   pgadmin:
+    image: dpage/pgadmin4
     container_name: pgadmin
     hostname: pgadmin
-    image: dpage/pgadmin4
-    restart: unless-stopped
+    restart: always
     ports:
       - "5050:80"
     environment:
@@ -30,6 +30,8 @@ services:
       - "./docker/pgadmin:/var/lib/pgadmin"
   adminer:
     image: adminer
+    container_name: adminer
+    hostname: adminer
     restart: always
     ports:
-      - "8585:8080"
+      - "5051:8080"

@@ -12,8 +12,6 @@ services:
     ports:
       - "61616:61616"
       - "8161:8161"
-#    volumes:
-##     "-~/your local host path: exported volumes in docker file"
-#      - ~/docker:/opt/broker
-#      - ~/docker:/opt/artemis
+    volumes:
+      - "./broker:/opt/broker"
 

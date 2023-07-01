@@ -75,6 +75,23 @@ mvn install:install-file ^
 
 ```xml
 
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.oracle</groupId>
+        <artifactId>ojdbc11</artifactId>
+        <version>21c</version>
+    </dependency>
+</dependencies>
+```
+
+### Test Dependency
+
+```xml
+
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -87,16 +104,6 @@ mvn install:install-file ^
     </dependencies>
 </dependencyManagement>
 <dependencies>
-
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.oracle</groupId>
-    <artifactId>ojdbc11</artifactId>
-    <version>21c</version>
-</dependency>
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>junit-jupiter</artifactId>
@@ -104,11 +111,10 @@ mvn install:install-file ^
 </dependency>
 <dependency>
     <groupId>org.testcontainers</groupId>
-    <artifactId>oracle</artifactId>
+    <artifactId>oracle-xe</artifactId>
     <scope>test</scope>
 </dependency>
 </dependencies>
-
 ```
 
 ### Spring Boot Properties

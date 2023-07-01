@@ -13,17 +13,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class DataYmlTest {
 
     @Autowired
-    private DataYaml underTest;
+    private DataYaml systemUnderTest;
 
     @Test
     void GivenYamlPropertySourceFactory_WhenLoadedContext_ThenYamlPropertiesInjected() {
-        assertNotNull(underTest);
+        assertNotNull(systemUnderTest);
 
-        assertEquals(1, underTest.id());
-        assertEquals("colorInfo", underTest.name());
+        assertEquals(1, systemUnderTest.id());
+        assertEquals("colorInfo", systemUnderTest.name());
 
-        LocalDateTime dateTime = LocalDateTime.parse(underTest.dateTime());
-
+        final var dateTime = LocalDateTime.parse(systemUnderTest.dateTime());
         assertEquals(2022, dateTime.getYear());
         assertEquals(1, dateTime.getMonthValue());
         assertEquals(1, dateTime.getDayOfMonth());
@@ -31,8 +30,7 @@ class DataYmlTest {
         assertEquals(0, dateTime.getMinute());
         assertEquals(0, dateTime.getSecond());
 
-        String[] colors = underTest.colors();
-
+        final var colors = systemUnderTest.colors();
         assertEquals("red", colors[0]);
         assertEquals("green", colors[1]);
         assertEquals("blue", colors[2]);
