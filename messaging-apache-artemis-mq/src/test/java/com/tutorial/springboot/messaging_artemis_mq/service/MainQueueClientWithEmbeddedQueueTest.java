@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainQueueClientWithEmbeddedQueueTest {
 
     @Autowired
-    private MainQueueClient systemUnderTest;
+    private MainQueueService systemUnderTest;
 
     @Test
     @DisplayName("should throw a NullPointerException if the message is null")
@@ -23,7 +23,7 @@ class MainQueueClientWithEmbeddedQueueTest {
         var givenMessage = StubData.NULL_MESSAGE_MODEL;
 
         var expectedException = NullPointerException.class;
-        var expectedExceptionMessage = "message should not be null";
+        var expectedExceptionMessage = "model should not be null";
 
         var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenMessage));
 

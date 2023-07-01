@@ -34,3 +34,7 @@ docker image rm mongo-express
 # apache activemq artemis ==============================================================================================
 docker rm artemis --force
 docker image rm apache/activemq-artemis:latest
+
+# oracle db ============================================================================================
+docker rm oracle --force
+docker image rm container-registry.oracle.com/database/express:21.3.0-xe

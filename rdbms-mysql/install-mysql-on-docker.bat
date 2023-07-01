@@ -8,4 +8,4 @@ docker image rm mysql:8.0
 docker rm adminer --force
 docker image rm adminer
 
-docker compose --file .\rdbms-mysql\docker-compose.yml --project-name mysql up --build -d
+docker compose --file .\docker-compose.yml --project-name mysql up --build -d

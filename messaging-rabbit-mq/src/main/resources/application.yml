@@ -1,8 +1,28 @@
 spring:
   rabbitmq:
-  host: localhost
-  port: 5672
-  username: guest
-  password: guest
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+destination:
+  main-queue: mainQueue
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  rabbitmq:
+    embedded:
+      enabled: true
+      port: 5672
+      username: guest
+      password: guest
+
+
+
+
+
 
 

@@ -11,4 +11,4 @@ docker image rm dpage/pgadmin4
 docker rm adminer --force
 docker image rm adminer
 
-docker compose --file .\rdbms-postgresql\docker-compose.yml --project-name postgresql up --build -d
+docker compose --file .\docker-compose.yml --project-name postgresql up --build -d

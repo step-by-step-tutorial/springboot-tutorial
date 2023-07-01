@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: ${DATABASE_USERNAME:test}
+    username: ${DATABASE_USERNAME:system}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
+    url: jdbc:oracle:thin:@${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
     driver-class-name: oracle.jdbc.driver.OracleDriver
   data:
     jpa:

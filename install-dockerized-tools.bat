@@ -10,8 +10,6 @@ docker image rm mysql:8.0
 
 docker rm adminer --force
 docker image rm adminer
-
-REM docker compose --file .\rdbms-mysql\docker-compose.yml --project-name mysql up --build -d
 REM ====================================================================================================================
 
 REM postgresql, pgadmin, adminer ========================================================================================
@@ -23,15 +21,11 @@ docker image rm dpage/pgadmin4
 
 docker rm adminer --force
 docker image rm adminer
-
-REM docker compose --file .\rdbms-postgresql\docker-compose.yml --project-name postgresql up --build -d
 REM ====================================================================================================================
 
 REM redis ==============================================================================================================
 docker rm redis --force
 docker image rm redis:latest
-
-REM docker compose --file .\nosql-redis\docker-compose.yml --project-name redis up --build -d
 REM ====================================================================================================================
 
 REM mongo, mongo-express ===============================================================================================
@@ -40,13 +34,16 @@ docker image rm mongo
 
 docker rm mongo-express --force
 docker image rm mongo-express
-
-REM docker compose --file .\nosql-mongo\docker-compose.yml --project-name mongo up --build -d
 REM ====================================================================================================================
 
 REM apache activemq artemis ============================================================================================
 docker rm artemis --force
 docker image rm apache/activemq-artemis:latest
-
 REM ====================================================================================================================
-docker compose --file .\docker-compose.yml --project-name springboot_tutorial up --build -d
+
+REM oracle db ============================================================================================
+docker rm oracle --force
+docker image rm container-registry.oracle.com/database/express:21.3.0-xe
+REM ====================================================================================================================
+
+docker compose --file .\docker-compose.yml --project-name springboot_tutorial up -d

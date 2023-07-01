@@ -11,15 +11,15 @@ import static com.tutorial.springboot.messaging_artemis_mq.utils.MessageUtils.cr
 import static java.util.Objects.requireNonNull;
 
 @Component
-public class MainQueueClient {
+public class MainQueueService {
 
-    private final Logger logger = LoggerFactory.getLogger(MainQueueClient.class);
+    private final Logger logger = LoggerFactory.getLogger(MainQueueService.class);
 
     private final String destination;
 
     private final JmsTemplate jmsTemplate;
 
-    public MainQueueClient(
+    public MainQueueService(
             @Value("${destination.main-queue}")
             final String destination,
             final JmsTemplate jmsTemplate
@@ -28,10 +28,10 @@ public class MainQueueClient {
         this.jmsTemplate = jmsTemplate;
     }
 
-    public void push(MessageModel message) {
-        requireNonNull(message, "message should not be null");
-        jmsTemplate.send(destination, createSerializableMessage(message));
-        logger.info("message sent to {}: {}", destination, message);
+    public void push(MessageModel model) {
+        requireNonNull(model, "model should not be null");
+        jmsTemplate.send(destination, createSerializableMessage(model));
+        logger.info("model sent to {}: {}", destination, model);
     }
 
 }

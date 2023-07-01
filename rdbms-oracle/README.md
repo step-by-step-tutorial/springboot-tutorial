@@ -39,6 +39,32 @@ oracle/database:21.3.0-xe
 step-7: docker stop/start oracle-xe-21c
 ```
 
+```yaml
+version: "3.8"
+
+services:
+  oracle:
+    #container-registry.oracle.com/database/free:latest
+    image: container-registry.oracle.com/database/express:21.3.0-xe
+    container_name: oracle
+    hostname: oracle
+    restart: always
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    environment:
+      ORACLE_PWD: password
+      ORACLE_CHARACTERSET: utf-8
+```
+
+### Enterprise Manager
+
+Open https://localhost:5500/em via web browser.
+
+* user: system
+* password: password
+* container name: xepdb1
+
 ## How To Config Spring Boot
 
 ### Dependency
@@ -122,7 +148,7 @@ mvn install:install-file ^
 ```yaml
 spring:
   datasource:
-    username: ${DATABASE_USERNAME:test}
+    username: ${DATABASE_USERNAME:system}
     password: ${DATABASE_PASSWORD:password}
     url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
     driver-class-name: oracle.jdbc.driver.OracleDriver

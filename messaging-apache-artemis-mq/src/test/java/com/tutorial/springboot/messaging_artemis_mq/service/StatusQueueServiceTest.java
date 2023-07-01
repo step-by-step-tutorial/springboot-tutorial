@@ -18,15 +18,17 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.tutorial.springboot.messaging_artemis_mq.utils.MessageUtils.createSerializableMessage;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of main queue client")
-class MainQueueClientTest {
+@DisplayName("unit tests of status queue client")
+class StatusQueueServiceTest {
 
     @InjectMocks
-    private MainQueueClient systemUnderTest;
+    private StatusQueueService systemUnderTest;
 
     @Mock
     private JmsTemplate jmsTemplate;
@@ -45,12 +47,12 @@ class MainQueueClientTest {
     }
 
     @Test
-    @DisplayName("should throw NullPointerException if the message is null")
+    @DisplayName("should throw a NullPointerException if the message is null")
     void shouldThrowNullPointerExceptionIfMessageIsNull() {
-        final var givenMessage = StubData.NULL_MESSAGE_MODEL;
+        final var givenMessage = StubData.NULL_STATUS_MODEL;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "message should not be null";
+        final var expectedExceptionMessage = "model should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenMessage));
 
@@ -62,7 +64,7 @@ class MainQueueClientTest {
     @Test
     @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
-        final var givenMessage = StubData.FAKE_MESSAGE_Model;
+        final var givenMessage = StubData.FAKE_STATUS_MODEL;
         final var givenObjectMessage = mock(MessageCreator.class);
         final var givenDestination = "fake queue";
         messageUtils.when(() -> createSerializableMessage(any())).thenReturn(givenObjectMessage);
@@ -75,5 +77,4 @@ class MainQueueClientTest {
         messageUtils.verify(() -> createSerializableMessage(any()), times(1));
         verify(jmsTemplate, times(1)).send(givenDestination, givenObjectMessage);
     }
-
 }
