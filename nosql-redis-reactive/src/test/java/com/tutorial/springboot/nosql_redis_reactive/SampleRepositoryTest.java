@@ -11,6 +11,7 @@ import redis.embedded.RedisServer;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,7 @@ class SampleRepositoryTest {
 
     static {
         try {
-            redisServer = new RedisServer();
+            redisServer = new RedisServer(6379);
         } catch (IOException exception) {
             logger.error("construction of the Redis server failed due to: {}", exception.getMessage());
         }
@@ -87,7 +88,7 @@ class SampleRepositoryTest {
         @BeforeEach
         void initDatabase() {
             this.id = systemUnderTest.save(StubFactory.SAMPLE_MODEL)
-                    .orElseThrow();
+                    .get();
         }
 
         @Test
@@ -98,6 +99,7 @@ class SampleRepositoryTest {
             final var expectedName = "stub name";
             final var expectedCode = 1;
             final var expectedDatetime = StubFactory.NOW;
+            final var all = systemUnderTest.findAll();
 
             final var actual = systemUnderTest.findByKey(givenId);
 

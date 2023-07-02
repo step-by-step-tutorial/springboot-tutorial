@@ -27,7 +27,7 @@ class SampleRepositoryTest {
 
     static {
         try {
-            redisServer = new RedisServer();
+            redisServer = new RedisServer(6379);
         } catch (IOException exception) {
             logger.error("construction of the Redis server failed due to: {}", exception.getMessage());
         }
