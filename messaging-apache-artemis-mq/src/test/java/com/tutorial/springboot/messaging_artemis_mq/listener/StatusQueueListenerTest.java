@@ -1,6 +1,7 @@
 package com.tutorial.springboot.messaging_artemis_mq.listener;
 
-import com.tutorial.springboot.messaging_artemis_mq.StubData;
+import com.tutorial.springboot.messaging_artemis_mq.model.Acknowledge;
+import com.tutorial.springboot.messaging_artemis_mq.model.StatusModel;
 import com.tutorial.springboot.messaging_artemis_mq.utils.MessageUtils;
 import jakarta.jms.Message;
 import org.junit.jupiter.api.AfterEach;
@@ -15,7 +16,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static com.tutorial.springboot.messaging_artemis_mq.StubData.FAKE_STATUS_MODEL;
 import static com.tutorial.springboot.messaging_artemis_mq.utils.MessageUtils.extractBody;
 import static com.tutorial.springboot.messaging_artemis_mq.utils.MessageUtils.extractCorrelationId;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,9 +28,9 @@ import static org.mockito.Mockito.*;
 class StatusQueueListenerTest {
 
     @InjectMocks
-    private StatusQueueListener systemUnderTest;
+    StatusQueueListener systemUnderTest;
 
-    private MockedStatic<MessageUtils> messageUtils;
+    MockedStatic<MessageUtils> messageUtils;
 
     @BeforeEach
     void setUp() {
@@ -45,7 +45,7 @@ class StatusQueueListenerTest {
     @Test
     @DisplayName("should throw a NullPointerException if the message is null")
     void shouldThrowNullPointerExceptionIfMessageIsNull() {
-        final var givenMessage = StubData.NULL_JMS_MESSAGE;
+        final Message givenMessage = null;
 
         final var expectedException = NullPointerException.class;
         final var expectedExceptionMessage = "message should not be null";
@@ -60,7 +60,7 @@ class StatusQueueListenerTest {
     @DisplayName("should log an info if the message was processed successful")
     void shouldLogInfoIfTheMessageWasProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
-        final var givenBody = Optional.of(FAKE_STATUS_MODEL);
+        final var givenBody = Optional.of(new StatusModel(Acknowledge.ACCEPTED, "fake additional data"));
         final var givenCorrelationId = "fake correlation Id";
         messageUtils.when(() -> extractBody(any(), any())).thenReturn(givenBody);
         messageUtils.when(() -> extractCorrelationId(any())).thenReturn(givenCorrelationId);

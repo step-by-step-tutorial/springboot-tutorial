@@ -1,6 +1,6 @@
 package com.tutorial.springboot.messaging_artemis_mq.service;
 
-import com.tutorial.springboot.messaging_artemis_mq.StubData;
+import com.tutorial.springboot.messaging_artemis_mq.model.MessageModel;
 import com.tutorial.springboot.messaging_artemis_mq.utils.MessageUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,16 +22,16 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of main queue client")
+@DisplayName("unit tests of main queue service")
 class MainQueueServiceTest {
 
     @InjectMocks
-    private MainQueueService systemUnderTest;
+    MainQueueService systemUnderTest;
 
     @Mock
-    private JmsTemplate jmsTemplate;
+    JmsTemplate jmsTemplate;
 
-    private MockedStatic<MessageUtils> messageUtils;
+    MockedStatic<MessageUtils> messageUtils;
 
     @BeforeEach
     void setUp() {
@@ -47,12 +47,12 @@ class MainQueueServiceTest {
     @Test
     @DisplayName("should throw NullPointerException if the message is null")
     void shouldThrowNullPointerExceptionIfMessageIsNull() {
-        final var givenMessage = StubData.NULL_MESSAGE_MODEL;
+        final MessageModel givenModel = null;
 
         final var expectedException = NullPointerException.class;
         final var expectedExceptionMessage = "model should not be null";
 
-        final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenMessage));
+        final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenModel));
 
         assertNotNull(actual);
         assertEquals(expectedExceptionMessage, actual.getMessage());
@@ -62,7 +62,7 @@ class MainQueueServiceTest {
     @Test
     @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
-        final var givenMessage = StubData.FAKE_MESSAGE_Model;
+        final var givenModel = new MessageModel("fake Id", "fake text");
         final var givenObjectMessage = mock(MessageCreator.class);
         final var givenDestination = "fake queue";
         messageUtils.when(() -> createSerializableMessage(any())).thenReturn(givenObjectMessage);
@@ -70,7 +70,7 @@ class MainQueueServiceTest {
                 .when(jmsTemplate)
                 .send(givenDestination, givenObjectMessage);
 
-        assertDoesNotThrow(() -> systemUnderTest.push(givenMessage));
+        assertDoesNotThrow(() -> systemUnderTest.push(givenModel));
 
         messageUtils.verify(() -> createSerializableMessage(any()), times(1));
         verify(jmsTemplate, times(1)).send(givenDestination, givenObjectMessage);

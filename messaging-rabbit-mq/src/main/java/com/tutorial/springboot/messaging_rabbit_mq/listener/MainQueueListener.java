@@ -18,9 +18,9 @@ public class MainQueueListener {
 
     @RabbitListener(queues = "${destination.main-queue}")
     public void processMessage(
-            Message message,
+            final Message message,
             @Header(AmqpHeaders.CORRELATION_ID)
-            String correlationId
+            final String correlationId
     ) {
         logger.info("message received: {}, {}", extractBody(message, MessageModel.class), correlationId);
     }

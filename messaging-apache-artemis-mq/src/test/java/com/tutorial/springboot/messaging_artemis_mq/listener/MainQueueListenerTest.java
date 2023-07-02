@@ -1,7 +1,7 @@
 package com.tutorial.springboot.messaging_artemis_mq.listener;
 
-import com.tutorial.springboot.messaging_artemis_mq.StubData;
 import com.tutorial.springboot.messaging_artemis_mq.model.Acknowledge;
+import com.tutorial.springboot.messaging_artemis_mq.model.MessageModel;
 import com.tutorial.springboot.messaging_artemis_mq.model.StatusModel;
 import com.tutorial.springboot.messaging_artemis_mq.service.StatusQueueService;
 import com.tutorial.springboot.messaging_artemis_mq.utils.MessageUtils;
@@ -31,12 +31,12 @@ import static org.mockito.Mockito.*;
 class MainQueueListenerTest {
 
     @InjectMocks
-    private MainQueueListener systemUnderTest;
+    MainQueueListener systemUnderTest;
 
     @Mock
-    private StatusQueueService statusQueueService;
+    StatusQueueService statusQueueService;
 
-    private MockedStatic<MessageUtils> messageUtils;
+    MockedStatic<MessageUtils> messageUtils;
 
     @BeforeEach
     void setUp() {
@@ -51,7 +51,7 @@ class MainQueueListenerTest {
     @Test
     @DisplayName("should throw a NullPointerException if the message is null")
     void shouldThrowNullPointerExceptionIfMessageIsNull() {
-        final var givenMessage = StubData.NULL_JMS_MESSAGE;
+        final Message givenMessage = null;
 
         final var expectedException = NullPointerException.class;
         final var expectedExceptionMessage = "message should not be null";
@@ -67,7 +67,7 @@ class MainQueueListenerTest {
     @DisplayName("should send an ACCEPTED status if the message was processed successful")
     void shouldSendAcceptedStatusIfTheMessageWasProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
-        final var givenBody = Optional.of(StubData.FAKE_MESSAGE_Model);
+        final var givenBody = Optional.of(new MessageModel("fake Id", "fake text"));
         final var givenCorrelationId = "fake correlation Id";
         messageUtils.when(() -> extractBody(any(), any())).thenReturn(givenBody);
         messageUtils.when(() -> extractCorrelationId(any())).thenReturn(givenCorrelationId);

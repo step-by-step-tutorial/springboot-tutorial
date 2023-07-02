@@ -1,6 +1,7 @@
 package com.tutorial.springboot.messaging_artemis_mq.service;
 
-import com.tutorial.springboot.messaging_artemis_mq.StubData;
+import com.tutorial.springboot.messaging_artemis_mq.model.Acknowledge;
+import com.tutorial.springboot.messaging_artemis_mq.model.StatusModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,21 +12,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles({"test", "embedded"})
-@DisplayName("unit tests of status queue client")
-class StatusQueueClientWithEmbeddedQueueTest {
+@DisplayName("unit tests of status queue service")
+class StatusQueueServiceWithEmbeddedQueueTest {
 
     @Autowired
-    private StatusQueueService systemUnderTest;
+    StatusQueueService systemUnderTest;
 
     @Test
     @DisplayName("should throw NullPointerException if the message is null")
     void shouldThrowNullPointerExceptionIfMessageIsNull() {
-        var givenMessage = StubData.NULL_STATUS_MODEL;
+        final StatusModel givenModel = null;
 
-        var expectedException = NullPointerException.class;
-        var expectedExceptionMessage = "model should not be null";
+        final var expectedException = NullPointerException.class;
+        final var expectedExceptionMessage = "model should not be null";
 
-        var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenMessage));
+        final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenModel));
 
         assertNotNull(actual);
         assertEquals(expectedExceptionMessage, actual.getMessage());
@@ -34,9 +35,9 @@ class StatusQueueClientWithEmbeddedQueueTest {
     @Test
     @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
-        var givenMessage = StubData.FAKE_STATUS_MODEL;
+        final var givenModel = new StatusModel(Acknowledge.ACCEPTED, "test additional data");
 
-        assertDoesNotThrow(() -> systemUnderTest.push(givenMessage));
+        assertDoesNotThrow(() -> systemUnderTest.push(givenModel));
     }
 
 }

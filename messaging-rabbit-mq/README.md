@@ -18,19 +18,25 @@ docker-compose --version
 docker-machine --version
 
 # remove current container and image
-docker rm artemis --force
-docker image rm apache/activemq-artemis:latest
+docker rm rabbitmq --force
+docker image rm rabbitmq:management
 
 # install and deploy artemis
-docker compose --file docker-compose.yml --project-name artemis up --build -d
+docker compose --file docker-compose.yml --project-name rabbitmq up -d
 ```
 
 **Docker Compose file**
 ```yaml
-
-```
-**Docker File**
-```dockerfile
+version: '3.8'
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
 ```
 
 ## How To Config Spring Boot
@@ -39,17 +45,39 @@ docker compose --file docker-compose.yml --project-name artemis up --build -d
 
 ```xml
 
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-amqp</artifactId>
+</dependency>
+
 ```
 
 ### Spring Boot Properties
 
 ```yaml
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 ```
 
-### How to Active JMS
+### How to Active RabbitMq
 
 ```java
+
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableRabbit
+public class RabbitMqConfig {
+}
 
 ```
 
