@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import static com.tutorial.springboot.messaging_rabbit_mq.utils.MessageUtils.extractBody;
+import static java.util.Objects.requireNonNull;
 
 @Component
 public class MainQueueListener {
@@ -17,11 +18,13 @@ public class MainQueueListener {
     private final Logger logger = LoggerFactory.getLogger(MainQueueListener.class);
 
     @RabbitListener(queues = "${destination.main-queue}")
-    public void processMessage(
+    public void onMessage(
             final Message message,
-            @Header(AmqpHeaders.CORRELATION_ID)
-            final String correlationId
+            @Header(AmqpHeaders.CORRELATION_ID) final String correlationId
     ) {
+        requireNonNull(message, "message should not be null");
+        requireNonNull(correlationId, "correlation Id should not be null");
+
         logger.info("message received: {}, {}", extractBody(message, MessageModel.class), correlationId);
     }
 }

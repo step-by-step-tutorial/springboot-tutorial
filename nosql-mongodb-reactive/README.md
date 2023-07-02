@@ -62,7 +62,7 @@ services:
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-bom</artifactId>
-            <version>1.18.0</version>
+            <version>1.18.3</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
