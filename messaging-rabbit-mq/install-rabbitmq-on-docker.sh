@@ -5,4 +5,4 @@ docker-machine --version
 docker rm rabbitmq --force
 docker image rm rabbitmq:management
 
-docker compose --file docker-compose.yml --project-name rabbitmq up --build -d
+docker compose --file docker-compose.yml --project-name rabbitmq up -d

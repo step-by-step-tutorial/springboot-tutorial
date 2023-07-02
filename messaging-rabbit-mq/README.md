@@ -1,14 +1,12 @@
 # <p align="center">Rabbit MQ</p>
 
 <p>
-
-
+Rabbit Mq is a message queue for more information see the [https://www.rabbitmq.com/](https://www.rabbitmq.com/).
 </p>
 
 ## Install Active MQ Artemis on Docker
 
-Execute the `docker compose  up -d` command
-to install RabbitMQ on docker, also, you can use the following commands.
+Execute the `docker compose  up -d` command to install RabbitMQ on docker, also, you can use the following commands.
 
 **Help**
 ```shell
@@ -78,26 +76,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class RabbitMqConfig {
 }
-
-```
-
-## How To Config Embedded Rabbit MQ
-
-### Dependency
-
-```xml
-
-```
-
-### Spring Boot Properties
-
-```yaml
-
-```
-
-### How to Use Embedded Server
-
-```java
 
 ```
 

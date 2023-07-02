@@ -1,4 +1,4 @@
-package com.tutorial.springboot.event_processor.testUtils;
+package com.tutorial.springboot.event_processor.config;
 
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;

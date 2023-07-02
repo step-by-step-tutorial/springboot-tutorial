@@ -8,10 +8,3 @@ spring:
       database: ${MONGO_DB_NAME:springboot_tutorial}
       authentication-database: admin
 
----
-spring:
-  config:
-    activate:
-      on-profile: test
-
----

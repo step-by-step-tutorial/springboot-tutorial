@@ -44,19 +44,6 @@ class SampleRepositoryTest {
                 .setName("stub name")
                 .setCode(1)
                 .setDatetime(NOW);
-
-    }
-
-    /**
-     * This method executes final-all query then return all available ID as a  {@link String} array.
-     *
-     * @return all available ID as a  {@link String} array
-     */
-    private String[] givenId() {
-        return systemUnderTest.findAll()
-                .stream()
-                .map(SampleModel::getId)
-                .toArray(String[]::new);
     }
 
     @BeforeAll
@@ -68,8 +55,8 @@ class SampleRepositoryTest {
     static void tearDown() {
         try {
             redisServer.stop();
-        }catch (Exception e){
-
+        } catch (Exception exception) {
+            logger.error("stopping embedded redis server failed due to: {}", exception.getMessage());
         }
     }
 
@@ -95,16 +82,18 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("find nested unit tests")
     class FindTest {
+        private String id = "";
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFactory.SAMPLE_MODEL);
+            this.id = systemUnderTest.save(StubFactory.SAMPLE_MODEL)
+                    .orElseThrow();
         }
 
         @Test
         @DisplayName("find one model by Key")
         void shouldReturnModelByGivenKey() {
-            final var givenId = givenId()[0];
+            final var givenId = id;
 
             final var expectedName = "stub name";
             final var expectedCode = 1;
@@ -125,15 +114,18 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("update nested unit tests")
     class UpdateTest {
+        private String id = "";
+
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFactory.SAMPLE_MODEL);
+            this.id = systemUnderTest.save(StubFactory.SAMPLE_MODEL)
+                    .orElseThrow();
         }
 
         @Test
         @DisplayName("update one model by new values")
         void shouldUpdateDatabaseBySuccessfulUpdate() {
-            final var givenId = givenId()[0];
+            final var givenId = id;
             final var givenNewName = "updated stub name";
             final var givenNewCode = 2;
             final var givenNewDatetime = StubFactory.TOMORROW;
@@ -166,16 +158,18 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("delete nested unit tests")
     class DeleteTest {
+        private String id = "";
+
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFactory.SAMPLE_MODEL);
+            this.id = systemUnderTest.save(StubFactory.SAMPLE_MODEL)
+                    .orElseThrow();
         }
-
 
         @Test
         @DisplayName("delete one model by Id")
         void shouldDeleteModelFromDatabaseByGivenId() {
-            final var givenId = givenId()[0];
+            final var givenId = id;
 
             assertDoesNotThrow(() -> systemUnderTest.deleteById(givenId));
             final var actual = systemUnderTest.findByKey(givenId);

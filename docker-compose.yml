@@ -87,3 +87,25 @@ services:
     restart: always
     ports:
       - "5051:8080"
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+  artemis:
+    image: apache/activemq-artemis
+    build:
+      context: ./messaging-apache-artemis-mq/docker
+      dockerfile: Dockerfile
+    container_name: artemis
+    hostname: artemis
+    restart: always
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    volumes:
+      - "./docker/broker:/opt/broker"
+

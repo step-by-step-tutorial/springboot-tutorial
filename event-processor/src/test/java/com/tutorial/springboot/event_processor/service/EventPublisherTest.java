@@ -16,15 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class EventPublisherTest {
 
     @Autowired
-    private EventPublisher systemUnderTest;
+    EventPublisher systemUnderTest;
 
     @Autowired
-    private ApplicationEvents applicationEvents;
+    ApplicationEvents applicationEvents;
 
     @Test
     @DisplayName("should throw a NullPointException if the event is null")
     void shouldThrowNullPointExceptionIfEventIsNull() {
-        final var givenEvent = FakeDataFactory.NULL_EVENT_MODEL;
+        final EventModel givenEvent = null;
 
         final var expectedException = NullPointerException.class;
         final var expectedExceptionMessage = "event should not be null";
@@ -37,7 +37,7 @@ class EventPublisherTest {
     @Test
     @DisplayName("the event should publish successful")
     void shouldPublishEventSuccessful() {
-        var givenEvent = FakeDataFactory.FAKE_EVENT_MODEL;
+        final var givenEvent = new EventModel("fake text");
 
         assertDoesNotThrow(() -> systemUnderTest.publish(givenEvent));
         final var actual = applicationEvents.stream(EventModel.class).toList();
