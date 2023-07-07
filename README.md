@@ -26,7 +26,7 @@
 * [step 012: nosql-mongodb-reactive](nosql-mongodb-reactive)
 * [step 013: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
 * [step 014: messaging-rabbit-mq](messaging-rabbit-mq)
-* step 015: messaging-kafka
+* [step 015: messaging-kafka](messaging-kafka)
 * step 016: rest
 * step 017: rest-exception-handling
 * step 018: rest-hateoas

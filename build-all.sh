@@ -12,3 +12,4 @@ mvn -f nosql-mongodb/pom.xml clean package
 mvn -f nosql-mongodb-reactive/pom.xml clean package
 mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
+mvn -f messaging-kafka/pom.xml clean package
