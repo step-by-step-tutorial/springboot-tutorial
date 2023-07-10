@@ -16,7 +16,6 @@ public class MainQueueService {
     private final String destination;
     private final RabbitTemplate rabbitTemplate;
 
-
     public MainQueueService(
             @Value("${destination.main-queue}")
             final String destination,

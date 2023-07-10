@@ -42,10 +42,11 @@ class MainTopicServiceWithEmbeddedKafkaTest {
 
     @Test
     @DisplayName("the message should be pushed to the topic")
-    void shouldPushMessageToTopic() {
+    void shouldPushMessageToTopic() throws InterruptedException {
         final var givenMessage = "hello";
 
         assertDoesNotThrow(() -> systemUnderTest.push(givenMessage));
+        Thread.sleep(10000);
     }
 
 }

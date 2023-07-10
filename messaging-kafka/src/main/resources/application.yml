@@ -14,12 +14,5 @@ spring:
     topic:
       name: embedded-topic
     consumer:
-      auto-offset-reset: earliest
       group-id: embedded-group
-    listener:
-      ack-mode: manual
-      client-id: embedded-client-id
-      concurrency: 10
-      type: batch
-    admin:
-      client-id: admin-embedded-client-id
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}

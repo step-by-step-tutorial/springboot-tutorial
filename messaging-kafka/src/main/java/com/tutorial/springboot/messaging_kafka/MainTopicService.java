@@ -5,7 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,7 +32,13 @@ public class MainTopicService {
     public void push(final String message) {
         requireNonNull(message, "message should not be null");
 
-        template.send(topic, message);
+        Message<String> kafkaMessage = MessageBuilder
+                .withPayload(message)
+                .setHeader(KafkaHeaders.CORRELATION_ID, UUID.randomUUID().toString())
+                .setHeader(KafkaHeaders.TOPIC, topic)
+                .build();
+
+        template.send(kafkaMessage);
         logger.info("message sent: {}", message);
     }
 }
