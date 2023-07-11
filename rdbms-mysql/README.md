@@ -64,7 +64,7 @@ Database: springboot_tutorial
 
 ## How To Config Spring Boot
 
-### Dependency
+### Dependencies
 
 ```xml
 

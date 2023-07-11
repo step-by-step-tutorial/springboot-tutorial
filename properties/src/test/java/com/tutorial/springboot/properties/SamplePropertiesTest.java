@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @DisplayName("unit tests of properties")
-class DataPropertiesTest {
+class SamplePropertiesTest {
 
     @Autowired
-    DataProperties systemUnderTest;
+    SampleProperties systemUnderTest;
 
     @Test
     void GivenDefaultPropertySourceFactory_WhenLoadedContext_ThenPropertiesInjected() {

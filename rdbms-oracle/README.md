@@ -67,7 +67,7 @@ Open https://localhost:5500/em via web browser.
 
 ## How To Config Spring Boot
 
-### Dependency
+### Dependencies
 
 The Oracle database driver should
 be [downloaded](https://www.oracle.com/de/database/technologies/appdev/jdbc-downloads.html) and install manually with

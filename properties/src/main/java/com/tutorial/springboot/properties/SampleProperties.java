@@ -4,8 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 
-@EnableConfigurationProperties
-@PropertySource(value = "classpath:data.properties")
+@PropertySource(value = "classpath:sample.properties")
 @ConfigurationProperties(prefix = "info")
-public record DataProperties(int id, String name, String dateTime, String[] colors) {
+@EnableConfigurationProperties
+public record SampleProperties(int id, String name, String dateTime, String[] colors) {
 }

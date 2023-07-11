@@ -4,9 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 
-@EnableConfigurationProperties
-@PropertySource(value = "classpath:data.yml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "classpath:sample.yml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties(prefix = "info")
-public record DataYaml(int id, String name, String dateTime, String[] colors) {
+@EnableConfigurationProperties
+public record SampleYaml(int id, String name, String dateTime, String[] colors) {
 
 }

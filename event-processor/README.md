@@ -103,7 +103,7 @@ public class EventPublisher {
 }
 ```
 
-## Dependency
+## Dependencies
 
 ```xml
 

@@ -1,5 +1,6 @@
 package com.tutorial.springboot.properties;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,10 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-class DataYmlTest {
+@DisplayName("unit tests of yaml file")
+class SampleYamlTest {
 
     @Autowired
-    private DataYaml systemUnderTest;
+    SampleYaml systemUnderTest;
 
     @Test
     void GivenYamlPropertySourceFactory_WhenLoadedContext_ThenYamlPropertiesInjected() {

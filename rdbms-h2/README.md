@@ -10,7 +10,7 @@ For more information about H2 go to the [website of H2](https://www.h2database.c
 
 ## How To Config Spring Boot
 
-### Dependency
+### Dependencies
 
 ```xml
 

@@ -41,7 +41,7 @@ services:
 
 ## How To Config Spring Boot
 
-### Dependency
+### Dependencies
 
 ```xml
 

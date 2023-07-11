@@ -4,20 +4,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@DisplayName("hello-world: Load context")
+@DisplayName("load context")
 class ApplicationTest {
 
     @Test
-    @DisplayName("print message")
+    @DisplayName("print a message")
     void GivenMessage_WhenInvokePrintMessage_ThenTheMessageWillBePrintedOnConsole() {
         var givenMessage = "Hello World Test";
 
-        System.out.println(givenMessage);
-
-        assertTrue(true);
+        assertDoesNotThrow(() -> System.out.println(givenMessage));
     }
 
 }

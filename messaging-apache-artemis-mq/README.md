@@ -147,7 +147,7 @@ Open [http://localhost:8161](http://localhost:8161/) in the browser.
 
 ## How To Config Spring Boot
 
-### Dependency
+### Dependencies
 
 ```xml
 
@@ -186,7 +186,7 @@ public class JmsConfig {
 
 ## How To Config Embedded Active MQ
 
-### Dependency
+### Dependencies
 
 ```xml
 

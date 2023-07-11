@@ -19,17 +19,17 @@ class ProfileServiceTest {
     @DisplayName("when it does not use profile")
     class DefaultProfileLoader {
         @Autowired(required = false)
-        private ProfileService beanUnderActiveProfile;
+        private ProfileService activeProfile;
 
         @Autowired
-        private DefaultProfileService beanWithoutProfile;
+        private UnProfiledService unProfiled;
 
         @Test
         void shouldOnlyLoadBeansWithoutProfile() {
-            assertNull(beanUnderActiveProfile);
+            assertNull(activeProfile);
 
-            assertNotNull(beanWithoutProfile);
-            assertTrue(beanWithoutProfile.getProfile().isBlank());
+            assertNotNull(unProfiled);
+            assertTrue(unProfiled.getProfile().isBlank());
         }
     }
 
@@ -39,18 +39,18 @@ class ProfileServiceTest {
     @DisplayName("when it uses test profile")
     class TestProfileLoader {
         @Autowired
-        private ProfileService beanUnderActiveProfile;
+        private ProfileService activeProfile;
 
         @Autowired
-        private DefaultProfileService beanWithoutProfile;
+        private UnProfiledService unProfiled;
 
         @Test
-        void shouldLoadBeanUnderTestProfileAndWithoutProfile() {
-            assertNotNull(beanUnderActiveProfile);
-            assertEquals(TEST, beanUnderActiveProfile.getProfile());
+        void shouldLoadBeanBasedOnTestProfileAndUnProfiled() {
+            assertNotNull(activeProfile);
+            assertEquals(TEST, activeProfile.getProfile());
 
-            assertNotNull(beanWithoutProfile);
-            assertTrue(beanWithoutProfile.getProfile().isBlank());
+            assertNotNull(unProfiled);
+            assertTrue(unProfiled.getProfile().isBlank());
         }
     }
 
@@ -60,17 +60,18 @@ class ProfileServiceTest {
     @DisplayName("when it uses dev profile")
     class DevProfileLoader {
         @Autowired
-        private ProfileService beanUnderActiveProfile;
+        private ProfileService activeProfile;
 
         @Autowired
-        private DefaultProfileService beanWithoutProfile;
+        private UnProfiledService unProfiled;
 
         @Test
-        void shouldLoadBeanUnderDevProfileAndWithoutProfile() {
-            assertNotNull(beanUnderActiveProfile);
-            assertEquals(DEV, beanUnderActiveProfile.getProfile());
-            assertNotNull(beanWithoutProfile);
-            assertTrue(beanWithoutProfile.getProfile().isBlank());
+        void shouldLoadBeanBasedOnDevProfileAndUnProfiled() {
+            assertNotNull(activeProfile);
+            assertEquals(DEV, activeProfile.getProfile());
+
+            assertNotNull(unProfiled);
+            assertTrue(unProfiled.getProfile().isBlank());
         }
     }
 }

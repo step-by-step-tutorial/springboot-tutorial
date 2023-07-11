@@ -12,44 +12,46 @@
 
 ## Steps
 
-* [step 001: hello-world](hello-world)
-* [step 002: profile](profile)
-* [step 003: properties](properties)
-* [step 004: event-processor](event-processor)
-* [step 005: rdbms-h2](rdbms-h2)
-* [step 006: rdbms-mysql](rdbms-mysql)
-* [step 007: rdbms-postgresql](rdbms-postgresql)
-* [step 008: rdbms-oracle](rdbms-oracle)
-* [step 009: nosql-redis](nosql-redis)
-* [step 010: nosql-redis-reactive](nosql-redis-reactive)
-* [step 011: nosql-mongodb](nosql-mongodb)
-* [step 012: nosql-mongodb-reactive](nosql-mongodb-reactive)
-* [step 013: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
-* [step 014: messaging-rabbit-mq](messaging-rabbit-mq)
-* [step 015: messaging-kafka](messaging-kafka)
-* step 016: rest
-* step 017: rest-exception-handling
-* step 018: rest-hateoas
-* step 019: websocket
-* step 020: webflux
-* step 021: ELK
-* step 022: security-authentication-basic
-* step 023: security-authentication-inmemory
-* step 024: security-authentication-UserEntity-service
-* step 025: security-authentication-ldap
-* step 026: security-authentication-remember-me
-* step 027: security-authentication-csrf
-* step 028: security-authentication-cors
-* step 029: security-authentication-xss
-* step 030: security-authentication-mfa
-* step 031: security-authentication-open-id
-* step 032: security-authorization-rbac
-* step 033: security-authorization-abac
-* step 034: security-authorization-acl
-* step 035: oauth-authorization-code
-* step 036: oauth-password
-* step 037: oauth-client-credentials
-* step 038: oauth-Implicit
+* [step: hello-world](hello-world)
+* [step: profile](profile)
+* [step: properties](properties)
+* [step: logger-log4j](properties)
+* [step: event-processor](event-processor)
+* [step: rdbms-h2](rdbms-h2)
+* [step: rdbms-mysql](rdbms-mysql)
+* [step: rdbms-postgresql](rdbms-postgresql)
+* [step: rdbms-oracle](rdbms-oracle)
+* [step: nosql-redis](nosql-redis)
+* [step: nosql-redis-reactive](nosql-redis-reactive)
+* [step: nosql-mongodb](nosql-mongodb)
+* [step: nosql-mongodb-reactive](nosql-mongodb-reactive)
+* [step: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
+* [step: messaging-rabbit-mq](messaging-rabbit-mq)
+* [step: messaging-kafka](messaging-kafka)
+* step: messaging-redis
+* step: rest
+* step: rest-exception-handling
+* step: rest-hateoas
+* step: websocket
+* step: webflux
+* step: ELK
+* step: security-authentication-basic
+* step: security-authentication-inmemory
+* step: security-authentication-UserEntity-service
+* step: security-authentication-ldap
+* step: security-authentication-remember-me
+* step: security-authentication-csrf
+* step: security-authentication-cors
+* step: security-authentication-xss
+* step: security-authentication-mfa
+* step: security-authentication-open-id
+* step: security-authorization-rbac
+* step: security-authorization-abac
+* step: security-authorization-acl
+* step: oauth-authorization-code
+* step: oauth-password
+* step: oauth-client-credentials
+* step: oauth-Implicit
 
 ## Build and Test
 
