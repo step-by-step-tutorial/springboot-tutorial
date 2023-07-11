@@ -1,6 +1,6 @@
-# <p align="center">NoSQL Reactive Redis</p>
+# <p text-align="center">NoSQL Reactive Redis</p>
 
-<p align="justify">
+<p text-align="justify">
 
 This tutorial is included [Redis](https://redis.io/) configuration for test and none test environment. This tutorial
 uses [Lettuce](https://lettuce.io/) to create connection factories for making connection to the Redis.
@@ -108,4 +108,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#nosql-reactive-redis) </p>**
+**<p text-align="center"> [Top](#nosql-reactive-redis) </p>**

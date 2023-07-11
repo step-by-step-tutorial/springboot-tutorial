@@ -1,6 +1,6 @@
-# <p align="center">NoSQL MongoDB</p>
+# <p text-align="center">NoSQL MongoDB</p>
 
-<p align="justify">
+<p text-align="justify">
 
 This tutorial is included [MongoDB](https://www.mongodb.com/) configuration for test and none test environment.
 
@@ -120,4 +120,4 @@ mvn test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#nosql-mongodb) </p>**
+**<p text-align="center"> [Top](#nosql-mongodb) </p>**

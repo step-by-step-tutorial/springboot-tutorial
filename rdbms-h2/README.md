@@ -1,6 +1,6 @@
-# <p align="center">RDBMS H2</p>
+# <p text-align="center">RDBMS H2</p>
 
-<p align="justify">
+<p text-align="justify">
 
 H2 is a light relational database implemented by java to use for embedded, in-memory and server mode. It is proper to
 use as a test database for testing or cache for an application. Also, it is able to work with file instead of memory.
@@ -82,4 +82,4 @@ mvn  spring-boot:run
 
 After running, see H2 web console [localhost:8080/h2-console](localhost:8080/h2-console).
 
-**<p align="center"> [Top](#rdbms-h2) </p>**
+**<p text-align="center"> [Top](#rdbms-h2) </p>**

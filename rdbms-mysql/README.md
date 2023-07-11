@@ -1,6 +1,6 @@
-# <p align="center">RDBMS MySQL</p>
+# <p text-align="center">RDBMS MySQL</p>
 
-<p align="justify">
+<p text-align="justify">
 
 This tutorial is included [MySQL database](https://www.mysql.com/) configuration for test and none test environment.
 
@@ -174,4 +174,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#rdbms-mysql) </p>**
+**<p text-align="center"> [Top](#rdbms-mysql) </p>**

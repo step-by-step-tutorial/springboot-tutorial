@@ -1,4 +1,4 @@
-# <p align="center">Properties</p>
+# <p text-align="center">Properties</p>
 
 <p text-align="justify">
 
@@ -166,4 +166,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#properties) </p>**
+**<p text-align="center"> [Top](#properties) </p>**

@@ -1,23 +1,6 @@
-# <p align="center">Hello World</p>
+# <p text-align="center">Hello World</p>
 
 This is the first step of the Spring Boot tutorial. The result is print `Hello World!`.
-
-```java
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class Application {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-        System.out.println("Hello World!");
-    }
-
-}
-
-```
 
 ## Dependencies
 
@@ -34,6 +17,25 @@ public class Application {
         <scope>test</scope>
     </dependency>
 </dependencies>
+
+```
+
+## Implementation
+
+```java
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+        System.out.println("Hello World!");
+    }
+
+}
 
 ```
 
@@ -60,4 +62,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center">[Top](#hello-world)</p>**
+**<p text-align="center">[Top](#hello-world)</p>**

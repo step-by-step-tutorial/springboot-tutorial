@@ -1,4 +1,4 @@
-# <p aligin="cenetr">Spring Boot Tutorial</p>
+# <p text-align="cenetr">Spring Boot Tutorial</p>
 
 [Spring Boot Documentation](https://spring.io/projects/spring-boot)
 
@@ -72,4 +72,4 @@ mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
 ```
 
-**<p align="center"> [Top](#spring-boot-tutorial) </p>**
+**<p text-align="center"> [Top](#spring-boot-tutorial) </p>**

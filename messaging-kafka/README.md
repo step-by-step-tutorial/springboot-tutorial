@@ -1,4 +1,4 @@
-# <p align="center">Kafka MQ</p>
+# <p text-align="center">Kafka MQ</p>
 
 <p>
 Apache Kafka MQ is a message queue, for more information see the [https://kafka.apache.org/](https://kafka.apache.org/).
@@ -149,4 +149,4 @@ mvn test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#kafka-mq) </p>**
+**<p text-align="center"> [Top](#kafka-mq) </p>**

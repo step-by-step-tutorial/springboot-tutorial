@@ -1,6 +1,6 @@
-# <p align="center">RDBMS Oracle</p>
+# <p text-align="center">RDBMS Oracle</p>
 
-<p align="justify">
+<p text-align="justify">
 
 This tutorial is included [Oracle database](https://www.oracle.com/) configuration for test and none test environment.
 
@@ -14,7 +14,7 @@ url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NA
 
 ## Install Oracle on Docker
 
-<p align="justify">
+<p text-align="justify">
 
 There is no official docker image on docker hub, therefore you should use
 the [GitHub repository](https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance) to install
@@ -207,4 +207,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#rdbms-oracle) </p>**
+**<p text-align="center"> [Top](#rdbms-oracle) </p>**

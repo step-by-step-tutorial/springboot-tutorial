@@ -1,4 +1,4 @@
-# <p align="center">Profile</p>
+# <p text-align="center">Profile</p>
 
 <p text-align="justify">
 
@@ -131,4 +131,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p align="center"> [Top](#profile) </p>**
+**<p text-align="center"> [Top](#profile) </p>**
