@@ -1,4 +1,4 @@
-# <p align="cenetr">Spring Boot Tutorial</p>
+# <p align="center">Spring Boot Tutorial</p>
 
 [Spring Boot Documentation](https://spring.io/projects/spring-boot)
 
