@@ -1,4 +1,4 @@
-# <p text-align="center">Apache Active MQ (Artemis)</p>
+# <p align="center">Apache Active MQ (Artemis)</p>
 
 <p>
 
@@ -277,4 +277,4 @@ mvn test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#apache-active-mq-artemis) </p>**
+**<p align="center"> [Top](#apache-active-mq-artemis) </p>**

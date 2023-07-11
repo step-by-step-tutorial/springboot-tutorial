@@ -1,4 +1,4 @@
-# <p text-align="center">Rabbit MQ</p>
+# <p align="center">Rabbit MQ</p>
 
 <p>
 Rabbit Mq is a message queue for more information see the [https://www.rabbitmq.com/](https://www.rabbitmq.com/).
@@ -107,4 +107,4 @@ mvn test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#rabbit-mq) </p>**
+**<p align="center"> [Top](#rabbit-mq) </p>**

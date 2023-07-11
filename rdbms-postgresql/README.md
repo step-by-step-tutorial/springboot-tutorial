@@ -1,6 +1,6 @@
-# <p text-align="center">RDBMS PostgreSQL</p>
+# <p align="center">RDBMS PostgreSQL</p>
 
-<p text-align="justify">
+<p align="justify">
 
 This tutorial is included [PostgreSQL database](https://www.postgresql.org/) configuration for test and none test
 environment.
@@ -184,4 +184,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#rdbms-postgresql) </p>**
+**<p align="center"> [Top](#rdbms-postgresql) </p>**

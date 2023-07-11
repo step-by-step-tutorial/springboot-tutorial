@@ -1,6 +1,6 @@
-# <p text-align="center">Event Processor</p>
+# <p align="center">Event Processor</p>
 
-<p text-align="justify">
+<p align="justify">
 
 This sample is about working event and event listener in Spring Boot. There are three concepts `event`, `listener` and
 `publish` for the event driven mechanism.
@@ -55,7 +55,7 @@ public class EventModel extends ApplicationEvent {
 
 ### Listener
 
-<p text-align="justify">
+<p align="justify">
 
 There are two methods to implement a listener, annotation driven and programmatically. Also, it is possible to have
 async listener with using `@Async`.
@@ -157,4 +157,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#event-processor) </p>**
+**<p align="center"> [Top](#event-processor) </p>**

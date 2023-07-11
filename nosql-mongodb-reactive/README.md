@@ -1,6 +1,6 @@
-# <p text-align="center">NoSQL Reactive MongoDB</p>
+# <p align="center">NoSQL Reactive MongoDB</p>
 
-<p text-align="justify">
+<p align="justify">
 
 This tutorial is included [MongoDB](https://www.mongodb.com/) configuration for test and none test environment.
 
@@ -120,4 +120,4 @@ mvn test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#nosql-reactive-mongodb) </p>**
+**<p align="center"> [Top](#nosql-reactive-mongodb) </p>**

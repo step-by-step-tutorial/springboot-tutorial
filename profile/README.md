@@ -1,13 +1,13 @@
-# <p text-align="center">Profile</p>
+# <p align="center">Profile</p>
 
-<p text-align="justify">
+<p align="justify">
 
 This sample is about working with profiles in the Spring Boot. The Profiles provide a possibility to categorized classes
 in order to use for specific goals, for example define specific classes only for test environment, etc.
 
 </p>
 
-<p text-align="justify">
+<p align="justify">
 
 In order to apply profiling:
 
@@ -131,4 +131,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#profile) </p>**
+**<p align="center"> [Top](#profile) </p>**

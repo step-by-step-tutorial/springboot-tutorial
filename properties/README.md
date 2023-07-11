@@ -1,6 +1,6 @@
-# <p text-align="center">Properties</p>
+# <p align="center">Properties</p>
 
-<p text-align="justify">
+<p align="justify">
 
 This sample is about working with yaml and properties file in Spring Boot. Also, the sample is using java `record` class
 for using externalized properties.
@@ -166,4 +166,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#properties) </p>**
+**<p align="center"> [Top](#properties) </p>**

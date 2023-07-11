@@ -1,6 +1,6 @@
-# <p text-align="center">NoSQL Redis</p>
+# <p align="center">NoSQL Redis</p>
 
-<p text-align="justify">
+<p align="justify">
 
 This tutorial is included [Redis](https://redis.io/) configuration for test and none test environment. This tutorial
 uses two libraries to create connection factories for making connection to the Redis.
@@ -114,4 +114,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center"> [Top](#nosql-redis) </p>**
+**<p align="center"> [Top](#nosql-redis) </p>**

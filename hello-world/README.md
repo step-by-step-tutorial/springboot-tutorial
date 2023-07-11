@@ -1,4 +1,4 @@
-# <p text-align="center">Hello World</p>
+# <p align="center">Hello World</p>
 
 This is the first step of the Spring Boot tutorial. The result is print `Hello World!`.
 
@@ -62,4 +62,4 @@ mvn  test
 mvn  spring-boot:run
 ```
 
-**<p text-align="center">[Top](#hello-world)</p>**
+**<p align="center">[Top](#hello-world)</p>**
