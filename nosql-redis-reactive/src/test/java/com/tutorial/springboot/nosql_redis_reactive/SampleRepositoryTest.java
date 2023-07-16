@@ -62,7 +62,7 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("save nested unit tests")
+    @DisplayName("nested unit tests of save")
     class SaveTest {
         @Test
         @DisplayName("save an model")
@@ -81,7 +81,7 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("find nested unit tests")
+    @DisplayName("nested unit tests of find")
     class FindTest {
         private String id = "";
 
@@ -158,7 +158,7 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("delete nested unit tests")
+    @DisplayName("nested unit tests of delete")
     class DeleteTest {
         private String id = "";
 

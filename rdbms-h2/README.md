@@ -3,7 +3,7 @@
 <p align="justify">
 
 H2 is a light relational database implemented by java to use for embedded, in-memory and server mode. It is proper to
-use as a test database for testing or cache for an application. Also, it is able to work with file instead of memory.
+use it as a test database for testing or cache for an application. Also, it is able to work with file instead of memory.
 For more information about H2 go to the [website of H2](https://www.h2database.com/html/main.html).
 
 </p>
@@ -27,13 +27,29 @@ For more information about H2 go to the [website of H2](https://www.h2database.c
 </dependencies>
 ```
 
+#### Web Console
+
+In order to access to the ht web console the application should be included the following dependency.
+
+```xml
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
 ### Spring Boot Configuration
 
 ```yaml
+
+spring:
+  main:
+    banner-mode: OFF
   datasource:
     username: sa
     password: ''
-    url: jdbc:h2:mem:${DATABASE_NAME:springboot_tutorial}
+    url: jdbc:h2:mem:${DATABASE_NAME:test_db}
     driver-class-name: org.h2.Driver
   data:
     jpa:

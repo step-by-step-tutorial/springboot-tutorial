@@ -27,35 +27,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class SampleRepositoryTest {
 
     @Container
-    static OracleContainer oracleContainer = new OracleContainer("gvenzl/oracle-xe:21-slim-faststart")
-            .withPassword("password");
-
-    @SuppressWarnings({"unused"})
-    @DynamicPropertySource
-    static void registerMySQLProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", oracleContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", oracleContainer::getUsername);
-        registry.add("spring.datasource.password", oracleContainer::getPassword);
-        registry.add("spring.datasource.driver-class-name", oracleContainer::getDriverClassName);
-    }
+    static final OracleContainer ORACLE = new OracleContainer("gvenzl/oracle-xe:21-slim-faststart");
 
     @Autowired
     SampleRepository systemUnderTest;
 
-    @BeforeAll
-    static void beforeAll() {
-        oracleContainer.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        oracleContainer.stop();
+    static {
+        ORACLE.withPassword("password");
     }
 
     /**
-     * This class includes Stub data.
+     * This class includes STUB data.
      */
-    static class StubFactory {
+    static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
         static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
@@ -65,19 +49,38 @@ class SampleRepositoryTest {
 
     }
 
+    @SuppressWarnings({"unused"})
+    @DynamicPropertySource
+    static void registerMySQLProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", ORACLE::getJdbcUrl);
+        registry.add("spring.datasource.username", ORACLE::getUsername);
+        registry.add("spring.datasource.password", ORACLE::getPassword);
+        registry.add("spring.datasource.driver-class-name", ORACLE::getDriverClassName);
+    }
+
+    @BeforeAll
+    static void beforeAll() {
+        ORACLE.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        ORACLE.stop();
+    }
+
     @Nested
-    @DisplayName("save nested unit tests")
+    @DisplayName("nested unit tests of save")
     class SaveTest {
 
         @Test
-        @DisplayName("save an entity")
+        @DisplayName("save an entity when there is not exception")
         void shouldReturnEntityWithIdBySuccessfulSave() {
-            final var givenEntity = StubFactory.SAMPLE_ENTITY;
+            final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
 
             final var expectedId = 1L;
             final var expectedName = "stub name";
             final var expectedCode = 1;
-            final var expectedDatetime = StubFactory.NOW;
+            final var expectedDatetime = StubFixturesFactory.NOW;
 
             final var actual = systemUnderTest.save(givenEntity);
 
@@ -90,23 +93,23 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("find nested unit tests")
+    @DisplayName("nested unit tests of find")
     class FindTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
         }
 
         @Test
-        @DisplayName("find one entity by Id")
+        @DisplayName("find one entity by given Id")
         void shouldReturnEntityByGivenId() {
             final var givenId = 1L;
 
             final var expectedId = 1L;
             final var expectedName = "stub name";
             final var expectedCode = 1;
-            final var expectedDatetime = StubFactory.NOW;
+            final var expectedDatetime = StubFixturesFactory.NOW;
 
             final var actual = systemUnderTest.findById(givenId);
 
@@ -121,29 +124,29 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("update nested tests")
+    @DisplayName("nested unit tests of update")
     class UpdateTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
         }
 
         @Test
-        @DisplayName("update one entity by new values")
-        void shouldUpdateDatabaseBySuccessfulUpdate() {
+        @DisplayName("update one entity by given new values")
+        void shouldUpdateTupleInDatabaseByGivenNewValues() {
             final var givenId = 1L;
             final var givenNewName = "updated stub name";
             final var givenNewCode = 2;
-            final var givenNewDatetime = StubFactory.TOMORROW;
+            final var givenNewDatetime = StubFixturesFactory.TOMORROW;
 
             final var expectedName = "updated stub name";
             final var expectedCode = 2;
-            final var expectedDatetime = StubFactory.TOMORROW;
+            final var expectedDatetime = StubFixturesFactory.TOMORROW;
 
             assertDoesNotThrow(() -> {
-                var actual = systemUnderTest.findById(givenId);
-                actual.ifPresent(entity -> {
+                var currentStateOfEntity = systemUnderTest.findById(givenId);
+                currentStateOfEntity.ifPresent(entity -> {
                     entity.setName(givenNewName);
                     entity.setCode(givenNewCode);
                     entity.setDatetime(givenNewDatetime);
@@ -162,16 +165,16 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("delete nested unit tests")
+    @DisplayName("nested unit tests of delete")
     class DeleteTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
         }
 
         @Test
-        @DisplayName("delete one entity by Id")
+        @DisplayName("delete one entity by given Id")
         void shouldDeleteTupleFromDatabaseByGivenId() {
             final var givenId = 1L;
 

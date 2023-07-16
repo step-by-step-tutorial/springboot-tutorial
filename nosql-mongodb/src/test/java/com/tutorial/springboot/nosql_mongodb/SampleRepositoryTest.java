@@ -75,7 +75,7 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("save nested unit tests")
+    @DisplayName("nested unit tests of save")
     class SaveTest {
 
         @BeforeEach
@@ -96,7 +96,7 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("find nested unit tests")
+    @DisplayName("nested unit tests of find")
     class FindTest {
 
         @BeforeEach

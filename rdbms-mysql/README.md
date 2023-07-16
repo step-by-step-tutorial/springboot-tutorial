@@ -22,7 +22,8 @@ url: jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useUnicode=true&useJDBCComplia
 
 ## Install MySQL on Docker
 
-Execute the `docker compose  up -d` command to install MySQL 8.0 and a SQL developer named adminer.
+At first, create a docker compose file and add the images then execute the `docker compose  up -d` command to install
+MySQL 8.0 and a SQL developer named adminer.
 
 ```yaml
 version: "3.8"
@@ -59,7 +60,7 @@ System: MySQL
 Server: mysql:3306
 Username: user
 Password: password
-Database: springboot_tutorial
+Database: test_db
 ```
 
 ## How To Config Spring Boot
@@ -85,29 +86,31 @@ Database: springboot_tutorial
 
 ```xml
 
-<dependencyManagement>
+<project>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.18.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-bom</artifactId>
-            <version>1.18.3</version>
-            <type>pom</type>
-            <scope>import</scope>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-</dependencyManagement>
-<dependencies>
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>junit-jupiter</artifactId>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>mysql</artifactId>
-    <scope>test</scope>
-</dependency>
-</dependencies>
+</project>
 ```
 
 ### Spring Boot Properties
@@ -117,7 +120,7 @@ spring:
   datasource:
     username: ${DATABASE_NAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:mysql:${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:springboot_tutorial}
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:test_db}
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     jpa:

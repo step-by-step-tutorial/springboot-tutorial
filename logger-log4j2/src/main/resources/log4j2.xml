@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_PATH">./logs/</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <RollingFile name="FileAppender" fileName="${LOG_PATH}/app.log"
+                     filePattern="${LOG_PATH}/app-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <JDBC name="databaseAppender" tableName="LOG_TABLE" bufferSize="1" ignoreExceptions="false">
+            <DriverManager
+                    driverClassName="com.mysql.cj.jdbc.Driver"
+                    connectionString="jdbc:mysql://localhost:3306/test_db"
+                    userName="user"
+                    password="password"
+            />
+            <Column name="EVENT_DATE" isEventTimestamp="true"/>
+            <Column name="LEVEL" pattern="%level"/>
+            <Column name="LOGGER" pattern="%logger"/>
+            <Column name="MESSAGE" pattern="%message"/>
+        </JDBC>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="databaseAppender"/>
+        </Root>
+        <Logger name="com.tutorial.springboot" level="info" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="databaseAppender"/>
+        </Logger>
+    </Loggers>
+</Configuration>

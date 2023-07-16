@@ -14,30 +14,7 @@ url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NA
 
 ## Install Oracle on Docker
 
-<p align="justify">
-
-There is no official docker image on docker hub, therefore you should use
-the [GitHub repository](https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance) to install
-Oracle database on docker.
-
-</p>
-Example of how to install Oracle database XE edition.
-
-```text
-step-1: download oracle-database-xe-21c-1.0-1.ol8.x86_64.rpm from https://www.oracle.com/database/technologies/xe-downloads.html
-step-2: git clone https://github.com/oracle/docker-images.git
-step-3: copy oracle-database-xe-21c-1.0-1.ol8.x86_64.rpm to path-to/OracleDatabase/SingleInstance/dockerfiles/21.3.0/
-step-4: cd path-to/OracleDatabase/SingleInstance/dockerfiles
-step-5: buildDockerImage.sh -x -v 21.3.0
-step-6: docker run --name oracle-xe-21c \
--p 1521:1521 -p 5500:5500 \
--e ORACLE_PWD=Adminxe18c \
--e ORACLE_CHARACTERSET=UTF8 \
--v /opt/oracle/oradata \
-oracle/database:21.3.0-xe
-
-step-7: docker stop/start oracle-xe-21c
-```
+Execute the `docker compose  up -d` command to install Oracle database.
 
 ```yaml
 version: "3.8"
@@ -118,29 +95,31 @@ mvn install:install-file ^
 
 ```xml
 
-<dependencyManagement>
+<project>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.18.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-bom</artifactId>
-            <version>1.18.3</version>
-            <type>pom</type>
-            <scope>import</scope>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>oracle-xe</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-</dependencyManagement>
-<dependencies>
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>junit-jupiter</artifactId>
-    <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>oracle-xe</artifactId>
-    <scope>test</scope>
-</dependency>
-</dependencies>
+</project>
 ```
 
 ### Spring Boot Properties

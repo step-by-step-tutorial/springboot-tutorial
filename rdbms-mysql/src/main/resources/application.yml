@@ -2,7 +2,7 @@ spring:
   datasource:
     username: ${DATABASE_NAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:mysql:${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:springboot_tutorial}
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:test_db}
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     jpa:
@@ -26,9 +26,9 @@ spring:
         default_schema: ${DATABASE_SCHEMA:sample}
 ---
 spring:
-  profiles:
-    active:
-      - test
+  config:
+    activate:
+      on-profile: test
   jpa:
     hibernate:
       ddl-auto: create
