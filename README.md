@@ -15,7 +15,9 @@
 * [step: hello-world](hello-world)
 * [step: profile](profile)
 * [step: properties](properties)
-* [step: logger-log4j](properties)
+* [step: logger-log4j-console](logger-log4j2-console)
+* [step: logger-log4j-file](logger-log4j2-file)
+* [step: logger-log4j-database](logger-log4j2-database)
 * [step: event-processor](event-processor)
 * [step: rdbms-h2](rdbms-h2)
 * [step: rdbms-mysql](rdbms-mysql)
@@ -59,6 +61,9 @@
 mvn -f hello-world/pom.xml clean package
 mvn -f profile/pom.xml clean package
 mvn -f properties/pom.xml clean package
+mvn -f logger-log4j-console/pom.xml clean package
+mvn -f logger-log4j-file/pom.xml clean package
+mvn -f logger-log4j-database/pom.xml clean package
 mvn -f event-processor/pom.xml clean package
 mvn -f rdbms-h2/pom.xml clean package
 mvn -f rdbms-mysql/pom.xml clean package
@@ -70,6 +75,7 @@ mvn -f nosql-mongodb/pom.xml clean package
 mvn -f nosql-mongodb-reactive/pom.xml clean package
 mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
+mvn -f messaging-kafka/pom.xml clean package
 ```
 
 **<p align="center"> [Top](#spring-boot-tutorial) </p>**
