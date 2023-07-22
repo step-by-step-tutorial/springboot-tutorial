@@ -65,11 +65,11 @@ Database: springboot_tutorial
 In order to connect to PostgreSQL via pgadmin brows [http://localhost:8081](http://localhost:8081/) via web browser and
 use the following properties in the add server popup.
 
-```properties
-hostname:postgresql
-port:5432
-Username:user
-Password:password
+```yaml
+hostname: postgresql
+port: 5432
+Username: user
+Password: password
 ```
 
 ## How To Config Spring Boot

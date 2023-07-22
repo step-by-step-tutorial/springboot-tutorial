@@ -36,11 +36,11 @@ see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x
 Add a bundle named `log4j_en.properties`.
 
 ```properties
-driver=com.mysql.cj.jdbc.Driver
-url=jdbc:mysql://localhost:3306/test_db
-username=user
-password=password
-table_name=LOG_TABLE
+driver=***
+url=***
+username=***
+password=***
+table_name=***
 ```
 
 Add `log4j2.xml` to the resources.
@@ -73,7 +73,7 @@ Add `log4j2.xml` to the resources.
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="databaseAppender"/>
         </Root>
-        <Logger name="com.tutorial.springboot" level="${LOG_LEVEL}" additivity="false">
+        <Logger name="package-name" level="${LOG_LEVEL}" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="databaseAppender"/>
         </Logger>

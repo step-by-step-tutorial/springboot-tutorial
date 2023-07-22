@@ -51,7 +51,7 @@ Add log4j2.xml to the resources.
         <Root level="${LOG_LEVEL}">
             <AppenderRef ref="ConsoleAppender"/>
         </Root>
-        <Logger name="com.tutorial.springboot" level="${LOG_LEVEL}" additivity="false">
+        <Logger name="package-name" level="${LOG_LEVEL}" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
     </Loggers>

@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
+
 @Repository
 public class SampleRepository {
 
@@ -26,7 +28,7 @@ public class SampleRepository {
     private HashOperations<String, String, String> hashOperations;
 
     public Optional<String> save(SampleModel model) {
-        Objects.requireNonNull(model);
+        requireNonNull(model);
 
         model.setId(UUID.randomUUID().toString());
 
@@ -40,8 +42,8 @@ public class SampleRepository {
     }
 
     public void update(SampleModel model) {
-        Objects.requireNonNull(model);
-        Objects.requireNonNull(model.getId());
+        requireNonNull(model);
+        requireNonNull(model.getId());
 
         try {
             hashOperations.put(Hash_KEY, model.getId(), mapper.writeValueAsString(model));
@@ -51,7 +53,7 @@ public class SampleRepository {
     }
 
     public Optional<SampleModel> findById(String id) {
-        Objects.requireNonNull(id);
+        requireNonNull(id);
 
         try {
             return Optional.ofNullable(mapper.readValue(hashOperations.get(Hash_KEY, id), SampleModel.class));
@@ -77,7 +79,7 @@ public class SampleRepository {
     }
 
     public void deleteById(String id) {
-        Objects.requireNonNull(id);
+        requireNonNull(id);
 
         hashOperations.delete(Hash_KEY, id);
     }

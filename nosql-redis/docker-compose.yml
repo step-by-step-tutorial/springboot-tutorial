@@ -5,5 +5,27 @@ services:
     image: redis:latest
     container_name: redis
     hostname: redis
+    restart: always
     ports:
       - "6379:6379"
+  commander:
+    image: rediscommander/redis-commander:latest
+    container_name: commander
+    hostname: commander
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    hostname: redisinsight
+    restart: always
+    volumes:
+      - "./docker/redislabs:/db"
+    ports:
+      - "8001:8001"
+

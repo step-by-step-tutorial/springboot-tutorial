@@ -33,15 +33,15 @@ see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x
 
 ### Spring Boot Properties
 
-Add log4j2.yml to the resources.
+Add log4j2.xml to the resources.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <Property name="LOG_PATH">./logs/</Property>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Property>
         <Property name="LOG_LEVEL">INFO</Property>
+        <Property name="LOG_PATH">./logs/</Property>
     </Properties>
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
@@ -62,7 +62,7 @@ Add log4j2.yml to the resources.
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="FileAppender"/>
         </Root>
-        <Logger name="com.tutorial.springboot" level="${LOG_LEVEL}" additivity="false">
+        <Logger name="package-name" level="${LOG_LEVEL}" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="FileAppender"/>
         </Logger>
