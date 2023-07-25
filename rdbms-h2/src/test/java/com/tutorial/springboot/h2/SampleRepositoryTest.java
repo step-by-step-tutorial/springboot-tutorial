@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@DisplayName("unit tests of sample repository")
+@DisplayName("unit tests of h2 sample repository")
 class SampleRepositoryTest {
 
     @Autowired

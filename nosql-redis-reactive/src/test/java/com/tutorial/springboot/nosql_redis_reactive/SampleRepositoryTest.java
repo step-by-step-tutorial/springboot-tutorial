@@ -11,16 +11,15 @@ import redis.embedded.RedisServer;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@DisplayName("unit tests of sample repository")
+@DisplayName("unit tests of reactive redis sample repository")
 class SampleRepositoryTest {
 
-    static final Logger logger = LoggerFactory.getLogger(SampleRepositoryTest.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(SampleRepositoryTest.class);
 
     static RedisServer redisServer;
 
@@ -28,7 +27,7 @@ class SampleRepositoryTest {
         try {
             redisServer = new RedisServer(6379);
         } catch (IOException exception) {
-            logger.error("construction of the Redis server failed due to: {}", exception.getMessage());
+            LOGGER.error("construction of the Redis server failed due to: {}", exception.getMessage());
         }
     }
 
@@ -38,11 +37,11 @@ class SampleRepositoryTest {
     /**
      * This class includes Stub data.
      */
-    static class StubFactory {
+    static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
         static final SampleModel SAMPLE_MODEL = SampleModel.create()
-                .setName("stub name")
+                .setName("name")
                 .setCode(1)
                 .setDatetime(NOW);
     }
@@ -57,7 +56,7 @@ class SampleRepositoryTest {
         try {
             redisServer.stop();
         } catch (Exception exception) {
-            logger.error("stopping embedded redis server failed due to: {}", exception.getMessage());
+            LOGGER.error("stopping embedded Redis server failed due to: {}", exception.getMessage());
         }
     }
 
@@ -65,9 +64,9 @@ class SampleRepositoryTest {
     @DisplayName("nested unit tests of save")
     class SaveTest {
         @Test
-        @DisplayName("save an model")
+        @DisplayName("save an model when there is no exception")
         void shouldReturnIdBySuccessfulSave() {
-            final var givenModel = StubFactory.SAMPLE_MODEL;
+            final var givenModel = StubFixturesFactory.SAMPLE_MODEL;
 
             final var actual = systemUnderTest.save(givenModel);
 
@@ -83,23 +82,22 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("nested unit tests of find")
     class FindTest {
-        private String id = "";
+        String id = "";
 
         @BeforeEach
-        void initDatabase() {
-            this.id = systemUnderTest.save(StubFactory.SAMPLE_MODEL)
-                    .get();
+        void setUp() {
+            assertNotNull(systemUnderTest);
+            this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_MODEL).orElseThrow();
         }
 
         @Test
-        @DisplayName("find one model by Key")
+        @DisplayName("find one model by given Key")
         void shouldReturnModelByGivenKey() {
             final var givenId = id;
 
-            final var expectedName = "stub name";
+            final var expectedName = "name";
             final var expectedCode = 1;
-            final var expectedDatetime = StubFactory.NOW;
-            final var all = systemUnderTest.findAll();
+            final var expectedDatetime = StubFixturesFactory.NOW;
 
             final var actual = systemUnderTest.findByKey(givenId);
 
@@ -114,35 +112,35 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("update nested unit tests")
+    @DisplayName("nested unit tests of update")
     class UpdateTest {
-        private String id = "";
+        String id = "";
 
         @BeforeEach
-        void initDatabase() {
-            this.id = systemUnderTest.save(StubFactory.SAMPLE_MODEL)
-                    .orElseThrow();
+        void setUp() {
+            assertNotNull(systemUnderTest);
+            this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_MODEL).orElseThrow();
         }
 
         @Test
-        @DisplayName("update one model by new values")
-        void shouldUpdateDatabaseBySuccessfulUpdate() {
+        @DisplayName("update one model by given new values")
+        void shouldUpdateModelInDatabaseByGivenNewValues() {
             final var givenId = id;
-            final var givenNewName = "updated stub name";
+            final var givenNewName = "updated name";
             final var givenNewCode = 2;
-            final var givenNewDatetime = StubFactory.TOMORROW;
+            final var givenNewDatetime = StubFixturesFactory.TOMORROW;
 
-            final var expectedName = "updated stub name";
+            final var expectedName = "updated name";
             final var expectedCode = 2;
-            final var expectedDatetime = StubFactory.TOMORROW;
+            final var expectedDatetime = StubFixturesFactory.TOMORROW;
 
             assertDoesNotThrow(() -> {
-                final var actual = systemUnderTest.findByKey(givenId).orElseThrow();
-                actual.setName(givenNewName);
-                actual.setCode(givenNewCode);
-                actual.setDatetime(givenNewDatetime);
+                final var currentStateOfModel = systemUnderTest.findByKey(givenId).orElseThrow();
+                currentStateOfModel.setName(givenNewName);
+                currentStateOfModel.setCode(givenNewCode);
+                currentStateOfModel.setDatetime(givenNewDatetime);
 
-                systemUnderTest.update(actual);
+                systemUnderTest.update(currentStateOfModel);
             });
 
             final var actual = systemUnderTest.findByKey(givenId);
@@ -160,16 +158,16 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("nested unit tests of delete")
     class DeleteTest {
-        private String id = "";
+        String id = "";
 
         @BeforeEach
-        void initDatabase() {
-            this.id = systemUnderTest.save(StubFactory.SAMPLE_MODEL)
-                    .orElseThrow();
+        void setUp() {
+            assertNotNull(systemUnderTest);
+            this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_MODEL).orElseThrow();
         }
 
         @Test
-        @DisplayName("delete one model by Id")
+        @DisplayName("delete one model by given Id")
         void shouldDeleteModelFromDatabaseByGivenId() {
             final var givenId = id;
 

@@ -3,6 +3,7 @@ package com.tutorial.springboot.rdbms_oracle;
 import com.tutorial.springboot.rdbms_oracle.entity.SampleEntity;
 import com.tutorial.springboot.rdbms_oracle.repository.SampleRepository;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of sample repository")
+@DisplayName("unit tests of oracle sample repository")
+@EnabledIfSystemProperty(named = "longTimeTest.isActivate", matches = "true")
 class SampleRepositoryTest {
 
     @Container
@@ -43,7 +45,7 @@ class SampleRepositoryTest {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
         static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
-                .setName("stub name")
+                .setName("name")
                 .setCode(1)
                 .setDatetime(NOW);
 
@@ -78,7 +80,7 @@ class SampleRepositoryTest {
             final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
 
             final var expectedId = 1L;
-            final var expectedName = "stub name";
+            final var expectedName = "name";
             final var expectedCode = 1;
             final var expectedDatetime = StubFixturesFactory.NOW;
 
@@ -107,7 +109,7 @@ class SampleRepositoryTest {
             final var givenId = 1L;
 
             final var expectedId = 1L;
-            final var expectedName = "stub name";
+            final var expectedName = "name";
             final var expectedCode = 1;
             final var expectedDatetime = StubFixturesFactory.NOW;
 
@@ -136,11 +138,11 @@ class SampleRepositoryTest {
         @DisplayName("update one entity by given new values")
         void shouldUpdateTupleInDatabaseByGivenNewValues() {
             final var givenId = 1L;
-            final var givenNewName = "updated stub name";
+            final var givenNewName = "updated name";
             final var givenNewCode = 2;
             final var givenNewDatetime = StubFixturesFactory.TOMORROW;
 
-            final var expectedName = "updated stub name";
+            final var expectedName = "updated name";
             final var expectedCode = 2;
             final var expectedDatetime = StubFixturesFactory.TOMORROW;
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+import static java.util.Objects.requireNonNull;
+
 @Repository
 public class SampleRepository {
 
@@ -21,7 +23,7 @@ public class SampleRepository {
     private ReactiveRedisOperations<String, String> template;
 
     public Optional<String> save(SampleModel model) {
-        Objects.requireNonNull(model);
+        requireNonNull(model);
 
         model.setId(UUID.randomUUID().toString());
 
@@ -32,12 +34,12 @@ public class SampleRepository {
             return Optional.ofNullable(model.getId());
         } catch (Exception exception) {
             logger.error(exception.getMessage());
-            return Optional.<String>empty();
+            return Optional.empty();
         }
     }
 
     public Optional<SampleModel> findByKey(String key) {
-        Objects.requireNonNull(key);
+        requireNonNull(key);
 
         try {
             String model = template.opsForValue()
@@ -51,8 +53,8 @@ public class SampleRepository {
     }
 
     public void update(SampleModel model) {
-        Objects.requireNonNull(model);
-        Objects.requireNonNull(model.getId());
+        requireNonNull(model);
+        requireNonNull(model.getId());
 
         try {
             template.opsForValue()
@@ -64,14 +66,14 @@ public class SampleRepository {
     }
 
     public void deleteById(String id) {
-        Objects.requireNonNull(id);
+        requireNonNull(id);
         template.opsForValue()
                 .delete(id)
                 .subscribe();
     }
 
     public List<SampleModel> findAll(Collection<String> keys) {
-        Objects.requireNonNull(keys);
+        requireNonNull(keys);
 
         return template.opsForValue()
                 .multiGet(keys)

@@ -12,15 +12,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles({"test", "embedded"})
-@DisplayName("unit tests of status queue service")
+@DisplayName("unit tests of  artemis[embedded] status queue service")
 class StatusQueueServiceWithEmbeddedQueueTest {
 
     @Autowired
     StatusQueueService systemUnderTest;
 
     @Test
-    @DisplayName("should throw NullPointerException if the message is null")
-    void shouldThrowNullPointerExceptionIfMessageIsNull() {
+    @DisplayName("should throw NullPointerException when given message is null")
+    void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final StatusModel givenModel = null;
 
         final var expectedException = NullPointerException.class;

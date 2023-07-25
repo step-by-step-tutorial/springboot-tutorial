@@ -13,5 +13,6 @@ services:
       - "61616:61616"
       - "8161:8161"
     volumes:
-      - "./broker:/opt/broker"
+      - "./docker/broker:/opt/broker"
+      - "./docker/broker:/opt/artemis"
 

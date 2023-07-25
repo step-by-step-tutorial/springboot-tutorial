@@ -37,7 +37,7 @@ public class SampleRepository {
             return Optional.ofNullable(model.getId());
         } catch (Exception exception) {
             logger.error(exception.getMessage());
-            return Optional.<String>empty();
+            return Optional.empty();
         }
     }
 

@@ -25,24 +25,6 @@ services:
     restart: always
     ports:
       - "6379:6379"
-
-```
-
-Also, there is a possibility to access redis via the Web UI.
-
-```yaml
-services:
-  commander:
-    image: rediscommander/redis-commander:latest
-    container_name: commander
-    hostname: commander
-    restart: always
-    environment:
-      - REDIS_HOSTS=local:redis:6379
-    ports:
-      - "8081:8081"
-    depends_on:
-      - redis
   redisinsight:
     image: redislabs/redisinsight:latest
     container_name: redisinsight
@@ -52,19 +34,33 @@ services:
       - "./docker/redislabs:/db"
     ports:
       - "8001:8001"
+
 ```
 
-In order to connect to redis via Web by commander use the [http://localhost:8081/](http://localhost:8081/) and by
-redisinsight use [http://localhost:8001/](http://localhost:8001/) then select the `I already have a database` and
-continue.
-
-**Redisinsight**
+Also, there is another alternative for the Redisinsight to access redis named Commander.
 
 ```yaml
-host: IP of the host machine (only IP and not localhost)
-port: 6379
-database: just a name
+  commander:
+    image: rediscommander/redis-commander:latest
+    container_name: commander
+    hostname: commander
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
 ```
+
+In order to connect to redis via Web
+
+* by commander use the [http://localhost:8081/](http://localhost:8081/)
+* by redisinsight use [http://localhost:8001/](http://localhost:8001/) then select the `I already have a database` and
+  continue with the following properties.
+  ```yaml
+  host: IP of the host machine (only IP and not localhost)
+  port: 6379
+  database: just a name
+  ```
 
 ## How To Config Spring Boot
 

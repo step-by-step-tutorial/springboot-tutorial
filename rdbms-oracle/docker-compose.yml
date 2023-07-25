@@ -12,3 +12,17 @@ services:
     environment:
       ORACLE_PWD: password
       ORACLE_CHARACTERSET: utf-8
+    volumes:
+      - "./docker/oracle_data:/opt/oracle/oradata"
+  ords:
+    image: container-registry.oracle.com/database/ords:latest
+    container_name: ords
+    hostname: ords
+    restart: always
+    links:
+      - oracle
+    ports:
+      - "8181:8181"
+    volumes:
+      - "./ords_secrets/:/opt/oracle/variables/"
+      - "./ords_config/:/etc/ords/config/"

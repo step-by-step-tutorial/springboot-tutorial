@@ -8,7 +8,7 @@ docker image rm postgres:13.9-alpine
 docker rm pgadmin --force
 docker image rm dpage/pgadmin4
 
-docker rm adminer --force
-docker image rm adminer
+REM docker rm adminer --force
+REM docker image rm adminer
 
 docker compose --file .\docker-compose.yml --project-name postgresql up --build -d

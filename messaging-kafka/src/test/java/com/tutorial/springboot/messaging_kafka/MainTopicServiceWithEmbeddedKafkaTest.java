@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles({"embedded"})
 @DirtiesContext
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@DisplayName("unit tests of kafka[embedded] main topic service")
 class MainTopicServiceWithEmbeddedKafkaTest {
 
     @Autowired
@@ -27,8 +28,8 @@ class MainTopicServiceWithEmbeddedKafkaTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException if the message is null")
-    void shouldThrowNullPointerExceptionIfMessageIsNull() {
+    @DisplayName("should throw a NullPointerException when given message is null")
+    void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final String givenMessage = null;
 
         final var expectedException = NullPointerException.class;
@@ -42,11 +43,10 @@ class MainTopicServiceWithEmbeddedKafkaTest {
 
     @Test
     @DisplayName("the message should be pushed to the topic")
-    void shouldPushMessageToTopic() throws InterruptedException {
+    void shouldPushMessageToTopic() {
         final var givenMessage = "hello";
 
         assertDoesNotThrow(() -> systemUnderTest.push(givenMessage));
-        Thread.sleep(10000);
     }
 
 }

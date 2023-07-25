@@ -18,12 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("jedis")
-@DisplayName("unit tests of sample repository")
+@DisplayName("unit tests of redis sample repository")
 class SampleRepositoryTest {
 
     static final Logger LOGGER = LoggerFactory.getLogger(SampleRepositoryTest.class);
 
     static RedisServer redisServer;
+
+    @Autowired
+    SampleRepository systemUnderTest;
 
     static {
         try {
@@ -31,21 +34,6 @@ class SampleRepositoryTest {
         } catch (IOException exception) {
             LOGGER.error("construction of the Redis server failed due to: {}", exception.getMessage());
         }
-    }
-
-    @Autowired
-    SampleRepository systemUnderTest;
-
-    /**
-     * This class includes Stub data.
-     */
-    static class StubFixturesFactory {
-        static final LocalDateTime NOW = LocalDateTime.now();
-        static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
-        static final SampleModel SAMPLE_MODEL = SampleModel.create()
-                .setName("name")
-                .setCode(1)
-                .setDatetime(NOW);
     }
 
     @BeforeAll
@@ -58,13 +46,32 @@ class SampleRepositoryTest {
         try {
             redisServer.stop();
         } catch (Exception exception) {
-            LOGGER.error("stopping embedded redis server failed due to: {}", exception.getMessage());
+            LOGGER.error("stopping embedded Redis server failed due to: {}", exception.getMessage());
         }
     }
+    /**
+     * This class includes Stub data.
+     */
+    static class StubFixturesFactory {
+        static final LocalDateTime NOW = LocalDateTime.now();
+        static final LocalDateTime TOMORROW = LocalDateTime.now()
+                .plusDays(1);
+        static final SampleModel SAMPLE_MODEL = SampleModel.create()
+                .setName("name")
+                .setCode(1)
+                .setDatetime(NOW);
+    }
+
 
     @Nested
     @DisplayName("nested unit tests of save")
     class SaveTest {
+
+        @BeforeEach
+        void setUp() {
+            assertNotNull(systemUnderTest);
+        }
+
         @Test
         @DisplayName("save a model when there is no exception")
         void shouldReturnIdBySuccessfulSave() {
@@ -85,10 +92,11 @@ class SampleRepositoryTest {
     @DisplayName("nested unit tests of find")
     class FindTest {
 
-        private String id = "";
+        String id = "";
 
         @BeforeEach
-        void initDatabase() {
+        void setUp() {
+            assertNotNull(systemUnderTest);
             this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_MODEL).orElseThrow();
         }
 
@@ -116,16 +124,17 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("nested unit tests of update")
     class UpdateTest {
-        private String id = "";
+        String id = "";
 
         @BeforeEach
-        void initDatabase() {
+        void setUp() {
+            assertNotNull(systemUnderTest);
             this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_MODEL).orElseThrow();
         }
 
         @Test
         @DisplayName("update one model by given new values")
-        void shouldUpdateDatabaseBySuccessfulUpdate() {
+        void shouldUpdateModelInDatabaseByGivenNewValues() {
             final var givenId = id;
             final var givenNewName = "updated name";
             final var givenNewCode = 2;
@@ -159,13 +168,13 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("nested unit tests of delete")
     class DeleteTest {
-        private String id = "";
+        String id = "";
 
         @BeforeEach
-        void initDatabase() {
+        void setUp() {
+            assertNotNull(systemUnderTest);
             this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_MODEL).orElseThrow();
         }
-
         @Test
         @DisplayName("delete one model by given Id")
         void shouldDeleteModelFromDatabaseByGivenId() {

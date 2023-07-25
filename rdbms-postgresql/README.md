@@ -35,41 +35,54 @@ services:
     hostname: pgadmin
     restart: always
     ports:
-      - "5050:80"
+      - "8080:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
       - "./docker/pgadmin:/var/lib/pgadmin"
-  adminer:
-    image: adminer
-    container_name: adminer
-    hostname: adminer
-    restart: always
-    ports:
-      - "5051:8080"
 ```
 
-In order to connect to PostgreSQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and
-use the following properties in the login page.
+Aldo, there is another alternative for Pgadmin for developing SQL named Adminer.
 
 ```yaml
-System: PostgreSQL
-Server: postgresql:5432
-Username: user
-Password: password
-Database: springboot_tutorial
+adminer:
+  image: adminer
+  container_name: adminer
+  hostname: adminer
+  restart: always
+  ports:
+    - "8080:8080"
 ```
 
-In order to connect to PostgreSQL via pgadmin brows [http://localhost:8081](http://localhost:8081/) via web browser and
+<p align="justify">
+
+In order to connect to PostgreSQL via Pgadmin open [http://localhost:8080](http://localhost:8080/) via web browser and
 use the following properties in the add server popup.
+
+</p>
 
 ```yaml
 hostname: postgresql
 port: 5432
 Username: user
 Password: password
+```
+
+<p align="justify">
+
+In order to connect to PostgreSQL via Adminer open [http://localhost:8080](http://localhost:8080/) via web browser and
+use the following properties in the login page.
+
+</p>
+
+```yaml
+System: PostgreSQL
+Server: postgresql:5432
+Username: user
+Password: password
+Database: test_db
 ```
 
 ## How To Config Spring Boot
@@ -129,7 +142,7 @@ spring:
   datasource:
     username: ${DATABASE_NAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:springboot_tutorial}
+    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:test_db}
     driver-class-name: org.postgresql.Driver
   data:
     jpa:

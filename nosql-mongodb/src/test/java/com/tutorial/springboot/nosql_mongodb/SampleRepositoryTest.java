@@ -14,64 +14,49 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @DataMongoTest
 @ActiveProfiles("test")
-@DisplayName("unit tests of sample repository")
+@DisplayName("unit tests of mongodb sample repository")
 class SampleRepositoryTest {
 
     @Container
-    static final MongoDBContainer mongoDbContainer = new MongoDBContainer("mongo:5.0.16");
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", mongoDbContainer::getReplicaSetUrl);
-    }
-
-    @BeforeAll
-    static void setUp() {
-        mongoDbContainer.start();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        mongoDbContainer.stop();
-    }
+    static final MongoDBContainer MONGODB = new MongoDBContainer("mongo:5.0.16");
 
     @Autowired
     SampleRepository systemUnderTest;
 
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri", MONGODB::getReplicaSetUrl);
+    }
+
+    @BeforeAll
+    static void setUp() {
+        MONGODB.start();
+    }
+
+    @AfterAll
+    static void tearDown() {
+        MONGODB.stop();
+    }
+
     /**
      * This class includes Stubs data.
      */
-    static class StubFactory {
+    static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now()
                 .truncatedTo(ChronoUnit.SECONDS);
         static final LocalDateTime TOMORROW = LocalDateTime.now()
                 .plusDays(1)
                 .truncatedTo(ChronoUnit.SECONDS);
         static final SampleDocument SAMPLE_DOCUMENT = SampleDocument.create()
-                .setName("stub name")
+                .setName("name")
                 .setCode(1)
                 .setDatetime(NOW);
-    }
-
-    /**
-     * This method executes final-all query then return all available IDs as a{@link String} array and if there is no
-     * persisted documents then throws {@link NoSuchElementException}.
-     *
-     * @return return all available IDs as a{@link String} array
-     * @throws NoSuchElementException if there is no persisted document
-     */
-    String[] giveMeId() {
-        return systemUnderTest.findAll()
-                .stream()
-                .map(SampleDocument::getId)
-                .toArray(String[]::new);
     }
 
     @Nested
@@ -79,14 +64,14 @@ class SampleRepositoryTest {
     class SaveTest {
 
         @BeforeEach
-        void preCondition() {
+        void setUp() {
             assertNotNull(systemUnderTest);
         }
 
         @Test
-        @DisplayName("save a document")
+        @DisplayName("save a document when there is no exception")
         void shouldReturnDocumentWithIdBySuccessfulSave() {
-            final var givenDocument = StubFactory.SAMPLE_DOCUMENT;
+            final var givenDocument = StubFixturesFactory.SAMPLE_DOCUMENT;
 
             final var actual = systemUnderTest.save(givenDocument);
 
@@ -99,20 +84,22 @@ class SampleRepositoryTest {
     @DisplayName("nested unit tests of find")
     class FindTest {
 
+        String id;
+
         @BeforeEach
-        void initDatabase() {
+        void setUp() {
             assertNotNull(systemUnderTest);
-            systemUnderTest.save(StubFactory.SAMPLE_DOCUMENT);
+            this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_DOCUMENT).getId();
         }
 
         @Test
-        @DisplayName("find one document by Id")
+        @DisplayName("find one document by given Id")
         void shouldReturnModelByGivenId() {
-            var givenId = giveMeId()[0];
+            final var givenId = id;
 
-            final var expectedName = "stub name";
+            final var expectedName = "name";
             final var expectedCode = 1;
-            final var expectedDatetime = StubFactory.NOW;
+            final var expectedDatetime = StubFixturesFactory.NOW;
 
             final var actual = systemUnderTest.findById(givenId);
 

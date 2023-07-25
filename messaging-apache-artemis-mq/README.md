@@ -1,6 +1,6 @@
 # <p align="center">Apache Active MQ (Artemis)</p>
 
-<p>
+<p align="justify">
 
 There are two distribution of Apache Active MQ, [Classic](https://activemq.apache.org/components/classic/) and the other
 one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial used Artemis distribution.
@@ -9,23 +9,12 @@ one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial
 
 ## Install Active MQ Artemis on Docker
 
+<p align="justify">
+
 Create docker-compose.yml, Dockerfile and start.sh file in a directory then execute the `docker compose  up -d` command
 to install Artemis on docker, also, you can use the following commands.
 
-**Help**
-```shell
-# check if docker was install on your machine
-docker --version
-docker-compose --version
-docker-machine --version
-
-# remove current container and image
-docker rm artemis --force
-docker image rm apache/activemq-artemis:latest
-
-# install and deploy artemis
-docker compose --file docker-compose.yml --project-name artemis up --build -d
-```
+</p>
 
 **Docker Compose file**
 ```yaml
@@ -43,10 +32,9 @@ services:
     ports:
       - "61616:61616"
       - "8161:8161"
-#    volumes:
-##     - ~/your local host path: exported volumes in docker file
-#      - ~/broker:/opt/broker
-#      - ~/broker:/opt/artemis
+    volumes:
+      - "./docker/broker:/opt/broker"
+      - "./docker/broker:/opt/artemis"
 ```
 **Docker File**
 ```dockerfile
@@ -119,7 +107,6 @@ EXPOSE 8161 \
 USER artemis
 
 VOLUME ["$APP_HOME", "$BROKER_HOME"]
-#WORKDIR $APP_HOME
 CMD $WORK_DIRECTORY/start.sh
 ```
 

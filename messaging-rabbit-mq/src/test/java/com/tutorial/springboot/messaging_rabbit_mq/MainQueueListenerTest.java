@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of main queue listener")
+@DisplayName("unit tests of rabbitmq main queue listener")
 class MainQueueListenerTest {
 
     @InjectMocks
@@ -42,8 +42,8 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException if the message is null")
-    void shouldThrowNullPointerExceptionIfMessageIsNull() {
+    @DisplayName("should throw a NullPointerException when given message is null")
+    void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final Message givenMessage = null;
         final var givenCorrelationId = "fake correlation Id";
 
@@ -57,8 +57,8 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException if the correlation is null")
-    void shouldThrowNullPointerExceptionIfCorrelationIdIsNull() {
+    @DisplayName("should throw a NullPointerException when given correlation is null")
+    void shouldThrowNullPointerExceptionWhenCorrelationIdIsNull() {
         final var givenMessage = new Message("fake body".getBytes());
         final String givenCorrelationId = null;
 
@@ -73,7 +73,7 @@ class MainQueueListenerTest {
 
     @Test
     @DisplayName("should processes message successful")
-    void shouldSendAcceptedStatusIfTheMessageWasProcessedSuccessful() {
+    void shouldSendAcceptedStatusWhenTheMessageWasProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
         final var givenCorrelationId = "fake correlation Id";
         final var givenBody = Optional.of(new MessageModel("fake Id", "fake text"));

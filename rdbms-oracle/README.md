@@ -14,6 +14,21 @@ url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NA
 
 ## Install Oracle on Docker
 
+If you want to install ORDS then you have to create the following directory and connection file.
+
+```shell
+
+mkdir ords_secrets
+mkdir ords_config
+# linux/unix
+echo CONN_STRING="sys as sysdba/password@oracle:1521/xepdb1" > ords_secrets/conn_string.txt
+# windows powershell
+echo 'CONN_STRING="sys as sysdba/password@oracle:1521/xepdb1"' > ords_secrets/conn_string.txt
+# windows cmd
+echo CONN_STRING=^"sys as sysdba/password@oracle:1521/xepdb1^" > ords_secrets/conn_string.txt
+
+```
+
 Execute the `docker compose  up -d` command to install Oracle database.
 
 ```yaml
@@ -21,7 +36,6 @@ version: "3.8"
 
 services:
   oracle:
-    #container-registry.oracle.com/database/free:latest
     image: container-registry.oracle.com/database/express:21.3.0-xe
     container_name: oracle
     hostname: oracle
@@ -32,15 +46,72 @@ services:
     environment:
       ORACLE_PWD: password
       ORACLE_CHARACTERSET: utf-8
+    volumes:
+      - "./docker/oracle_data:/opt/oracle/oradata"
+  ords:
+    image: container-registry.oracle.com/database/ords:latest
+    container_name: ords
+    hostname: ords
+    restart: always
+    links:
+      - oracle
+    ports:
+      - "8181:8181"
+    volumes:
+      - "./ords_secrets/:/opt/oracle/variables/"
+      - "./ords_config/:/etc/ords/config/"
+```
+
+### Set up Database
+
+Install [SqlPlus](https://www.oracle.com/database/technologies/instant-client/downloads.html) then connect to oracle
+db-service by following command and after that create your target user. Use the system or sys user.
+
+```shell
+sqlplus system/password@//localhost:1521/xepdb1
+```
+
+```oracle-sql
+CREATE USER target_user IDENTIFIED BY target_password;
+rem grants based on the requirements
 ```
 
 ### Enterprise Manager
 
-Open https://localhost:5500/em via web browser.
+Open https://localhost:5500/em in web browser.
 
 * user: system
 * password: password
 * container name: xepdb1
+
+### ORDS
+
+You have to enable the ORDS schema for the target user. Therefor connect to the db-service by target user and execute
+the procedure.
+
+```shell
+sqlplus target_user/target_password@//localhost:1521/xepdb1
+```
+
+```oracle-plsql
+ DECLARE
+     PRAGMA AUTONOMOUS_TRANSACTION;
+   BEGIN
+ 
+        ORDS.ENABLE_SCHEMA(p_enabled => TRUE,
+                           p_schema => 'TARGET_USER',
+                           p_url_mapping_type => 'BASE_PATH',
+                           p_url_mapping_pattern => 'target_user',
+                           p_auto_rest_auth => FALSE);
+
+      commit;
+
+  END;
+/
+```
+
+Open http://localhost:8181/ords in web browser, then use target_user and its password to log in to
+the `Sql Developer Web`.
 
 ## How To Config Spring Boot
 
@@ -177,7 +248,7 @@ mvn clean package -DskipTests=true
 ## Test
 
 ```bash
-mvn  test
+mvn  test "-longTimeTest.isActivate=true"
 ```
 
 ## Run

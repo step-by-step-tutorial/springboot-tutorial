@@ -2,7 +2,7 @@ spring:
   datasource:
     username: ${DATABASE_NAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:springboot_tutorial}
+    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:test_db}
     driver-class-name: org.postgresql.Driver
   data:
     jpa:

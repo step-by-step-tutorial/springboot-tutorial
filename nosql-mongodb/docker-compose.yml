@@ -12,7 +12,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-
   mongo-express:
     image: mongo-express
     container_name: mongo-express

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of main topic service")
+@DisplayName("unit tests of kafka main topic service")
 class MainTopicServiceTest {
 
     @InjectMocks
@@ -38,7 +38,7 @@ class MainTopicServiceTest {
     }
 
     @Test
-    @DisplayName("should throw NullPointerException when the message is null")
+    @DisplayName("should throw NullPointerException when given message is null")
     void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final String givenMessage = null;
 

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
+@DisplayName("unit tests of console logging")
 class ApplicationTest {
 
     Logger logger = LoggerFactory.getLogger(ApplicationTest.class.getSimpleName());

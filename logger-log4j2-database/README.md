@@ -110,8 +110,10 @@ mvn clean package -DskipTests=true
 
 ## Test
 
+If the MySql instance is ready and already configured then it is possible to run the unit tests.
+
 ```bash
-mvn test
+mvn test "-Dmysql.isReady=true"
 ```
 
 ## Run

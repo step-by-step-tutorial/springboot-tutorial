@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of main queue listener")
+@DisplayName("unit tests of artemis main queue listener")
 class MainQueueListenerTest {
 
     @InjectMocks
@@ -49,8 +49,8 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException if the message is null")
-    void shouldThrowNullPointerExceptionIfMessageIsNull() {
+    @DisplayName("should throw a NullPointerException when given message is null")
+    void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final Message givenMessage = null;
 
         final var expectedException = NullPointerException.class;
@@ -64,8 +64,8 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should send an ACCEPTED status if the message was processed successful")
-    void shouldSendAcceptedStatusIfTheMessageWasProcessedSuccessful() {
+    @DisplayName("should send an ACCEPTED status when given message was processed successful")
+    void shouldSendAcceptedStatusWhenTheMessageWasProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
         final var givenBody = Optional.of(new MessageModel("fake Id", "fake text"));
         final var givenCorrelationId = "fake correlation Id";
@@ -84,8 +84,8 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should send a FAILED status if the message was not processed successful")
-    void shouldSendFailedStatusIfTheMessageWasNotProcessedSuccessful() {
+    @DisplayName("should send a FAILED status when given message was not processed successful")
+    void shouldSendFailedStatusWhenTheMessageWasNotProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
         final var givenBody = Optional.empty();
         messageUtils.when(() -> extractBody(any(), any())).thenReturn(givenBody);

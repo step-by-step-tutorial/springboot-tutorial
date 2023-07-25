@@ -5,6 +5,7 @@ spring:
     username: guest
     password: guest
 
+# defined by user
 destination:
   main-queue: mainQueue
 

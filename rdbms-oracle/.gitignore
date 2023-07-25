@@ -3,6 +3,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 docker
+ords_config
+ords_secrets
 
 ### STS ###
 .apt_generated

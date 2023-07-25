@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Testcontainers
-@ActiveProfiles({"unit tests of main queue service"})
+@DisplayName("unit tests of rabbitmq main queue service")
 class MainQueueServiceTest {
 
     @Container
@@ -49,8 +49,8 @@ class MainQueueServiceTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException if the message is null")
-    void shouldThrowNullPointerExceptionIfMessageIsNull() {
+    @DisplayName("should throw a NullPointerException when given message is null")
+    void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final MessageModel givenModel = null;
 
         final var expectedException = NullPointerException.class;

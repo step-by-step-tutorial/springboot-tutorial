@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of main queue service")
+@DisplayName("unit tests of artemis main queue service")
 class MainQueueServiceTest {
 
     @InjectMocks
@@ -45,8 +45,8 @@ class MainQueueServiceTest {
     }
 
     @Test
-    @DisplayName("should throw NullPointerException if the message is null")
-    void shouldThrowNullPointerExceptionIfMessageIsNull() {
+    @DisplayName("should throw NullPointerException when given message is null")
+    void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final MessageModel givenModel = null;
 
         final var expectedException = NullPointerException.class;

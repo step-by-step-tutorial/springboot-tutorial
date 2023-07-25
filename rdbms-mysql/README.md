@@ -49,7 +49,7 @@ services:
     hostname: adminer
     restart: always
     ports:
-      - "5050:8080"
+      - "8080:8080"
 ```
 
 In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use

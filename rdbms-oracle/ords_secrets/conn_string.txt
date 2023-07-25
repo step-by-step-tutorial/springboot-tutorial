@@ -1,0 +1,1 @@
+CONN_STRING="sys as sysdba/password@oracle:1521/xepdb1"

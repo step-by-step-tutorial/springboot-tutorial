@@ -5,13 +5,9 @@
 This tutorial is included [Redis](https://redis.io/) configuration for test and none test environment. This tutorial
 uses [Lettuce](https://lettuce.io/) to create connection factories for making connection to the Redis.
 
-
-
 </p>
 
 ## Install Redis on Docker
-
-Execute the `docker compose  up -d` command to install the Redis.
 
 ```yaml
 version: "3.8"
@@ -21,9 +17,45 @@ services:
     image: redis:latest
     container_name: redis
     hostname: redis
+    restart: always
     ports:
       - "6379:6379"
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    hostname: redisinsight
+    restart: always
+    volumes:
+      - "./docker/redislabs:/db"
+    ports:
+      - "8001:8001"
+
 ```
+
+Also, there is another alternative for the Redisinsight to access redis named Commander.
+
+```yaml
+  commander:
+    image: rediscommander/redis-commander:latest
+    container_name: commander
+    hostname: commander
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+```
+
+In order to connect to redis via Web
+
+* by commander use the [http://localhost:8081/](http://localhost:8081/)
+* by redisinsight use [http://localhost:8001/](http://localhost:8001/) then select the `I already have a database` and
+  continue with the following properties.
+  ```yaml
+  host: IP of the host machine (only IP and not localhost)
+  port: 6379
+  database: just a name
+  ```
 
 ## How To Config Spring Boot
 
@@ -73,15 +105,6 @@ spring:
       port: ${REDIS_PORT:6379}
       repositories:
         enabled: false
-  redis:
-    ssl: false
-    timeout: 2000
-    lettuce:
-      pool:
-        max-active: 8
-        max-idle: 8
-        min-idle: 0
-        max-wait: -1
 ```
 
 ## Prerequisites

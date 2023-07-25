@@ -1,29 +1,19 @@
 # <p align="center">Rabbit MQ</p>
 
-<p>
+<p align="justify">
+
 Rabbit Mq is a message queue for more information see the [https://www.rabbitmq.com/](https://www.rabbitmq.com/).
+
 </p>
 
 ## Install Active MQ Artemis on Docker
 
+<p align="justify">
+
 Execute the `docker compose  up -d` command to install RabbitMQ on docker, also, you can use the following commands.
 
-**Help**
-```shell
-# check if docker was install on your machine
-docker --version
-docker-compose --version
-docker-machine --version
+</p>
 
-# remove current container and image
-docker rm rabbitmq --force
-docker image rm rabbitmq:management
-
-# install and deploy artemis
-docker compose --file docker-compose.yml --project-name rabbitmq up -d
-```
-
-**Docker Compose file**
 ```yaml
 version: '3.8'
 services:

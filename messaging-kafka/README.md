@@ -1,34 +1,18 @@
 # <p align="center">Kafka MQ</p>
 
-<p>
+<p align="justify">
+
 Apache Kafka MQ is a message queue, for more information see the [https://kafka.apache.org/](https://kafka.apache.org/).
+
 </p>
 
 ## Install Active MQ Artemis on Docker
 
+<p align="justify">
+
 Execute the `docker compose  up -d` command to install Kafka on docker, also, you can use the following commands.
 
-**Help**
-
-```shell
-# check if docker was install on your machine
-docker --version
-docker-compose --version
-docker-machine --version
-
-# remove current container and image
-docker rm kafka --force
-docker rm zookeeper --force
-docker rm kafdrop --force
-docker image rm confluentinc/cp-zookeeper:latest
-docker image rm confluentinc/cp-kafka:latest
-docker image rm obsidiandynamics/kafdrop:latest
-
-# install and deploy artemis
-docker compose --file docker-compose.yml --project-name kafka up -d```
-```
-
-**Docker Compose file**
+</p>
 
 ```yaml
 version: '2'
@@ -119,7 +103,6 @@ spring:
       client-id: admin-embedded-client-id
 
 ```
-
 
 ### Web Console (kafdrop)
 

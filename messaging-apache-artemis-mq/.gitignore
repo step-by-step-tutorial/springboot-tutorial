@@ -3,7 +3,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 data
-infrastructure/broker
+docker
+
 
 ### STS ###
 .apt_generated

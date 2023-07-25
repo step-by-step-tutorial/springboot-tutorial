@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of status queue listener")
+@DisplayName("unit tests of artemis status queue listener")
 class StatusQueueListenerTest {
 
     @InjectMocks
@@ -43,8 +43,8 @@ class StatusQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException if the message is null")
-    void shouldThrowNullPointerExceptionIfMessageIsNull() {
+    @DisplayName("should throw a NullPointerException when given message is null")
+    void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final Message givenMessage = null;
 
         final var expectedException = NullPointerException.class;
@@ -57,8 +57,8 @@ class StatusQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should log an info if the message was processed successful")
-    void shouldLogInfoIfTheMessageWasProcessedSuccessful() {
+    @DisplayName("should log an info when given message was processed successful")
+    void shouldLogInfoWhenTheMessageWasProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
         final var givenBody = Optional.of(new StatusModel(Acknowledge.ACCEPTED, "fake additional data"));
         final var givenCorrelationId = "fake correlation Id";
@@ -72,8 +72,8 @@ class StatusQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should logg an error if the message was not processed successful")
-    void shouldLogErrorIfTheMessageWasNotProcessedSuccessful() {
+    @DisplayName("should logg an error when given message was not processed successful")
+    void shouldLogErrorWhenTheMessageWasNotProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
         final var givenBody = Optional.empty();
         final var givenCorrelationId = "fake correlation Id";
