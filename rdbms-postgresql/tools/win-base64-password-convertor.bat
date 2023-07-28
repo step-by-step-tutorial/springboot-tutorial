@@ -1,0 +1,1 @@
+certutil -encode plain-password.txt base64-password.txt
