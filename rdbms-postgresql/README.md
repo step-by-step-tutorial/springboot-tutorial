@@ -37,8 +37,6 @@ sudo -u test_user psql -d test_db -f test_db_schema.sql
 
 ## Install PostgreSQL on Docker
 
-Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.
-
 ### Docker Compose File
 
 Create a file named docker-compose.yml with the following configuration.
@@ -75,6 +73,8 @@ services:
     volumes:
       - "./docker/pgadmin:/var/lib/pgadmin"
 ```
+
+Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.
 
 <p align="justify">
 
@@ -126,7 +126,6 @@ Database: test_db
 ```xml
 
 <dependencies>
-
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-jpa</artifactId>

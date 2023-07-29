@@ -6,7 +6,7 @@ This tutorial is included [Oracle database](https://www.oracle.com/) configurati
 
 </p>
 
-**URL Example**
+### URL Example
 
 ```yaml
 url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
@@ -14,10 +14,11 @@ url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NA
 
 ## Install Oracle on Docker
 
+### ORDS Pre-Config
+
 If you want to install ORDS then you have to create the following directory and connection file.
 
 ```shell
-
 mkdir ords_secrets
 mkdir ords_config
 # linux/unix
@@ -29,7 +30,9 @@ echo CONN_STRING=^"sys as sysdba/password@oracle:1521/xepdb1^" > ords_secrets/co
 
 ```
 
-Execute the `docker compose  up -d` command to install Oracle database.
+### Docker Compose File
+
+Create a file named docker-compose.yml with the following configuration.
 
 ```yaml
 version: "3.8"
@@ -62,6 +65,8 @@ services:
       - "./ords_config/:/etc/ords/config/"
 ```
 
+Execute the `docker compose  up -d` command to install Oracle database.
+
 ### Set up Database
 
 Install [SqlPlus](https://www.oracle.com/database/technologies/instant-client/downloads.html) then connect to oracle
@@ -73,7 +78,6 @@ sqlplus system/password@//localhost:1521/xepdb1
 
 ```oracle-sql
 CREATE USER target_user IDENTIFIED BY target_password;
-rem grants based on the requirements
 ```
 
 ### Enterprise Manager
@@ -224,9 +228,9 @@ spring:
         default_schema: ${spring.datasource.username}
 ---
 spring:
-  profiles:
-    active:
-      - test
+  config:
+    activate:
+      on-profile: test
   jpa:
     hibernate:
       ddl-auto: create
@@ -256,5 +260,7 @@ mvn  test "-longTimeTest.isActivate=true"
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center"> [Top](#rdbms-oracle) </p>**

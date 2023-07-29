@@ -26,9 +26,9 @@ spring:
         default_schema: ${spring.datasource.username}
 ---
 spring:
-  profiles:
-    active:
-      - test
+  config:
+    activate:
+      on-profile: test
   jpa:
     hibernate:
       ddl-auto: create
