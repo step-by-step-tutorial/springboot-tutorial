@@ -7,9 +7,41 @@ environment.
 
 </p>
 
+## How To
+
+```shell
+# first connection
+sudo -u postgres psql postgres
+
+# change password
+alter user postgres with password 'password';
+
+# exit from postgres database
+type: \q
+
+# how to create user?
+sudo -u postgres createuser -D -A -P user-name
+# example
+sudo -u postgres createuser -D -A -P test_user
+
+# how to create database?
+sudo -u postgres createdb -O user-name db-name
+# example
+sudo -u postgres createdb -O test_user test_db
+
+# how to run sql file?
+sudo -u user-name psql -d db-name -f file-name.sql
+# example
+sudo -u test_user psql -d test_db -f test_db_schema.sql
+```
+
 ## Install PostgreSQL on Docker
 
-Execute the `docker compose  up -d` command to install PostgreSQL and a SQL developer named adminer and pgadmin.
+Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.
+
+### Docker Compose File
+
+Create a file named docker-compose.yml with the following configuration.
 
 ```yaml
 version: "3.8"
@@ -44,7 +76,23 @@ services:
       - "./docker/pgadmin:/var/lib/pgadmin"
 ```
 
-Aldo, there is another alternative for Pgadmin for developing SQL named Adminer.
+<p align="justify">
+
+In order to connect to PostgreSQL via Pgadmin open [http://localhost:8080](http://localhost:8080/) through web browser
+and use the following properties in the add-server popup.
+
+</p>
+
+```yaml
+hostname: postgresql
+port: 5432
+Username: user
+Password: password
+```
+
+### Adminer
+
+Also, there is another alternative for Pgadmin for developing SQL named Adminer.
 
 ```yaml
 adminer:
@@ -58,22 +106,8 @@ adminer:
 
 <p align="justify">
 
-In order to connect to PostgreSQL via Pgadmin open [http://localhost:8080](http://localhost:8080/) via web browser and
-use the following properties in the add server popup.
-
-</p>
-
-```yaml
-hostname: postgresql
-port: 5432
-Username: user
-Password: password
-```
-
-<p align="justify">
-
-In order to connect to PostgreSQL via Adminer open [http://localhost:8080](http://localhost:8080/) via web browser and
-use the following properties in the login page.
+In order to connect to PostgreSQL via Adminer open [http://localhost:8080](http://localhost:8080/) through web browser
+and use the following properties in the login page.
 
 </p>
 
@@ -166,13 +200,13 @@ spring:
         default_schema: ${DATABASE_SCHEMA:sample}
 ---
 spring:
-  profiles:
-    active:
-      - test
-  jpa:
-    hibernate:
-      ddl-auto: create
-
+  config:
+    activate:
+      on-profile: test
+  data:
+    jpa:
+      hibernate:
+        ddl-auto: create
 ```
 
 ## Prerequisites
@@ -198,5 +232,7 @@ mvn  test
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center"> [Top](#rdbms-postgresql) </p>**

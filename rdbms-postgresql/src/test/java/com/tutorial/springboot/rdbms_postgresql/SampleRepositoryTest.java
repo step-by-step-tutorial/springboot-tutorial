@@ -86,7 +86,6 @@ class SampleRepositoryTest {
         void shouldReturnEntityWithIdBySuccessfulSave() {
             final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
 
-            final var expectedId = 1L;
             final var expectedName = "name";
             final var expectedCode = 1;
             final var expectedDatetime = StubFixturesFactory.NOW;
@@ -94,7 +93,7 @@ class SampleRepositoryTest {
             final var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
-            assertEquals(expectedId, actual.getId());
+            assertNotNull(actual.getId());
             assertEquals(expectedName, actual.getName());
             assertEquals(expectedCode, actual.getCode());
             assertEquals(expectedDatetime, actual.getDatetime());
@@ -104,18 +103,19 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("nested unit tests of find")
     class FindTest {
+        private Long id;
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            final var entity = systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            id = entity.getId();
         }
 
         @Test
         @DisplayName("find one entity by given Id")
         void shouldReturnEntityByGivenId() {
-            final var givenId = 1L;
+            final var givenId = id;
 
-            final var expectedId = 1L;
             final var expectedName = "name";
             final var expectedCode = 1;
             final var expectedDatetime = StubFixturesFactory.NOW;
@@ -124,7 +124,6 @@ class SampleRepositoryTest {
 
             assertTrue(actual.isPresent());
             actual.ifPresent(entity -> {
-                assertEquals(expectedId, entity.getId());
                 assertEquals(expectedName, entity.getName());
                 assertEquals(expectedCode, entity.getCode());
                 assertEquals(expectedDatetime, entity.getDatetime());
@@ -136,15 +135,18 @@ class SampleRepositoryTest {
     @DisplayName("nested unit tests of update")
     class UpdateTest {
 
+        private Long id;
+
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            final var entity = systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            id = entity.getId();
         }
 
         @Test
         @DisplayName("update one entity by given new values")
         void shouldUpdateTupleInDatabaseByGivenNewValues() {
-            final var givenId = 1L;
+            final var givenId = id;
             final var givenNewName = "updated name";
             final var givenNewCode = 2;
             final var givenNewDatetime = StubFixturesFactory.TOMORROW;
@@ -166,6 +168,7 @@ class SampleRepositoryTest {
 
             assertTrue(actual.isPresent());
             actual.ifPresent(entity -> {
+                assertNotNull(entity.getId());
                 assertEquals(expectedName, entity.getName());
                 assertEquals(expectedCode, entity.getCode());
                 assertEquals(expectedDatetime, entity.getDatetime());
@@ -176,16 +179,18 @@ class SampleRepositoryTest {
     @Nested
     @DisplayName("nested unit tests of delete")
     class DeleteTest {
+        private Long id;
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            final var entity = systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            id = entity.getId();
         }
 
         @Test
         @DisplayName("delete one entity by given Id")
         void shouldDeleteTupleFromDatabaseByGivenId() {
-            final var givenId = 1L;
+            final var givenId = id;
 
             assertDoesNotThrow(() -> systemUnderTest.deleteById(givenId));
             final var actual = systemUnderTest.findById(givenId);

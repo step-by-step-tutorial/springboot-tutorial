@@ -1,10 +1,3 @@
-kubectl delete all --all
-kubectl delete secrets postgres-secrets
-kubectl delete configMap postgres-configmap
-kubectl delete persistentvolumeclaim postgres-pvc
-kubectl delete secrets pgadmin-secrets
-kubectl delete ingress pgadmin
-
 kubectl apply -f ./kube/postgres-pvc.yml
 
 kubectl apply -f ./kube/postgres-configmap.yml
@@ -39,5 +32,9 @@ REM kubectl get ingress -n default
 REM kubectl describe ingress pgadmin -n default
 kubectl get all
 
+REM if you want to connect to pgadmin from localhost through the web browser use the following command
+REM http://localhost:8080
 kubectl port-forward service/pgadmin 8080:80
+
+REM if you want to connect database from localhost through the application use the following command
 kubectl port-forward service/postgres 5432:5432

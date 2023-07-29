@@ -26,9 +26,10 @@ spring:
         default_schema: ${DATABASE_SCHEMA:sample}
 ---
 spring:
-  profiles:
-    active:
-      - test
-  jpa:
-    hibernate:
-      ddl-auto: create
+  config:
+    activate:
+      on-profile: test
+  data:
+    jpa:
+      hibernate:
+        ddl-auto: create
