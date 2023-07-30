@@ -7,6 +7,12 @@ environment.
 
 </p>
 
+### URL
+
+```yaml
+url: jdbc:postgresql://host:port/database-name
+```
+
 ## How To
 
 ```shell

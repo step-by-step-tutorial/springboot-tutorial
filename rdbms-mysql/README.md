@@ -14,16 +14,17 @@ Some parameters can be included in mysql URL connection are as follows.
 
 </p>
 
-**URL Example**
+### URL
 
 ```yaml
-url: jdbc:mysql://${MYSQL_HOST}/${MYSQL_DATABASE}?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&pinGlobalTxToPhysicalConnection=TRUE
+url: jdbc:mysql://host:port/database-name?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&pinGlobalTxToPhysicalConnection=TRUE
 ```
 
 ## Install MySQL on Docker
 
-At first, create a docker compose file and add the images then execute the `docker compose  up -d` command to install
-MySQL 8.0 and a SQL developer named adminer.
+### Docker Compose File
+
+Create a file named docker-compose.yml with the following configuration.
 
 ```yaml
 version: "3.8"
@@ -52,8 +53,14 @@ services:
       - "8080:8080"
 ```
 
+Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.
+
+<p align="justify">
+
 In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use
 the following properties in the login page.
+
+</p>
 
 ```yaml
 System: MySQL
@@ -144,9 +151,9 @@ spring:
         default_schema: ${DATABASE_SCHEMA:sample}
 ---
 spring:
-  profiles:
-    active:
-      - test
+  config:
+    activate:
+      on-profile: test
   jpa:
     hibernate:
       ddl-auto: create
@@ -176,5 +183,7 @@ mvn  test
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center"> [Top](#rdbms-mysql) </p>**

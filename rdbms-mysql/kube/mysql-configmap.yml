@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+data:
+  mysql-database: test_db
+# if you want to add privilege the user and database to support XA transactions you have to add the following queries
+#  initdb.sql: |-
+#    CREATE DATABASE IF NOT EXISTS `test_db` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+#    CREATE USER IF NOT EXISTS 'user' IDENTIFIED BY 'password';
+#    GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user';
+#    GRANT XA_RECOVER_ADMIN ON *.* TO 'user';
+#    GRANT ALL ON `test_db`.* TO 'user';
+#    FLUSH PRIVILEGES;
