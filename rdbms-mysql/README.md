@@ -53,14 +53,247 @@ services:
       - "8080:8080"
 ```
 
-Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.
+Execute the `docker compose  up -d` command to install MySQL and Adminer.
 
 <p align="justify">
 
-In order to connect to MySQL via adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use
+In order to connect to MySQL via Adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use
 the following properties in the login page.
 
 </p>
+
+```yaml
+System: MySQL
+Server: mysql:3306
+Username: user
+Password: password
+Database: test_db
+```
+
+## Install MySQL on Kubernetes
+
+Create the following file.
+
+```yaml
+# mysql-secrets.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secrets
+type: Opaque
+data:
+  mysql-root-password: cm9vdA==
+  mysql-user: dXNlcg==
+  mysql-password: cGFzc3dvcmQ=
+```
+
+```yaml
+# mysql-configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+data:
+  mysql-database: test_db
+# if you want to add privilege the user and database to support XA transactions you have to add the following queries
+#  initdb.sql: |-
+#    CREATE DATABASE IF NOT EXISTS `test_db` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+#    CREATE USER IF NOT EXISTS 'user' IDENTIFIED BY 'password';
+#    GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user';
+#    GRANT XA_RECOVER_ADMIN ON *.* TO 'user';
+#    GRANT ALL ON `test_db`.* TO 'user';
+#    FLUSH PRIVILEGES;
+```
+
+```yaml
+# mysql-pvc.yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  labels:
+    app: mysql
+    tier: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+```yaml
+# mysql-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    tier: database
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+        tier: database
+    spec:
+      containers:
+        - image: mysql:8.0
+          name: mysql
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-root-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-configmap
+                  key: mysql-database
+          ports:
+            - name: mysql
+              containerPort: 3306
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      #            - name: mysql-initdb
+      #              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+#        - name: mysql-initdb
+#          configMap:
+#            name: mysql-configmap
+```
+
+```yaml
+# mysql-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+    tier: database
+spec:
+  selector:
+    app: mysql
+    tier: database
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+```
+
+```yaml
+# adminer-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+        - name: adminer
+          image: adminer:latest
+          ports:
+            - containerPort: 8080
+```
+
+```yaml
+# adminer-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer
+spec:
+  selector:
+    app: adminer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+```
+
+Execute the following commands to install tools on Kubernetes.
+
+```shell
+kubectl apply -f ./kube/mysql-pvc.yml
+
+kubectl apply -f ./kube/mysql-configmap.yml
+# kubectl describe configmap mysql-configmap -n default
+
+kubectl apply -f ./kube/mysql-secrets.yml
+# kubectl describe secret mysql-secrets -n default
+# kubectl get secret mysql-secrets -n default -o yaml
+
+kubectl apply -f ./kube/mysql-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment mysql -n default
+
+kubectl apply -f ./kube/mysql-service.yml
+# kubectl get service -n default
+# kubectl describe service mysql -n default
+
+kubectl apply -f ./kube/adminer-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment adminer -n default
+
+kubectl apply -f ./kube/adminer-service.yml
+# kubectl get services -n default
+# kubectl describe service adminer -n default
+
+# kubectl apply -f ./kube/adminer-ingress.yml
+# kubectl get ingress -n default
+# kubectl describe ingress adminer -n default
+kubectl get all
+```
+
+<p align="justify">
+
+If you want to connect to MySQL through application or Adminer from localhost through the web browser use the following
+command and dashboard of Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
+
+</p>
+
+```shell
+# adminer
+# http://localhost:8080
+kubectl port-forward service/adminer 8080:8080
+
+# mysql
+kubectl port-forward service/mysql 3306:3306
+```
+
+Use the following properties for Adminer.
 
 ```yaml
 System: MySQL
