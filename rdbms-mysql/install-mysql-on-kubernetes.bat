@@ -30,7 +30,7 @@ kubectl get all
 
 REM if you want to connect to adminer from localhost through the web browser use the following command
 REM http://localhost:8080
-kubectl port-forward service/adminer 8080:8080
+kubectl port-forward service/adminer 8080:80
 
 REM if you want to connect database from localhost through the application use the following command
 kubectl port-forward service/mysql 3306:3306

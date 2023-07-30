@@ -74,6 +74,8 @@ Database: test_db
 
 Create the following file.
 
+**mysql-secrets.yml**
+
 ```yaml
 # mysql-secrets.yml
 apiVersion: v1
@@ -86,6 +88,8 @@ data:
   mysql-user: dXNlcg==
   mysql-password: cGFzc3dvcmQ=
 ```
+
+**mysql-configmap.yml**
 
 ```yaml
 # mysql-configmap.yml
@@ -105,6 +109,8 @@ data:
 #    FLUSH PRIVILEGES;
 ```
 
+**mysql-pvc.yml**
+
 ```yaml
 # mysql-pvc.yml
 apiVersion: v1
@@ -121,6 +127,8 @@ spec:
     requests:
       storage: 1Gi
 ```
+
+**mysql-deployment.yml**
 
 ```yaml
 # mysql-deployment.yml
@@ -175,8 +183,8 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-      #            - name: mysql-initdb
-      #              mountPath: /docker-entrypoint-initdb.d
+      #                  - name: mysql-initdb
+      #                    mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
@@ -185,6 +193,8 @@ spec:
 #          configMap:
 #            name: mysql-configmap
 ```
+
+**mysql-service.yml**
 
 ```yaml
 # mysql-service.yml
@@ -204,6 +214,8 @@ spec:
     - port: 3306
       targetPort: 3306
 ```
+
+**adminer-deployment.yml**
 
 ```yaml
 # adminer-deployment.yml
@@ -227,6 +239,8 @@ spec:
           ports:
             - containerPort: 8080
 ```
+
+**adminer-service.yml**
 
 ```yaml
 # adminer-service.yml
@@ -287,7 +301,7 @@ command and dashboard of Adminer is available with [http://localhost:8080](http:
 ```shell
 # adminer
 # http://localhost:8080
-kubectl port-forward service/adminer 8080:8080
+kubectl port-forward service/adminer 8080:80
 
 # mysql
 kubectl port-forward service/mysql 3306:3306
@@ -301,6 +315,79 @@ Server: mysql:3306
 Username: user
 Password: password
 Database: test_db
+```
+
+Also, there is another alternative for Adminer, named Phpmyadmin. Therefore, use the following instruction to install
+that on Kubernetes.
+
+**phpmyadmin-deployment.yml**
+
+```yaml
+# phpmyadmin-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin
+  labels:
+    app: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+        - name: phpmyadmin
+          image: phpmyadmin/phpmyadmin
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 80
+          env:
+            - name: PMA_HOST
+              value: mysql
+            - name: PMA_PORT
+              value: "3306"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: mysql-root-password
+```
+
+**phpmyadmin-service.yml**
+
+```yaml
+# phpmyadmin-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin
+spec:
+  type: NodePort
+  selector:
+    app: phpmyadmin
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+```
+
+<p align="justify">
+
+If you want to connect to Phpmyadmin from localhost through the web browser use the following command and dashboard of
+Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
+
+</p>
+
+```shell
+# http://localhost:8080
+kubectl port-forward service/phpmyadmin 8080:80
 ```
 
 ## How To Config Spring Boot
