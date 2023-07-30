@@ -72,12 +72,13 @@ Database: test_db
 
 ## Install MySQL on Kubernetes
 
-Create the following file.
+### MySQL
+
+Create the following file for installing MySQL.
 
 **mysql-secrets.yml**
 
 ```yaml
-# mysql-secrets.yml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -92,7 +93,6 @@ data:
 **mysql-configmap.yml**
 
 ```yaml
-# mysql-configmap.yml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -112,7 +112,6 @@ data:
 **mysql-pvc.yml**
 
 ```yaml
-# mysql-pvc.yml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -131,7 +130,6 @@ spec:
 **mysql-deployment.yml**
 
 ```yaml
-# mysql-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -183,8 +181,8 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-      #                  - name: mysql-initdb
-      #                    mountPath: /docker-entrypoint-initdb.d
+#            - name: mysql-initdb
+#              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
@@ -197,7 +195,6 @@ spec:
 **mysql-service.yml**
 
 ```yaml
-# mysql-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -215,10 +212,11 @@ spec:
       targetPort: 3306
 ```
 
+### Adminer
+
 **adminer-deployment.yml**
 
 ```yaml
-# adminer-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -243,7 +241,6 @@ spec:
 **adminer-service.yml**
 
 ```yaml
-# adminer-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -317,13 +314,14 @@ Password: password
 Database: test_db
 ```
 
+### Phpmyadmin
+
 Also, there is another alternative for Adminer, named Phpmyadmin. Therefore, use the following instruction to install
 that on Kubernetes.
 
 **phpmyadmin-deployment.yml**
 
 ```yaml
-# phpmyadmin-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -363,7 +361,6 @@ spec:
 **phpmyadmin-service.yml**
 
 ```yaml
-# phpmyadmin-service.yml
 apiVersion: v1
 kind: Service
 metadata:
