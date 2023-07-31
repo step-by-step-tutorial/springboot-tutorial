@@ -319,6 +319,8 @@ spec:
       targetPort: 80
 ```
 
+### Apply the Files
+
 Execute the following commands to install tools on Kubernetes.
 
 ```shell
@@ -347,9 +349,6 @@ kubectl apply -f ./kube/pgadmin-service.yml
 # kubectl get services -n default
 # kubectl describe service pgadmin -n default
 
-# kubectl apply -f ./kube/pgadmin-ingress.yml
-# kubectl get ingress -n default
-# kubectl describe ingress pgadmin -n default
 kubectl get all
 ```
 

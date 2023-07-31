@@ -298,6 +298,8 @@ spec:
       targetPort: 8080
 ```
 
+### Apply the Files
+
 Execute the following commands to install tools on Kubernetes.
 
 ```shell
@@ -326,9 +328,6 @@ kubectl apply -f ./kube/adminer-service.yml
 # kubectl get services -n default
 # kubectl describe service adminer -n default
 
-# kubectl apply -f ./kube/adminer-ingress.yml
-# kubectl get ingress -n default
-# kubectl describe ingress adminer -n default
 kubectl get all
 ```
 
