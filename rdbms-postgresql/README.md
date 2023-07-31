@@ -247,7 +247,7 @@ spec:
   selector:
     app: postgres
     tier: database
-  type: NodePort
+
   ports:
     - port: 5432
       targetPort: 5432
@@ -313,7 +313,6 @@ metadata:
 spec:
   selector:
     app: pgadmin
-  type: NodePort
   ports:
     - port: 80
       targetPort: 80
@@ -401,7 +400,7 @@ spec:
         - name: adminer
           image: adminer:latest
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 ```
 
 **adminer-service.yml**
@@ -416,8 +415,8 @@ spec:
     app: adminer
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 8080
+      targetPort: 8080
 ```
 
 Execute the following commands to install tools on Kubernetes.
@@ -447,7 +446,7 @@ Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
 ```shell
 # adminer
 # http://localhost:8080
-kubectl port-forward service/adminer 8080:80
+kubectl port-forward service/adminer 8080:8080
 
 ```
 

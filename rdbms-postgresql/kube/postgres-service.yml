@@ -9,7 +9,6 @@ spec:
   selector:
     app: postgres
     tier: database
-  type: NodePort
   ports:
     - port: 5432
       targetPort: 5432

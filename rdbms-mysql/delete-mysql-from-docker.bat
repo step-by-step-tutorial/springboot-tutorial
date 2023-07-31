@@ -3,3 +3,6 @@ docker image rm mysql:8.0
 
 docker rm adminer --force
 docker image rm adminer
+
+REM docker rm phpmyadmin --force
+REM docker image rm phpmyadmin

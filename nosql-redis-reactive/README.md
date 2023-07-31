@@ -49,13 +49,15 @@ Also, there is another alternative for the Redisinsight to access redis named Co
 In order to connect to redis via Web
 
 * by commander use the [http://localhost:8081/](http://localhost:8081/)
-* by redisinsight use [http://localhost:8001/](http://localhost:8001/) then select the `I already have a database` and
+* by redisinsight use [http://host-IP:8001/](http://host-IP:8001/) then select the `I already have a database` and
   continue with the following properties.
   ```yaml
   host: IP of the host machine (only IP and not localhost)
   port: 6379
   database: just a name
   ```
+  
+## Install Redis on Kubernetes
 
 ## How To Config Spring Boot
 

@@ -99,6 +99,8 @@ services:
 
 Execute the `docker compose  up -d` command to install MySQL and Adminer.
 
+### Adminer
+
 <p align="justify">
 
 In order to connect to MySQL via Adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use
@@ -113,6 +115,21 @@ Username: user
 Password: password
 Database: test_db
 ```
+
+### Phpmyadmin
+
+There is another alternative for Adminer named Phpmyadmin.
+
+```yaml
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+```
+
 
 ## Install MySQL on Kubernetes
 
@@ -225,8 +242,8 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-      #            - name: mysql-initdb
-      #              mountPath: /docker-entrypoint-initdb.d
+#            - name: mysql-initdb
+#              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
@@ -250,7 +267,6 @@ spec:
   selector:
     app: mysql
     tier: database
-  type: NodePort
   ports:
     - port: 3306
       targetPort: 3306
@@ -409,7 +425,6 @@ kind: Service
 metadata:
   name: phpmyadmin
 spec:
-  type: NodePort
   selector:
     app: phpmyadmin
   ports:
