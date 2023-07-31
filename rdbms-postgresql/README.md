@@ -82,6 +82,8 @@ services:
 
 Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.
 
+### PGADMIN
+
 <p align="justify">
 
 In order to connect to PostgreSQL via Pgadmin open [http://localhost:8080](http://localhost:8080/) through web browser
@@ -120,6 +122,341 @@ and use the following properties in the login page.
 ```yaml
 System: PostgreSQL
 Server: postgresql:5432
+Username: user
+Password: password
+Database: test_db
+```
+
+## Install PostgreSQL on Kubernetes
+
+### PostgreSQL
+
+Create the following file for installing PostgreSQL.
+
+**postgres-secrets.yml**
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secrets
+type: Opaque
+data:
+  postgres-user: dXNlcg==
+  postgres-password: cGFzc3dvcmQ=
+```
+
+**postgres-configmap.yml**
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configmap
+data:
+  postgres-database: test_db
+```
+
+**postgres-pvc.yml**
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  labels:
+    app: postgres
+    tier: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+**postgres-deployment.yml**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+        tier: database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: postgres-password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-configmap
+                  key: postgres-database
+            - name: PGDATA
+              value: /data/postgres
+          ports:
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+```
+
+**postgres-service.yml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+    tier: database
+spec:
+  selector:
+    app: postgres
+    tier: database
+  type: NodePort
+  ports:
+    - port: 5432
+      targetPort: 5432
+```
+
+### PGADMIN
+
+**pgadmin-secrets.yml**
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pgadmin-secrets
+type: Opaque
+data:
+  pgadmin_default_password: cGFzc3dvcmQ=
+```
+
+**pgadmin-deployment.yml**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4
+          ports:
+            - containerPort: 80
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: pgadmin4@pgadmin.org
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgadmin-secrets
+                  key: pgadmin_default_password
+            - name: PGADMIN_CONFIG_SERVER_MODE
+              value: "False"
+```
+
+**pgadmin-service.yml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin
+spec:
+  selector:
+    app: pgadmin
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+```
+
+Execute the following commands to install tools on Kubernetes.
+
+```shell
+kubectl apply -f ./kube/postgres-pvc.yml
+
+kubectl apply -f ./kube/postgres-configmap.yml
+# kubectl describe configmap postgres-configmap -n default
+
+kubectl apply -f ./kube/postgres-secrets.yml
+# kubectl describe secret postgres-secrets -n default
+# kubectl get secret postgres-secrets -n default -o yaml
+
+kubectl apply -f ./kube/postgres-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment postgres -n default
+
+kubectl apply -f ./kube/postgres-service.yml
+# kubectl get service -n default
+# kubectl describe service postgres -n default
+
+kubectl apply -f ./kube/pgadmin-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment pgadmin -n default
+
+kubectl apply -f ./kube/pgadmin-service.yml
+# kubectl get services -n default
+# kubectl describe service pgadmin -n default
+
+# kubectl apply -f ./kube/pgadmin-ingress.yml
+# kubectl get ingress -n default
+# kubectl describe ingress pgadmin -n default
+kubectl get all
+```
+
+<p align="justify">
+
+If you want to connect to PostgreSQL through application or Pgadmin from localhost through the web browser use the
+following
+command and dashboard of Pgadmin is available with [http://localhost:8080](http://localhost:8080) URL.
+
+</p>
+
+```shell
+# pgadmin
+# http://localhost:8080
+kubectl port-forward service/pgadmin 8080:80
+
+# postgres
+kubectl port-forward service/postgres 5432:5432
+```
+
+Use the following properties in the add-server popup.
+
+```yaml
+hostname: postgresql
+port: 5432
+Username: user
+Password: password
+```
+
+### Adminer
+
+**adminer-deployment.yml**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+        - name: adminer
+          image: adminer:latest
+          ports:
+            - containerPort: 80
+```
+
+**adminer-service.yml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer
+spec:
+  selector:
+    app: adminer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+```
+
+Execute the following commands to install tools on Kubernetes.
+
+```shell
+kubectl apply -f ./kube/adminer-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment adminer -n default
+
+kubectl apply -f ./kube/adminer-service.yml
+# kubectl get services -n default
+# kubectl describe service adminer -n default
+
+# kubectl apply -f ./kube/adminer-ingress.yml
+# kubectl get ingress -n default
+# kubectl describe ingress adminer -n default
+kubectl get all
+```
+
+<p align="justify">
+
+If you want to connect to Adminer from localhost through the web browser use the following command and dashboard of
+Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
+
+</p>
+
+```shell
+# adminer
+# http://localhost:8080
+kubectl port-forward service/adminer 8080:80
+
+```
+
+Use the following properties for Adminer.
+
+```yaml
+System: PostgreSQL
+Server: postgres:5432
 Username: user
 Password: password
 Database: test_db

@@ -20,6 +20,50 @@ Some parameters can be included in mysql URL connection are as follows.
 url: jdbc:mysql://host:port/database-name?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&pinGlobalTxToPhysicalConnection=TRUE
 ```
 
+## How To
+
+### MySQL Service
+
+Command to work with mysql service.
+
+```shell
+# connect
+mysql -u root -p
+
+# import database
+mysql -u root -p < file.sql
+# import data
+mysql -u root -p db-name < file.sql
+
+# backup database
+mysqldump mysql -u root -p [–no-data] db-name [–no-create-info] > file.sql
+mysqldump mysql -u root -p [–no-data] -databases db-name1 db-name2 ... [–no-create-info] > file.sql
+mysqldump mysql -u root -p [–no-data] all-databases [–no-create-info] > file.sql
+mysqldump mysql -u root -p [–no-data] db-name table-name1 table-name2 ... [–no-create-info] > file.sql
+```
+
+### SQL Commands
+
+```mysql-sql
+# create a database
+CREATE DATABASE IF NOT EXISTS 'test_db' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+# create a user
+CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
+
+# gran to a user and database
+GRANT grant-name ON `db-name`.* TO 'db-user'@'db-host';
+FLUSH PRIVILEGES;
+exit;
+
+# example to gran XA to a user
+GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user'@'localhost';
+GRANT XA_RECOVER_ADMIN ON *.* TO 'user'@'localhost';
+GRANT ALL ON `test_db`.* TO 'user'@'localhost';
+FLUSH PRIVILEGES;
+exit;
+```
+
 ## Install MySQL on Docker
 
 ### Docker Compose File
@@ -181,8 +225,8 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-#            - name: mysql-initdb
-#              mountPath: /docker-entrypoint-initdb.d
+      #            - name: mysql-initdb
+      #              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
