@@ -13,10 +13,10 @@ environment.
 url: jdbc:postgresql://host:port/database-name
 ```
 
-## How To
+### How To
 
 ```shell
-# first connection
+# try to connect
 sudo -u postgres psql postgres
 
 # change password
@@ -115,16 +115,16 @@ adminer:
 <p align="justify">
 
 In order to connect to PostgreSQL via Adminer open [http://localhost:8080](http://localhost:8080/) through web browser
-and use the following properties in the login page.
+use the following properties in the login page.
 
 </p>
 
 ```yaml
-System: PostgreSQL
-Server: postgresql:5432
-Username: user
-Password: password
-Database: test_db
+system: PostgreSQL
+server: postgresql:5432
+username: user
+password: password
+database: test_db
 ```
 
 ## Install PostgreSQL on Kubernetes
@@ -142,7 +142,9 @@ metadata:
   name: postgres-secrets
 type: Opaque
 data:
+  # value: user
   postgres-user: dXNlcg==
+  # value: password
   postgres-password: cGFzc3dvcmQ=
 ```
 
@@ -264,6 +266,7 @@ metadata:
   name: pgadmin-secrets
 type: Opaque
 data:
+  # value: password
   pgadmin_default_password: cGFzc3dvcmQ=
 ```
 
@@ -323,7 +326,12 @@ spec:
 Execute the following commands to install tools on Kubernetes.
 
 ```shell
+# ======================================================================================================================
+# PostgreSQL
+# ======================================================================================================================
 kubectl apply -f ./kube/postgres-pvc.yml
+# kubectl get pvc 
+# kubectl describe pvc postgres-pvc
 
 kubectl apply -f ./kube/postgres-configmap.yml
 # kubectl describe configmap postgres-configmap -n default
@@ -340,6 +348,14 @@ kubectl apply -f ./kube/postgres-service.yml
 # kubectl get service -n default
 # kubectl describe service postgres -n default
 
+# ======================================================================================================================
+# Pgadmin
+# ======================================================================================================================
+
+kubectl apply -f ./kube/pgadmin-secrets.yml
+# kubectl describe secret pgadmin-secrets -n default
+# kubectl get secret pgadmin-secrets -n default -o yaml
+
 kubectl apply -f ./kube/pgadmin-deployment.yml
 # kubectl get deployments -n default
 # kubectl describe deployment pgadmin -n default
@@ -348,14 +364,24 @@ kubectl apply -f ./kube/pgadmin-service.yml
 # kubectl get services -n default
 # kubectl describe service pgadmin -n default
 
+# ======================================================================================================================
+# After Install
+# ======================================================================================================================
+
 kubectl get all
+```
+
+For connecting to PostgreSQL through application in localhost.
+
+```shell
+# postgres
+kubectl port-forward service/postgres 5432:5432
 ```
 
 <p align="justify">
 
-If you want to connect to PostgreSQL through application or Pgadmin from localhost through the web browser use the
-following
-command and dashboard of Pgadmin is available with [http://localhost:8080](http://localhost:8080) URL.
+To access to Pgadmin from localhost through the web browser use the following command and dashboard of Pgadmin is
+available with [http://localhost:8080](http://localhost:8080) URL.
 
 </p>
 
@@ -363,9 +389,6 @@ command and dashboard of Pgadmin is available with [http://localhost:8080](http:
 # pgadmin
 # http://localhost:8080
 kubectl port-forward service/pgadmin 8080:80
-
-# postgres
-kubectl port-forward service/postgres 5432:5432
 ```
 
 Use the following properties in the add-server popup.
@@ -422,6 +445,9 @@ spec:
 Execute the following commands to install tools on Kubernetes.
 
 ```shell
+# ======================================================================================================================
+# Adminer
+# ======================================================================================================================
 kubectl apply -f ./kube/adminer-deployment.yml
 # kubectl get deployments -n default
 # kubectl describe deployment adminer -n default
@@ -430,16 +456,13 @@ kubectl apply -f ./kube/adminer-service.yml
 # kubectl get services -n default
 # kubectl describe service adminer -n default
 
-# kubectl apply -f ./kube/adminer-ingress.yml
-# kubectl get ingress -n default
-# kubectl describe ingress adminer -n default
 kubectl get all
 ```
 
 <p align="justify">
 
-If you want to connect to Adminer from localhost through the web browser use the following command and dashboard of
-Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
+For connecting to Adminer from localhost through the web browser use the following command and dashboard of Adminer is
+available with [http://localhost:8080](http://localhost:8080) URL.
 
 </p>
 
@@ -453,11 +476,11 @@ kubectl port-forward service/adminer 8080:8080
 Use the following properties for Adminer.
 
 ```yaml
-System: PostgreSQL
-Server: postgres:5432
-Username: user
-Password: password
-Database: test_db
+system: PostgreSQL
+server: postgres:5432
+username: user
+password: password
+database: test_db
 ```
 
 ## How To Config Spring Boot

@@ -20,14 +20,12 @@ Some parameters can be included in mysql URL connection are as follows.
 url: jdbc:mysql://host:port/database-name?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&pinGlobalTxToPhysicalConnection=TRUE
 ```
 
-## How To
+### How To
 
-### MySQL Service
-
-Command to work with mysql service.
+#### mysql service.
 
 ```shell
-# connect
+# try to connect
 mysql -u root -p
 
 # import database
@@ -42,9 +40,9 @@ mysqldump mysql -u root -p [–no-data] all-databases [–no-create-info] > file
 mysqldump mysql -u root -p [–no-data] db-name table-name1 table-name2 ... [–no-create-info] > file.sql
 ```
 
-### SQL Commands
+#### SQL Commands
 
-```mysql-sql
+```iso92-sql
 # create a database
 CREATE DATABASE IF NOT EXISTS 'test_db' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
@@ -103,17 +101,17 @@ Execute the `docker compose  up -d` command to install MySQL and Adminer.
 
 <p align="justify">
 
-In order to connect to MySQL via Adminer brows [http://localhost:8080](http://localhost:8080/) via web browser and use
+In order to connect to MySQL via Adminer open [http://localhost:8080](http://localhost:8080/) in the web browser and use
 the following properties in the login page.
 
 </p>
 
 ```yaml
-System: MySQL
-Server: mysql:3306
-Username: user
-Password: password
-Database: test_db
+system: MySQL
+server: mysql:3306
+username: user
+password: password
+database: test_db
 ```
 
 ### Phpmyadmin
@@ -130,6 +128,7 @@ There is another alternative for Adminer named Phpmyadmin.
       - PMA_ARBITRARY=1
 ```
 
+In order to connect to MySQL via Phpmyadmin open [http://localhost:8080](http://localhost:8080/) in the web browser.
 
 ## Install MySQL on Kubernetes
 
@@ -146,8 +145,11 @@ metadata:
   name: mysql-secrets
 type: Opaque
 data:
+  # value: root
   mysql-root-password: cm9vdA==
+  # value: user
   mysql-user: dXNlcg==
+  # value: password
   mysql-password: cGFzc3dvcmQ=
 ```
 
@@ -242,8 +244,8 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-#            - name: mysql-initdb
-#              mountPath: /docker-entrypoint-initdb.d
+      #            - name: mysql-initdb
+      #              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
@@ -319,7 +321,12 @@ spec:
 Execute the following commands to install tools on Kubernetes.
 
 ```shell
+# ======================================================================================================================
+# MySQL
+# ======================================================================================================================
 kubectl apply -f ./kube/mysql-pvc.yml
+# kubectl get pvc 
+# kubectl describe pvc mysql-pvc
 
 kubectl apply -f ./kube/mysql-configmap.yml
 # kubectl describe configmap mysql-configmap -n default
@@ -336,6 +343,9 @@ kubectl apply -f ./kube/mysql-service.yml
 # kubectl get service -n default
 # kubectl describe service mysql -n default
 
+# ======================================================================================================================
+# Adminer
+# ======================================================================================================================
 kubectl apply -f ./kube/adminer-deployment.yml
 # kubectl get deployments -n default
 # kubectl describe deployment adminer -n default
@@ -344,33 +354,51 @@ kubectl apply -f ./kube/adminer-service.yml
 # kubectl get services -n default
 # kubectl describe service adminer -n default
 
+# ======================================================================================================================
+# Phpmyadmin
+# ======================================================================================================================
+# kubectl apply -f ./kube/phpmyadmin-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment phpmyadmin -n default
+
+# kubectl apply -f ./kube/phpmyadmin-service.yml
+# kubectl get services -n default
+# kubectl describe service phpmyadmin -n default
+
+# ======================================================================================================================
+# After Install
+# ======================================================================================================================
 kubectl get all
+```
+
+For connecting to MySQL through application from localhost
+
+```shell
+# mysql
+kubectl port-forward service/mysql 3306:3306
 ```
 
 <p align="justify">
 
-If you want to connect to MySQL through application or Adminer from localhost through the web browser use the following
-command and dashboard of Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
+To connect to Adminer from localhost through the web browser use the following command and dashboard of Adminer is
+available with [http://localhost:8080](http://localhost:8080) URL.
 
 </p>
 
 ```shell
 # adminer
 # http://localhost:8080
-kubectl port-forward service/adminer 8080:80
-
-# mysql
-kubectl port-forward service/mysql 3306:3306
+kubectl port-forward service/adminer 8080:8080
 ```
 
 Use the following properties for Adminer.
 
 ```yaml
-System: MySQL
-Server: mysql:3306
-Username: user
-Password: password
-Database: test_db
+system: MySQL
+server: mysql:3306
+username: user
+password: password
+database: test_db
 ```
 
 ### Phpmyadmin
@@ -433,6 +461,23 @@ spec:
       targetPort: 80
 ```
 
+Execute the following commands to install tools on Kubernetes.
+
+```shell
+# ======================================================================================================================
+# Phpmyadmin
+# ======================================================================================================================
+kubectl apply -f ./kube/phpmyadmin-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment phpmyadmin -n default
+
+kubectl apply -f ./kube/phpmyadmin-service.yml
+# kubectl get services -n default
+# kubectl describe service phpmyadmin -n default
+
+kubectl get all
+```
+
 <p align="justify">
 
 If you want to connect to Phpmyadmin from localhost through the web browser use the following command and dashboard of
@@ -441,6 +486,7 @@ Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
 </p>
 
 ```shell
+# phpmyadmin
 # http://localhost:8080
 kubectl port-forward service/phpmyadmin 8080:80
 ```
