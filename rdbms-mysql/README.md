@@ -2,9 +2,19 @@
 
 <p align="justify">
 
-This tutorial is included [MySQL database](https://www.mysql.com/) configuration for test and none test environment.
+This tutorial is included [MySQL database](https://www.mysql.com/) configuration for test and none test environments.
 
-Some parameters can be included in mysql URL connection are as follows.
+</p>
+
+### URL
+
+The URL follows the syntax that mentioned below.
+
+```text
+jdbc:mysql://host:port/database-name
+```
+
+There are a few parameters included in the connection string of MySQL as follows.
 
 * useUnicode=true
 * useJDBCCompliantTimezoneShift=true
@@ -12,21 +22,18 @@ Some parameters can be included in mysql URL connection are as follows.
 * serverTimezone=UTC
 * pinGlobalTxToPhysicalConnection=TRUE
 
-</p>
-
-### URL
-
-```yaml
-url: jdbc:mysql://host:port/database-name?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&pinGlobalTxToPhysicalConnection=TRUE
-```
-
 ### How To
 
-#### mysql service.
+After installing MySQL, it is possible to work with MySQL service based on command line.
+
+#### MySQL Service.
+
+Use `mysql -u root -p -h localhost` in order to connect to MySQL database in `localhost` also you need password of
+user `root`.
 
 ```shell
 # try to connect
-mysql -u root -p
+mysql -u root -p  -h hostname
 
 # import database
 mysql -u root -p < file.sql
@@ -42,24 +49,32 @@ mysqldump mysql -u root -p [–no-data] db-name table-name1 table-name2 ... [–
 
 #### SQL Commands
 
-```iso92-sql
-# create a database
-CREATE DATABASE IF NOT EXISTS 'test_db' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+A few SQL commands to create schema (database), user and grant to the user.
 
-# create a user
+```iso92-sql
+# schema (database)
+SHOW DATABASES;
+CREATE DATABASE IF NOT EXISTS 'db-name' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+USE db-name;
+DROP DATABASE db-name;
+SHOW TABLES;
+
+# user
 CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
 
-# gran to a user and database
-GRANT grant-name ON `db-name`.* TO 'db-user'@'db-host';
+# gran
+GRANT privilege-type ON db-name.table-name TO 'user'@'host';
 FLUSH PRIVILEGES;
-exit;
 
-# example to gran XA to a user
-GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user'@'localhost';
-GRANT XA_RECOVER_ADMIN ON *.* TO 'user'@'localhost';
-GRANT ALL ON `test_db`.* TO 'user'@'localhost';
+
+# example, assign gran to an user for executing XA transactions 
+GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user'@'%';
+GRANT XA_RECOVER_ADMIN ON *.* TO 'user'@'%';
+GRANT ALL ON `test_db`.* TO 'user'@'%';
 FLUSH PRIVILEGES;
-exit;
+
+# exit
+EXIT;
 ```
 
 ## Install MySQL on Docker
@@ -97,44 +112,52 @@ services:
 
 Execute the `docker compose  up -d` command to install MySQL and Adminer.
 
+```shell
+# full command
+docker compose --file ./docker-compose.yml --project-name mysql up --build -d
+
+```
+
 ### Adminer
 
 <p align="justify">
 
-In order to connect to MySQL via Adminer open [http://localhost:8080](http://localhost:8080/) in the web browser and use
+In order to connect to MySQL by Adminer, open [http://localhost:8080](http://localhost:8080/) in the web browser and use
 the following properties in the login page.
 
 </p>
 
 ```yaml
 system: MySQL
-server: mysql:3306
+server: mysql:3306 #host:port
 username: user
 password: password
 database: test_db
 ```
 
-### Phpmyadmin
+### PhpMyAdmin
 
-There is another alternative for Adminer named Phpmyadmin.
+There is another alternative for Adminer named phpMyAdmin.
 
 ```yaml
   phpmyadmin:
     image: phpmyadmin
+    container_name: phpmyadmin
+    hostname: phpmyadmin
     restart: always
     ports:
-      - 8080:80
+      - "8080:80"
     environment:
       - PMA_ARBITRARY=1
 ```
 
-In order to connect to MySQL via Phpmyadmin open [http://localhost:8080](http://localhost:8080/) in the web browser.
+In order to connect to MySQL by phpMyAdmin open [http://localhost:8080](http://localhost:8080/) in the web browser.
 
 ## Install MySQL on Kubernetes
 
 ### MySQL
 
-Create the following file for installing MySQL.
+Create the following files for installing MySQL.
 
 **mysql-secrets.yml**
 
@@ -276,6 +299,8 @@ spec:
 
 ### Adminer
 
+Create the following files for installing Adminer.
+
 **adminer-deployment.yml**
 
 ```yaml
@@ -316,9 +341,9 @@ spec:
       targetPort: 8080
 ```
 
-### Apply the Files
+### Apply Configuration Files
 
-Execute the following commands to install tools on Kubernetes.
+Execute the following commands to install the tools on Kubernetes.
 
 ```shell
 # ======================================================================================================================
@@ -355,23 +380,12 @@ kubectl apply -f ./kube/adminer-service.yml
 # kubectl describe service adminer -n default
 
 # ======================================================================================================================
-# Phpmyadmin
-# ======================================================================================================================
-# kubectl apply -f ./kube/phpmyadmin-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment phpmyadmin -n default
-
-# kubectl apply -f ./kube/phpmyadmin-service.yml
-# kubectl get services -n default
-# kubectl describe service phpmyadmin -n default
-
-# ======================================================================================================================
 # After Install
 # ======================================================================================================================
 kubectl get all
 ```
 
-For connecting to MySQL through application from localhost
+For connecting to MySQL through application on localhost it should be executed the following command.
 
 ```shell
 # mysql
@@ -380,8 +394,8 @@ kubectl port-forward service/mysql 3306:3306
 
 <p align="justify">
 
-To connect to Adminer from localhost through the web browser use the following command and dashboard of Adminer is
-available with [http://localhost:8080](http://localhost:8080) URL.
+In order to connect to Adminer from localhost through the web browser use the following command and dashboard of Adminer
+is available on [http://localhost:8080](http://localhost:8080) URL.
 
 </p>
 
@@ -395,15 +409,15 @@ Use the following properties for Adminer.
 
 ```yaml
 system: MySQL
-server: mysql:3306
+server: mysql:3306 #host:port
 username: user
 password: password
 database: test_db
 ```
 
-### Phpmyadmin
+### PhpMyAdmin
 
-Also, there is another alternative for Adminer, named Phpmyadmin. Therefore, use the following instruction to install
+Also, there is another alternative for Adminer named phpMyAdmin. Therefore, use the following instruction to install
 that on Kubernetes.
 
 **phpmyadmin-deployment.yml**
@@ -461,11 +475,11 @@ spec:
       targetPort: 80
 ```
 
-Execute the following commands to install tools on Kubernetes.
+Execute the following commands to install the tools on Kubernetes.
 
 ```shell
 # ======================================================================================================================
-# Phpmyadmin
+# PhpMyAdmin
 # ======================================================================================================================
 kubectl apply -f ./kube/phpmyadmin-deployment.yml
 # kubectl get deployments -n default
@@ -480,8 +494,8 @@ kubectl get all
 
 <p align="justify">
 
-If you want to connect to Phpmyadmin from localhost through the web browser use the following command and dashboard of
-Adminer is available with [http://localhost:8080](http://localhost:8080) URL.
+In order to connect to phpMyAdmin through the web browser on localhost use the following command and dashboard of
+phpMyAdmin is available on [http://localhost:8080](http://localhost:8080) URL.
 
 </p>
 
@@ -586,6 +600,7 @@ spring:
 * [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 * [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/) (optional)
 
 ## Build
 
@@ -607,4 +622,4 @@ mvn  spring-boot:run
 
 ##
 
-**<p align="center"> [Top](#rdbms-mysql) </p>**
+**<p align="center">[Top](#rdbms-mysql)</p>**
