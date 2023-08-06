@@ -33,10 +33,8 @@
 * [step: messaging-kafka](messaging-kafka)
 * step: messaging-redis
 * step: messaging-pulsar
-* step: rest
-* step: rest-exception-handling
+* step: rest-basic
 * step: rest-hateoas
-* step: websocket
 * step: webflux
 * step: ELK
 * step: Jaeger
