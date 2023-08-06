@@ -27,6 +27,7 @@
 * [step: nosql-redis-reactive](nosql-redis-reactive)
 * [step: nosql-mongodb](nosql-mongodb)
 * [step: nosql-mongodb-reactive](nosql-mongodb-reactive)
+* [step: nosql-hadoop](nosql-hadoop)
 * [step: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
 * [step: messaging-rabbit-mq](messaging-rabbit-mq)
 * [step: messaging-kafka](messaging-kafka)
@@ -79,5 +80,7 @@ mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
 mvn -f messaging-kafka/pom.xml clean package
 ```
+
+##
 
 **<p align="center"> [Top](#spring-boot-tutorial) </p>**

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commander-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: commander
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: commander
+    spec:
+      containers:
+        - name: commander
+          image: rediscommander/redis-commander:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
