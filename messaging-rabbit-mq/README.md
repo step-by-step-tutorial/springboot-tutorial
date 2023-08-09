@@ -2,15 +2,15 @@
 
 <p align="justify">
 
-Rabbit Mq is a message queue for more information see the [https://www.rabbitmq.com/](https://www.rabbitmq.com/).
+RabbitMq is a message queue for more information see the [https://www.rabbitmq.com/](https://www.rabbitmq.com/).
 
 </p>
 
-## Install Active MQ Artemis on Docker
+## Install RabbitMQ on Docker
 
 <p align="justify">
 
-Execute the `docker compose  up -d` command to install RabbitMQ on docker, also, you can use the following commands.
+Execute the `docker compose  up -d` command to install RabbitMQ on docker.
 
 </p>
 
@@ -47,8 +47,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: root
+    password: root
 
 ```
 
