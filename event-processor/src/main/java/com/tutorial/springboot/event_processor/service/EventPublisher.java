@@ -16,7 +16,7 @@ public class EventPublisher {
     @Autowired
     private ApplicationEventPublisher publisher;
 
-    public void publish(EventModel event) {
+    public void publish(final EventModel event) {
         requireNonNull(event, "event should not be null");
 
         publisher.publishEvent(event);

@@ -64,7 +64,7 @@ services:
       POSTGRES_DB: test_db
       PGDATA: /data/postgres
     volumes:
-      - "./docker/postgresql:/data/postgres"
+      - "./target/postgresql:/data/postgres"
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -77,7 +77,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
-      - "./docker/pgadmin:/var/lib/pgadmin"
+      - "./target/pgadmin:/var/lib/pgadmin"
 ```
 
 Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.

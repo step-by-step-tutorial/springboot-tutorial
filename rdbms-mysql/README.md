@@ -33,7 +33,7 @@ user `root`.
 
 ```shell
 # try to connect
-mysql -u root -p  -h hostname
+mysql -u root -p -h hostname
 
 # import database
 mysql -u root -p < file.sql
@@ -100,7 +100,7 @@ services:
       - MYSQL_DATABASE=test_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./docker/mysql:/etc/mysql/conf.d"
+      - "./target/mysql:/etc/mysql/conf.d"
   adminer:
     image: adminer
     container_name: adminer

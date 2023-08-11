@@ -57,7 +57,7 @@ in the web browser.
 
 ### MongoDB
 
-Create the following files for installing Redis.
+Create the following files for installing MongoDB.
 
 **mongo-pvc.yml**
 ```yaml

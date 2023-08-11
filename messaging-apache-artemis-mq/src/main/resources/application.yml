@@ -8,12 +8,6 @@ spring:
   jms:
     pub-sub-domain: true
 
-logging:
-  level:
-    org:
-      springframework:
-        jms: DEBUG
-
 # defined by user
 destination:
   main-queue: mainQueue

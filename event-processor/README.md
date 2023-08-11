@@ -3,7 +3,7 @@
 <p align="justify">
 
 This sample is about working event and event listener in Spring Boot. There are three concepts `event`, `listener` and
-`publish` for the event driven mechanism.
+`publish` for the event driven mechanism. This tutorial used Spring Boot builtin event mechanism.
 
 </p>
 
@@ -72,7 +72,7 @@ import org.springframework.stereotype.Component;
 public class EventHandler {
 
     @EventListener
-    void onEvent(final EventModel event) {
+    void onEvent(EventModel event) {
     }
 
 }
@@ -88,7 +88,7 @@ public class EventHandler {
 
     @Async
     @EventListener
-    void onEvent(final EventModel event) {
+    void onEvent(EventModel event) {
     }
 }
 ```
@@ -156,5 +156,7 @@ mvn  test
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center"> [Top](#event-processor) </p>**

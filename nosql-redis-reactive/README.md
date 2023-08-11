@@ -30,7 +30,7 @@ services:
     hostname: redisinsight
     restart: always
     volumes:
-      - "./docker/redislabs:/db"
+      - "./target/redislabs:/db"
     ports:
       - "8001:8001"
 

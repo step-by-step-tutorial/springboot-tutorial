@@ -8,7 +8,7 @@ if ! [ -f "${BROKER_HOME}"/etc/broker.xml ]; then
                "${EXTRA_ARGS}" \
                "${BROKER_HOME}"
 else
-  echo "broker already created, ignoring creation"
+  echo "the broker already created, ignoring creation"
 fi
 
 exec  "${BROKER_HOME}"/bin/artemis run

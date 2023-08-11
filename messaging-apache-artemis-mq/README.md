@@ -9,34 +9,12 @@ one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial
 
 ## Install Active MQ Artemis on Docker
 
-<p align="justify">
+### Docker Compose File
 
-Create docker-compose.yml, Dockerfile and start.sh file in a directory then execute the `docker compose  up -d` command
-to install Artemis on docker, also, you can use the following commands.
+Create `Dockerfile`, `start.sh` and `docker-compose.yml` file in a directory (like `docker`).
 
-</p>
-
-**Docker Compose file**
-```yaml
-version: '3.8'
-
-services:
-  artemis:
-    image: apache/activemq-artemis
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    container_name: artemis
-    hostname: artemis
-    restart: always
-    ports:
-      - "61616:61616"
-      - "8161:8161"
-    volumes:
-      - "./docker/broker:/opt/broker"
-      - "./docker/broker:/opt/artemis"
-```
 **Docker File**
+
 ```dockerfile
 FROM openjdk:11
 MAINTAINER samanalishiri@gmail.com
@@ -129,8 +107,130 @@ fi
 exec  "${BROKER_HOME}"/bin/artemis run
 ```
 
+**Docker Compose file**
+
+```yaml
+version: '3.8'
+
+services:
+  artemis:
+    image: apache/activemq-artemis
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: artemis
+    hostname: artemis
+    restart: always
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    volumes:
+      - "./target/broker:/opt/broker"
+      - "./target/broker:/opt/artemis"
+```
+
+Execute the `docker compose  up -d` command to install Artemis.
+
+```shell
+# full command
+docker compose --file ./docker-compose.yml --project-name artemis up --build -d
+
+```
+
 ### Web Console
-Open [http://localhost:8161](http://localhost:8161/) in the browser.
+
+In order to access Artemis web console open [http://localhost:8161](http://localhost:8161/) in the browser.
+
+## Install Artemis on Kubernetes
+
+Create image manually from the `Dockerfile` located in the `./docker` directory by following command.
+
+```shell
+docker build -t apache/artemis:latest ./docker
+```
+
+Create the following files for installing Artemis.
+
+**artemis-deployment.yml**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artemis
+  labels:
+    app: artemis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artemis
+  template:
+    metadata:
+      labels:
+        app: artemis
+    spec:
+      containers:
+        - name: artemis
+          image: apache/activemq-artemis
+          ports:
+            - containerPort: 61616
+            - containerPort: 8161
+```
+
+**artemis-service.yml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: artemis
+spec:
+  selector:
+    app: artemis
+  ports:
+    - name: queue-port
+      port: 61616
+      targetPort: 61616
+    - name: management-ui-port
+      port: 8161
+      targetPort: 8161
+```
+
+### Apply Configuration Files
+
+Execute the following commands to install the tools on Kubernetes.
+
+```shell
+# ======================================================================================================================
+# Artemis
+# ======================================================================================================================
+kubectl apply -f ./kube/artemis-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment artemis -n default
+
+kubectl apply -f ./kube/artemis-service.yml
+# kubectl get service -n default
+# kubectl describe service artemis -n default
+
+# ======================================================================================================================
+# After Install
+# ======================================================================================================================
+kubectl get all
+```
+
+<p align="justify">
+
+In order to connect to Artemis from localhost through the web browser use the following command and dashboard of Artemis
+is available on [http://localhost:8161](http://localhost:8161) URL.
+
+</p>
+
+```shell
+# artemis
+# http://localhost:8161
+kubectl port-forward service/artemis 8161:8161
+```
 
 ## How To Config Spring Boot
 
@@ -263,5 +363,7 @@ mvn test
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center"> [Top](#apache-active-mq-artemis) </p>**

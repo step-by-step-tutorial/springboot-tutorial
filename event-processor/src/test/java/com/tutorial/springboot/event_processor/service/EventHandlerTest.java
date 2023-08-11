@@ -21,8 +21,8 @@ class EventHandlerTest {
     LogCapture logInfoCapture;
 
     @Test
-    @DisplayName("should receive and handle the event")
-    void shouldReceiveAndHandleEvent() {
+    @DisplayName("should receive an event")
+    void shouldReceiveEventWhenThereIsNoError() {
         final var givenEvent = new EventModel("fake text");
 
         final var expectedLog = String.format("message received: %s", givenEvent.text());

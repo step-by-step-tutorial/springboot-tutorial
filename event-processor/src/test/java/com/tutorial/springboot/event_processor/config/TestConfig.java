@@ -12,7 +12,7 @@ public class TestConfig {
 
     @Bean
     public LogCapture logInfoCapture() {
-        final LogCapture logCapture = new LogCapture();
+        final var logCapture = new LogCapture();
         logCapture.start();
 
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);

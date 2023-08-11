@@ -1,15 +1,17 @@
 # <p align="center">Apache Log4j2 Console</p>
 
-<p>
+<p align="justify">
 
-Log4j is a log framework. For more information
-see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/).
+Log4j is a log framework and this tutorial shows how should be integrated Spring Boot 3 and Log4j2 to print logs on the
+console. For more information see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/).
 
 </p>
 
 ## How To Config Spring Boot
 
 ### Dependencies
+
+The default logger must be excluded.
 
 ```xml
 
@@ -33,7 +35,7 @@ see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x
 
 ### Spring Boot Properties
 
-Add log4j2.xml to the resources.
+Add `log4j2.xml` to the resources.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,7 +64,6 @@ Add log4j2.xml to the resources.
 
 * [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
 
 ## Build
 
@@ -81,5 +82,7 @@ mvn test
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center"> [Top](#apache-log4j2-console) </p>**

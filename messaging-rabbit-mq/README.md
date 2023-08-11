@@ -8,11 +8,9 @@ RabbitMq is a message queue for more information see the [https://www.rabbitmq.c
 
 ## Install RabbitMQ on Docker
 
-<p align="justify">
+### Docker Compose File
 
-Execute the `docker compose  up -d` command to install RabbitMQ on docker.
-
-</p>
+Create a file named docker-compose.yml with the following configuration.
 
 ```yaml
 version: '3.8'
@@ -25,6 +23,124 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+```
+
+Execute the `docker compose  up -d` command to install MongoDB and Mongo Express.
+
+```shell
+# full command
+docker compose --file ./docker-compose.yml --project-name rabbitmq up --build -d
+
+```
+
+## Install MongoDB on Kubernetes
+
+Create the following files for installing Redis.
+
+**rabbitmq-secrets.yml**
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmq-secrets
+type: Opaque
+data:
+  # value: root
+  username: cm9vdA==
+  # value: root
+  password: cm9vdA==
+```
+
+**rabbitmq-deployment.yml**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  labels:
+    app: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:management
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secrets
+                  key: username
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secrets
+                  key: password
+```
+
+**rabbitmq-service.yml**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: queue-port
+      port: 5672
+      targetPort: 5672
+    - name: management-ui-port
+      port: 15672
+      targetPort: 15672
+```
+
+### Apply Configuration Files
+
+Execute the following commands to install the tools on Kubernetes.
+
+```shell
+# ======================================================================================================================
+# Rabbitmq
+# ======================================================================================================================
+kubectl apply -f ./kube/rabbitmq-secrets.yml
+# kubectl describe secret rabbitmq-secrets -n default
+# kubectl get secret rabbitmq-secrets -n default -o yaml
+
+kubectl apply -f ./kube/rabbitmq-deployment.yml
+# kubectl get deployments -n default
+# kubectl describe deployment rabbitmq -n default
+
+kubectl apply -f ./kube/rabbitmq-service.yml
+# kubectl get service -n default
+# kubectl describe service rabbitmq -n default
+
+# ======================================================================================================================
+# After Install
+# ======================================================================================================================
+kubectl get all
+```
+
+In order to connect to rabbitmq from localhost through the web browser or application use the following command.
+
+```shell
+# rabbitmq
+# http://localhost:15672
+kubectl port-forward service/rabbitmq 15672:15672
 ```
 
 ## How To Config Spring Boot

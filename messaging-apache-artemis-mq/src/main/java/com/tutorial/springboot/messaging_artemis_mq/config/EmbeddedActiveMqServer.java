@@ -22,7 +22,7 @@ public class EmbeddedActiveMqServer implements DisposableBean {
             @Value("${spring.artemis.port}") final String port
     ) {
         try {
-            org.apache.activemq.artemis.core.config.Configuration config = new ConfigurationImpl();
+            var config = new ConfigurationImpl();
             config.addAcceptorConfiguration("tcp", String.format("tcp://%s:%s", host, port));
             activeMqServer.setConfiguration(config);
             activeMqServer.start();

@@ -36,7 +36,7 @@ class EventPublisherTest {
 
     @Test
     @DisplayName("the event should publish successful")
-    void shouldPublishEventSuccessful() {
+    void shouldPublishEventSuccessfulWhenThereIsNoError() {
         final var givenEvent = new EventModel("fake text");
 
         assertDoesNotThrow(() -> systemUnderTest.publish(givenEvent));

@@ -13,7 +13,7 @@ services:
       ORACLE_PWD: password
       ORACLE_CHARACTERSET: utf-8
     volumes:
-      - "./docker/oracle_data:/opt/oracle/oradata"
+      - "./target/oracle_data:/opt/oracle/oradata"
   ords:
     image: container-registry.oracle.com/database/ords:latest
     container_name: ords

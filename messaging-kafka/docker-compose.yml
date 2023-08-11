@@ -25,7 +25,7 @@ services:
         KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
         KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       volumes:
-        - "./docker/kafka:/var/lib/kafka/data"
+        - "./target/kafka:/var/lib/kafka/data"
     kafdrop:
       image: obsidiandynamics/kafdrop:latest
       container_name: kafdrop

@@ -1,6 +1,6 @@
 # <p align="center">Hello World</p>
 
-This is the first step of the Spring Boot tutorial. The result is print `Hello World!`.
+This is the first step of the Spring Boot tutorial. The result is printing `Hello World!` on the console.
 
 ## Dependencies
 
@@ -61,5 +61,7 @@ mvn  test
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center">[Top](#hello-world)</p>**

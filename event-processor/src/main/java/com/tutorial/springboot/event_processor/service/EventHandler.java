@@ -15,7 +15,7 @@ public class EventHandler {
 
     @EventListener
     void onEvent(final EventModel event) {
-        requireNonNull(event);
+        requireNonNull(event, "event should not be null");
         logger.info("message received: {}", event.text());
     }
 
