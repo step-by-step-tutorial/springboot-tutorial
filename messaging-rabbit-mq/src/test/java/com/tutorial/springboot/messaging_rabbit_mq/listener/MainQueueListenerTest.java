@@ -1,4 +1,4 @@
-package com.tutorial.springboot.messaging_rabbit_mq;
+package com.tutorial.springboot.messaging_rabbit_mq.listener;
 
 import com.tutorial.springboot.messaging_rabbit_mq.listener.MainQueueListener;
 import com.tutorial.springboot.messaging_rabbit_mq.model.MessageModel;

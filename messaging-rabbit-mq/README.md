@@ -25,7 +25,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
 ```
 
-Execute the `docker compose  up -d` command to install MongoDB and Mongo Express.
+Execute the `docker compose  up -d` command to install RabbitMQ.
 
 ```shell
 # full command
@@ -33,9 +33,13 @@ docker compose --file ./docker-compose.yml --project-name rabbitmq up --build -d
 
 ```
 
-## Install MongoDB on Kubernetes
+### Web Console
 
-Create the following files for installing Redis.
+Open [http://localhost:15672/](http://localhost:15672/) in the browser.
+
+## Install RabbitMQ on Kubernetes
+
+Create the following files for installing RabbitMQ.
 
 **rabbitmq-secrets.yml**
 
@@ -143,7 +147,7 @@ In order to connect to rabbitmq from localhost through the web browser or applic
 kubectl port-forward service/rabbitmq 15672:15672
 ```
 
-## How To Config Spring Boot
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -156,7 +160,7 @@ kubectl port-forward service/rabbitmq 15672:15672
 
 ```
 
-### Spring Boot Properties
+### Application Properties
 
 ```yaml
 spring:
@@ -168,7 +172,7 @@ spring:
 
 ```
 
-### How to Active RabbitMq
+### Java Config
 
 ```java
 
@@ -181,13 +185,74 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableRabbit
 public class RabbitMqConfig {
+    @Bean
+    public Queue queue(@Value("${queue-name}") final String name) {
+        return new Queue(name, false);
+    }
 }
-
 ```
 
-### Web Console
+## How To Set up Test
 
-Open [http://localhost:15672/](http://localhost:15672/) in the browser.
+### Dependencies
+
+```xml
+
+<project>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.18.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>rabbitmq</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
+```
+
+### Java Config for Test
+
+```java
+
+@Testcontainers
+class TestClass {
+    @Container
+    static final RabbitMQContainer rabbitMqContainer = new RabbitMQContainer("rabbitmq:management");
+
+    @DynamicPropertySource
+    static void rabbitMQProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.rabbitmq.host", rabbitMqContainer::getHost);
+        registry.add("spring.rabbitmq.port", rabbitMqContainer::getAmqpPort);
+        registry.add("spring.rabbitmq.username", rabbitMqContainer::getAdminUsername);
+        registry.add("spring.rabbitmq.password", rabbitMqContainer::getAdminPassword);
+    }
+
+    @BeforeAll
+    static void beforeAll() {
+        rabbitMqContainer.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        rabbitMqContainer.start();
+    }
+}
+```
 
 ## Prerequisites
 
@@ -212,5 +277,7 @@ mvn test
 ```bash
 mvn  spring-boot:run
 ```
+
+##
 
 **<p align="center"> [Top](#rabbit-mq) </p>**

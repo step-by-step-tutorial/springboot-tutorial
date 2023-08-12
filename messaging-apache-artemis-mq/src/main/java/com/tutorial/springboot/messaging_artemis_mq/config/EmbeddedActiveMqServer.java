@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile({"embedded"})
+@Profile({"embedded-artemis"})
 public class EmbeddedActiveMqServer implements DisposableBean {
 
     private final Logger logger = LoggerFactory.getLogger(EmbeddedActiveMqServer.class);
@@ -26,15 +26,15 @@ public class EmbeddedActiveMqServer implements DisposableBean {
             config.addAcceptorConfiguration("tcp", String.format("tcp://%s:%s", host, port));
             activeMqServer.setConfiguration(config);
             activeMqServer.start();
-            logger.info("embedded active-mq has started");
+            logger.info("embedded active-mq-artemis has started");
         } catch (Exception e) {
-            logger.error("embedded active-mq failed due to: {}", e.getMessage());
+            logger.error("embedded active-mq-artemis failed due to: {}", e.getMessage());
         }
     }
 
     @Override
     public void destroy() throws Exception {
-        logger.info("embedded active-mq has stopped");
+        logger.info("embedded active-mq-artemis has stopped");
         activeMqServer.stop();
     }
 }

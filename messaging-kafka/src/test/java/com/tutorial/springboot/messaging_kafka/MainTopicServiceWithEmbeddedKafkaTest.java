@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@ActiveProfiles({"embedded"})
+@ActiveProfiles({"embedded-kafka"})
 @DirtiesContext
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
 @DisplayName("unit tests of kafka[embedded] main topic service")

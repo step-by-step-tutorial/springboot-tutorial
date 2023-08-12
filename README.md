@@ -27,7 +27,7 @@
 * [step: nosql-redis-reactive](nosql-redis-reactive)
 * [step: nosql-mongodb](nosql-mongodb)
 * [step: nosql-mongodb-reactive](nosql-mongodb-reactive)
-* [step: nosql-hadoop](nosql-hadoop)
+* step: nosql-hadoop
 * [step: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
 * [step: messaging-rabbit-mq](messaging-rabbit-mq)
 * [step: messaging-kafka](messaging-kafka)
@@ -62,9 +62,9 @@
 mvn -f hello-world/pom.xml clean package
 mvn -f profile/pom.xml clean package
 mvn -f properties/pom.xml clean package
-mvn -f logger-log4j-console/pom.xml clean package
-mvn -f logger-log4j-file/pom.xml clean package
-mvn -f logger-log4j-database/pom.xml clean package
+mvn -f logger-log4j2-console/pom.xml clean package
+mvn -f logger-log4j2-file/pom.xml clean package
+mvn -f logger-log4j2-database/pom.xml clean package
 mvn -f event-processor/pom.xml clean package
 mvn -f rdbms-h2/pom.xml clean package
 mvn -f rdbms-mysql/pom.xml clean package

@@ -1,1 +1,1 @@
-docker compose --file .\docker\docker-compose.yml --project-name artemis up --build -d
+docker compose --file docker-compose.yml --project-name artemis up --build -d

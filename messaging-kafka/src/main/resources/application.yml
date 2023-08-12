@@ -9,7 +9,7 @@ spring:
 ---
 spring:
   profiles:
-    active: embedded
+    active: embedded-kafka
   kafka:
     topic:
       name: embedded-topic

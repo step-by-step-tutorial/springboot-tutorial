@@ -2,10 +2,7 @@ version: '3.8'
 
 services:
   artemis:
-    image: apache/activemq-artemis
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    image: apache/activemq-artemis:latest
     container_name: artemis
     hostname: artemis
     restart: always

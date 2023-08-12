@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles({"test", "embedded"})
+@ActiveProfiles({"test", "embedded-artemis"})
 @DisplayName("unit tests of  artemis[embedded] status queue service")
 class StatusQueueServiceWithEmbeddedQueueTest {
 

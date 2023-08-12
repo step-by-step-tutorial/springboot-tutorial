@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: artemis
-          image: apache/activemq-artemis
+          image: apache/activemq-artemis:latest
           ports:
             - containerPort: 61616
             - containerPort: 8161

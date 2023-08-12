@@ -17,7 +17,7 @@ destination:
 spring:
   config:
     activate:
-      on-profile: embedded
+      on-profile: embedded-artemis
   artemis:
     mode: embedded
     embedded:

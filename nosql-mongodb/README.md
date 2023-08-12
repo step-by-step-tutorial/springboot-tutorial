@@ -50,7 +50,8 @@ docker compose --file ./docker-compose.yml --project-name mongo up --build -d
 
 ### Mongo Express
 
-In order to connect to MongoDB by Mongo Express through the web browser open [http://localhost:8001/](http://localhost:8001/)
+In order to connect to MongoDB by Mongo Express through the web browser
+open [http://localhost:8001/](http://localhost:8001/)
 in the web browser.
 
 ## Install MongoDB on Kubernetes
@@ -60,6 +61,7 @@ in the web browser.
 Create the following files for installing MongoDB.
 
 **mongo-pvc.yml**
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -74,6 +76,7 @@ spec:
 ```
 
 **mongo-secrets.yml**
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -260,7 +263,7 @@ Mongo Express is available on [http://localhost:8001](http://localhost:8001) URL
 kubectl port-forward service/mongo-express 8001:8001
 ```
 
-## How To Config Spring Boot
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -273,6 +276,36 @@ kubectl port-forward service/mongo-express 8001:8001
     </dependency>
 </dependencies>
 ```
+
+### Application Properties
+
+```yaml
+spring:
+  data:
+    mongodb:
+      username: root
+      password: root
+      host: ${MONGO_DB_HOST:localhost}
+      port: ${MONGO_DB_PORT:27017}
+      database: ${MONGO_DB_NAME:test_db}
+      authentication-database: admin
+```
+
+### Java Config
+
+```java
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+@Configuration
+@EnableMongoRepositories(basePackages = "repository-package")
+public class MongoDbConfig {
+}
+
+```
+
+## How To Set up Test
 
 ### Test Dependency
 
@@ -305,18 +338,32 @@ kubectl port-forward service/mongo-express 8001:8001
 </project>
 ```
 
-### Spring Boot Properties
+### Java Config for Test
 
-```yaml
-spring:
-  data:
-    mongodb:
-      username: root
-      password: root
-      host: ${MONGO_DB_HOST:localhost}
-      port: ${MONGO_DB_PORT:27017}
-      database: ${MONGO_DB_NAME:test_db}
-      authentication-database: admin
+```java
+
+@Testcontainers
+@DataMongoTest
+class SampleRepositoryTest {
+
+    @Container
+    static final MongoDBContainer MONGODB = new MongoDBContainer("mongo:5.0.16");
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri", MONGODB::getReplicaSetUrl);
+    }
+
+    @BeforeAll
+    static void setUp() {
+        MONGODB.start();
+    }
+
+    @AfterAll
+    static void tearDown() {
+        MONGODB.stop();
+    }
+}
 ```
 
 ## Prerequisites

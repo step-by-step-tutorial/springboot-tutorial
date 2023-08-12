@@ -1,14 +1,12 @@
-package com.tutorial.springboot.messaging_rabbit_mq;
+package com.tutorial.springboot.messaging_rabbit_mq.service;
 
 import com.tutorial.springboot.messaging_rabbit_mq.model.MessageModel;
-import com.tutorial.springboot.messaging_rabbit_mq.service.MainQueueService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.RabbitMQContainer;
@@ -22,17 +20,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Testcontainers
 @DisplayName("unit tests of rabbitmq main queue service")
-class MainQueueServiceTest {
+class MainQueueServiceWithContainerTest {
 
     @Container
-    static final RabbitMQContainer rabbitMqContainer = new RabbitMQContainer("rabbitmq:management");
+    static final RabbitMQContainer RABBITMQ = new RabbitMQContainer("rabbitmq:management");
 
     @DynamicPropertySource
     static void rabbitMQProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.rabbitmq.host", rabbitMqContainer::getHost);
-        registry.add("spring.rabbitmq.port", rabbitMqContainer::getAmqpPort);
-        registry.add("spring.rabbitmq.username", rabbitMqContainer::getAdminUsername);
-        registry.add("spring.rabbitmq.password", rabbitMqContainer::getAdminPassword);
+        registry.add("spring.rabbitmq.host", RABBITMQ::getHost);
+        registry.add("spring.rabbitmq.port", RABBITMQ::getAmqpPort);
+        registry.add("spring.rabbitmq.username", RABBITMQ::getAdminUsername);
+        registry.add("spring.rabbitmq.password", RABBITMQ::getAdminPassword);
     }
 
     @Autowired
@@ -40,12 +38,12 @@ class MainQueueServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        rabbitMqContainer.start();
+        RABBITMQ.start();
     }
 
     @AfterAll
     static void afterAll() {
-        rabbitMqContainer.start();
+        RABBITMQ.start();
     }
 
     @Test

@@ -60,6 +60,10 @@ docker compose --file ./docker-compose.yml --project-name kafka up --build -d
 
 ```
 
+### Kafdrop
+
+Open [http://localhost:9000/](http://localhost:9000/) in the browser.
+
 ## Install Kafka on Kubernetes
 
 Create the following files for installing Kafka.
@@ -269,26 +273,19 @@ is available on [http://localhost:9000](http://localhost:9000) URL.
 kubectl port-forward service/kafdrop-service 9000:9000
 ```
 
-## How To Config Spring Boot
+## How To Set up Spring Boot
 
 ### Dependencies
 
 ```xml
 
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.kafka</groupId>
-        <artifactId>spring-kafka</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.kafka</groupId>
-        <artifactId>spring-kafka-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka</artifactId>
+</dependency>
 ```
 
-### Spring Boot Properties
+### Application Properties
 
 ```yaml
 spring:
@@ -298,30 +295,47 @@ spring:
     consumer:
       group-id: ${KAFKA_GROUP_ID:main-group}
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
+```
 
----
+## How To Set up Test
+
+The embedded Kafka used for unit tests.
+
+### Dependencies
+
+```xml
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+### Application Properties
+
+```yaml
 spring:
   profiles:
-    active: embedded
+    active: embedded-kafka
   kafka:
     topic:
       name: embedded-topic
     consumer:
-      auto-offset-reset: earliest
       group-id: embedded-group
-    listener:
-      ack-mode: manual
-      client-id: embedded-client-id
-      concurrency: 10
-      type: batch
-    admin:
-      client-id: admin-embedded-client-id
-
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
 ```
 
-### Web Console (kafdrop)
+### Java Config for Test
 
-Open [http://localhost:9000/](http://localhost:9000/) in the browser.
+```java
+@SpringBootTest
+@ActiveProfiles({"embedded-kafka"})
+@DirtiesContext
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+class TestClass {
+    
+}
+```
 
 ## Prerequisites
 
