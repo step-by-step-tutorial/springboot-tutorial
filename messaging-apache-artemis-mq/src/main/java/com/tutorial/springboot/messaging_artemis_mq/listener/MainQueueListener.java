@@ -24,7 +24,7 @@ public class MainQueueListener {
         this.statusQueueService = statusQueueService;
     }
 
-    @JmsListener(destination = "${destination.main-queue}")
+    @JmsListener(destination = "${queue.main}")
     public void onMessage(final Message message) {
         requireNonNull(message, "message should not be null");
         logger.info("message received from {}", extractDestination(message));

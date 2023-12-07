@@ -15,7 +15,7 @@ public class StatusQueueListener {
 
     private final Logger logger = LoggerFactory.getLogger(StatusQueueListener.class);
 
-    @JmsListener(destination = "${destination.status-queue}")
+    @JmsListener(destination = "${queue.status}")
     public void onMessage(final Message message) {
         requireNonNull(message, "message should not be null");
         logger.info("status received from {}", extractDestination(message));

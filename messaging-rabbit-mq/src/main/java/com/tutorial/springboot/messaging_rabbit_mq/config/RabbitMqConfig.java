@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class RabbitMqConfig {
     @Bean
-    public Queue queue(@Value("${destination.main-queue}") final String name) {
+    public Queue queue(@Value("${queue.main}") final String name) {
         return new Queue(name, false);
     }
 }

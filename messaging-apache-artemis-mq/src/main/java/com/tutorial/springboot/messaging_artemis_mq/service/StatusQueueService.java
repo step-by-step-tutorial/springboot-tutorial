@@ -15,21 +15,21 @@ public class StatusQueueService {
 
     private final Logger logger = LoggerFactory.getLogger(StatusQueueService.class);
 
-    private final String destination;
+    private final String queue;
 
     private final JmsTemplate jmsTemplate;
 
     public StatusQueueService(
-            @Value("${destination.status-queue}")
-            final String destination,
+            @Value("${queue.status}")
+            final String queue,
             final JmsTemplate jmsTemplate) {
-        this.destination = destination;
+        this.queue = queue;
         this.jmsTemplate = jmsTemplate;
     }
 
     public void push(StatusModel model) {
         requireNonNull(model, "model should not be null");
-        jmsTemplate.send(destination, createSerializableMessage(model));
-        logger.info("ack sent to {}: {}", destination, model);
+        jmsTemplate.send(queue, createSerializableMessage(model));
+        logger.info("ack sent to {}: {}", queue, model);
     }
 }

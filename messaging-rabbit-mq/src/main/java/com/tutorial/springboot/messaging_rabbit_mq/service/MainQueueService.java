@@ -13,20 +13,20 @@ import static java.util.Objects.requireNonNull;
 public class MainQueueService {
     private final Logger logger = LoggerFactory.getLogger(MainQueueService.class);
 
-    private final String destination;
+    private final String queue;
     private final RabbitTemplate rabbitTemplate;
 
     public MainQueueService(
-            @Value("${destination.main-queue}")
-            final String destination,
+            @Value("${queue.main}")
+            final String queue,
             final RabbitTemplate rabbitTemplate) {
-        this.destination = destination;
+        this.queue = queue;
         this.rabbitTemplate = rabbitTemplate;
     }
 
     public void push(Object model) {
         requireNonNull(model, "model should not be null");
-        rabbitTemplate.send(destination, requireNonNull(createMessage(model), "message should not be null"));
-        logger.info("message sent to {}: {}", destination, model);
+        rabbitTemplate.send(queue, requireNonNull(createMessage(model), "message should not be null"));
+        logger.info("message sent to {}: {}", queue, model);
     }
 }

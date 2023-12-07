@@ -31,13 +31,14 @@ class EventPublisherTest {
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.publish(givenEvent));
 
+        assertNotNull(actual);
         assertEquals(expectedExceptionMessage, actual.getMessage());
     }
 
     @Test
     @DisplayName("the event should publish successful")
     void shouldPublishEventSuccessfulWhenThereIsNoError() {
-        final var givenEvent = new EventModel("fake text");
+        final var givenEvent = new EventModel("text");
 
         assertDoesNotThrow(() -> systemUnderTest.publish(givenEvent));
         final var actual = applicationEvents.stream(EventModel.class).toList();

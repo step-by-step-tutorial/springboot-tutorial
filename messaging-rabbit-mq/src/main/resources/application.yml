@@ -6,8 +6,8 @@ spring:
     password: root
 
 # defined by user
-destination:
-  main-queue: mainQueue
+queue:
+  main: mainQueue
 
 
 

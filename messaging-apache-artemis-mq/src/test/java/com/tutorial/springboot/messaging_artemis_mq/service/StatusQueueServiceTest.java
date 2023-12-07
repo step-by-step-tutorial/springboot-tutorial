@@ -38,7 +38,7 @@ class StatusQueueServiceTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(systemUnderTest, "destination", "fake queue");
+        ReflectionTestUtils.setField(systemUnderTest, "queue", "fake queue");
         messageUtils = mockStatic(MessageUtils.class);
     }
 

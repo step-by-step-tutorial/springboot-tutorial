@@ -23,7 +23,7 @@ class EventHandlerTest {
     @Test
     @DisplayName("should receive an event")
     void shouldReceiveEventWhenThereIsNoError() {
-        final var givenEvent = new EventModel("fake text");
+        final var givenEvent = new EventModel("text");
 
         final var expectedLog = String.format("message received: %s", givenEvent.text());
 

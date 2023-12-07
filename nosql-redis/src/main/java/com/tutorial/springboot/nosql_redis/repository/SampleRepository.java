@@ -1,6 +1,5 @@
 package com.tutorial.springboot.nosql_redis.repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutorial.springboot.nosql_redis.model.SampleModel;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -9,10 +8,11 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.tutorial.springboot.nosql_redis.util.JsonUtils.toJson;
+import static com.tutorial.springboot.nosql_redis.util.JsonUtils.toModel;
 import static java.util.Objects.requireNonNull;
 
 @Repository
@@ -22,18 +22,15 @@ public class SampleRepository {
 
     private final Logger logger = LoggerFactory.getLogger(SampleRepository.class);
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, String> hashOperations;
 
     public Optional<String> save(SampleModel model) {
         requireNonNull(model);
 
-        model.setId(UUID.randomUUID().toString());
-
         try {
-            hashOperations.putIfAbsent(Hash_KEY, model.getId(), mapper.writeValueAsString(model));
+            model.setId(UUID.randomUUID().toString());
+            hashOperations.putIfAbsent(Hash_KEY, model.getId(), toJson(model));
             return Optional.ofNullable(model.getId());
         } catch (Exception exception) {
             logger.error(exception.getMessage());
@@ -46,7 +43,7 @@ public class SampleRepository {
         requireNonNull(model.getId());
 
         try {
-            hashOperations.put(Hash_KEY, model.getId(), mapper.writeValueAsString(model));
+            hashOperations.put(Hash_KEY, model.getId(), toJson(model));
         } catch (Exception exception) {
             logger.error(exception.getMessage());
         }
@@ -56,7 +53,8 @@ public class SampleRepository {
         requireNonNull(id);
 
         try {
-            return Optional.ofNullable(mapper.readValue(hashOperations.get(Hash_KEY, id), SampleModel.class));
+            final var jsonString = hashOperations.get(Hash_KEY, id);
+            return Optional.ofNullable(toModel(jsonString, SampleModel.class));
         } catch (Exception exception) {
             logger.error(exception.getMessage());
             return Optional.empty();
@@ -69,7 +67,7 @@ public class SampleRepository {
                 .stream()
                 .map(item -> {
                     try {
-                        return mapper.readValue(item, SampleModel.class);
+                        return toModel(item, SampleModel.class);
                     } catch (Exception exception) {
                         logger.error(exception.getMessage());
                         return new SampleModel();
@@ -81,6 +79,10 @@ public class SampleRepository {
     public void deleteById(String id) {
         requireNonNull(id);
 
-        hashOperations.delete(Hash_KEY, id);
+        try {
+            hashOperations.delete(Hash_KEY, id);
+        } catch (Exception exception) {
+            logger.error(exception.getMessage());
+        }
     }
 }

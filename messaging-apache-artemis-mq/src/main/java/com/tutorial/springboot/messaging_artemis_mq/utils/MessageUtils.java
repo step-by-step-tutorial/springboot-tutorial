@@ -50,7 +50,7 @@ public final class MessageUtils {
         try {
             return message.getJMSDestination().toString();
         } catch (JMSException e) {
-            logger.error("destination does not exist for the reason that: {}", e.getMessage());
+            logger.error("queue does not exist for the reason that: {}", e.getMessage());
             return null;
         }
     }

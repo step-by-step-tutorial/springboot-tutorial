@@ -16,8 +16,7 @@ public class TestConfig {
         logCapture.start();
 
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-        org.apache.logging.log4j.core.config.Configuration configuration = loggerContext.getConfiguration();
-        LoggerConfig rootLoggerConfig = configuration.getLoggerConfig("");
+        LoggerConfig rootLoggerConfig = loggerContext.getConfiguration().getLoggerConfig("");
         rootLoggerConfig.addAppender(logCapture, Level.INFO, null);
 
         return logCapture;

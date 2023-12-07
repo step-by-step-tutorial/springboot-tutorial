@@ -9,9 +9,9 @@ spring:
     pub-sub-domain: true
 
 # defined by user
-destination:
-  main-queue: mainQueue
-  status-queue: statusQueue
+queue:
+  main: mainQueue
+  status: statusQueue
 
 ---
 spring:

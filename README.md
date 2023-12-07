@@ -1,13 +1,16 @@
 # <p align="center">Spring Boot Tutorial</p>
 
-[Spring Boot Documentation](https://spring.io/projects/spring-boot)
+Spring Boot is an agile framework to use modules of Spring framework in fast and easy configuration way. For
+more information refer to [Spring Boot documentation](https://spring.io/projects/spring-boot)
 
-[Spring Boot Generator](https://start.spring.io/)
+In order to create an preconfigured project based on Spring Boot use the following link.
+
+* [Spring Boot Generator](https://start.spring.io/)
 
 ## Prerequisites
 
 * [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html) 
+* [Maven 3](https://maven.apache.org/index.html)
 * [Docker](https://www.docker.com/)
 
 ## Steps

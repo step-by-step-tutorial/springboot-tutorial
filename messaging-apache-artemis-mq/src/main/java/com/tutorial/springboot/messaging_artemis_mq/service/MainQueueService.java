@@ -15,23 +15,23 @@ public class MainQueueService {
 
     private final Logger logger = LoggerFactory.getLogger(MainQueueService.class);
 
-    private final String destination;
+    private final String queue;
 
     private final JmsTemplate jmsTemplate;
 
     public MainQueueService(
-            @Value("${destination.main-queue}")
-            final String destination,
+            @Value("${queue.main}")
+            final String queue,
             final JmsTemplate jmsTemplate
     ) {
-        this.destination = destination;
+        this.queue = queue;
         this.jmsTemplate = jmsTemplate;
     }
 
     public void push(MessageModel model) {
         requireNonNull(model, "model should not be null");
-        jmsTemplate.send(destination, createSerializableMessage(model));
-        logger.info("model sent to {}: {}", destination, model);
+        jmsTemplate.send(queue, createSerializableMessage(model));
+        logger.info("model sent to {}: {}", queue, model);
     }
 
 }

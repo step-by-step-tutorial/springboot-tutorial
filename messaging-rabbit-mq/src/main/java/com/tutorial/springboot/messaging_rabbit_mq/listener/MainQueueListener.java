@@ -17,7 +17,7 @@ public class MainQueueListener {
 
     private final Logger logger = LoggerFactory.getLogger(MainQueueListener.class);
 
-    @RabbitListener(queues = "${destination.main-queue}")
+    @RabbitListener(queues = "${queue.main}")
     public void onMessage(
             final Message message,
             @Header(AmqpHeaders.CORRELATION_ID) final String correlationId
