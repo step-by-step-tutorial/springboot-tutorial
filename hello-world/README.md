@@ -41,7 +41,7 @@ public class Application {
 
 ## Prerequisites
 
-* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 
 ## Build

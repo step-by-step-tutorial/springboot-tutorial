@@ -72,7 +72,7 @@ create `log4j2.xml` in the resources and add the following configuration.
 
 ## Prerequisites
 
-* [Java 17](https://www.oracle.com/de/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 
 ## Build
