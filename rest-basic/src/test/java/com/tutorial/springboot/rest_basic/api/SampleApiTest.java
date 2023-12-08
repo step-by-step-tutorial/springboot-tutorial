@@ -16,7 +16,7 @@ import static com.tutorial.springboot.rest_basic.TestApiUtils.createUriBuilder;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@DisplayName("Sample API test on /v1/samples")
+@DisplayName("Sample API test")
 class SampleApiTest {
 
     static final String BASE_PATH = "/v1/samples";
@@ -28,32 +28,29 @@ class SampleApiTest {
     int port;
 
     @Nested
-    @DisplayName("sending POST request to " + BASE_PATH)
+    @DisplayName("sending POST request to -> " + BASE_PATH)
     class SaveTest {
 
         @Test
-        void GivenId_ThenReturnUniqueSampleDto() {
+        void GivenDto_ThenReturnId() {
             final var givenDto = new SampleDto(null, "text", 1, LocalDateTime.now());
             final var givenUri = createUriBuilder(port)
                     .path(BASE_PATH)
                     .build()
                     .toUri();
 
-            final var actual = restTemplate.postForEntity(givenUri, new HttpEntity<>(givenDto), String.class);
+            final var actual = restTemplate.postForEntity(givenUri, new HttpEntity<>(givenDto), Long.class);
 
             assertNotNull(actual);
             assertEquals(201, actual.getStatusCode().value());
+            assertNotNull(actual.getBody());
             assertNotNull(actual.getHeaders().getLocation());
-            assertEquals(givenUri.getHost(), actual.getHeaders().getLocation().getHost());
-            assertEquals(givenUri.getPort(), actual.getHeaders().getLocation().getPort());
-            assertNotNull(actual.getHeaders().getLocation().getPath());
-            assertTrue(actual.getHeaders().getLocation().getPath().startsWith(givenUri.getPath()));
-            assertNull(actual.getBody());
+            assertEquals(givenUri.toString() + "/" + actual.getBody(), actual.getHeaders().getLocation().toString());
         }
     }
 
     @Nested
-    @DisplayName("sending GET request to " + BASE_PATH + " /{id}")
+    @DisplayName("sending GET request to -> " + BASE_PATH + "/{id}")
     class FindByIdTest {
         final LocalDateTime now = LocalDateTime.now();
 
