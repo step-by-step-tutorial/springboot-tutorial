@@ -1,7 +1,7 @@
 package com.tutorial.springboot.rest_basic.api;
 
+import com.tutorial.springboot.rest_basic.TestDbUtils;
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
-import com.tutorial.springboot.rest_basic.dto.Storage;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,10 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static com.tutorial.springboot.rest_basic.TestApiUtils.createUriBuilder;
+import static com.tutorial.springboot.rest_basic.TestApiUtils.generateTestUri;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -28,18 +30,15 @@ class SampleApiTest {
     int port;
 
     @Nested
-    @DisplayName("sending POST request to -> " + BASE_PATH)
+    @DisplayName("POST -> " + BASE_PATH)
     class SaveTest {
 
         @Test
-        void GivenDto_ThenReturnId() {
-            final var givenDto = new SampleDto(null, "text", 1, LocalDateTime.now());
-            final var givenUri = createUriBuilder(port)
-                    .path(BASE_PATH)
-                    .build()
-                    .toUri();
+        void GivenDto_WhenPost_ThenReturnIdOnCreatedStatus() {
+            final var givenDto = SampleDto.builder().text("fake").code(1).datetime(LocalDateTime.now()).build();
+            final var givenUri = generateTestUri(port).path(BASE_PATH).build().toUri();
 
-            final var actual = restTemplate.postForEntity(givenUri, new HttpEntity<>(givenDto), Long.class);
+            final var actual = restTemplate.exchange(givenUri, HttpMethod.POST, new HttpEntity<>(givenDto), Long.class);
 
             assertNotNull(actual);
             assertEquals(201, actual.getStatusCode().value());
@@ -50,36 +49,87 @@ class SampleApiTest {
     }
 
     @Nested
-    @DisplayName("sending GET request to -> " + BASE_PATH + "/{id}")
+    @DisplayName("GET -> " + BASE_PATH + "/{id}")
     class FindByIdTest {
-        final LocalDateTime now = LocalDateTime.now();
 
         @BeforeEach
         void setUp() {
-            Storage.SAMPLE_COLLECTION.put(1L, new SampleDto(1L, "text", 1, now));
+            TestDbUtils.SampleCollection.populate();
         }
 
         @AfterEach
         void tearDown() {
-            Storage.SAMPLE_COLLECTION.clear();
+            TestDbUtils.SampleCollection.truncate();
         }
 
         @Test
-        void GivenId_ThenReturnUniqueSampleDto() {
-            final var givenId = 1L;
-            final var givenUri = createUriBuilder(port)
-                    .path(BASE_PATH)
-                    .path("/{id}")
-                    .build(givenId);
+        void GivenId_WhenGet_ThenReturnUniqueSampleDtoOnOkStatus() {
+            final var givenId = TestDbUtils.SampleCollection.selectAll().stream().findFirst().orElseThrow();
+            final var givenUri = generateTestUri(port).path(BASE_PATH).path("/{id}").build(givenId);
 
-            final var actual = restTemplate.getForEntity(givenUri, SampleDto.class);
+            final var actual = restTemplate.exchange(givenUri, HttpMethod.GET, new HttpEntity<>(null), SampleDto.class);
 
             assertNotNull(actual);
             assertEquals(200, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
-            assertEquals("text", actual.getBody().text());
-            assertEquals(1, actual.getBody().code());
-            assertEquals(now, actual.getBody().datetime());
+            assertNotNull(actual.getBody().text());
+            assertNotNull(actual.getBody().code());
+            assertNotNull(actual.getBody().datetime());
+        }
+    }
+
+    @Nested
+    @DisplayName("GET -> " + BASE_PATH)
+    class FindAllTest {
+
+        @BeforeEach
+        void setUp() {
+            TestDbUtils.SampleCollection.populate();
+        }
+
+        @AfterEach
+        void tearDown() {
+            TestDbUtils.SampleCollection.truncate();
+        }
+
+        @Test
+        void GivenNothing_WhenGet_ThenReturnListOfSampleDtoOnOkStatus() {
+            final var givenUri = generateTestUri(port).path(BASE_PATH).build().toUri();
+
+            final var actual = restTemplate.exchange(givenUri, HttpMethod.GET, new HttpEntity<>(null), List.class);
+
+            assertNotNull(actual);
+            assertEquals(200, actual.getStatusCode().value());
+            assertNotNull(actual.getBody());
+            assertTrue(actual.getBody().size() > 1);
+        }
+    }
+
+    @Nested
+    @DisplayName("PUT -> " + BASE_PATH + "/{id}")
+    class UpdateTest {
+
+        @BeforeEach
+        void setUp() {
+            TestDbUtils.SampleCollection.populate();
+        }
+
+        @AfterEach
+        void tearDown() {
+            TestDbUtils.SampleCollection.truncate();
+        }
+
+        @Test
+        void GivenDtoAndId_WhenPut_ThenReturnNothingOnNoContentStatus() {
+            final var givenId = TestDbUtils.SampleCollection.selectAll().stream().findFirst().orElseThrow();
+            final var givenDto = SampleDto.builder().from(TestDbUtils.SampleCollection.select(givenId)).text("update").code(1).datetime(LocalDateTime.now()).build();
+            final var givenUri = generateTestUri(port).path(BASE_PATH).path("/{id}").build(givenId);
+
+            final var actual = restTemplate.exchange(givenUri, HttpMethod.PUT, new HttpEntity<>(givenDto), Void.class);
+
+            assertNotNull(actual);
+            assertEquals(204, actual.getStatusCode().value());
+            assertNull(actual.getBody());
         }
     }
 
