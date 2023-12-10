@@ -36,7 +36,7 @@ In order to create an preconfigured project based on Spring Boot use the followi
 * [step: messaging-kafka](messaging-kafka)
 * step: messaging-redis
 * step: messaging-pulsar
-* step: rest-basic
+* step: restful-web-api
 * step: rest-hateoas
 * step: webflux
 * step: ELK
@@ -80,6 +80,7 @@ mvn -f nosql-mongodb-reactive/pom.xml clean package
 mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
 mvn -f messaging-kafka/pom.xml clean package
+mvn -f restful-web-api/pom.xml clean package
 ```
 
 ##

@@ -7,7 +7,7 @@ public final class TestApiUtils {
 	public TestApiUtils() {
 	}
 
-	public static UriComponentsBuilder generateTestUri(int port) {
+	public static UriComponentsBuilder createTestUriBuilder(int port) {
 		return UriComponentsBuilder.newInstance()
 				.encode()
 				.scheme("http")
