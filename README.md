@@ -36,7 +36,7 @@ In order to create an preconfigured project based on Spring Boot use the followi
 * [step: messaging-kafka](messaging-kafka)
 * step: messaging-redis
 * step: messaging-pulsar
-* step: restful-web-api
+* [step: restful-web-api](restful-web-api)
 * step: rest-hateoas
 * step: webflux
 * step: ELK
