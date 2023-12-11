@@ -3,7 +3,7 @@
 Spring Boot is an agile framework to use modules of Spring framework in fast and easy configuration way. For
 more information refer to [Spring Boot documentation](https://spring.io/projects/spring-boot)
 
-In order to create an preconfigured project based on Spring Boot use the following link.
+In order to create a preconfigured project based on Spring Boot use the following link.
 
 * [Spring Boot Generator](https://start.spring.io/)
 

@@ -20,6 +20,25 @@ This tutorial is about develop a RESTful web services includes API documentation
 
 ```
 
+In order to support JSON the following dependencies must be added.
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+    </dependency>
+</dependencies>
+```
+
 ## Implementation
 
 

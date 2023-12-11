@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restfulwebapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restfulwebapi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: restfulwebapi
+    spec:
+      containers:
+        - name: restfulwebapi
+          image: samanalishiri/restful-web-services:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_HOST
+              value: "0.0.0.0"
+            - name: APP_PORT
+              value: "8080"

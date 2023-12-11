@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: restfulwebapi
+spec:
+  selector:
+    app: restfulwebapi
+  ports:
+    - port: 8080
+      targetPort: 8080
