@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: restfulwebapi
-          image: samanalishiri/restful-web-services:latest
-          imagePullPolicy: Always
+          image: samanalishiri/restfulwebapi:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:

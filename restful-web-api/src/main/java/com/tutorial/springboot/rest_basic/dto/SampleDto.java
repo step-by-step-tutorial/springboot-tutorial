@@ -1,13 +1,29 @@
 package com.tutorial.springboot.rest_basic.dto;
 
+import com.tutorial.springboot.rest_basic.validation.UpdateValidation;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 public record SampleDto(
+
+        @NotNull(groups = UpdateValidation.class, message = "Sample.ID should not be null")
         Long id,
+
+        @NotBlank(message = "Sample.id should not be null")
         String text,
+
+        @NotNull(message = "Sample.code should not be null")
         Integer code,
+
+        @NotNull(message = "Sample.datetime should not be null")
         LocalDateTime datetime
 ) {
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
         private Long id;
         private String text;
@@ -48,9 +64,5 @@ public record SampleDto(
         public SampleDto build() {
             return new SampleDto(id, text, code, datetime);
         }
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 }

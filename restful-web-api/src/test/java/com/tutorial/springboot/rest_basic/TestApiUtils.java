@@ -4,15 +4,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public final class TestApiUtils {
 
-	public TestApiUtils() {
-	}
+    private TestApiUtils() {
+    }
 
-	public static UriComponentsBuilder createTestUriBuilder(int port) {
-		return UriComponentsBuilder.newInstance()
-				.encode()
-				.scheme("http")
-				.host("localhost")
-				.port(port);
-	}
+    public static UriComponentsBuilder uriBuilder(int port, String basePath) {
+        return UriComponentsBuilder.newInstance()
+                .encode()
+                .scheme("http")
+                .host("localhost")
+                .port(port)
+                .path(basePath);
+    }
 
 }

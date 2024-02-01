@@ -1,1 +1,1 @@
-docker compose --file .\docker-compose.yml --project-name restful-web-api up --build -d
+docker compose --file .\docker-compose.yml --project-name restfulwebapi up --build -d

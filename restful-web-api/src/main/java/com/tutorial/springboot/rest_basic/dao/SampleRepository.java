@@ -2,50 +2,29 @@ package com.tutorial.springboot.rest_basic.dao;
 
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
+import java.util.Optional;
 
-public class SampleRepository {
+public interface SampleRepository {
+    Optional<Long> insert(SampleDto sample);
 
-    public static final Map<Long, SampleDto> SAMPLE_TABLE = Collections.synchronizedMap(new HashMap<>());
+    Optional<SampleDto> selectById(Long id);
 
-    public static final AtomicLong SAMPLE_ID_GENERATOR = new AtomicLong();
+    void update(Long id, SampleDto dto);
 
-    public static long insert(SampleDto dto) {
-        final var id = SAMPLE_ID_GENERATOR.incrementAndGet();
-        SAMPLE_TABLE.putIfAbsent(
-                id,
-                SampleDto.builder()
-                        .from(dto)
-                        .id(id)
-                        .build()
-        );
-        return id;
-    }
+    void deleteById(Long id);
 
-    public static List<SampleDto> selectAll() {
-        return SAMPLE_TABLE.values()
-                .stream()
-                .toList();
-    }
+    List<Long> insertAll(SampleDto... samples);
 
-    public static SampleDto selectById(Long id) {
-        return SampleRepository.SAMPLE_TABLE.get(id);
-    }
+    List<SampleDto> selectAll(Long... identities);
 
-    public static void update(Long id, SampleDto dto) {
-        SAMPLE_TABLE.put(id, dto);
-    }
+    List<SampleDto> selectAll();
 
-    public static void delete(Long id) {
-        SAMPLE_TABLE.remove(id);
-    }
+    void deleteAll(Long... identities);
 
-    public static void truncate() {
-        SampleRepository.SAMPLE_TABLE.clear();
-    }
+    void truncate();
 
-    public static Set<Long> projectAllIds() {
-        return SampleRepository.SAMPLE_TABLE.keySet();
-    }
+    List<Long> identities();
+
+    boolean exists(Long id);
 }

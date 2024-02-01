@@ -1,12 +1,12 @@
-docker rm restful-web-services --force
-docker image rm samanalishiri/restful-web-services:latest
+docker rm restfulwebapi --force
+docker image rm samanalishiri/restfulwebapi:latest
 
-docker build -t samanalishiri/restful-web-services:latest .
+docker build -t samanalishiri/restfulwebapi:latest .
 
 docker run ^
---name restful-web-services ^
+--name restfulwebapi ^
 -p 8080:8080 ^
--h restful-web-services ^
+-h restfulwebapi ^
 -e APP_HOST=0.0.0.0 ^
 -e APP_PORT=8080 ^
--itd samanalishiri/restful-web-services:latest
+-itd samanalishiri/restfulwebapi:latest

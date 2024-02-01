@@ -1,7 +1,7 @@
 REM ======================================================================================================================
 REM RESTFUL-WEB-API
 REM ======================================================================================================================
-docker build -t samanalishiri/restful-web-services:latest .
+docker build -t samanalishiri/restfulwebapi:latest .
 
 kubectl apply -f .\kube\app-deployment.yml
 REM kubectl get deployments -n default
