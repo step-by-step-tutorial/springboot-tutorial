@@ -1,11 +1,11 @@
-package com.tutorial.springboot.rest_basic.dao;
+package com.tutorial.springboot.rest_basic.service;
 
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface SampleRepository {
+public interface SampleService {
     Optional<Long> insert(SampleDto sample);
 
     Optional<SampleDto> selectById(Long id);
@@ -24,7 +24,7 @@ public interface SampleRepository {
 
     void truncate();
 
-    List<Long> identities();
+    List<Long> getIdentities();
 
     boolean exists(Long id);
 }

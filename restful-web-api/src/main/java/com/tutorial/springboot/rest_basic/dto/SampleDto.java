@@ -1,6 +1,5 @@
 package com.tutorial.springboot.rest_basic.dto;
 
-import com.tutorial.springboot.rest_basic.validation.UpdateValidation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -8,7 +7,6 @@ import java.time.LocalDateTime;
 
 public record SampleDto(
 
-        @NotNull(groups = UpdateValidation.class, message = "Sample.ID should not be null")
         Long id,
 
         @NotBlank(message = "Sample.id should not be null")

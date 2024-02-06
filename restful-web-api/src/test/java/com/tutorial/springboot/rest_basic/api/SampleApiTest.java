@@ -1,9 +1,9 @@
 package com.tutorial.springboot.rest_basic.api;
 
 import com.tutorial.springboot.rest_basic.TestApiUtils;
-import com.tutorial.springboot.rest_basic.TestFixtureUtils;
-import com.tutorial.springboot.rest_basic.dao.SampleRepository;
+import com.tutorial.springboot.rest_basic.TestFixture;
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
+import com.tutorial.springboot.rest_basic.service.SampleService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,17 +14,16 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpMethod.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@DisplayName("Sample API unit tests")
+@DisplayName("Sample API Unit Tests")
 class SampleApiTest {
 
     static final String ROOT_URI = "api/v1/samples";
@@ -33,7 +32,7 @@ class SampleApiTest {
     TestRestTemplate systemUnderTest;
 
     @Autowired
-    SampleRepository sampleRepository;
+    SampleService sampleService;
 
     UriComponentsBuilder uriBuilder;
 
@@ -41,33 +40,12 @@ class SampleApiTest {
         uriBuilder = TestApiUtils.uriBuilder(port, ROOT_URI);
     }
 
-    static class TestFixture {
-        static SampleDto oneSample() {
-            return SampleDto.builder()
-                    .text("fake")
-                    .code(1)
-                    .datetime(LocalDateTime.now())
-                    .build();
-        }
-
-        static SampleDto[] multiSample(final int number) {
-            return IntStream.range(0, number)
-                    .boxed()
-                    .map(integer -> SampleDto.builder()
-                            .text(String.format("fake %s", integer))
-                            .code(integer)
-                            .datetime(LocalDateTime.now())
-                            .build())
-                    .toArray(SampleDto[]::new);
-        }
-    }
-
     @Nested
     @DisplayName("POST -> save one")
     class SaveTest {
 
         @Test
-        void GivenDto_WhenPost_ThenReturnIdOnCreatedStatus() {
+        void givenDto_whenPost_thenReturnIdOnCreatedStatus() {
             final var givenDto = TestFixture.oneSample();
             final var givenUri = uriBuilder.build().toUri();
 
@@ -81,7 +59,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNullDto_WhenPost_ThenReturnUnsupportedMediaError() {
+        void givenNullDto_whenPost_thenReturnUnsupportedMediaError() {
             final SampleDto givenDto = null;
             final var givenUri = uriBuilder.build().toUri();
 
@@ -93,7 +71,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenDtoWithInvalidField_WhenPost_ThenReturnInternalServerError() {
+        void givenDtoWithInvalidField_whenPost_thenReturnInternalServerError() {
             final var givenDto = SampleDto.builder().build();
             final var givenUri = uriBuilder.build().toUri();
 
@@ -106,7 +84,7 @@ class SampleApiTest {
             );
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(400, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
             assertFalse(actual.getBody().isEmpty());
         }
@@ -117,8 +95,8 @@ class SampleApiTest {
     class SaveAllTest {
 
         @Test
-        void GivenListOfDto_WhenPost_ThenReturnListOfIdOnCreatedStatus() {
-            final var givenListOfDto = TestFixture.multiSample(2);
+        void givenListOfDto_whenPost_thenReturnListOfIdOnCreatedStatus() {
+            final var givenListOfDto = TestFixture.multiSample();
             final var givenUri = uriBuilder.path("/saveAll").build().toUri();
 
             final var actual = systemUnderTest.exchange(
@@ -132,11 +110,11 @@ class SampleApiTest {
             assertNotNull(actual);
             assertEquals(201, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
-            assertEquals(2, actual.getBody().size());
+            assertEquals(givenListOfDto.length, actual.getBody().size());
         }
 
         @Test
-        void GivenEmptyList_WhenPost_ThenReturnInternalServerError() {
+        void givenEmptyList_whenPost_thenReturnInternalServerError() {
             final var givenListOfDto = new SampleDto[0];
             final var givenUri = uriBuilder.path("/saveAll").build().toUri();
 
@@ -148,7 +126,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNullList_WhenPost_ThenReturnUnsupportedMediaError() {
+        void givenNullList_whenPost_thenReturnUnsupportedMediaError() {
             final SampleDto[] givenListOfDto = null;
             final var givenUri = uriBuilder.path("/saveAll").build().toUri();
 
@@ -168,17 +146,17 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleRepository.insertAll(TestFixture.multiSample(1));
+            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleRepository.truncate();
+            sampleService.truncate();
         }
 
         @Test
-        void GivenId_WhenGet_ThenReturnUniqueSampleDtoOnOkStatus() {
-            final var givenId = TestFixtureUtils.selectByRandom(listOfIdentities);
+        void givenId_whenGet_thenReturnUniqueSampleDtoOnOkStatus() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), SampleDto.class);
@@ -192,7 +170,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNullId_WhenGet_ThenReturnNotFoundError() {
+        void givenNullId_whenGet_thenReturnNotFoundError() {
             final Long givenId = null;
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
@@ -204,7 +182,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenEmptyId_WhenGet_ThenReturnNotFoundError() {
+        void givenEmptyId_whenGet_thenReturnNotFoundError() {
             final String givenId = "";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
@@ -216,7 +194,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNotNumberId_WhenGet_ThenReturnInternalServerError() {
+        void givenNotNumberId_whenGet_thenReturnInternalServerError() {
             final String givenId = "not number";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
@@ -234,16 +212,16 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            sampleRepository.insertAll(TestFixture.multiSample(2));
+            sampleService.insertAll(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleRepository.truncate();
+            sampleService.truncate();
         }
 
         @Test
-        void GivenNothing_WhenGet_ThenReturnListOfSampleDtoOnOkStatus() {
+        void givenNothing_whenGet_thenReturnListOfSampleDtoOnOkStatus() {
             final var givenUri = uriBuilder.path("/findAll").build().toUri();
 
             final var actual = systemUnderTest.exchange(
@@ -260,8 +238,8 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenIdSequence_WhenGet_ThenReturnListOfSampleDtoOnOkStatus() {
-            var givenIdentities = sampleRepository.identities()
+        void givenIdSequence_whenGet_thenReturnListOfSampleDtoOnOkStatus() {
+            var givenIdentities = sampleService.getIdentities()
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.joining(","));
@@ -276,7 +254,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNullAsIdSequence_WhenGet_ThenReturnNotFoundError() {
+        void givenNullAsIdSequence_whenGet_thenReturnNotFoundError() {
             final String givenIdentities = null;
             final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
 
@@ -288,7 +266,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenEmptyStringAsIdSequence_WhenGet_ThenReturnNotFoundError() {
+        void givenEmptyStringAsIdSequence_whenGet_thenReturnNotFoundError() {
             final var givenIdentities = "";
             final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
 
@@ -300,7 +278,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenIdSequenceWithNotNumber_WhenGet_ThenReturnInternalServerError() {
+        void givenIdSequenceWithNotNumber_whenGet_thenReturnInternalServerError() {
             final var givenIdentities = "not number";
             final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
 
@@ -312,7 +290,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenIdSequenceWithNullPlace_WhenGet_ThenReturnInternalServerError() {
+        void givenIdSequenceWithNullPlace_whenGet_thenReturnInternalServerError() {
             final var givenIdentities = "1,,2";
             final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
 
@@ -332,20 +310,20 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleRepository.insertAll(TestFixture.multiSample(1));
+            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleRepository.truncate();
+            sampleService.truncate();
         }
 
         @Test
-        void GivenDtoAndId_WhenPut_ThenReturnNothingOnNoContentStatus() {
-            final var givenId = TestFixtureUtils.selectByRandom(listOfIdentities);
+        void givenDtoAndId_whenPut_thenReturnNothingOnNoContentStatus() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder()
-                    .from(sampleRepository.selectById(givenId).orElseThrow())
+                    .from(sampleService.selectById(givenId).orElseThrow())
                     .text("update")
                     .code(1)
                     .datetime(now())
@@ -359,8 +337,8 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNullDtoAndId_WhenPut_ThenReturnInternalServerError() {
-            final var givenId = TestFixtureUtils.selectByRandom(listOfIdentities);
+        void givenNullDtoAndId_whenPut_thenReturnInternalServerError() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final SampleDto givenDto = null;
 
@@ -372,8 +350,8 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenEmptyDtoAndId_WhenPut_ThenReturnInternalServerError() {
-            final var givenId = TestFixtureUtils.selectByRandom(listOfIdentities);
+        void givenEmptyDtoAndId_whenPut_thenReturnInternalServerError() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder().build();
 
@@ -385,12 +363,12 @@ class SampleApiTest {
                     });
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(400, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void GivenDtoAndNullId_WhenPut_ThenReturnNotFoundError() {
+        void givenDtoAndNullId_whenPut_thenReturnNotFoundError() {
             final Long givenId = null;
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder().build();
@@ -403,7 +381,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenDtoAndEmptyId_WhenPut_ThenReturnNotFoundError() {
+        void givenDtoAndEmptyId_whenPut_thenReturnNotFoundError() {
             final var givenId = "";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder().build();
@@ -416,7 +394,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenDtoAndNotNumberId_WhenPut_ThenReturnInternalServerError() {
+        void givenDtoAndNotNumberId_whenPut_thenReturnInternalServerError() {
             final var givenId = "not number";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder().build();
@@ -437,17 +415,17 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleRepository.insertAll(TestFixture.multiSample(1));
+            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleRepository.truncate();
+            sampleService.truncate();
         }
 
         @Test
-        void GivenId_WhenDelete_ThenReturnNothingOnNoContentStatus() {
-            final var givenId = TestFixtureUtils.selectByRandom(listOfIdentities);
+        void givenId_whenDelete_thenReturnNothingOnNoContentStatus() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), Void.class);
@@ -458,7 +436,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNullId_WhenDelete_ThenReturnInternalServerError() {
+        void givenNullId_whenDelete_thenReturnInternalServerError() {
             final Long givenId = null;
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
@@ -470,7 +448,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenEmptyId_WhenDelete_ThenReturnInternalServerError() {
+        void givenEmptyId_whenDelete_thenReturnInternalServerError() {
             final var givenId = "";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
@@ -482,7 +460,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNotNumberId_WhenDelete_ThenReturnInternalServerError() {
+        void givenNotNumberId_whenDelete_thenReturnInternalServerError() {
             final var givenId = "not number";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
@@ -495,21 +473,21 @@ class SampleApiTest {
     }
 
     @Nested
-    @DisplayName("GET -> delete all")
+    @DisplayName("DELETE -> delete all")
     class DeleteAllTest {
 
         @BeforeEach
         void populate() {
-            sampleRepository.insertAll(TestFixture.multiSample(3));
+            sampleService.insertAll(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleRepository.truncate();
+            sampleService.truncate();
         }
 
         @Test
-        void GivenNothing_WhenDelete_ThenReturnNothingOnNoContentStatus() {
+        void givenNothing_whenDelete_thenReturnNothingOnNoContentStatus() {
             final var givenUri = uriBuilder.path("/truncate").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), Void.class);
@@ -519,8 +497,8 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenIdSequence_WhenDelete_ThenReturnNothingOnNoContentStatus() {
-            var givenIdentities = sampleRepository.identities()
+        void givenIdSequence_whenDelete_thenReturnNothingOnNoContentStatus() {
+            var givenIdentities = sampleService.getIdentities()
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.joining(","));
@@ -533,7 +511,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenNullAsIdSequence_WhenDelete_ThenReturnNotFoundError() {
+        void givenNullAsIdSequence_whenDelete_thenReturnNotFoundError() {
             final String givenIdentities = null;
             final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
 
@@ -545,7 +523,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenEmptyStringAsIdSequence_WhenDelete_ThenReturnNotFoundError() {
+        void givenEmptyStringAsIdSequence_whenDelete_thenReturnNotFoundError() {
             final var givenIdentities = "";
             final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
 
@@ -557,7 +535,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenIdSequenceWithNotNumber_WhenDelete_ThenReturnInternalServerError() {
+        void givenIdSequenceWithNotNumber_whenDelete_thenReturnInternalServerError() {
             final var givenIdentities = "not number";
             final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
 
@@ -569,7 +547,7 @@ class SampleApiTest {
         }
 
         @Test
-        void GivenIdSequenceWithNullPlace_WhenDelete_ThenReturnNotFoundError() {
+        void givenIdSequenceWithNullPlace_whenDelete_thenReturnNotFoundError() {
             final var givenIdentities = "1,,2";
             final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
 
@@ -578,6 +556,55 @@ class SampleApiTest {
             assertNotNull(actual);
             assertEquals(500, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
+        }
+    }
+
+    @Nested
+    @DisplayName("HEAD,OPTION -> metadata")
+    class GetMetadata {
+
+        private List<Long> listOfIdentities;
+
+        @BeforeEach
+        void populate() {
+            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
+        }
+
+        @AfterEach
+        void truncate() {
+            sampleService.truncate();
+        }
+
+        @Test
+        void givenId_whenHead_thenReturnOkStatus() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenUri = uriBuilder.path("/{id}").build(givenId);
+
+            final var actual = systemUnderTest.exchange(givenUri, HEAD, new HttpEntity<>(null), SampleDto.class);
+
+            assertNotNull(actual);
+            assertEquals(200, actual.getStatusCode().value());
+        }
+
+        @Test
+        void givenInvalidId_whenHead_thenReturnNotFoundStatus() {
+            final var givenId = Collections.max(listOfIdentities) + 1;
+            final var givenUri = uriBuilder.path("/{id}").build(givenId);
+
+            final var actual = systemUnderTest.exchange(givenUri, HEAD, new HttpEntity<>(null), SampleDto.class);
+
+            assertNotNull(actual);
+            assertEquals(404, actual.getStatusCode().value());
+        }
+
+        @Test
+        void givenNothing_whenOption_thenReturnAllowedHttpVerbsOnOkStatus() {
+            final var givenUri = uriBuilder.path("/verbs").build().toUri();
+
+            final var actual = systemUnderTest.exchange(givenUri, OPTIONS, new HttpEntity<>(null), String.class);
+
+            assertNotNull(actual);
+            assertEquals(200, actual.getStatusCode().value());
         }
     }
 }

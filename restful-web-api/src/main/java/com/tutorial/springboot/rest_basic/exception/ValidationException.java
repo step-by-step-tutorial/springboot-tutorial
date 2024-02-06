@@ -6,7 +6,7 @@ public class ValidationException extends RuntimeException {
     private final List<String> details;
 
     public ValidationException(List<String> errorMessages) {
-        super("There are invalid values, please refer to details!");
+        super("There are invalid values, please refer to the details!");
         this.details = errorMessages;
     }
 
