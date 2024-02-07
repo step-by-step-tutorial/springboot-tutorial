@@ -14,17 +14,17 @@ public interface SampleService {
 
     void deleteById(Long id);
 
-    List<Long> insertAll(SampleDto... samples);
+    boolean exists(Long id);
 
-    List<SampleDto> selectAll(Long... identities);
+    List<Long> insertBatch(SampleDto... samples);
+
+    List<SampleDto> selectBatch(Long... identities);
+
+    void deleteBatch(Long... identities);
 
     List<SampleDto> selectAll();
 
-    void deleteAll(Long... identities);
+    void deleteAll();
 
-    void truncate();
-
-    List<Long> getIdentities();
-
-    boolean exists(Long id);
+    List<Long> selectIdentities();
 }

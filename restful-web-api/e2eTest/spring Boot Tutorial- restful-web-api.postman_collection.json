@@ -8,16 +8,22 @@
 	},
 	"item": [
 		{
-			"name": "OPTION Sample",
+			"name": "API allowed verbs",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: allowed verbs\", function () {",
+							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"It has Allow header\", function () {",
 							"    pm.response.to.have.header(\"Allow\");",
-							"    console.log(`Sample API: get allowed varbs -> [${pm.response.headers.get(\"Allow\")}]`)",
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"     console.log(`allowed HTTP methods: [${pm.response.headers.get(\"Allow\")}]`)",
 							"});"
 						],
 						"type": "text/javascript"
@@ -28,12 +34,12 @@
 				"method": "OPTIONS",
 				"header": [],
 				"url": {
-					"raw": "{{URL}}/verbs",
+					"raw": "{{URL}}/options",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
-						"verbs"
+						"options"
 					]
 				},
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -41,20 +47,30 @@
 			"response": []
 		},
 		{
-			"name": "Save Sample",
+			"name": "Save",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: save one\", function () {",
+							"pm.test(\"Status code is 201\", function () {",
 							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"It has Location header\", function () {",
 							"    pm.response.to.have.header(\"Location\");",
+							"});",
+							"",
+							"pm.test(\"It returns ID in the body\", function () {",
 							"    pm.expect(pm.response.text()).not.empty",
-							"    ",
-							"    var candidateId = pm.response.text();",
-							"    pm.environment.set(\"CANDIDATE_ID\", candidateId);",
-							"    console.log(`Sample API: save one with ID=${candidateId}`)",
+							"});",
+							"",
+							"pm.test(\"Set default ID for the test environment\", function () {",
+							"    pm.environment.set(\"CANDIDATE_ID\", pm.response.text());",
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`save one resource with ID: ${pm.response.text()}`)",
 							"});",
 							""
 						],
@@ -85,18 +101,25 @@
 			"response": []
 		},
 		{
-			"name": "Get Sample",
+			"name": "Find",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: get one\", function () {",
+							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Body is not empty\", function () {",
 							"    pm.expect(pm.response.text()).not.empty;",
-							"    console.log(`Sample API: get one -> ${pm.response.text()}`)",
-							"});"
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`returned resource: ${pm.response.text()}`)",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -119,17 +142,21 @@
 			"response": []
 		},
 		{
-			"name": "HEAD Sample",
+			"name": "Exists",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: check existence one\", function () {",
+							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"    pm.response.to.be.ok;",
-							"    console.log(`Sample API: check existence -> ${pm.response.status}`)",
-							"});"
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`check existence: ${pm.response.status}`)",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -152,15 +179,18 @@
 			"response": []
 		},
 		{
-			"name": "Update Sample",
+			"name": "Update",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: update one\", function () {",
+							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
-							"    console.log(`Sample API: update one -> ${pm.response.status == \"No Content\"? \"Done\" : \"Failed\"}`)",
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`update result: ${pm.response.status == \"No Content\"? \"Done\" : \"Failed\"}`)",
 							"});"
 						],
 						"type": "text/javascript"
@@ -193,16 +223,19 @@
 			"response": []
 		},
 		{
-			"name": "Update Sample Error",
+			"name": "Update Failed",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: update one by invalid data\", function () {\r",
-							"    pm.response.to.have.status(500);\r",
-							"    pm.response.to.be.serverError;\r",
-							"    console.log(`Sample API: update one by invalid data -> ${pm.response.text()}`)\r",
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.be.badRequest;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"print expectation\", function () {\r",
+							"    console.log(`update failed with message: ${pm.response.text()}`)\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -235,16 +268,20 @@
 			"response": []
 		},
 		{
-			"name": "Delete Sample",
+			"name": "Delete",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: delete one\", function () {",
+							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
-							"    console.log(`Sample API: delete one -> ${pm.response.status == \"No Content\" ? \"Done\" : \"Failed\"}`)",
-							"});"
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`delete result: ${pm.response.status == \"No Content\" ? \"Done\" : \"Failed\"}`)",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -276,19 +313,26 @@
 			"response": []
 		},
 		{
-			"name": "Save All Sample",
+			"name": "Save Batch",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: save all\", function () {",
+							"pm.test(\"Status code is 201\", function () {",
 							"    pm.response.to.have.status(201);",
-							"    pm.expect(pm.response.text()).not.empty",
-							"    ",
-							"    var listOfId = JSON.parse(pm.response.text());",
-							"    pm.environment.set(\"LIST_OF_CANDIDATE_ID\", listOfId.join(\",\"));",
-							"    console.log(`Sample API: save all with IDs=${pm.response.json().length}`)",
+							"});",
+							"",
+							"pm.test(\"Body is not empty\", function () {",
+							"     pm.expect(pm.response.text()).not.empty",
+							"});",
+							"",
+							"pm.test(\"Set default list of ID for the test environment\", function () {",
+							"    pm.environment.set(\"LIST_OF_CANDIDATE_ID\", JSON.parse(pm.response.text()).join(\",\"));",
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`number of saved resources: ${pm.response.json().length}`)",
 							"});"
 						],
 						"type": "text/javascript"
@@ -308,17 +352,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/samples/saveAll",
-					"protocol": "http",
+					"raw": "{{URL}}/batch",
 					"host": [
-						"localhost"
+						"{{URL}}"
 					],
-					"port": "8080",
 					"path": [
-						"api",
-						"v1",
-						"samples",
-						"saveAll"
+						"batch"
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -326,85 +365,20 @@
 			"response": []
 		},
 		{
-			"name": "Get All Sample",
+			"name": "Delete Batch",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: get all\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.expect(pm.response.text()).not.empty;",
-							"    console.log(`Sample API: get all with lenght ${pm.response.json().length}`)",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{URL}}/findAll",
-					"host": [
-						"{{URL}}"
-					],
-					"path": [
-						"findAll"
-					]
-				},
-				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-			},
-			"response": []
-		},
-		{
-			"name": "Get All Sample By IDs",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Sample API: get all\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.expect(pm.response.text()).not.empty;",
-							"    console.log(`Sample API: get all with lenght ${pm.response.json().length}`)",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{URL}}/findAll/{{LIST_OF_CANDIDATE_ID}}",
-					"host": [
-						"{{URL}}"
-					],
-					"path": [
-						"findAll",
-						"{{LIST_OF_CANDIDATE_ID}}"
-					]
-				},
-				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
-			},
-			"response": []
-		},
-		{
-			"name": "Delete All Sample By IDs",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Sample API: delete one\", function () {",
+							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
-							"    console.log(`Sample API: delete one -> ${pm.response.status == \"No Content\" ? \"Done\" : \"Failed\"}`)",
-							"});"
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`delete result: ${pm.response.status == \"No Content\" ? \"Done\" : \"Failed\"}`)",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -415,7 +389,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "[{{LIST_OF_CANDIDATE_ID}}]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -423,13 +397,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/deleteAll/{{LIST_OF_CANDIDATE_ID}}",
+					"raw": "{{URL}}/batch",
 					"host": [
 						"{{URL}}"
 					],
 					"path": [
-						"deleteAll",
-						"{{LIST_OF_CANDIDATE_ID}}"
+						"batch"
 					]
 				},
 				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
@@ -437,15 +410,56 @@
 			"response": []
 		},
 		{
-			"name": "Truncate Sample",
+			"name": "Get All",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Sample API: truncate\", function () {",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Body is not empty\", function () {",
+							"    pm.expect(pm.response.text()).not.empty;",
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`number of returned resources: ${pm.response.json().length}`)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}",
+					"host": [
+						"{{URL}}"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete All",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
-							"    console.log(`Sample API: truncate -> ${pm.response.status == \"No Content\" ? \"Done\" : \"Failed\"}`)",
+							"});",
+							"",
+							"pm.test(\"print expectation\", function () {",
+							"    console.log(`truncate result: ${pm.response.status == \"No Content\" ? \"Done\" : \"Failed\"}`)",
 							"});"
 						],
 						"type": "text/javascript"
@@ -465,12 +479,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{URL}}/truncate",
+					"raw": "{{URL}}",
 					"host": [
 						"{{URL}}"
-					],
-					"path": [
-						"truncate"
 					]
 				},
 				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."

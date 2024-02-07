@@ -18,7 +18,6 @@ import java.util.List;
 
 import static com.tutorial.springboot.rest_basic.util.ErrorUtils.checkValidation;
 import static com.tutorial.springboot.rest_basic.util.HttpUtils.createUriFromId;
-import static com.tutorial.springboot.rest_basic.util.StringUtils.stringToLongArray;
 import static org.springframework.http.ResponseEntity.*;
 
 @RestController
@@ -70,25 +69,31 @@ public class SampleApi {
         return noContent().build();
     }
 
-    @PostMapping(value = "/saveAll")
-    public ResponseEntity<List<Long>> saveAll(@RequestBody SampleDto[] samples) {
-        logger.info("Received an inbound request to save all samples");
-        var identities = sampleService.insertAll(samples);
+    @RequestMapping(value = "/{id}", method = RequestMethod.HEAD)
+    public ResponseEntity<Void> exists(@PathVariable Long id) {
+        logger.info("Received an inbound request to check existence of a sample by its unique ID[{}]", id);
+        return sampleService.exists(id) ? ok().build() : notFound().build();
+    }
+
+    @PostMapping(value = "/batch")
+    public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] samples) {
+        logger.info("Received an inbound request to save a batch of samples");
+        var identities = sampleService.insertBatch(samples);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(identities);
     }
 
-    @GetMapping(value = "/findAll/{identities}")
-    public ResponseEntity<List<SampleDto>> findAll(@PathVariable(value = "identities") String identities) {
-        logger.info("Received an inbound request to retrieve all samples");
-        final var samples = sampleService.selectAll(stringToLongArray(identities));
+    @DeleteMapping(value = "/batch")
+    public ResponseEntity<Void> deleteBatch(@RequestBody Long[] identities) {
+        logger.info("Received an inbound request to delete a batch of samples");
+        sampleService.deleteBatch(identities);
 
-        return ok().body(samples);
+        return noContent().build();
     }
 
-    @GetMapping(value = "/findAll")
+    @GetMapping
     public ResponseEntity<List<SampleDto>> findAll() {
         logger.info("Received an inbound request to retrieve all samples");
         final var samples = sampleService.selectAll();
@@ -96,30 +101,16 @@ public class SampleApi {
         return ok().body(samples);
     }
 
-    @DeleteMapping(value = "/deleteAll/{identities}")
-    public ResponseEntity<Void> deleteAll(@PathVariable(value = "identities") String identities) {
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAll() {
         logger.info("Received an inbound request to delete all samples");
-        sampleService.deleteAll(stringToLongArray(identities));
+        sampleService.deleteAll();
 
         return noContent().build();
     }
 
-    @DeleteMapping(value = "/truncate")
-    public ResponseEntity<Void> truncate() {
-        logger.info("Received an inbound request to delete all samples");
-        sampleService.truncate();
-
-        return noContent().build();
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.HEAD)
-    public ResponseEntity<Void> exists(@PathVariable Long id) {
-        logger.info("Received an inbound request to check existence of a sample by its unique ID[{}]", id);
-        return sampleService.exists(id) ? ok().build() : notFound().build();
-    }
-
-    @RequestMapping(value = "/verbs", method = RequestMethod.OPTIONS)
-    public ResponseEntity<String> getHttpVerbs() {
+    @RequestMapping(value = "/options", method = RequestMethod.OPTIONS)
+    public ResponseEntity<String> getHttpMethods() {
         logger.info("Received an inbound request to show supported HTTP verbs");
         return ResponseEntity.ok()
                 .allow(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS)

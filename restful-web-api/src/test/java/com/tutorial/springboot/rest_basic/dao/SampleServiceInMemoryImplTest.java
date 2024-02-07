@@ -2,6 +2,7 @@ package com.tutorial.springboot.rest_basic.dao;
 
 import com.tutorial.springboot.rest_basic.TestFixture;
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
+import com.tutorial.springboot.rest_basic.exception.ValidationException;
 import com.tutorial.springboot.rest_basic.repository.Database;
 import com.tutorial.springboot.rest_basic.service.SampleService;
 import com.tutorial.springboot.rest_basic.service.SampleServiceInMemoryImpl;
@@ -38,7 +39,7 @@ class SampleServiceInMemoryImplTest {
         @Test
         void givenListOfSample_whenInsertAll_thenReturnListOfId() {
             var givenSamples = TestFixture.multiSample();
-            var actual = assertDoesNotThrow(() -> systemUnderTest.insertAll(givenSamples));
+            var actual = assertDoesNotThrow(() -> systemUnderTest.insertBatch(givenSamples));
             assertNotNull(actual);
             assertFalse(actual.isEmpty());
         }
@@ -46,7 +47,7 @@ class SampleServiceInMemoryImplTest {
         @Test
         void givenEmptyList_whenInsertAll_thenThrowIllegalStateException() {
             var givenSamples = new SampleDto[0];
-            var actual = assertThrows(IllegalStateException.class, () -> systemUnderTest.insertAll(givenSamples));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.insertBatch(givenSamples));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
@@ -54,7 +55,7 @@ class SampleServiceInMemoryImplTest {
         @Test
         void givenNullAsList_whenInsertAll_thenThrowNullPointerException() {
             final SampleDto[] givenSamples = null;
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.insertAll(givenSamples));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.insertBatch(givenSamples));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
@@ -74,7 +75,7 @@ class SampleServiceInMemoryImplTest {
 
         @Test
         void givenNothing_whenSelectAll_thenReturnListOfSample() {
-            systemUnderTest.insertAll(TestFixture.multiSample());
+            systemUnderTest.insertBatch(TestFixture.multiSample());
             var actual = systemUnderTest.selectAll();
             assertNotNull(actual);
             assertFalse(actual.isEmpty());
@@ -82,8 +83,8 @@ class SampleServiceInMemoryImplTest {
 
         @Test
         void givenListOfId_whenSelectAll_thenReturnListOfSample() {
-            var givenListOfId = systemUnderTest.insertAll(TestFixture.multiSample());
-            var actual = systemUnderTest.selectAll(givenListOfId.toArray(Long[]::new));
+            var givenListOfId = systemUnderTest.insertBatch(TestFixture.multiSample());
+            var actual = systemUnderTest.selectBatch(givenListOfId.toArray(Long[]::new));
             assertNotNull(actual);
             assertFalse(actual.isEmpty());
         }
@@ -91,7 +92,7 @@ class SampleServiceInMemoryImplTest {
         @Test
         void givenEmptyList_whenSelectAll_thenThrowIllegalStateException() {
             var givenListOfId = new Long[0];
-            var actual = assertThrows(IllegalStateException.class, () -> systemUnderTest.selectAll(givenListOfId));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.selectBatch(givenListOfId));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
@@ -99,15 +100,15 @@ class SampleServiceInMemoryImplTest {
         @Test
         void givenNullAsList_whenSelectAll_thenThrowNullPointerException() {
             final Long[] givenListOfId = null;
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.selectAll(givenListOfId));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.selectBatch(givenListOfId));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
 
         @Test
         void givenNothing_whenGetIdentities_thenReturnListOfId() {
-            systemUnderTest.insertAll(TestFixture.multiSample());
-            var actual = systemUnderTest.getIdentities();
+            systemUnderTest.insertBatch(TestFixture.multiSample());
+            var actual = systemUnderTest.selectIdentities();
             assertNotNull(actual);
             assertFalse(actual.isEmpty());
         }
@@ -184,7 +185,7 @@ class SampleServiceInMemoryImplTest {
                     .datetime(LocalDateTime.now())
                     .build();
 
-            var actual = assertThrows(IllegalStateException.class, () -> systemUnderTest.update(givenId, givenSample));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.update(givenId, givenSample));
 
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
@@ -206,8 +207,8 @@ class SampleServiceInMemoryImplTest {
 
         @Test
         void givenIdentities_whenDeleteAllById_thenAllDeletedSuccessfully() {
-            var givenIdentities = systemUnderTest.insertAll(TestFixture.multiSample()).toArray(Long[]::new);
-            assertDoesNotThrow(() -> systemUnderTest.deleteAll(givenIdentities));
+            var givenIdentities = systemUnderTest.insertBatch(TestFixture.multiSample()).toArray(Long[]::new);
+            assertDoesNotThrow(() -> systemUnderTest.deleteBatch(givenIdentities));
             Stream.of(givenIdentities)
                     .forEach(id -> assertFalse(systemUnderTest.exists(id)));
         }
@@ -215,7 +216,7 @@ class SampleServiceInMemoryImplTest {
         @Test
         void givenEmptyListOfId_whenDeleteAllByIdentities_thenThrowIllegalStateException() {
             var givenIdentities = new Long[0];
-            var actual = assertThrows(IllegalStateException.class, () -> systemUnderTest.deleteAll(givenIdentities));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.deleteBatch(givenIdentities));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
@@ -223,16 +224,16 @@ class SampleServiceInMemoryImplTest {
         @Test
         void givenNullAsList_whenDeleteAllByIdentities_thenThrowNullPointerException() {
             final Long[] givenIdentities = null;
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.deleteAll(givenIdentities));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.deleteBatch(givenIdentities));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
 
         @Test
         void givenSample_whenTruncate_thenAllDeletedSuccessfully() {
-            systemUnderTest.insertAll(TestFixture.multiSample());
+            systemUnderTest.insertBatch(TestFixture.multiSample());
             var actual = assertDoesNotThrow(() -> {
-                systemUnderTest.truncate();
+                systemUnderTest.deleteAll();
                 return systemUnderTest.selectAll();
             });
             assertEquals(0, actual.size());

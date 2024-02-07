@@ -16,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,12 +91,12 @@ class SampleApiTest {
 
     @Nested
     @DisplayName("POST -> save all")
-    class SaveAllTest {
+    class SaveBatchTest {
 
         @Test
         void givenListOfDto_whenPost_thenReturnListOfIdOnCreatedStatus() {
             final var givenListOfDto = TestFixture.multiSample();
-            final var givenUri = uriBuilder.path("/saveAll").build().toUri();
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(
                     givenUri,
@@ -114,21 +113,21 @@ class SampleApiTest {
         }
 
         @Test
-        void givenEmptyList_whenPost_thenReturnInternalServerError() {
-            final var givenListOfDto = new SampleDto[0];
-            final var givenUri = uriBuilder.path("/saveAll").build().toUri();
+        void givenEmptyList_whenPost_thenReturnBadRequestError() {
+            final var givenListOfDto = List.of();
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, POST, new HttpEntity<>(givenListOfDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(400, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
         void givenNullList_whenPost_thenReturnUnsupportedMediaError() {
             final SampleDto[] givenListOfDto = null;
-            final var givenUri = uriBuilder.path("/saveAll").build().toUri();
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, POST, new HttpEntity<>(givenListOfDto), String.class);
 
@@ -146,12 +145,12 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
+            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleService.truncate();
+            sampleService.deleteAll();
         }
 
         @Test
@@ -212,17 +211,17 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            sampleService.insertAll(TestFixture.multiSample());
+            sampleService.insertBatch(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleService.truncate();
+            sampleService.deleteAll();
         }
 
         @Test
         void givenNothing_whenGet_thenReturnListOfSampleDtoOnOkStatus() {
-            final var givenUri = uriBuilder.path("/findAll").build().toUri();
+            final var givenUri = uriBuilder.build().toUri();
 
             final var actual = systemUnderTest.exchange(
                     givenUri,
@@ -238,51 +237,11 @@ class SampleApiTest {
         }
 
         @Test
-        void givenIdSequence_whenGet_thenReturnListOfSampleDtoOnOkStatus() {
-            var givenIdentities = sampleService.getIdentities()
-                    .stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(","));
-            final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
-
-            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
-
-            assertNotNull(actual);
-            assertEquals(200, actual.getStatusCode().value());
-            assertNotNull(actual.getBody());
-            assertFalse(actual.getBody().isEmpty());
-        }
-
-        @Test
-        void givenNullAsIdSequence_whenGet_thenReturnNotFoundError() {
-            final String givenIdentities = null;
-            final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
-
-            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
-
-            assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
-            assertNotNull(actual.getBody());
-        }
-
-        @Test
-        void givenEmptyStringAsIdSequence_whenGet_thenReturnNotFoundError() {
-            final var givenIdentities = "";
-            final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
-
-            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
-
-            assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
-            assertNotNull(actual.getBody());
-        }
-
-        @Test
         void givenIdSequenceWithNotNumber_whenGet_thenReturnInternalServerError() {
             final var givenIdentities = "not number";
-            final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
             assertEquals(500, actual.getStatusCode().value());
@@ -292,9 +251,9 @@ class SampleApiTest {
         @Test
         void givenIdSequenceWithNullPlace_whenGet_thenReturnInternalServerError() {
             final var givenIdentities = "1,,2";
-            final var givenUri = uriBuilder.path("/findAll/{identities}").build(givenIdentities);
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
             assertEquals(500, actual.getStatusCode().value());
@@ -310,12 +269,12 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
+            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleService.truncate();
+            sampleService.deleteAll();
         }
 
         @Test
@@ -415,12 +374,12 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
+            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleService.truncate();
+            sampleService.deleteAll();
         }
 
         @Test
@@ -474,21 +433,21 @@ class SampleApiTest {
 
     @Nested
     @DisplayName("DELETE -> delete all")
-    class DeleteAllTest {
+    class DeleteBatchTest {
 
         @BeforeEach
         void populate() {
-            sampleService.insertAll(TestFixture.multiSample());
+            sampleService.insertBatch(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleService.truncate();
+            sampleService.deleteAll();
         }
 
         @Test
         void givenNothing_whenDelete_thenReturnNothingOnNoContentStatus() {
-            final var givenUri = uriBuilder.path("/truncate").build().toUri();
+            final var givenUri = uriBuilder.build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), Void.class);
 
@@ -497,49 +456,46 @@ class SampleApiTest {
         }
 
         @Test
-        void givenIdSequence_whenDelete_thenReturnNothingOnNoContentStatus() {
-            var givenIdentities = sampleService.getIdentities()
-                    .stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(","));
-            final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
+        void givenListOfId_whenDeleteBatch_thenReturnNothingOnNoContentStatus() {
+            var givenIdentities = sampleService.selectIdentities();
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), Void.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), Void.class);
 
             assertNotNull(actual);
             assertEquals(204, actual.getStatusCode().value());
         }
 
         @Test
-        void givenNullAsIdSequence_whenDelete_thenReturnNotFoundError() {
-            final String givenIdentities = null;
-            final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
+        void givenNull_whenDelete_thenReturnInternalServerError() {
+            final Long[] givenIdentities = null;
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(500, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void givenEmptyStringAsIdSequence_whenDelete_thenReturnNotFoundError() {
-            final var givenIdentities = "";
-            final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
+        void givenEmptyList_whenDelete_thenReturnNotFoundError() {
+            final var givenIdentities = List.of();
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(400, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
         void givenIdSequenceWithNotNumber_whenDelete_thenReturnInternalServerError() {
             final var givenIdentities = "not number";
-            final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
             assertEquals(500, actual.getStatusCode().value());
@@ -549,9 +505,9 @@ class SampleApiTest {
         @Test
         void givenIdSequenceWithNullPlace_whenDelete_thenReturnNotFoundError() {
             final var givenIdentities = "1,,2";
-            final var givenUri = uriBuilder.path("/deleteAll/{identities}").build(givenIdentities);
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
             assertEquals(500, actual.getStatusCode().value());
@@ -567,12 +523,12 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertAll(TestFixture.multiSample());
+            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
         }
 
         @AfterEach
         void truncate() {
-            sampleService.truncate();
+            sampleService.deleteAll();
         }
 
         @Test
@@ -599,7 +555,7 @@ class SampleApiTest {
 
         @Test
         void givenNothing_whenOption_thenReturnAllowedHttpVerbsOnOkStatus() {
-            final var givenUri = uriBuilder.path("/verbs").build().toUri();
+            final var givenUri = uriBuilder.path("/options").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, OPTIONS, new HttpEntity<>(null), String.class);
 
