@@ -1,16 +1,16 @@
 package com.tutorial.springboot.rest_basic.exception;
 
-import java.util.List;
+import java.util.Collection;
 
 public class ValidationException extends RuntimeException {
-    private final List<String> details;
+    private final Collection<String> details;
 
-    public ValidationException(List<String> errorMessages) {
+    public ValidationException(Collection<String> errorMessages) {
         super("There are invalid values, please refer to the details!");
         this.details = errorMessages;
     }
 
-    public List<String> getDetails() {
+    public Collection<String> getDetails() {
         return details;
     }
 }

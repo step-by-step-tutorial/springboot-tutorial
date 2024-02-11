@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -21,7 +22,7 @@ public class ExceptionApi {
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<List<String>> catchValidationException(ValidationException ex) {
+    public ResponseEntity<Collection<String>> catchValidationException(ValidationException ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.badRequest().body(ex.getDetails());
     }

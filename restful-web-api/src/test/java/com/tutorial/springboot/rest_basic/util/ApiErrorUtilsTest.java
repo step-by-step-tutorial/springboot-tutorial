@@ -12,13 +12,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Error Utils Unit Tests")
-class ErrorUtilsTest {
+class ApiErrorUtilsTest {
 
     @Test
     public void checkValidation_noErrors() {
         var givenBindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(false);
-        assertDoesNotThrow(() -> ErrorUtils.checkValidation(givenBindingResult));
+        assertDoesNotThrow(() -> ApiErrorUtils.checkValidation(givenBindingResult));
     }
 
     @Test
@@ -27,7 +27,7 @@ class ErrorUtilsTest {
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(true);
         Mockito.when(givenBindingResult.getAllErrors()).thenReturn(List.of(new ObjectError("object name", "error message")));
 
-        var actual = assertThrows(ValidationException.class, () -> ErrorUtils.checkValidation(givenBindingResult));
+        var actual = assertThrows(ValidationException.class, () -> ApiErrorUtils.checkValidation(givenBindingResult));
 
         assertNotNull(actual);
         assertNotNull(actual.getMessage());

@@ -4,14 +4,15 @@ import com.tutorial.springboot.rest_basic.dto.SampleDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.tutorial.springboot.rest_basic.repository.Database.SAMPLE_ID_GENERATOR;
 import static com.tutorial.springboot.rest_basic.repository.Database.SAMPLE_TABLE;
 import static com.tutorial.springboot.rest_basic.validation.NumberValidation.requireEquality;
-import static com.tutorial.springboot.rest_basic.validation.ParamValidation.requireNotEmpty;
-import static com.tutorial.springboot.rest_basic.validation.ParamValidation.requireNotNull;
+import static com.tutorial.springboot.rest_basic.validation.CollectionValidation.requireNotEmpty;
+import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.requireNotNull;
 import static java.util.Arrays.asList;
 import static java.util.Objects.*;
 
@@ -85,7 +86,9 @@ public class SampleServiceInMemoryImpl implements SampleService {
         requireNotNull(identities, "List of identities should not be null");
         requireNotEmpty(identities, "List of identifier should not be empty");
 
-        Stream.of(identities).forEach(SAMPLE_TABLE::remove);
+        Stream.of(identities)
+                .filter(Objects::nonNull)
+                .forEach(SAMPLE_TABLE::remove);
     }
 
     @Override

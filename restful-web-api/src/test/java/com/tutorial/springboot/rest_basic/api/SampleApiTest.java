@@ -14,7 +14,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -26,6 +26,20 @@ import static org.springframework.http.HttpMethod.*;
 class SampleApiTest {
 
     static final String ROOT_URI = "api/v1/samples";
+
+    public static final int CREATED_STATUS_CODE = 201;
+
+    public static final int UNSUPPORTED_MEDIA_STATUS_CODE = 415;
+
+    public static final int BAD_REQUEST_STATUS_CODE = 400;
+
+    public static final int OK_STATUS_CODE = 200;
+
+    public static final int NOT_FOUND_STATUS_CODE = 404;
+
+    public static final int INTERNAL_SERVER_ERROR_STATUS_CODE = 500;
+
+    public static final int NO_CONTENT_STATUS_CODE = 204;
 
     @Autowired
     TestRestTemplate systemUnderTest;
@@ -40,7 +54,7 @@ class SampleApiTest {
     }
 
     @Nested
-    @DisplayName("POST -> save one")
+    @DisplayName("Persist data via REST API using POST method")
     class SaveTest {
 
         @Test
@@ -51,26 +65,26 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, POST, new HttpEntity<>(givenDto), Long.class);
 
             assertNotNull(actual);
-            assertEquals(201, actual.getStatusCode().value());
+            assertEquals(CREATED_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
             assertNotNull(actual.getHeaders().getLocation());
             assertEquals(givenUri + "/" + actual.getBody(), actual.getHeaders().getLocation().toString());
         }
 
         @Test
-        void givenNullDto_whenPost_thenReturnUnsupportedMediaError() {
+        void givenNullAsBody_whenPost_thenReturnUnsupportedMediaError() {
             final SampleDto givenDto = null;
             final var givenUri = uriBuilder.build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, POST, new HttpEntity<>(givenDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(415, actual.getStatusCode().value());
+            assertEquals(UNSUPPORTED_MEDIA_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void givenDtoWithInvalidField_whenPost_thenReturnInternalServerError() {
+        void givenDtoWithInvalidFields_whenPost_thenReturnBadRequestError() {
             final var givenDto = SampleDto.builder().build();
             final var givenUri = uriBuilder.build().toUri();
 
@@ -83,14 +97,14 @@ class SampleApiTest {
             );
 
             assertNotNull(actual);
-            assertEquals(400, actual.getStatusCode().value());
+            assertEquals(BAD_REQUEST_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
-            assertFalse(actual.getBody().isEmpty());
+            assertEquals(3, actual.getBody().size());
         }
     }
 
     @Nested
-    @DisplayName("POST -> save all")
+    @DisplayName("Persist batch of data via REST API using POST method")
     class SaveBatchTest {
 
         @Test
@@ -107,9 +121,28 @@ class SampleApiTest {
             );
 
             assertNotNull(actual);
-            assertEquals(201, actual.getStatusCode().value());
+            assertEquals(CREATED_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
             assertEquals(givenListOfDto.length, actual.getBody().size());
+        }
+
+        @Test
+        void givenListOfDtoIncludeInvalidDto_whenPost_thenReturnListOfIdOnCreatedStatus() {
+            final var givenListOfDto = new SampleDto[]{SampleDto.builder().build(), SampleDto.builder().build()};
+
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
+
+            final var actual = systemUnderTest.exchange(
+                    givenUri,
+                    POST,
+                    new HttpEntity<>(givenListOfDto),
+                    new ParameterizedTypeReference<List<String>>() {
+                    }
+            );
+
+            assertNotNull(actual);
+            assertEquals(BAD_REQUEST_STATUS_CODE, actual.getStatusCode().value());
+            assertNotNull(actual.getBody());
         }
 
         @Test
@@ -120,7 +153,7 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, POST, new HttpEntity<>(givenListOfDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(400, actual.getStatusCode().value());
+            assertEquals(BAD_REQUEST_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
@@ -132,13 +165,13 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, POST, new HttpEntity<>(givenListOfDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(415, actual.getStatusCode().value());
+            assertEquals(UNSUPPORTED_MEDIA_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
     }
 
     @Nested
-    @DisplayName("GET -> find one")
+    @DisplayName("Fetch data via REST API using GET method")
     class FindByIdTest {
 
         private List<Long> listOfIdentities;
@@ -161,7 +194,7 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), SampleDto.class);
 
             assertNotNull(actual);
-            assertEquals(200, actual.getStatusCode().value());
+            assertEquals(OK_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
             assertNotNull(actual.getBody().text());
             assertNotNull(actual.getBody().code());
@@ -176,37 +209,37 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(NOT_FOUND_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
         void givenEmptyId_whenGet_thenReturnNotFoundError() {
-            final String givenId = "";
+            final var givenId = "";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(NOT_FOUND_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
         void givenNotNumberId_whenGet_thenReturnInternalServerError() {
-            final String givenId = "not number";
+            final var givenId = "not number";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
     }
 
     @Nested
-    @DisplayName("GET -> find all")
+    @DisplayName("Fetch a group of data via REST API using GET method")
     class FindAllTest {
 
         @BeforeEach
@@ -231,38 +264,14 @@ class SampleApiTest {
                     });
 
             assertNotNull(actual);
-            assertEquals(200, actual.getStatusCode().value());
+            assertEquals(OK_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
             assertFalse(actual.getBody().isEmpty());
-        }
-
-        @Test
-        void givenIdSequenceWithNotNumber_whenGet_thenReturnInternalServerError() {
-            final var givenIdentities = "not number";
-            final var givenUri = uriBuilder.path("/batch").build().toUri();
-
-            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(givenIdentities), String.class);
-
-            assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
-            assertNotNull(actual.getBody());
-        }
-
-        @Test
-        void givenIdSequenceWithNullPlace_whenGet_thenReturnInternalServerError() {
-            final var givenIdentities = "1,,2";
-            final var givenUri = uriBuilder.path("/batch").build().toUri();
-
-            final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(givenIdentities), String.class);
-
-            assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
-            assertNotNull(actual.getBody());
         }
     }
 
     @Nested
-    @DisplayName("PUT -> update one")
+    @DisplayName("Update data via REST API using PUT method")
     class UpdateTest {
 
         private List<Long> listOfIdentities;
@@ -278,11 +287,10 @@ class SampleApiTest {
         }
 
         @Test
-        void givenDtoAndId_whenPut_thenReturnNothingOnNoContentStatus() {
+        void givenDtoWithNullIdAndId_whenPut_thenReturnNothingOnNoContentStatus() {
             final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder()
-                    .from(sampleService.selectById(givenId).orElseThrow())
                     .text("update")
                     .code(1)
                     .datetime(now())
@@ -291,12 +299,30 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), Void.class);
 
             assertNotNull(actual);
-            assertEquals(204, actual.getStatusCode().value());
+            assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
             assertNull(actual.getBody());
         }
 
         @Test
-        void givenNullDtoAndId_whenPut_thenReturnInternalServerError() {
+        void givenDtoWithTheSameIdAndId_whenPut_thenReturnNothingOnNoContentStatus() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenUri = uriBuilder.path("/{id}").build(givenId);
+            final var givenDto = SampleDto.builder()
+                    .id(givenId)
+                    .text("update")
+                    .code(1)
+                    .datetime(now())
+                    .build();
+
+            final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), Void.class);
+
+            assertNotNull(actual);
+            assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
+            assertNull(actual.getBody());
+        }
+
+        @Test
+        void givenNullAsBodyAndId_whenPut_thenReturnInternalServerError() {
             final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final SampleDto givenDto = null;
@@ -304,12 +330,12 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void givenEmptyDtoAndId_whenPut_thenReturnInternalServerError() {
+        void givenEmptyDtoAndId_whenPut_thenReturnBadRequestError() {
             final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder().build();
@@ -322,12 +348,37 @@ class SampleApiTest {
                     });
 
             assertNotNull(actual);
-            assertEquals(400, actual.getStatusCode().value());
+            assertEquals(BAD_REQUEST_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
+            assertEquals(3, actual.getBody().size());
         }
 
         @Test
-        void givenDtoAndNullId_whenPut_thenReturnNotFoundError() {
+        void givenDtoWithDifferentIdAndId_whenPut_thenReturnBadRequestError() {
+            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenUri = uriBuilder.path("/{id}").build(givenId);
+            final var givenDto = SampleDto.builder()
+                    .id(0L)
+                    .text("updated")
+                    .code(1)
+                    .datetime(now())
+                    .build();
+
+            final var actual = systemUnderTest.exchange(
+                    givenUri,
+                    PUT,
+                    new HttpEntity<>(givenDto),
+                    new ParameterizedTypeReference<List<String>>() {
+                    });
+
+            assertNotNull(actual);
+            assertEquals(BAD_REQUEST_STATUS_CODE, actual.getStatusCode().value());
+            assertNotNull(actual.getBody());
+            assertEquals(1, actual.getBody().size());
+        }
+
+        @Test
+        void givenDtoAndNullAsId_whenPut_thenReturnNotFoundError() {
             final Long givenId = null;
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder().build();
@@ -335,7 +386,7 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(NOT_FOUND_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
@@ -348,7 +399,7 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(NOT_FOUND_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
@@ -361,13 +412,13 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
     }
 
     @Nested
-    @DisplayName("DELETE -> delete one")
+    @DisplayName("Delete data via REST API using DELETE method")
     class DeleteTest {
 
         private List<Long> listOfIdentities;
@@ -390,31 +441,31 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), Void.class);
 
             assertNotNull(actual);
-            assertEquals(204, actual.getStatusCode().value());
+            assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
             assertNull(actual.getBody());
         }
 
         @Test
-        void givenNullId_whenDelete_thenReturnInternalServerError() {
+        void givenNullAsId_whenDelete_thenReturnNotFoundError() {
             final Long givenId = null;
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(NOT_FOUND_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void givenEmptyId_whenDelete_thenReturnInternalServerError() {
+        void givenEmptyId_whenDelete_thenReturnNotFoundError() {
             final var givenId = "";
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), String.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(NOT_FOUND_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
@@ -426,13 +477,13 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
     }
 
     @Nested
-    @DisplayName("DELETE -> delete all")
+    @DisplayName("Delete a group of data via REST API using DELETE method")
     class DeleteBatchTest {
 
         @BeforeEach
@@ -446,13 +497,14 @@ class SampleApiTest {
         }
 
         @Test
-        void givenNothing_whenDelete_thenReturnNothingOnNoContentStatus() {
+        void givenNothing_whenDeleteAll_thenReturnNothingOnNoContentStatus() {
             final var givenUri = uriBuilder.build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), Void.class);
 
             assertNotNull(actual);
-            assertEquals(204, actual.getStatusCode().value());
+            assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
+            assertNull(actual.getBody());
         }
 
         @Test
@@ -463,60 +515,73 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), Void.class);
 
             assertNotNull(actual);
-            assertEquals(204, actual.getStatusCode().value());
+            assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
+            assertNull(actual.getBody());
         }
 
         @Test
-        void givenNull_whenDelete_thenReturnInternalServerError() {
+        void givenNullAsListOfId_whenDeleteBatch_thenReturnInternalServerError() {
             final Long[] givenIdentities = null;
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void givenEmptyList_whenDelete_thenReturnNotFoundError() {
+        void givenEmptyList_whenDeleteBatch_thenReturnBadRequestError() {
             final var givenIdentities = List.of();
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
-            assertEquals(400, actual.getStatusCode().value());
+            assertEquals(BAD_REQUEST_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void givenIdSequenceWithNotNumber_whenDelete_thenReturnInternalServerError() {
-            final var givenIdentities = "not number";
+        void givenListOfIdWithNotNumberElement_whenDeleteBatch_thenReturnInternalServerError() {
+            final var givenIdentities = new Object[]{"not number"};
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
+            assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
             assertNotNull(actual.getBody());
         }
 
         @Test
-        void givenIdSequenceWithNullPlace_whenDelete_thenReturnNotFoundError() {
-            final var givenIdentities = "1,,2";
+        void givenListOfIdWithNullElement_whenDelete_thenReturnNothingOnNoContentStatus() {
+            final var givenIdentities = new Long[]{1L, null};
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
 
             assertNotNull(actual);
-            assertEquals(500, actual.getStatusCode().value());
-            assertNotNull(actual.getBody());
+            assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
+            assertNull(actual.getBody());
+        }
+
+        @Test
+        void givenListOfIdWithEmptyElement_whenDelete_thenReturnNothingOnNoContentStatus() {
+            final var givenIdentities = new Object[]{1, ""};
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
+
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
+
+            assertNotNull(actual);
+            assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
+            assertNull(actual.getBody());
         }
     }
 
     @Nested
-    @DisplayName("HEAD,OPTION -> metadata")
+    @DisplayName("Fetch metadata via REST API using HEAD,OPTION method")
     class GetMetadata {
 
         private List<Long> listOfIdentities;
@@ -539,18 +604,18 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, HEAD, new HttpEntity<>(null), SampleDto.class);
 
             assertNotNull(actual);
-            assertEquals(200, actual.getStatusCode().value());
+            assertEquals(OK_STATUS_CODE, actual.getStatusCode().value());
         }
 
         @Test
         void givenInvalidId_whenHead_thenReturnNotFoundStatus() {
-            final var givenId = Collections.max(listOfIdentities) + 1;
+            final var givenId = -1;
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, HEAD, new HttpEntity<>(null), SampleDto.class);
 
             assertNotNull(actual);
-            assertEquals(404, actual.getStatusCode().value());
+            assertEquals(NOT_FOUND_STATUS_CODE, actual.getStatusCode().value());
         }
 
         @Test
@@ -560,7 +625,7 @@ class SampleApiTest {
             final var actual = systemUnderTest.exchange(givenUri, OPTIONS, new HttpEntity<>(null), String.class);
 
             assertNotNull(actual);
-            assertEquals(200, actual.getStatusCode().value());
+            assertEquals(OK_STATUS_CODE, actual.getStatusCode().value());
         }
     }
 }

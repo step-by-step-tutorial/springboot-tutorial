@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.tutorial.springboot.rest_basic.util.ErrorUtils.checkValidation;
+import static com.tutorial.springboot.rest_basic.util.ApiErrorUtils.checkValidation;
 import static com.tutorial.springboot.rest_basic.util.HttpUtils.createUriFromId;
 import static org.springframework.http.ResponseEntity.*;
 
@@ -77,7 +77,8 @@ public class SampleApi {
 
     @PostMapping(value = "/batch")
     public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] samples) {
-        logger.info("Received an inbound request to save a batch of samples");
+        logger.info("Received an inbound request to save a batch[{}] of samples", samples.length);
+        checkValidation(samples);
         var identities = sampleService.insertBatch(samples);
 
         return ResponseEntity
@@ -87,7 +88,7 @@ public class SampleApi {
 
     @DeleteMapping(value = "/batch")
     public ResponseEntity<Void> deleteBatch(@RequestBody Long[] identities) {
-        logger.info("Received an inbound request to delete a batch of samples");
+        logger.info("Received an inbound request to delete a batch[{}] of samples", identities.length);
         sampleService.deleteBatch(identities);
 
         return noContent().build();

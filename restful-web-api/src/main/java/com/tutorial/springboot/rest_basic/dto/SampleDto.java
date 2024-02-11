@@ -9,13 +9,13 @@ public record SampleDto(
 
         Long id,
 
-        @NotBlank(message = "Sample.id should not be null")
+        @NotBlank(message = "sample.text should not be null or empty")
         String text,
 
-        @NotNull(message = "Sample.code should not be null")
+        @NotNull(message = "sample.code should not be null")
         Integer code,
 
-        @NotNull(message = "Sample.datetime should not be null")
+        @NotNull(message = "sample.datetime should not be null")
         LocalDateTime datetime
 ) {
     public static Builder builder() {
