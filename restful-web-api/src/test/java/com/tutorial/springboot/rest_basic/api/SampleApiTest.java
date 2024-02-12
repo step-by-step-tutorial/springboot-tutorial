@@ -127,7 +127,27 @@ class SampleApiTest {
         }
 
         @Test
-        void givenListOfDtoIncludeInvalidDto_whenPost_thenReturnListOfIdOnCreatedStatus() {
+        void givenListOfDtoIncludeInvalidDto_whenPost_thenReturnListOfIdForValidDtoOnCreatedStatus() {
+            final var givenListOfDto = new SampleDto[]{SampleDto.builder().build(), TestFixture.oneSample()};
+
+            final var givenUri = uriBuilder.path("/batch").build().toUri();
+
+            final var actual = systemUnderTest.exchange(
+                    givenUri,
+                    POST,
+                    new HttpEntity<>(givenListOfDto),
+                    new ParameterizedTypeReference<List<Long>>() {
+                    }
+            );
+
+            assertNotNull(actual);
+            assertEquals(CREATED_STATUS_CODE, actual.getStatusCode().value());
+            assertNotNull(actual.getBody());
+            assertEquals(1, actual.getBody().size());
+        }
+
+        @Test
+        void givenListOfDtoIsIncludedOnlyInvalidDto_whenPost_thenReturnBadRequestError() {
             final var givenListOfDto = new SampleDto[]{SampleDto.builder().build(), SampleDto.builder().build()};
 
             final var givenUri = uriBuilder.path("/batch").build().toUri();

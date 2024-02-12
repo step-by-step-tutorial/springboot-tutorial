@@ -15,14 +15,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class ApiErrorUtilsTest {
 
     @Test
-    public void checkValidation_noErrors() {
+    @DisplayName("Pass validation with no error")
+    public void givenNoErrors_thenValidationPasses() {
         var givenBindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(false);
         assertDoesNotThrow(() -> ApiErrorUtils.checkValidation(givenBindingResult));
     }
 
     @Test
-    public void checkValidation_withErrors() {
+    @DisplayName("Failed validation with errors")
+    public void givenValidationErrors_thenThrowsException() {
         var givenBindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(true);
         Mockito.when(givenBindingResult.getAllErrors()).thenReturn(List.of(new ObjectError("object name", "error message")));

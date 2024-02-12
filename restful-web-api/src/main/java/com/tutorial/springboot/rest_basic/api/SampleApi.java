@@ -15,8 +15,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.tutorial.springboot.rest_basic.util.ApiErrorUtils.checkValidation;
+import static com.tutorial.springboot.rest_basic.util.CleanUpUtils.clean;
 import static com.tutorial.springboot.rest_basic.util.HttpUtils.createUriFromId;
 import static org.springframework.http.ResponseEntity.*;
 
@@ -78,8 +80,7 @@ public class SampleApi {
     @PostMapping(value = "/batch")
     public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] samples) {
         logger.info("Received an inbound request to save a batch[{}] of samples", samples.length);
-        checkValidation(samples);
-        var identities = sampleService.insertBatch(samples);
+        var identities = sampleService.insertBatch(clean(Stream.of(samples)).toArray(SampleDto[]::new));
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -10,11 +10,11 @@ import java.util.stream.Stream;
 
 import static com.tutorial.springboot.rest_basic.repository.Database.SAMPLE_ID_GENERATOR;
 import static com.tutorial.springboot.rest_basic.repository.Database.SAMPLE_TABLE;
-import static com.tutorial.springboot.rest_basic.validation.NumberValidation.requireEquality;
 import static com.tutorial.springboot.rest_basic.validation.CollectionValidation.requireNotEmpty;
+import static com.tutorial.springboot.rest_basic.validation.NumberValidation.requireEquality;
 import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.requireNotNull;
 import static java.util.Arrays.asList;
-import static java.util.Objects.*;
+import static java.util.Objects.nonNull;
 
 @Repository
 public class SampleServiceInMemoryImpl implements SampleService {
