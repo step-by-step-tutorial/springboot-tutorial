@@ -16,7 +16,7 @@ class ApiErrorUtilsTest {
 
     @Test
     @DisplayName("Pass validation with no error")
-    public void givenNoErrors_thenValidationPasses() {
+    void givenNoErrors_thenValidationPasses() {
         var givenBindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(false);
         assertDoesNotThrow(() -> ApiErrorUtils.checkValidation(givenBindingResult));
@@ -24,7 +24,7 @@ class ApiErrorUtilsTest {
 
     @Test
     @DisplayName("Failed validation with errors")
-    public void givenValidationErrors_thenThrowsException() {
+    void givenValidationErrors_thenThrowsException() {
         var givenBindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(true);
         Mockito.when(givenBindingResult.getAllErrors()).thenReturn(List.of(new ObjectError("object name", "error message")));

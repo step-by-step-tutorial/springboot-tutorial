@@ -48,8 +48,7 @@ curl -si -X DELETE -H "Content-Type: application/json" -L "http://localhost:8080
 for /f "delims=" %%i in ('curl -s -X GET -H "Content-Type: application/json" -L "http://localhost:8080/api/v1/samples/%SAMPLE_ID%"') do set FETCHED_SAMPLE_DELETED=%%i
 echo INPUT: %SAMPLE_ID%
 echo RESPONSE: No Content
-echo FETCHED_SAMPLE_DELETED:
-echo %FETCHED_SAMPLE_DELETED% | jq
+echo FETCHED_SAMPLE_DELETED: %FETCHED_SAMPLE_DELETED%
 
 echo:
 echo ===================================================================================================================

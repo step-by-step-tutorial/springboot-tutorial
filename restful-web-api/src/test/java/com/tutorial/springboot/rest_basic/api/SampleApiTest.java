@@ -27,19 +27,20 @@ class SampleApiTest {
 
     static final String ROOT_URI = "api/v1/samples";
 
-    public static final int CREATED_STATUS_CODE = 201;
+    static final int OK_STATUS_CODE = 200;
 
-    public static final int UNSUPPORTED_MEDIA_STATUS_CODE = 415;
+    static final int CREATED_STATUS_CODE = 201;
 
-    public static final int BAD_REQUEST_STATUS_CODE = 400;
+    static final int NO_CONTENT_STATUS_CODE = 204;
 
-    public static final int OK_STATUS_CODE = 200;
+    static final int BAD_REQUEST_STATUS_CODE = 400;
 
-    public static final int NOT_FOUND_STATUS_CODE = 404;
+    static final int NOT_FOUND_STATUS_CODE = 404;
 
-    public static final int INTERNAL_SERVER_ERROR_STATUS_CODE = 500;
+    static final int UNSUPPORTED_MEDIA_STATUS_CODE = 415;
 
-    public static final int NO_CONTENT_STATUS_CODE = 204;
+    static final int INTERNAL_SERVER_ERROR_STATUS_CODE = 500;
+
 
     @Autowired
     TestRestTemplate systemUnderTest;
@@ -49,7 +50,7 @@ class SampleApiTest {
 
     UriComponentsBuilder uriBuilder;
 
-    public SampleApiTest(@LocalServerPort int port) {
+    SampleApiTest(@LocalServerPort int port) {
         uriBuilder = TestApiUtils.uriBuilder(port, ROOT_URI);
     }
 

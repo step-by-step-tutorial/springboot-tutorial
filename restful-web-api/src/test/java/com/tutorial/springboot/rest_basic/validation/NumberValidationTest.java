@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Number Validation Unit Tests")
-public class NumberValidationTest {
+class NumberValidationTest {
 
     @Test
-    public void givenEqualNumbers_thenContinue() {
+    void givenEqualNumbers_thenContinue() {
         var givenN = 1L;
         var givenM = 1L;
         var givenErrorMessage = "fake";
@@ -19,7 +19,7 @@ public class NumberValidationTest {
     }
 
     @Test
-    public void givenUnequalNumbers_thenThrowValidationException() {
+    void givenUnequalNumbers_thenThrowValidationException() {
         var givenN = 1L;
         var givenM = 2L;
         var givenErrorMessage = "error message";

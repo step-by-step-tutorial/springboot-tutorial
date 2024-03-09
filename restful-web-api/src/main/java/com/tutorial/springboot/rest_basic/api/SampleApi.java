@@ -50,7 +50,7 @@ public class SampleApi {
         logger.info("Received an inbound request to retrieve a sample by its unique ID[{}]", id);
         return sampleService.selectById(id)
                 .map(sample -> ok().body(sample))
-                .orElseGet(() -> ok(SampleDto.builder().build()));
+                .orElseGet(() -> notFound().build());
     }
 
     @PutMapping(path = "/{id}")
