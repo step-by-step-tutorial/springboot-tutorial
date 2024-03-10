@@ -53,9 +53,8 @@ body of the HTTP request.
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@PostMapping("/users")
-public User createUser(@RequestBody User newUser) {
-// Create a new user
+@PostMapping("/uri")
+public ResponseEntity<ID> create(@RequestBody DTO dto) {
 }
 ```
 
@@ -66,9 +65,8 @@ This HTTP verb is used to retrieve information from the identified resource.
 ```java
 import org.springframework.web.bind.annotation.GetMapping;
 
-@GetMapping("/users/{id}")
-public User getUser(@PathVariable Long id) {
-// Get user by ID
+@GetMapping("/uri/{id}")
+public ResponseEntity<DTO> get(@PathVariable Long id) {
 }
 ```
 
@@ -80,9 +78,8 @@ This HTTP verb is used to update the current representation of the resource with
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@PutMapping("/users/{id}")
-public User updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-// Update the user
+@PutMapping("/uri/{id}")
+public void update(@PathVariable Long id, @RequestBody DTO dto) {
 }
 ```
 
@@ -95,9 +92,8 @@ the resource currently residing on the server should be modified to produce a ne
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@PatchMapping("/users/{id}")
-public User partialUpdateUser(@PathVariable Long id, @RequestBody User userUpdates) {
-// Partially update the user
+@PatchMapping("/uri/{id}")
+public void partialUpdate(@PathVariable Long id, @RequestBody DTO dto) {
 }
 ```
 
@@ -108,9 +104,8 @@ This HTTP verb is used to delete a resource identified by a URI.
 ```java
 import org.springframework.web.bind.annotation.DeleteMapping;
 
-@DeleteMapping("/users/{id}")
-public void deleteUser(@PathVariable Long id) {
-// Delete the user
+@DeleteMapping("/uri/{id}")
+public void delete(@PathVariable Long id) {
 }
 ``` 
 
@@ -124,9 +119,8 @@ annotation for a HEAD method. But you can indicate the method type in the @Reque
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@RequestMapping(value = "/users/{id}", method = RequestMethod.HEAD)
-public ResponseEntity<String> headUser(@PathVariable Long id) {
-// Handle head request
+@RequestMapping(value = "/uri/{id}", method = RequestMethod.HEAD)
+public ResponseEntity<String> head(@PathVariable Long id) {
 }
 ``` 
 
@@ -139,15 +133,16 @@ specific annotation for an OPTIONS method. But you can indicate the method type 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@RequestMapping(value = "/users", method = RequestMethod.OPTIONS)
-public ResponseEntity<String> optionsUsers() {
-// Handle options request
+@RequestMapping(value = "/uri", method = RequestMethod.OPTIONS)
+public ResponseEntity<String> options() {
 }
 ```
 
 ## How To Config Spring Boot
 
 ### Dependencies
+
+#### Main Dependencies
 
 ```xml
 
@@ -158,12 +153,18 @@ public ResponseEntity<String> optionsUsers() {
     </dependency>
     <dependency>
         <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <scope>test</scope>
     </dependency>
 </dependencies>
 
 ```
+
+#### JSON Dependencies
 
 In order to support JSON, the following dependencies must be added.
 
@@ -185,12 +186,42 @@ In order to support JSON, the following dependencies must be added.
 </dependencies>
 ```
 
+#### Swagger Dependencies
+
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.3.0</version>
+    </dependency>
+</dependencies>
+```
+
 ### Spring Boot Properties
 
 ```yaml
 server:
   address: ${APP_HOST:0.0.0.0}
   port: ${APP_PORT:8080}
+```
+
+### Java Config
+
+```java
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@OpenAPIDefinition(
+        info = @Info(title = "Spring Boot Tutorial", description = "RESTful web service"),
+        servers = @Server(url = "http://localhost:8080")
+)
+public class OpenApiConfig {
+}
 ```
 
 ## Prerequisites
@@ -223,6 +254,10 @@ mvn  test
 ```bash
 mvn  spring-boot:run
 ```
+
+To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator)
+To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+To access **swagger** ui brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ##
 
