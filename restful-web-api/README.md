@@ -17,7 +17,7 @@ To develop an efficient and standard-conforming RESTful web API, keep in mind th
    a plural noun (like `users`, `orders`, `products`, etc.). This practice maintains uniformity and provides intuitive
    context to the API end-users.
 
-4. Discouraging CRUD operation tailing on category roots: CRUD operations should rely on HTTP verbs rather than path
+4. CRUD operation tailing on category roots: CRUD operations should rely on HTTP verbs rather than path
    tails for differentiated actions. For example, the base URI (`/api/v1/samples`) should accommodate all CRUD
    operations by varying the HTTP verbs and not the endpoint path:
 
@@ -245,19 +245,34 @@ mvn  test
 
 ### E2E Test
 
+#### Command Line
+
 ```shell
-./e2eTest/e2etest.sh
+# Unix/Linux
+./e2eTest/shell/e2etest.sh
+```
+
+```shell
+# Windows
+./e2eTest/shell/e2etest.bat
+```
+
+#### Postman CLI
+
+```shell
+postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/Spring Boot Tutorial.postman_environment.json'
 ```
 
 ## Run
 
-```bash
+```shell
 mvn  spring-boot:run
 ```
 
 To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator)
 To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
-To access **swagger** ui brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+To access **swagger** ui
+brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ##
 
