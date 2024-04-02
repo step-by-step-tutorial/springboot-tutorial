@@ -7,13 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-public final class Database {
+public final class SampleRepository {
 
-    public static final Map<Long, SampleDto> SAMPLE_TABLE = Collections.synchronizedMap(new HashMap<>());
+    public static final Map<Long, SampleDto> OPERATIONS = Collections.synchronizedMap(new HashMap<>());
 
-    public static final AtomicLong SAMPLE_ID_GENERATOR = new AtomicLong();
+    public static final AtomicLong ID_GENERATOR = new AtomicLong();
 
-    private Database() {
+    private SampleRepository() {
     }
 
 }

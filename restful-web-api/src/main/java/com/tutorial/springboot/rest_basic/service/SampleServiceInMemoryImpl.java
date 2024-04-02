@@ -1,6 +1,7 @@
 package com.tutorial.springboot.rest_basic.service;
 
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
+import com.tutorial.springboot.rest_basic.repository.SampleRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -8,8 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.tutorial.springboot.rest_basic.repository.Database.SAMPLE_ID_GENERATOR;
-import static com.tutorial.springboot.rest_basic.repository.Database.SAMPLE_TABLE;
 import static com.tutorial.springboot.rest_basic.validation.CollectionValidation.requireNotEmpty;
 import static com.tutorial.springboot.rest_basic.validation.NumberValidation.requireEquality;
 import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.requireNotNull;
@@ -23,8 +22,8 @@ public class SampleServiceInMemoryImpl implements SampleService {
     public Optional<Long> insert(SampleDto sample) {
         requireNotNull(sample, "Sample should not be null");
 
-        final var id = SAMPLE_ID_GENERATOR.incrementAndGet();
-        SAMPLE_TABLE.putIfAbsent(id, SampleDto.builder().from(sample).id(id).build());
+        final var id = SampleRepository.ID_GENERATOR.incrementAndGet();
+        SampleRepository.OPERATIONS.putIfAbsent(id, SampleDto.builder().from(sample).id(id).build());
         return Optional.of(id);
     }
 
@@ -32,7 +31,7 @@ public class SampleServiceInMemoryImpl implements SampleService {
     public Optional<SampleDto> selectById(Long id) {
         requireNotNull(id, "ID of Sample should not be null");
 
-        final var sample = SAMPLE_TABLE.get(id);
+        final var sample = SampleRepository.OPERATIONS.get(id);
         return Optional.ofNullable(sample);
     }
 
@@ -44,18 +43,18 @@ public class SampleServiceInMemoryImpl implements SampleService {
             requireEquality(id, dto.id(), "There are two different values for Sample ID");
         }
 
-        SAMPLE_TABLE.put(id, SampleDto.builder().from(dto).id(id).build());
+        SampleRepository.OPERATIONS.put(id, SampleDto.builder().from(dto).id(id).build());
     }
 
     @Override
     public void deleteById(Long id) {
         requireNotNull(id, "ID of Sample should not be null");
-        SAMPLE_TABLE.remove(id);
+        SampleRepository.OPERATIONS.remove(id);
     }
 
     @Override
     public boolean exists(Long id) {
-        return SAMPLE_TABLE.containsKey(id);
+        return SampleRepository.OPERATIONS.containsKey(id);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class SampleServiceInMemoryImpl implements SampleService {
         requireNotEmpty(identities, "List of identifier should not be empty");
 
         final var listOfIdentifiers = asList(identities);
-        return SAMPLE_TABLE.values()
+        return SampleRepository.OPERATIONS.values()
                 .stream()
                 .filter(sample -> listOfIdentifiers.contains(sample.id()))
                 .toList();
@@ -88,24 +87,24 @@ public class SampleServiceInMemoryImpl implements SampleService {
 
         Stream.of(identities)
                 .filter(Objects::nonNull)
-                .forEach(SAMPLE_TABLE::remove);
+                .forEach(SampleRepository.OPERATIONS::remove);
     }
 
     @Override
     public List<SampleDto> selectAll() {
-        return SAMPLE_TABLE.values()
+        return SampleRepository.OPERATIONS.values()
                 .stream()
                 .toList();
     }
 
     @Override
     public void deleteAll() {
-        SAMPLE_TABLE.clear();
+        SampleRepository.OPERATIONS.clear();
     }
 
     @Override
     public List<Long> selectIdentities() {
-        return SAMPLE_TABLE.keySet().stream().toList();
+        return SampleRepository.OPERATIONS.keySet().stream().toList();
     }
 
 }

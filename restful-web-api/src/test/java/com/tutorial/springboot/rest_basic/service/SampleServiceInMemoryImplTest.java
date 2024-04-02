@@ -1,11 +1,9 @@
-package com.tutorial.springboot.rest_basic.dao;
+package com.tutorial.springboot.rest_basic.service;
 
 import com.tutorial.springboot.rest_basic.TestFixture;
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
 import com.tutorial.springboot.rest_basic.exception.ValidationException;
-import com.tutorial.springboot.rest_basic.repository.Database;
-import com.tutorial.springboot.rest_basic.service.SampleService;
-import com.tutorial.springboot.rest_basic.service.SampleServiceInMemoryImpl;
+import com.tutorial.springboot.rest_basic.repository.SampleRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +20,7 @@ class SampleServiceInMemoryImplTest {
 
     @AfterEach
     void tearDown() {
-        Database.SAMPLE_TABLE.clear();
+        SampleRepository.OPERATIONS.clear();
     }
 
     @Nested

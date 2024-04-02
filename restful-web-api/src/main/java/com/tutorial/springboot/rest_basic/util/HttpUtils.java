@@ -1,10 +1,12 @@
 package com.tutorial.springboot.rest_basic.util;
 
+import com.tutorial.springboot.rest_basic.exception.ValidationException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
-import static java.util.Objects.requireNonNull;
+import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.requireNotNull;
 
 public final class HttpUtils {
 
@@ -12,9 +14,9 @@ public final class HttpUtils {
     }
 
     public static URI createUriFromId(Long id) {
-        requireNonNull(id, "ID should not be null");
+        requireNotNull(id, "ID should not be null");
         if (id <= 0) {
-            throw new IllegalStateException("ID should not be less than zero");
+            throw new ValidationException(List.of("ID should not be less than zero"));
         }
 
         return ServletUriComponentsBuilder.fromCurrentRequest()

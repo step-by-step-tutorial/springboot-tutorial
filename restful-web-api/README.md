@@ -23,10 +23,11 @@ To develop an efficient and standard-conforming RESTful web API, keep in mind th
 
     ```text
     Base URI: /api/v1/samples
-        Create Record -> POST /api/v1/samples
-        Read All Records -> GET /api/v1/samples
-        Update Record -> PUT /api/v1/samples/{id}
-        Delete Record -> DELETE /api/v1/samples/{id}
+        Create a record -> POST /api/v1/samples
+        Read all records -> GET /api/v1/samples
+        Read a record -> GET /api/v1/samples/{id}
+        Update a record -> PUT /api/v1/samples/{id}
+        Delete a record -> DELETE /api/v1/samples/{id}
     ```
 
 5. Adopting comprehensive READ operations: The GET operation for the base URI should return the complete list of objects
@@ -86,7 +87,8 @@ public void update(@PathVariable Long id, @RequestBody DTO dto) {
 ### PATCH:
 
 This HTTP verb is used to partially update a resource. The request body contains a set of instructions describing how
-the resource currently residing on the server should be modified to produce a new version.
+the resource currently residing on the server should be modified to produce a new version. There is JSON library tp help
+you named [Jsonpatch](https://jsonpatch.com/)
 
 ```java
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -228,8 +230,8 @@ public class OpenApiConfig {
 
 * [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-* [Postman CLI](https://learning.postman.com/docs/postman-cli/postman-cli-installation/)
+* [Docker](https://www.docker.com/) (Optional)
+* [Postman CLI](https://learning.postman.com/docs/postman-cli/postman-cli-installation/) (Optional)
 
 ## Build
 
