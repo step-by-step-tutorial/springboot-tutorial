@@ -1,17 +1,12 @@
-# <p align="center">Kafka</p>
+# <p align="center">Spring Boot and Kafka Tutorial</p>
 
 <p align="justify">
-
-Apache Kafka is an event streaming platform. It follows publish/subscriber pattern around streams of events. The Kafka
-supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
-many producer and many consumer it means there is many-to-many relation between producer and consumer based on Topic.
-
-For more information see the [https://kafka.apache.org](https://kafka.apache.org).
-
+This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 </p>
 
 ## <p align="center"> Table of Content </p>
 
+* [Apache Kafka](#apache-kafka)
 * [Apache use cases](#apache-use-cases)
 * [Install Kafka on Docker](#install-kafka-on-docker)
 * [Install Kafka on Kubernetes](#install-kafka-on-kubernetes)
@@ -20,7 +15,7 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 * [Prerequisites](#prerequisites)
 * [Pipeline](#pipeline )
 
-## Description
+## Apache Kafka
 
 <p align="justify">
 
@@ -401,4 +396,4 @@ mvn  spring-boot:run
 
 ##
 
-**<p align="center"> [Top](#kafka) </p>**
+**<p align="center"> [Top](#p-spring-boot-and-kafka-tutorial) </p>**
