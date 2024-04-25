@@ -15,5 +15,5 @@ mvn -f nosql-mongodb/pom.xml clean
 mvn -f nosql-mongodb-reactive/pom.xml clean
 mvn -f messaging-apache-artemis-mq/pom.xml clean
 mvn -f messaging-rabbit-mq/pom.xml clean
-mvn -f messaging-kafka/pom.xml clean
+mvn -f messaging-apache-kafka/pom.xml clean
 mvn -f restful-web-api/pom.xml clean

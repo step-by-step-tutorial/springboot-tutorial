@@ -33,7 +33,7 @@ In order to create a preconfigured project based on Spring Boot use the followin
 * step: nosql-hadoop
 * [step: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
 * [step: messaging-rabbit-mq](messaging-rabbit-mq)
-* [step: messaging-kafka](messaging-kafka)
+* [step: messaging-apache-kafka](messaging-apache-kafka)
 * step: messaging-redis
 * step: messaging-pulsar
 * [step: restful-web-api](restful-web-api)
@@ -79,7 +79,7 @@ mvn -f nosql-mongodb/pom.xml clean package
 mvn -f nosql-mongodb-reactive/pom.xml clean package
 mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
-mvn -f messaging-kafka/pom.xml clean package
+mvn -f messaging-apache-kafka/pom.xml clean package
 mvn -f restful-web-api/pom.xml clean package
 ```
 

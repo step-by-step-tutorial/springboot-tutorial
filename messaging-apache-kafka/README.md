@@ -1,16 +1,59 @@
-# <p align="center">Kafka MQ</p>
+# <p align="center">Kafka</p>
 
 <p align="justify">
 
-Apache Kafka MQ is a message queue, for more information see the [https://kafka.apache.org/](https://kafka.apache.org/).
+Apache Kafka is an event streaming platform. It follows publish/subscriber pattern around streams of events. The Kafka
+supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
+many producer and many consumer it means there is many-to-many relation between producer and consumer based on Topic.
+
+For more information see the [https://kafka.apache.org](https://kafka.apache.org).
 
 </p>
+
+## <p align="center"> Table of Content </p>
+
+* [Apache use cases](#apache-use-cases)
+* [Install Kafka on Docker](#install-kafka-on-docker)
+* [Install Kafka on Kubernetes](#install-kafka-on-kubernetes)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [Prerequisites](#prerequisites)
+* [Pipeline](#pipeline )
+
+## Description
+
+<p align="justify">
+
+Apache Kafka is an event streaming platform. It follows publish/subscriber pattern around streams of events. The Kafka
+supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
+many producer and many consumer it means there is many-to-many relation between producer and consumer based on Topic.
+
+For more information see the [https://kafka.apache.org](https://kafka.apache.org).
+
+</p>
+
+<p align="justify">
+
+<img src="/doc/kafka-solution.gif" width="426" height="240">
+
+</p>
+
+## Apache Use Cases
+
+* Messaging
+* Website Activity Tracking
+* Metrics
+* Log Aggregation
+* Stream Processing
+* Event Sourcing
+* Commit Log
 
 ## Install Kafka on Docker
 
 ### Docker Compose File
 
-Create a file named docker-compose.yml with the following configuration.
+Create a file named docker-compose.yml with the following configuration. It includes Zookeeper, Kafka and Kafdrop
+services.
 
 ```yaml
 version: '2'
@@ -60,19 +103,16 @@ docker compose --file ./docker-compose.yml --project-name kafka up --build -d
 
 ```
 
-### Kafdrop
-
-Open [http://localhost:9000/](http://localhost:9000/) in the browser.
+Open [http://localhost:9000/](http://localhost:9000/) in the browser to access Kafdrop dashboard.
 
 ## Install Kafka on Kubernetes
 
+### Kube Files
+
 Create the following files for installing Kafka.
 
-### Kafka
-
-**zookeeper-deployment.yml**
-
 ```yaml
+#zookeeper-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -99,9 +139,8 @@ spec:
               value: "2000"
 ```
 
-**zookeeper-service.yml**
-
 ```yaml
+#zookeeper-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -114,9 +153,8 @@ spec:
       targetPort: 2181
 ```
 
-**kafka-deployment.yml**
-
 ```yaml
+#kafka-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -154,9 +192,8 @@ spec:
 
 ```
 
-**kafka-service.yml**
-
 ```yaml
+#kafka-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -169,11 +206,8 @@ spec:
       targetPort: 9092
 ```
 
-### Kafdrop
-
-**kafdrop-deployment.yml**
-
 ```yaml
+#kafdrop-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -201,9 +235,8 @@ spec:
 
 ```
 
-**kafdrop-service.yml**
-
 ```yaml
+#kafdrop-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -297,13 +330,14 @@ spring:
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
 ```
 
-## How To Set up Test
+## How To Set up Spring Boot Test
 
-The embedded Kafka used for unit tests.
+The embedded Kafka is used for unit tests.
 
 ### Dependencies
 
 ```xml
+
 <dependency>
     <groupId>org.springframework.kafka</groupId>
     <artifactId>spring-kafka-test</artifactId>
@@ -328,12 +362,13 @@ spring:
 ### Java Config for Test
 
 ```java
+
 @SpringBootTest
 @ActiveProfiles({"embedded-kafka"})
 @DirtiesContext
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
 class TestClass {
-    
+
 }
 ```
 
@@ -342,20 +377,23 @@ class TestClass {
 * [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 * [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
 
-## Build
+## Pipeline
+
+### Build
 
 ```bash
 mvn clean package -DskipTests=true 
 ```
 
-## Test
+### Test
 
 ```bash
 mvn test
 ```
 
-## Run
+### Run
 
 ```bash
 mvn  spring-boot:run
@@ -363,4 +401,4 @@ mvn  spring-boot:run
 
 ##
 
-**<p align="center"> [Top](#kafka-mq) </p>**
+**<p align="center"> [Top](#kafka) </p>**

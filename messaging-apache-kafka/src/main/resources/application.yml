@@ -8,8 +8,9 @@ spring:
 
 ---
 spring:
-  profiles:
-    active: embedded-kafka
+  config:
+    activate:
+      on-profile: embedded-kafka
   kafka:
     topic:
       name: embedded-topic
