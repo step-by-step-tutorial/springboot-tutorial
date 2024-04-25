@@ -29,7 +29,7 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 
 <p align="justify">
 
-<img src="/doc/kafka-solution.gif" width="426" height="240">
+<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/messaging-apache-kafka/doc/kafka-solution.gif" width="426" height="240">
 
 </p>
 
