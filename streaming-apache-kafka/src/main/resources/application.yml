@@ -1,0 +1,20 @@
+spring:
+  kafka:
+    streams:
+      bootstrap-servers: {KAFKA_URL:localhost:9092}
+      application-id: streaming-apache-kafka
+
+# defined by user
+topic:
+  input: inputTopic
+  output: outputTopic
+
+---
+spring:
+  config:
+    activate:
+      on-profile: embedded-kafka
+  kafka:
+    streams:
+      bootstrap-servers: ${KAFKA_URL:localhost:9092}
+      application-id: embedded-streaming-apache-kafka

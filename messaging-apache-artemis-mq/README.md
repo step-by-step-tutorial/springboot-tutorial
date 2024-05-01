@@ -155,12 +155,12 @@ kubectl port-forward service/artemis 8161:8161
 spring:
   artemis:
     mode: native
-    host: ${ACTIVE_MQ_HOST:localhost}
-    port: ${ACTIVE_MQ_PORT:61616}
     user: ${ACTIVE_MQ_USER:artemis}
     password: ${ACTIVE_MQ_PASS:artemis}
+    broker-url: ${ACTIVE_MQ_HOST:localhost}:${ACTIVE_MQ_PORT:61616}
   jms:
     pub-sub-domain: true
+
 
 ```
 
@@ -202,9 +202,7 @@ spring:
     mode: embedded
     embedded:
       enabled: true
-      queues: mainQueue,statusQueue
-    host: localhost
-    port: 61616
+    broker-url: localhost:61616
 ```
 
 ### Java Config for Test
@@ -234,7 +232,7 @@ public class EmbeddedActiveMqServer implements DisposableBean {
     ) {
         try {
             org.apache.activemq.artemis.core.config.Configuration config = new ConfigurationImpl();
-            config.addAcceptorConfiguration("tcp", String.format("tcp://%s:%s", host, port));
+            config.addAcceptorConfiguration("embeddedartemis", String.format("tcp://%s:%s", host, port));
             activeMqServer.setConfiguration(config);
             activeMqServer.start();
             logger.info("embedded active-mq-artemis has started");

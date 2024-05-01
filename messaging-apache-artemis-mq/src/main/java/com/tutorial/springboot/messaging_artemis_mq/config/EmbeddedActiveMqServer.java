@@ -17,13 +17,10 @@ public class EmbeddedActiveMqServer implements DisposableBean {
 
     private final EmbeddedActiveMQ activeMqServer = new EmbeddedActiveMQ();
 
-    public EmbeddedActiveMqServer(
-            @Value("${spring.artemis.host}") final String host,
-            @Value("${spring.artemis.port}") final String port
-    ) {
+    public EmbeddedActiveMqServer(@Value("${spring.artemis.broker-url}") final String brokerUrl) {
         try {
             var config = new ConfigurationImpl();
-            config.addAcceptorConfiguration("tcp", String.format("tcp://%s:%s", host, port));
+            config.addAcceptorConfiguration("embeddedartemis", String.format("tcp://%s", brokerUrl));
             activeMqServer.setConfiguration(config);
             activeMqServer.start();
             logger.info("embedded active-mq-artemis has started");

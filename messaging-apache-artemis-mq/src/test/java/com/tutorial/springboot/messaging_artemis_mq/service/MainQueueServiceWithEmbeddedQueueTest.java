@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles({"test", "embedded-artemis"})
-@DisplayName("unit tests of  artemis[embedded] main queue service")
+@DisplayName("unit tests of artemis[embedded] main queue service")
 class MainQueueServiceWithEmbeddedQueueTest {
 
     @Autowired
