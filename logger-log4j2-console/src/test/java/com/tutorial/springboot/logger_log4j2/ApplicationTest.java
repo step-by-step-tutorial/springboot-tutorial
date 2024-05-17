@@ -18,11 +18,11 @@ class ApplicationTest {
     @DisplayName("writing a message on the console")
     void shouldBeWrittenMessageOnTheConsole() {
         assertDoesNotThrow(() -> {
-            logger.error("error log");
-            logger.warn("warn log");
-            logger.info("info log");
-            logger.debug("debug log");
-            logger.trace("trace log");
+            logger.trace("\tIf log level is OFF \t=> log nothing");
+            logger.debug("\tIf log level is ERROR \t=> log errors");
+            logger.info("\tIf log level is WARNm \t=> log errors, warns");
+            logger.warn("\tIf log level is INFO \t=> log errors, warns, info");
+            logger.error("\tIf log level is DEBUG \t=> log errors, warns, info, debug");
         });
     }
 

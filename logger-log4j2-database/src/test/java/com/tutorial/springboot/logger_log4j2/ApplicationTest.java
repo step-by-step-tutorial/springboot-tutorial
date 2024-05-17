@@ -16,16 +16,15 @@ class ApplicationTest {
 
     final Logger logger = LoggerFactory.getLogger(ApplicationTest.class.getSimpleName());
 
-
     @Test
     @DisplayName("writing a message on the database")
     void shouldBeWrittenMessageOnTheFile() {
         assertDoesNotThrow(() -> {
-            logger.info("info log");
-            logger.error("error log");
-            logger.warn("warn log");
-            logger.debug("debug log");
-            logger.trace("trace log");
+            logger.trace("If log level is OFF => log nothing");
+            logger.debug("If log level is ERROR => log errors");
+            logger.info("If log level is WARNm => log errors, warns");
+            logger.warn("If log level is INFO => log errors, warns, info");
+            logger.error("If log level is DEBUG => log errors, warns, info, debug");
         });
     }
 

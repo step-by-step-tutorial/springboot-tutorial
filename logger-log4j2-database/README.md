@@ -1,26 +1,95 @@
-# <p align="center">Apache Log4j2 Relational Database</p>
+# <p align="center">Apache Log4j2 And Relational Database Appender</p>
 
 <p align="justify">
 
 Log4j is a log framework and this tutorial shows how should be integrated Spring Boot 3 and Log4j2 to send logs to a
-database. For more information see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/).
+database. For more information see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x).
 
 </p>
 
+# Getting Start
+
+## Prerequisites
+
+* [Java 21](https://www.oracle.com/de/java/technologies/downloads)
+* [Maven 3](https://maven.apache.org/index.html)
+* [MySQL](https://www.mysql.com)
+* [Docker](https://www.docker.com)
+
 ## Set up Database
 
-Install a relational database such as MySQL then create new user and execute the following DDL to create a table.
+### Install Dockerized MySQL
 
-```shell
-# try to connect to mysql
-mysql -u root -p  -h hostname
+Create a docker compose file named `docker-compose.yml` then copy and paste the following script. There are two clients
+to help you for interacting with MySQL therefore you can select one of them, MySQL workbench or Adminer. If you install
+MySQL via docker compose script in this project then it will be initialized via docker compose script.
+
+```yaml
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    hostname: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=test_db
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - "./target/mysql:/etc/mysql/conf.d"
+      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+  mysql-workbench:
+    image: linuxserver/mysql-workbench:latest
+    container_name: mysql-workbench
+    hostname: mysql-workbench
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./target:/config
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    cap_add:
+      - IPC_LOCK
+  adminer:
+    image: adminer
+    container_name: adminer
+    hostname: adminer
+    restart: always
+    ports:
+      - "8080:8080"
 ```
 
-```iso92-sql
-# user
-CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
+### Initialize MySQL Manually
 
-# table
+After installation a MySQL database, create new user, database and create the `LOG_TABLE` table.
+
+```shell
+# try to connect to docker container
+docker exec -it mysql sh
+```
+
+```shell
+# try to connect to mysql via MySQL client
+# user: root
+# password: root 
+# hostname: localhost
+mysql -h hostname -u root -p
+```
+
+```mysql
+CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
+CREATE DATABASE IF NOT EXISTS test_db;
+USE test_db;
+
 CREATE TABLE LOG_TABLE (
   ID INT PRIMARY KEY AUTO_INCREMENT,
   EVENT_DATE TIMESTAMP,
@@ -30,9 +99,42 @@ CREATE TABLE LOG_TABLE (
 );
 ```
 
-## How To Config Spring Boot
+## Pipeline
 
-### Dependencies
+### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+### Test
+
+In this tutorial I don't want to use testcontainer framework because I want to check database after inserting log. If
+the MySql instance is ready and already configured then it is possible to run the unit tests.
+
+```bash
+mvn test "-Dmysql.isReady=true"
+```
+
+After running tests successfully then connect to MySQL database and execute the following queries to see the result.
+
+```mysql
+show databases;
+use test_db;
+show tables;
+
+SELECT * FROM LOG_TABLE;
+```
+
+### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+# How To Config Application
+
+## Dependencies
 
 ```xml
 
@@ -59,7 +161,7 @@ CREATE TABLE LOG_TABLE (
 </dependencies>
 ```
 
-### Spring Boot Properties
+## Log4j Properties
 
 Create a bundle named `log4j2_en.properties` include the following properties in the resources. In this case I am using
 MySQL properties.
@@ -67,9 +169,9 @@ MySQL properties.
 ```properties
 driver=com.mysql.cj.jdbc.Driver
 url=jdbc:mysql://localhost:3306/test_db
+table_name=LOG_TABLE
 username=user
 password=password
-table_name=LOG_TABLE
 ```
 
 Create `log4j2.xml` in the resources with proper configuration for the database.
@@ -110,32 +212,6 @@ Create `log4j2.xml` in the resources with proper configuration for the database.
 </Configuration>
 ```
 
-## Prerequisites
-
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-
-## Build
-
-```bash
-mvn clean package -DskipTests=true 
-```
-
-## Test
-
-If the MySql instance is ready and already configured then it is possible to run the unit tests.
-
-```bash
-mvn test "-Dmysql.isReady=true"
-```
-
-## Run
-
-```bash
-mvn  spring-boot:run
-```
-
-##
+#
 
 **<p align="center"> [Top](#apache-log4j2-relational-database) </p>**

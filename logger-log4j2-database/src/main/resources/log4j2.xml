@@ -13,7 +13,8 @@
                     driverClassName="${bundle:log4j2:driver}"
                     connectionString="${bundle:log4j2:url}"
                     userName="${bundle:log4j2:username}"
-                    password="${bundle:log4j2:password}"/>
+                    password="${bundle:log4j2:password}"
+            />
             <Column name="EVENT_DATE" isEventTimestamp="true"/>
             <Column name="LEVEL" pattern="%level"/>
             <Column name="LOGGER" pattern="%logger"/>

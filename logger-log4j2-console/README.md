@@ -1,4 +1,4 @@
-# <p align="center">Apache Log4j2 Console</p>
+# <p align="center">Apache Log4j2 And Console Appender</p>
 
 <p align="justify">
 
@@ -7,9 +7,36 @@ console. For more information see [https://logging.apache.org/log4j/2.x/](https:
 
 </p>
 
-## How To Config Spring Boot
+# Getting Start
 
-### Dependencies
+## Prerequisites
+
+* [Java 21](https://www.oracle.com/de/java/technologies/downloads)
+* [Maven 3](https://maven.apache.org/index.html)
+
+## Pipeline
+
+### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+### Test
+
+```bash
+mvn test
+```
+
+### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+# How To Config Spring Boot
+
+## Dependencies
 
 The default logger must be excluded.
 
@@ -33,9 +60,9 @@ The default logger must be excluded.
 </dependencies>
 ```
 
-### Spring Boot Properties
+## Spring Boot Properties
 
-Add `log4j2.xml` to the resources.
+Add `log4j2.xml` to the **resources** directory.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -60,29 +87,20 @@ Add `log4j2.xml` to the resources.
 </Configuration>
 ```
 
-## Prerequisites
+## Log Level
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
+To filter log messages according to their importance or severity.
 
-## Build
-
-```bash
-mvn clean package -DskipTests=true 
+```text
+ If log level is OFF    =>  log nothing
+ If log level is ERROR  =>  log errors
+ If log level is WARN   =>  log errors, warns
+ If log level is INFO   =>  log errors, warns, info
+ If log level is DEBUG  =>  log errors, warns, info, debug 
+ If log level is TRACE  =>  log errors, warns, info, debug, trace 
+ If log level is ALL    =>  log everything such as errors, warns, etc
 ```
 
-## Test
-
-```bash
-mvn test
-```
-
-## Run
-
-```bash
-mvn  spring-boot:run
-```
-
-##
+#
 
 **<p align="center"> [Top](#apache-log4j2-console) </p>**

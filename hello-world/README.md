@@ -2,6 +2,35 @@
 
 This is the first step of the Spring Boot tutorial. The result is printing `Hello World!` on the console.
 
+# Getting Start
+
+## Pipeline
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/de/java/technologies/downloads)
+* [Maven 3](https://maven.apache.org/index.html)
+
+### Build
+
+```bash
+mvn clean package -DskipTests=true
+```
+
+### Test
+
+```bash
+mvn  test
+```
+
+### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+# Setup
+
 ## Dependencies
 
 ```xml
@@ -39,29 +68,6 @@ public class Application {
 
 ```
 
-## Prerequisites
-
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-
-## Build
-
-```bash
-mvn clean package -DskipTests=true
-```
-
-## Test
-
-```bash
-mvn  test
-```
-
-## Run
-
-```bash
-mvn  spring-boot:run
-```
-
-##
+#
 
 **<p align="center">[Top](#hello-world)</p>**
