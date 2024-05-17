@@ -3,15 +3,18 @@
 Spring Boot is an agile framework to use modules of Spring framework in fast and easy configuration way. For
 more information refer to [Spring Boot documentation](https://spring.io/projects/spring-boot)
 
-In order to create a preconfigured project based on Spring Boot use the following link.
+This tutorial provides many best practises and examples include documentation.
 
-* [Spring Boot Generator](https://start.spring.io/)
+**In order to create a preconfigured project based on Spring Boot use the following link.**
+
+* [Spring Boot Generator](https://start.spring.io)
 
 ## Prerequisites
 
 * [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
 
 ## Steps
 
@@ -21,7 +24,7 @@ In order to create a preconfigured project based on Spring Boot use the followin
 * [step: logger-log4j-console](logger-log4j2-console)
 * [step: logger-log4j-file](logger-log4j2-file)
 * [step: logger-log4j-database](logger-log4j2-database)
-* [step: event-processor](event-processor)
+* [step: event-handling](event-handling)
 * [step: rdbms-h2](rdbms-h2)
 * [step: rdbms-mysql](rdbms-mysql)
 * [step: rdbms-postgresql](rdbms-postgresql)
@@ -68,7 +71,7 @@ mvn -f properties/pom.xml clean package
 mvn -f logger-log4j2-console/pom.xml clean package
 mvn -f logger-log4j2-file/pom.xml clean package
 mvn -f logger-log4j2-database/pom.xml clean package
-mvn -f event-processor/pom.xml clean package
+mvn -f event-handling/pom.xml clean package
 mvn -f rdbms-h2/pom.xml clean package
 mvn -f rdbms-mysql/pom.xml clean package
 mvn -f rdbms-postgresql/pom.xml clean package

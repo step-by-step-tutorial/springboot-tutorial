@@ -1,7 +1,8 @@
 package com.tutorial.springboot.event_processor.service;
 
+import com.tutorial.springboot.event_processor.config.TestLogRepository;
 import com.tutorial.springboot.event_processor.model.EventModel;
-import com.tutorial.springboot.event_processor.config.LogCapture;
+import com.tutorial.springboot.event_processor.util.LogTopic;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,23 +13,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DisplayName("unit tests of event handler")
-class EventHandlerTest {
+class EventSubscriberTest {
 
     @Autowired
     ApplicationEventPublisher publisher;
 
     @Autowired
-    LogCapture logInfoCapture;
+    TestLogRepository testLogRepository;
 
     @Test
     @DisplayName("should receive an event")
     void shouldReceiveEventWhenThereIsNoError() {
-        final var givenEvent = new EventModel("text");
+        final var givenEvent = new EventModel("content");
 
-        final var expectedLog = String.format("message received: %s", givenEvent.text());
+        final var expectedLog = String.format("%s: %s", LogTopic.INPUT_EVENT.getMessage(), givenEvent.content());
 
         assertDoesNotThrow(() -> publisher.publishEvent(givenEvent));
-        final var actual = logInfoCapture.getEvents();
+        final var actual = testLogRepository.getMessages();
 
         assertNotNull(actual);
         assertTrue(actual.contains(expectedLog));

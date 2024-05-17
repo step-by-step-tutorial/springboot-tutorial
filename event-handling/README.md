@@ -1,13 +1,44 @@
-# <p align="center">Event Processor</p>
+# <p align="center">Event Handling</p>
 
 <p align="justify">
 
-This sample is about working event and event listener in Spring Boot. There are three concepts `event`, `listener` and
-`publish` for the event driven mechanism. This tutorial used Spring Boot builtin event mechanism.
+This sample is about working with event and event listener in Spring Boot. There are three concepts `event`, `listener`
+and `publish` for the event driven mechanism. This tutorial used builtin event handling solution of Spring Boot.
 
 </p>
 
+# Getting Start
+
+## Prerequisites
+
+* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+
+## Pipeline
+
+### Build
+
+```bash
+mvn clean package -DskipTests=true
+```
+
+### Test
+
+```bash
+mvn  test
+```
+
+### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+# Basic Concepts
+
 ## Dependencies
+
+Add the following dependencies to the POM file of Maven project.
 
 ```xml
 
@@ -65,6 +96,8 @@ async listener with using `@Async`.
 #### Annotation Driven
 
 ```java
+//Sync listener
+
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -79,6 +112,8 @@ public class EventHandler {
 ```
 
 ```java
+//Async listener
+
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -116,7 +151,6 @@ Publisher is used to publish/dispatch events and, the Spring Boot has a class na
 that.
 
 ```java
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -124,8 +158,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class EventPublisher {
 
-    @Autowired
-    private ApplicationEventPublisher publisher;
+    private final ApplicationEventPublisher publisher;
+
+    public EventPublisher(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
 
     public void publish(EventModel event) {
         publisher.publishEvent(event);
@@ -134,29 +171,6 @@ public class EventPublisher {
 }
 ```
 
-## Prerequisites
+#
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-
-## Build
-
-```bash
-mvn clean package -DskipTests=true
-```
-
-## Test
-
-```bash
-mvn  test
-```
-
-## Run
-
-```bash
-mvn  spring-boot:run
-```
-
-##
-
-**<p align="center"> [Top](#event-processor) </p>**
+**<p align="center"> [Top](#event-handling) </p>**

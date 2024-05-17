@@ -27,7 +27,7 @@ class EventPublisherTest {
         final EventModel givenEvent = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "event should not be null";
+        final var expectedExceptionMessage = "Event should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.publish(givenEvent));
 
@@ -38,14 +38,14 @@ class EventPublisherTest {
     @Test
     @DisplayName("the event should publish successful")
     void shouldPublishEventSuccessfulWhenThereIsNoError() {
-        final var givenEvent = new EventModel("text");
+        final var givenEvent = new EventModel("content");
 
         assertDoesNotThrow(() -> systemUnderTest.publish(givenEvent));
         final var actual = applicationEvents.stream(EventModel.class).toList();
 
         assertNotNull(actual);
         assertEquals(1, actual.size());
-        assertEquals(givenEvent, actual.get(0));
+        assertEquals(givenEvent, actual.getFirst());
     }
 
 }

@@ -4,7 +4,7 @@ call mvn -f properties/pom.xml clean
 call mvn -f logger-log4j2-console/pom.xml clean
 call mvn -f logger-log4j2-file/pom.xml clean
 call mvn -f logger-log4j2-database/pom.xml clean
-call mvn -f event-processor/pom.xml clean
+call mvn -f event-handling/pom.xml clean
 call mvn -f rdbms-h2/pom.xml clean
 call mvn -f rdbms-mysql/pom.xml clean
 call mvn -f rdbms-postgresql/pom.xml clean

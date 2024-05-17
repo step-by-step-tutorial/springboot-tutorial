@@ -5,12 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.5</version>
         <relativePath/>
     </parent>
     <groupId>com.tutorial.springboot</groupId>
-    <artifactId>event-processor</artifactId>
+    <artifactId>event-handling</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <name>Event Handling</name>
     <properties>
         <java.version>21</java.version>
     </properties>
