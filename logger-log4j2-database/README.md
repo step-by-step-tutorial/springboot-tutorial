@@ -21,8 +21,10 @@ database. For more information see [https://logging.apache.org/log4j/2.x/](https
 ### Install Dockerized MySQL
 
 Create a docker compose file named `docker-compose.yml` then copy and paste the following script. There are two clients
-to help you for interacting with MySQL therefore you can select one of them, MySQL workbench or Adminer. If you install
-MySQL via docker compose script in this project then it will be initialized via docker compose script.
+to help you for interacting with MySQL therefore you can select one of
+them, [MySQL workbench](https://www.mysql.com/products/workbench) or [Adminer](https://www.adminer.org/). If you install
+MySQL via docker compose script mentioned below then database will be initialized and configured and, you don't need to
+initialize it manually.
 
 ```yaml
 version: "3.8"
@@ -90,12 +92,13 @@ CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
 CREATE DATABASE IF NOT EXISTS test_db;
 USE test_db;
 
-CREATE TABLE LOG_TABLE (
-  ID INT PRIMARY KEY AUTO_INCREMENT,
-  EVENT_DATE TIMESTAMP,
-  LEVEL VARCHAR(10),
-  LOGGER VARCHAR(255),
-  MESSAGE VARCHAR(4000)
+CREATE TABLE LOG_TABLE
+(
+    ID         INT PRIMARY KEY AUTO_INCREMENT,
+    EVENT_DATE TIMESTAMP,
+    LEVEL      VARCHAR(10),
+    LOGGER     VARCHAR(255),
+    MESSAGE    VARCHAR(4000)
 );
 ```
 
@@ -109,8 +112,9 @@ mvn clean package -DskipTests=true
 
 ### Test
 
-In this tutorial I don't want to use testcontainer framework because I want to check database after inserting log. If
-the MySql instance is ready and already configured then it is possible to run the unit tests.
+In this tutorial I don't want to use [Testcontainers](https://testcontainers.com) framework to test because I want to
+check database after inserting log. If the MySql instance is ready and already configured then it is possible to run the
+unit tests.
 
 ```bash
 mvn test "-Dmysql.isReady=true"
@@ -123,7 +127,8 @@ show databases;
 use test_db;
 show tables;
 
-SELECT * FROM LOG_TABLE;
+SELECT *
+FROM LOG_TABLE;
 ```
 
 ### Run
