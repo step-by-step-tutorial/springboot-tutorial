@@ -34,7 +34,7 @@ mvn test
 mvn  spring-boot:run
 ```
 
-# How To Config Spring Boot
+# How To Config Application
 
 ## Dependencies
 
@@ -60,7 +60,7 @@ The default logger must be excluded.
 </dependencies>
 ```
 
-## Spring Boot Properties
+## Log4j Properties
 
 Add `log4j2.xml` to the **resources** directory.
 
