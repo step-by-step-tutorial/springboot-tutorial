@@ -11,15 +11,14 @@ public class ProcessorTopology {
     public ProcessorTopology() {
     }
 
-    @SafeVarargs
-    public final void build(
+    public void build(
             SourceProcessor<Serializable, Serializable> sourceProcessor,
             SinkProcessor<Serializable, Serializable> sinkProcessor,
             StreamProcessor<Serializable, Serializable, Serializable, Serializable>... streamProcessors
     ) {
         KStream<Serializable, Serializable> input = sourceProcessor.startListening();
-        KStream<Serializable, Serializable> result = null;
 
+        KStream<Serializable, Serializable> result = null;
         for (StreamProcessor<Serializable, Serializable, Serializable, Serializable> processor : streamProcessors) {
             if (result == null) {
                 result = processor.process(input);

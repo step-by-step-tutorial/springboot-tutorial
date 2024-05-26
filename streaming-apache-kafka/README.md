@@ -134,6 +134,10 @@ docker compose --file ./docker-compose.yml --project-name kafka up --build -d
 
 ```
 
+```shell
+docker run --name kcat --network kafka-network --rm -it edenhill/kcat:1.7.1 -b kafka:9092 -t test-topic
+```
+
 Open [http://localhost:9000/](http://localhost:9000/) in the browser to access Kafdrop dashboard.
 
 ## Install Kafka on Kubernetes

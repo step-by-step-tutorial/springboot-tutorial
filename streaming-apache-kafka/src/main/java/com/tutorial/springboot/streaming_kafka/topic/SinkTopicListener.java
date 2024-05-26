@@ -1,4 +1,4 @@
-package com.tutorial.springboot.streaming_kafka;
+package com.tutorial.springboot.streaming_kafka.topic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import static java.util.Objects.requireNonNull;
 
 @Service
-public class OutputTopicListener {
+public class SinkTopicListener {
 
-    private final Logger logger = LoggerFactory.getLogger(OutputTopicListener.class);
+    private final Logger logger = LoggerFactory.getLogger(SinkTopicListener.class);
 
-    @KafkaListener(topics = "${topic.output}")
+    @KafkaListener(topics = "sinkTopic")
     public void onMessage(
             @Payload String message,
             @Header(KafkaHeaders.CORRELATION_ID) String correlationId
