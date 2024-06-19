@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Collection Validation Unit Tests")
 public class CollectionValidationTest {
     @Nested
-    class CollectionRequireNotEmpty {
+    class RequireNotEmptyFunction {
         @Test
         public void givenNonEmptyCollection_thenContinue() {
             var givenCollection = List.of("fake item");

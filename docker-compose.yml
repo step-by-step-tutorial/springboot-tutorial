@@ -121,37 +121,43 @@ services:
     volumes:
       - "./target/broker:/opt/broker"
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: docker.io/bitnami/zookeeper
     container_name: zookeeper
     hostname: zookeeper
+    restart: always
     ports:
       - "2181:2181"
+    volumes:
+      - "./target/zookeeper:/bitnami"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: docker.io/bitnami/kafka
     container_name: kafka
     hostname: kafka
-    depends_on:
-      - zookeeper
+    restart: always
     ports:
       - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
     volumes:
-        - "./target/kafka:/var/lib/kafka/data"
+      - "./target/kafka:/bitnami"
+    environment:
+      KAFKA_CFG_BROKER_ID: 1
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: LOCALHOST://:9092,CONTAINER://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: LOCALHOST://localhost:9092,CONTAINER://kafka:9093
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LOCALHOST
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
+    hostname: kafdrop
+    restart: always
     ports:
       - "9000:9000"
     environment:
-      KAFKA_BROKERCONNECT: kafka:9092
+      KAFKA_BROKERCONNECT: kafka:9093
       JVM_OPTS: "-Xms32M -Xmx64M"
 

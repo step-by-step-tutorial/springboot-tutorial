@@ -11,7 +11,7 @@ This tutorial provides many best practises and examples include documentation.
 
 ## Prerequisites
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 * [Docker](https://www.docker.com)
 * [Kubernetes](https://kubernetes.io)
@@ -39,6 +39,7 @@ This tutorial provides many best practises and examples include documentation.
 * [step: messaging-apache-kafka](messaging-apache-kafka)
 * step: messaging-redis
 * step: messaging-pulsar
+* [step: streaming-apache-kafka](streaming-apache-kafka)
 * [step: restful-web-api](restful-web-api)
 * step: rest-hateoas
 * step: webflux

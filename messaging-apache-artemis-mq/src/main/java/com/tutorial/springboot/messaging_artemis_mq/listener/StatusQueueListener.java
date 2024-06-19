@@ -17,12 +17,12 @@ public class StatusQueueListener {
 
     @JmsListener(destination = "${queue.status}")
     public void onMessage(final Message message) {
-        requireNonNull(message, "message should not be null");
-        logger.info("status received from {}", extractDestination(message));
+        requireNonNull(message, "Message should not be null");
+        logger.info("Status received from {}", extractDestination(message));
         extractBody(message, StatusModel.class)
                 .ifPresentOrElse(
-                        body -> logger.info("status processing succeeded: {}", extractCorrelationId(message)),
-                        () -> logger.error("status processing failed: {}", extractCorrelationId(message)));
+                        body -> logger.info("Status processing succeeded: {}", extractCorrelationId(message)),
+                        () -> logger.error("Status processing failed: {}", extractCorrelationId(message)));
     }
 
 }

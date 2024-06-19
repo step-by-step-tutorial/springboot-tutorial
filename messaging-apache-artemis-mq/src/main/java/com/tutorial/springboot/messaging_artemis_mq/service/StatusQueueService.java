@@ -19,17 +19,14 @@ public class StatusQueueService {
 
     private final JmsTemplate jmsTemplate;
 
-    public StatusQueueService(
-            @Value("${queue.status}")
-            final String queue,
-            final JmsTemplate jmsTemplate) {
+    public StatusQueueService(@Value("${queue.status}") final String queue, final JmsTemplate jmsTemplate) {
         this.queue = queue;
         this.jmsTemplate = jmsTemplate;
     }
 
     public void push(StatusModel model) {
-        requireNonNull(model, "model should not be null");
+        requireNonNull(model, "StatusModel should not be null");
         jmsTemplate.send(queue, createSerializableMessage(model));
-        logger.info("ack sent to {}: {}", queue, model);
+        logger.info("Acknowledge sent to {}: {}", queue, model);
     }
 }

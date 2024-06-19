@@ -1,3 +1,4 @@
+
 # <p align="center">Event Handling</p>
 
 <p align="justify">
@@ -7,41 +8,54 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 
 </p>
 
-# Getting Start
+## <p align="center"> Table of Content </p>
 
-## Prerequisites
+* [Getting Started](#getting-started)
+* [Basic Concepts](#basic-concepts)
+* [Dependencies](#dependencies)
+* [Implementation](#implementation)
+    * [Event](#event)
+        * [Java Bean](#java-bean)
+        * [ApplicationEvent](#applicationevent)
+    * [Listener](#listener)
+        * [Annotation Driven](#annotation-driven)
+        * [Programmatically](#programmatically)
+    * [Publisher](#publisher)
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-## Pipeline
+### Pipeline
 
-### Build
+#### Build
 
 ```bash
 mvn clean package -DskipTests=true
 ```
 
-### Test
+#### Test
 
 ```bash
-mvn  test
+mvn test
 ```
 
-### Run
+#### Run
 
 ```bash
-mvn  spring-boot:run
+mvn spring-boot:run
 ```
 
-# Basic Concepts
+## Basic Concepts
 
-## Dependencies
+### Dependencies
 
 Add the following dependencies to the POM file of Maven project.
 
 ```xml
-
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -55,25 +69,23 @@ Add the following dependencies to the POM file of Maven project.
 </dependencies>
 ```
 
-## Implementation
+### Implementation
 
-### Event
+#### Event
 
 There are two mechanisms in the Spring Boot to define an event. One solution is, create a java bean and another one is,
 create a class extended from `ApplicationEvent`.
 
-#### Java Bean
+##### Java Bean
 
 ```java
 public record EventModel(String text) {
 }
-
 ```
 
-#### ApplicationEvent
+##### ApplicationEvent
 
 ```java
-
 import org.springframework.context.ApplicationEvent;
 
 public class EventModel extends ApplicationEvent {
@@ -84,7 +96,7 @@ public class EventModel extends ApplicationEvent {
 }
 ```
 
-### Listener
+#### Listener
 
 <p align="justify">
 
@@ -93,7 +105,7 @@ async listener with using `@Async`.
 
 </p>
 
-#### Annotation Driven
+##### Annotation Driven
 
 ```java
 //Sync listener
@@ -107,7 +119,6 @@ public class EventHandler {
     @EventListener
     void onEvent(EventModel event) {
     }
-
 }
 ```
 
@@ -128,10 +139,9 @@ public class EventHandler {
 }
 ```
 
-#### Programmatically
+##### Programmatically
 
 ```java
-
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -145,7 +155,7 @@ class EventHandler implements ApplicationListener<EventModel> {
 }
 ```
 
-### Publisher
+#### Publisher
 
 Publisher is used to publish/dispatch events and, the Spring Boot has a class named `ApplicationEventPublisher` to do
 that.
@@ -167,10 +177,9 @@ public class EventPublisher {
     public void publish(EventModel event) {
         publisher.publishEvent(event);
     }
-
 }
 ```
 
-#
+##
 
 **<p align="center"> [Top](#event-handling) </p>**

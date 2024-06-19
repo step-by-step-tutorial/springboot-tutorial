@@ -19,19 +19,15 @@ public class MainQueueService {
 
     private final JmsTemplate jmsTemplate;
 
-    public MainQueueService(
-            @Value("${queue.main}")
-            final String queue,
-            final JmsTemplate jmsTemplate
-    ) {
+    public MainQueueService(@Value("${queue.main}") final String queue, final JmsTemplate jmsTemplate) {
         this.queue = queue;
         this.jmsTemplate = jmsTemplate;
     }
 
     public void push(MessageModel model) {
-        requireNonNull(model, "model should not be null");
+        requireNonNull(model, "MessageModel should not be null");
         jmsTemplate.send(queue, createSerializableMessage(model));
-        logger.info("model sent to {}: {}", queue, model);
+        logger.info("Message sent to {}: {}", queue, model);
     }
 
 }

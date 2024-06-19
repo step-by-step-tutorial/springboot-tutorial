@@ -22,7 +22,8 @@ spring:
     embedded:
       enabled: true
     # localhost:61616
-    broker-url: vm://embeddedartemis
+    # vm://embeddedartemis
+    broker-url: localhost:61616
 
 ---
 spring:

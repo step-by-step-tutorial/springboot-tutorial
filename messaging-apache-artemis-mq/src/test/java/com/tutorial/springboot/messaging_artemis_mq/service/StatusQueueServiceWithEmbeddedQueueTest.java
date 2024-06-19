@@ -24,7 +24,7 @@ class StatusQueueServiceWithEmbeddedQueueTest {
         final StatusModel givenModel = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "model should not be null";
+        final var expectedExceptionMessage = "StatusModel should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenModel));
 
@@ -35,7 +35,7 @@ class StatusQueueServiceWithEmbeddedQueueTest {
     @Test
     @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
-        final var givenModel = new StatusModel(Acknowledge.ACCEPTED, "test additional data");
+        final var givenModel = new StatusModel(Acknowledge.ACCEPTED, "test additional data", "");
 
         assertDoesNotThrow(() -> systemUnderTest.push(givenModel));
     }

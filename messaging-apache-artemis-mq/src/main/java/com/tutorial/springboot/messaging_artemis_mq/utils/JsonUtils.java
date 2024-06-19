@@ -17,7 +17,7 @@ public final class JsonUtils {
         try {
             return MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            logger.error("converting object to JSON string failed due to: {}", e.getMessage());
+            logger.error("Converting object to JSON string failed due to: {}", e.getMessage());
             return null;
         }
     }

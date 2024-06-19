@@ -54,7 +54,7 @@ class MainQueueListenerTest {
         final Message givenMessage = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "message should not be null";
+        final var expectedExceptionMessage = "Message should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.onMessage(givenMessage));
 
@@ -73,14 +73,14 @@ class MainQueueListenerTest {
         messageUtils.when(() -> extractCorrelationId(any())).thenReturn(givenCorrelationId);
         doNothing()
                 .when(statusQueueService)
-                .push(new StatusModel(Acknowledge.ACCEPTED, givenCorrelationId));
+                .push(new StatusModel(Acknowledge.ACCEPTED, givenCorrelationId, ""));
 
         assertDoesNotThrow(() -> systemUnderTest.onMessage(givenMessage));
 
         messageUtils.verify(() -> extractBody(any(), any()), times(1));
         messageUtils.verify(() -> extractCorrelationId(any()), times(1));
         verify(statusQueueService, times(1))
-                .push(new StatusModel(Acknowledge.ACCEPTED, givenCorrelationId));
+                .push(new StatusModel(Acknowledge.ACCEPTED, givenCorrelationId, ""));
     }
 
     @Test
@@ -92,13 +92,13 @@ class MainQueueListenerTest {
         messageUtils.when(() -> extractCorrelationId(any())).thenReturn("fake correlation Id");
         doNothing()
                 .when(statusQueueService)
-                .push(new StatusModel(Acknowledge.FAILED, "fake correlation Id"));
+                .push(new StatusModel(Acknowledge.FAILED, "fake correlation Id", "Message body could not be extracted"));
 
         assertDoesNotThrow(() -> systemUnderTest.onMessage(givenMessage));
 
         messageUtils.verify(() -> extractBody(any(), any()), times(1));
         messageUtils.verify(() -> extractCorrelationId(any()), times(1));
-        verify(statusQueueService, times(1)).push(new StatusModel(Acknowledge.FAILED, "fake correlation Id"));
+        verify(statusQueueService, times(1)).push(new StatusModel(Acknowledge.FAILED, "fake correlation Id", "Message body could not be extracted"));
     }
 
 }

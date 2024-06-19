@@ -228,7 +228,7 @@ public class OpenApiConfig {
 
 ## Prerequisites
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 * [Docker](https://www.docker.com/) (Optional)
 * [Postman CLI](https://learning.postman.com/docs/postman-cli/postman-cli-installation/) (Optional)

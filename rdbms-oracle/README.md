@@ -122,7 +122,7 @@ the `Sql Developer Web`.
 ### Dependencies
 
 The Oracle database driver should
-be [downloaded](https://www.oracle.com/de/database/technologies/appdev/jdbc-downloads.html) and install manually with
+be [downloaded](https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html) and install manually with
 following command.
 
 **Linux/Unix**
@@ -238,7 +238,7 @@ spring:
 
 ## Prerequisites
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 * [Docker](https://www.docker.com/)
 

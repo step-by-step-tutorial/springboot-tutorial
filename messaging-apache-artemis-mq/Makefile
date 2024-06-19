@@ -1,21 +1,21 @@
-createContainer:
+docker-deploy:
 	docker compose --file docker-compose.yml --project-name artemis up -d
 
-rebuildContainer:
+docker-rebuild-deploy:
 	docker compose --file docker-compose.yml --project-name artemis up --build -d
 
-deleteContainer:
+docker-remove-container:
 	docker rm artemis --force
 
-deleteImage:
+docker-remove-image:
 	docker image rm apache/activemq-artemis:latest
 
-createKube:
+kube-deploy:
 	kubectl apply -f ./kube/artemis-deployment.yml
 	kubectl apply -f ./kube/artemis-service.yml
 
-deleteKube:
+kube-delete:
 	kubectl delete all --all
 
-localhost:
+kube-bind-to-localhost:
 	kubectl port-forward service/artemis 8161:8161

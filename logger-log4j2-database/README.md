@@ -1,17 +1,26 @@
+
 # <p align="center">Apache Log4j2 And Relational Database Appender</p>
 
 <p align="justify">
 
 Log4j is a log framework and this tutorial shows how should be integrated Spring Boot 3 and Log4j2 to send logs to a
-database. For more information see [https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x).
+database. For more information see [https://logging.apache.org/log4j/2.x](https://logging.apache.org/log4j/2.x).
 
 </p>
 
-# Getting Start
+## <p align="center"> Table of Content </p>
 
-## Prerequisites
+* [Getting Started](#getting-started)
+* [Set up Database](#set-up-database)
+    * [Install Dockerized MySQL](#install-dockerized-mysql)
+    * [Initialize MySQL Manually](#initialize-mysql-manually)
+* [How To Config Application](#how-to-config-application)
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads)
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 * [MySQL](https://www.mysql.com)
 * [Docker](https://www.docker.com)
@@ -102,15 +111,15 @@ CREATE TABLE LOG_TABLE
 );
 ```
 
-## Pipeline
+### Pipeline
 
-### Build
+#### Build
 
 ```bash
 mvn clean package -DskipTests=true 
 ```
 
-### Test
+#### Test
 
 In this tutorial I don't want to use [Testcontainers](https://testcontainers.com) framework to test because I want to
 check database after inserting log. If the MySql instance is ready and already configured then it is possible to run the
@@ -131,18 +140,17 @@ SELECT *
 FROM LOG_TABLE;
 ```
 
-### Run
+#### Run
 
 ```bash
 mvn  spring-boot:run
 ```
 
-# How To Config Application
+## How To Config Application
 
-## Dependencies
+### Dependencies
 
 ```xml
-
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -166,7 +174,7 @@ mvn  spring-boot:run
 </dependencies>
 ```
 
-## Log4j Properties
+### Log4j Properties
 
 Create a bundle named `log4j2_en.properties` include the following properties in the resources. In this case I am using
 MySQL properties.
@@ -217,6 +225,6 @@ Create `log4j2.xml` in the resources with proper configuration for the database.
 </Configuration>
 ```
 
-#
+##
 
 **<p align="center"> [Top](#apache-log4j2-relational-database) </p>**

@@ -53,7 +53,7 @@ class StatusQueueServiceTest {
         final StatusModel givenModel = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "model should not be null";
+        final var expectedExceptionMessage = "StatusModel should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenModel));
 
@@ -65,7 +65,7 @@ class StatusQueueServiceTest {
     @Test
     @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
-        final var givenModel = new StatusModel(Acknowledge.ACCEPTED, "fake additional data");
+        final var givenModel = new StatusModel(Acknowledge.ACCEPTED, "fake additional data", "");
         final var givenObjectMessage = mock(MessageCreator.class);
         final var givenDestination = "fake queue";
         messageUtils.when(() -> createSerializableMessage(any())).thenReturn(givenObjectMessage);

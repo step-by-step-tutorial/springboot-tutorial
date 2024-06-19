@@ -29,10 +29,10 @@ public final class MessageUtils {
     public static <T> Optional<T> extractBody(final Message message, final Class<T> typeOfBody) {
         try {
             var body = message.getBody(typeOfBody);
-            logger.info("converting message body succeeded: {}", body);
+            logger.info("Extracting message body succeeded: {}", body);
             return Optional.ofNullable(body);
         } catch (JMSException e) {
-            logger.error("converting message body failed due to: {}", e.getMessage());
+            logger.error("Extracting message body failed due to: {}", e.getMessage());
             return Optional.empty();
         }
     }
@@ -41,7 +41,7 @@ public final class MessageUtils {
         try {
             return message.getJMSCorrelationID();
         } catch (JMSException e) {
-            logger.error("correlation Id does not exist for the reason that: {}", e.getMessage());
+            logger.error("Correlation Id does not exist for the reason that: {}", e.getMessage());
             return null;
         }
     }
@@ -50,7 +50,7 @@ public final class MessageUtils {
         try {
             return message.getJMSDestination().toString();
         } catch (JMSException e) {
-            logger.error("queue does not exist for the reason that: {}", e.getMessage());
+            logger.error("Queue does not exist for the reason that: {}", e.getMessage());
             return null;
         }
     }

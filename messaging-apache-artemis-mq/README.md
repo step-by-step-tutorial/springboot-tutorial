@@ -9,15 +9,51 @@ information see
 
 </p>
 
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [Install Active MQ Artemis on Docker](#install-active-mq-artemis-on-docker)
+* [Install Active MQ Artemis on Kubernetes](#install-active-mq-artemis-on-kubernetes)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Test](#how-to-set-up-test)
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
 ## Install Active MQ Artemis on Docker
 
 ### Docker Compose File
 
-Create docker compose file.
-
-**docker-compose.yml**
+Create docker compose file with the following content.
 
 ```yaml
+#docker-compose.yml
 version: '3.8'
 
 services:
@@ -34,6 +70,8 @@ services:
       - "./target/broker:/opt/artemis"
 ```
 
+### Apply Docker Compose File
+
 Execute the `docker compose  up -d` command to install Artemis.
 
 ```shell
@@ -46,19 +84,14 @@ docker compose --file docker-compose.yml --project-name artemis up --build -d
 
 In order to access Artemis web console open [http://localhost:8161](http://localhost:8161/) in the browser.
 
-## Install Artemis on Kubernetes
+## Install Active MQ Artemis on Kubernetes
 
-Create image manually from the `Dockerfile` located in the `./docker` directory by following command.
+### Kube Files
 
-```shell
-docker build -t apache/artemis:latest ./docker
-```
-
-Create the following files for installing Artemis.
-
-**artemis-deployment.yml**
+Create the following files in order to apply on Kubernetes.
 
 ```yaml
+# artemis-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -83,9 +116,8 @@ spec:
             - containerPort: 8161
 ```
 
-**artemis-service.yml**
-
 ```yaml
+# artemis-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -102,40 +134,28 @@ spec:
       targetPort: 8161
 ```
 
-### Apply Configuration Files
+### Apply Kube Files
 
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-# ======================================================================================================================
-# Artemis
-# ======================================================================================================================
 kubectl apply -f ./kube/artemis-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment artemis -n default
-
 kubectl apply -f ./kube/artemis-service.yml
-# kubectl get service -n default
-# kubectl describe service artemis -n default
-
-# ======================================================================================================================
-# After Install
-# ======================================================================================================================
-kubectl get all
 ```
+
+To check status, use `kubectl get all` command.
 
 <p align="justify">
 
-In order to connect to Artemis from localhost through the web browser use the following command and dashboard of Artemis
-is available on [http://localhost:8161](http://localhost:8161) URL.
+In order to connect to Artemis from localhost through the web browser use the following command
 
 </p>
 
 ```shell
-# artemis
-# http://localhost:8161
 kubectl port-forward service/artemis 8161:8161
 ```
+
+Dashboard of Artemis is available on [http://localhost:8161](http://localhost:8161) URL.
 
 ## How To Set up Spring Boot
 
@@ -235,15 +255,15 @@ public class EmbeddedActiveMqServer implements DisposableBean {
             config.addAcceptorConfiguration("embeddedartemis", String.format("tcp://%s:%s", host, port));
             activeMqServer.setConfiguration(config);
             activeMqServer.start();
-            logger.info("embedded active-mq-artemis has started");
+            logger.info("Embedded active-mq-artemis has started");
         } catch (Exception e) {
-            logger.error("embedded active-mq-artemis failed due to: {}", e.getMessage());
+            logger.error("Embedded active-mq-artemis failed due to: {}", e.getMessage());
         }
     }
 
     @Override
     public void destroy() throws Exception {
-        logger.info("embedded active-mq-artemis has stopped");
+        logger.info("Embedded active-mq-artemis has stopped");
         activeMqServer.stop();
     }
 }
@@ -261,28 +281,30 @@ class TestClass {
 
 ```
 
-## Prerequisites
+## Make File
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
+```shell
+docker-deploy:
+	docker compose --file docker-compose.yml --project-name artemis up -d
 
-## Build
+docker-rebuild-deploy:
+	docker compose --file docker-compose.yml --project-name artemis up --build -d
 
-```bash
-mvn clean package -DskipTests=true 
-```
+docker-remove-container:
+	docker rm artemis --force
 
-## Test
+docker-remove-image:
+	docker image rm apache/activemq-artemis:latest
 
-```bash
-mvn test
-```
+kube-deploy:
+	kubectl apply -f ./kube/artemis-deployment.yml
+	kubectl apply -f ./kube/artemis-service.yml
 
-## Run
+kube-delete:
+	kubectl delete all --all
 
-```bash
-mvn  spring-boot:run
+kube-bind-to-localhost:
+	kubectl port-forward service/artemis 8161:8161
 ```
 
 ##

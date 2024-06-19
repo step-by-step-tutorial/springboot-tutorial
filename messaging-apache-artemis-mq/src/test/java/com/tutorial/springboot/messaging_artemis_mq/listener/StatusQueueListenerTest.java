@@ -48,7 +48,7 @@ class StatusQueueListenerTest {
         final Message givenMessage = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "message should not be null";
+        final var expectedExceptionMessage = "Message should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.onMessage(givenMessage));
 
@@ -60,7 +60,7 @@ class StatusQueueListenerTest {
     @DisplayName("should log an info when given message was processed successful")
     void shouldLogInfoWhenTheMessageWasProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
-        final var givenBody = Optional.of(new StatusModel(Acknowledge.ACCEPTED, "fake additional data"));
+        final var givenBody = Optional.of(new StatusModel(Acknowledge.ACCEPTED, "fake additional data", ""));
         final var givenCorrelationId = "fake correlation Id";
         messageUtils.when(() -> extractBody(any(), any())).thenReturn(givenBody);
         messageUtils.when(() -> extractCorrelationId(any())).thenReturn(givenCorrelationId);

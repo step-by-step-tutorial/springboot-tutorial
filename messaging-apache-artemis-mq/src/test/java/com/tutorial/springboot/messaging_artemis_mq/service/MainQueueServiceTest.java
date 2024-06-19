@@ -50,7 +50,7 @@ class MainQueueServiceTest {
         final MessageModel givenModel = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "model should not be null";
+        final var expectedExceptionMessage = "MessageModel should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenModel));
 

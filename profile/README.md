@@ -110,7 +110,7 @@ In this sample there are two profiles named **dev** and **test**.
 
 ## Prerequisites
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
 
 ## Build

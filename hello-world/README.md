@@ -8,7 +8,7 @@ This is the first step of the Spring Boot tutorial. The result is printing `Hell
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/de/java/technologies/downloads)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
 ### Build
