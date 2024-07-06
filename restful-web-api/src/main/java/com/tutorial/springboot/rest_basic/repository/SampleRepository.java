@@ -10,7 +10,7 @@ public interface SampleRepository<T, E extends Entity<T>> {
 
     Optional<E> selectById(T id);
 
-    void update(T id, E entity);
+    void update(E entity, T id, Integer version);
 
     void deleteById(T id);
 

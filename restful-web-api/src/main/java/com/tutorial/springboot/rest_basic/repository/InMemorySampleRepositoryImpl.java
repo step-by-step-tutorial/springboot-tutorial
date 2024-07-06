@@ -1,6 +1,9 @@
 package com.tutorial.springboot.rest_basic.repository;
 
 import com.tutorial.springboot.rest_basic.entity.SampleEntity;
+import com.tutorial.springboot.rest_basic.transformer.SampleTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -17,6 +20,8 @@ import static java.util.Objects.nonNull;
 
 @Repository
 public class InMemorySampleRepositoryImpl implements SampleRepository<Long, SampleEntity> {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public Optional<Long> insert(SampleEntity entity) {
@@ -37,15 +42,23 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
     }
 
     @Override
-    public void update(Long id, SampleEntity entity) {
+    public void update(SampleEntity entity, Long id, Integer version) {
         requireNotNull(id, "ID of Sample should not be null");
         requireNotNull(entity, "Sample should not be null");
         if (nonNull(entity.id())) {
             requireEquality(id, entity.id(), "There are two different values for Sample ID");
         }
-
-        entity.increaseVersion();
-        SAMPLE_TABLE.put(id, entity);
+        var persisted = selectById(id);
+        if (persisted.isPresent()) {
+            var value = persisted.get();
+            if (!Objects.equals(value.version(), version)) {
+                throw new IllegalStateException(String.format("Sample entity [id %s and version %s] do not match with DTO [id %s and version %s] ", id, value.version(), id, version));
+            }
+            value.updateFrom(entity);
+            SAMPLE_TABLE.put(id, value);
+        } else {
+            logger.warn("Sample Entity with id {} not found", id);
+        }
     }
 
     @Override

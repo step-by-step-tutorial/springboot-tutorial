@@ -147,7 +147,7 @@ class InMemorySampleServiceImplTest {
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
                     .datetime(LocalDateTime.now())
-                    .version(0)
+                    .version(1)
                     .build();
 
             var actual = assertDoesNotThrow(() -> {
@@ -156,7 +156,7 @@ class InMemorySampleServiceImplTest {
             });
 
             assertNotNull(actual);
-            assertEquals(SampleDto.builder().from(givenSample).version(1).build(), actual);
+            assertEquals(SampleDto.builder().from(givenSample).version(2).build(), actual);
         }
 
         @Test
@@ -166,7 +166,7 @@ class InMemorySampleServiceImplTest {
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
                     .datetime(LocalDateTime.now())
-                    .version(0)
+                    .version(1)
                     .build();
 
             var actual = assertDoesNotThrow(() -> {

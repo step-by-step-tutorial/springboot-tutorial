@@ -2,7 +2,6 @@ package com.tutorial.springboot.rest_basic.service;
 
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
 import com.tutorial.springboot.rest_basic.entity.SampleEntity;
-import com.tutorial.springboot.rest_basic.exception.ValidationException;
 import com.tutorial.springboot.rest_basic.repository.SampleRepository;
 import com.tutorial.springboot.rest_basic.transformer.SampleTransformer;
 import org.slf4j.Logger;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -23,7 +21,7 @@ import static java.util.Objects.nonNull;
 @Service
 public class InMemorySampleServiceImpl implements SampleService {
 
-    private final Logger logger = LoggerFactory.getLogger(InMemorySampleServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final SampleRepository<Long, SampleEntity> sampleRepository;
 
@@ -53,14 +51,10 @@ public class InMemorySampleServiceImpl implements SampleService {
             requireEquality(id, dto.id(), "There are two different values for Sample ID");
         }
 
-        var entity = sampleRepository.selectById(id);
-        if (entity.isPresent()) {
-            var value = entity.get();
-            if (!Objects.equals(value.version(), dto.version())) {
-                throw new IllegalStateException(String.format("Sample entity [id %s and version %s] do not match with DTO [id %s and version %s] ", id, value.version(), id, dto.version()));
-            }
-            sampleRepository.update(id, toEntity(dto, value));
-        }else {
+        var exists = sampleRepository.exists(id);
+        if (exists) {
+            sampleRepository.update(toEntity(dto), id, dto.version());
+        } else {
             logger.warn("Sample Entity with id {} not found", id);
         }
     }

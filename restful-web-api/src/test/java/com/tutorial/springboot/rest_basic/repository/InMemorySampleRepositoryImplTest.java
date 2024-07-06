@@ -1,11 +1,8 @@
 package com.tutorial.springboot.rest_basic.repository;
 
 import com.tutorial.springboot.rest_basic.TestFixture;
-import com.tutorial.springboot.rest_basic.dto.SampleDto;
-import com.tutorial.springboot.rest_basic.entity.Entity;
 import com.tutorial.springboot.rest_basic.entity.SampleEntity;
 import com.tutorial.springboot.rest_basic.exception.ValidationException;
-import com.tutorial.springboot.rest_basic.service.SampleService;
 import com.tutorial.springboot.rest_basic.transformer.SampleTransformer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -159,11 +156,12 @@ class InMemorySampleRepositoryImplTest {
                     .datetime(LocalDateTime.now());
 
             var actual = assertDoesNotThrow(() -> {
-                systemUnderTest.update(givenId, givenSample);
+                systemUnderTest.update(givenSample, givenId, 1);
                 return systemUnderTest.selectById(givenId).orElseThrow();
             });
 
             assertNotNull(actual);
+            givenSample.increaseVersion();
             assertEquals(givenSample, actual);
         }
 
@@ -176,7 +174,7 @@ class InMemorySampleRepositoryImplTest {
                     .datetime(LocalDateTime.now());
 
             var actual = assertDoesNotThrow(() -> {
-                systemUnderTest.update(givenId, givenSample);
+                systemUnderTest.update(givenSample, givenId, 1);
                 return systemUnderTest.selectById(givenId).orElseThrow();
             });
 
@@ -194,7 +192,7 @@ class InMemorySampleRepositoryImplTest {
                     .text("updated text")
                     .datetime(LocalDateTime.now());
 
-            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.update(givenId, givenSample));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.update(givenSample, givenId, 1));
 
             assertNotNull(actual);
             assertNotNull(actual.getMessage());

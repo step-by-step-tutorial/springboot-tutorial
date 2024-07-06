@@ -3,6 +3,7 @@ package com.tutorial.springboot.rest_basic.entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -19,7 +20,7 @@ public class SampleEntity implements Entity<Long> {
     @NotNull(message = "sample.datetime should not be null")
     LocalDateTime datetime;
 
-    private Integer version = 0;
+    private Integer version = 1;
 
     public SampleEntity() {
     }
@@ -75,6 +76,14 @@ public class SampleEntity implements Entity<Long> {
     public SampleEntity increaseVersion() {
         this.version++;
         return this;
+    }
+
+    @Transient
+    public void updateFrom(SampleEntity newOne) {
+        code(newOne.code());
+        text(newOne.text());
+        datetime(newOne.datetime());
+        increaseVersion();
     }
 
     @Override

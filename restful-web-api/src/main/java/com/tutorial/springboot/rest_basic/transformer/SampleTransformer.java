@@ -25,10 +25,4 @@ public final class SampleTransformer {
                 .datetime(dto.datetime());
     }
 
-    public static SampleEntity toEntity(SampleDto dto, SampleEntity entity) {
-        return entity
-                .code(dto.code())
-                .text(dto.text())
-                .datetime(dto.datetime());
-    }
 }
