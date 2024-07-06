@@ -315,6 +315,7 @@ class SampleApiTest {
                     .text("update")
                     .code(1)
                     .datetime(now())
+                    .version(0)
                     .build();
 
             final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), Void.class);
@@ -333,6 +334,7 @@ class SampleApiTest {
                     .text("update")
                     .code(1)
                     .datetime(now())
+                    .version(0)
                     .build();
 
             final var actual = systemUnderTest.exchange(givenUri, PUT, new HttpEntity<>(givenDto), Void.class);

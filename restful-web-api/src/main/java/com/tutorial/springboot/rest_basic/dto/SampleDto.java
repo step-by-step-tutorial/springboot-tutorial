@@ -16,7 +16,9 @@ public record SampleDto(
         Integer code,
 
         @NotNull(message = "sample.datetime should not be null")
-        LocalDateTime datetime
+        LocalDateTime datetime,
+
+        Integer version
 ) {
     public static Builder builder() {
         return new Builder();
@@ -27,6 +29,7 @@ public record SampleDto(
         private String text;
         private Integer code;
         private LocalDateTime datetime;
+        private Integer version;
 
         public Builder() {
         }
@@ -36,6 +39,7 @@ public record SampleDto(
             this.text = dto.text;
             this.code = dto.code;
             this.datetime = dto.datetime;
+            this.version = dto.version;
             return this;
         }
 
@@ -59,8 +63,13 @@ public record SampleDto(
             return this;
         }
 
+        public Builder version(Integer version) {
+            this.version = version;
+            return this;
+        }
+
         public SampleDto build() {
-            return new SampleDto(id, text, code, datetime);
+            return new SampleDto(id, text, code, datetime,version);
         }
     }
 }

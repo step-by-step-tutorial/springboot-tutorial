@@ -1,13 +1,20 @@
 package com.tutorial.springboot.rest_basic.service;
 
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
+import com.tutorial.springboot.rest_basic.entity.SampleEntity;
+import com.tutorial.springboot.rest_basic.exception.ValidationException;
 import com.tutorial.springboot.rest_basic.repository.SampleRepository;
+import com.tutorial.springboot.rest_basic.transformer.SampleTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.tutorial.springboot.rest_basic.transformer.SampleTransformer.toEntity;
 import static com.tutorial.springboot.rest_basic.validation.CollectionValidation.requireNotEmpty;
 import static com.tutorial.springboot.rest_basic.validation.NumberValidation.requireEquality;
 import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.requireNotNull;
@@ -16,24 +23,26 @@ import static java.util.Objects.nonNull;
 @Service
 public class InMemorySampleServiceImpl implements SampleService {
 
-    final SampleRepository sampleRepository;
+    private final Logger logger = LoggerFactory.getLogger(InMemorySampleServiceImpl.class);
 
-    public InMemorySampleServiceImpl(SampleRepository sampleRepository) {
+    private final SampleRepository<Long, SampleEntity> sampleRepository;
+
+    public InMemorySampleServiceImpl(SampleRepository<Long, SampleEntity> sampleRepository) {
         this.sampleRepository = sampleRepository;
     }
 
     @Override
-    public Optional<Long> insert(SampleDto sample) {
-        requireNotNull(sample, "Sample should not be null");
+    public Optional<Long> insert(SampleDto dto) {
+        requireNotNull(dto, "Sample should not be null");
 
-        return Optional.of(sampleRepository.insert(sample).orElseThrow());
+        return sampleRepository.insert(toEntity(dto));
     }
 
     @Override
     public Optional<SampleDto> selectById(Long id) {
         requireNotNull(id, "ID of Sample should not be null");
 
-        return Optional.of(sampleRepository.selectById(id).orElseThrow());
+        return sampleRepository.selectById(id).map(SampleTransformer::toDto);
     }
 
     @Override
@@ -44,7 +53,16 @@ public class InMemorySampleServiceImpl implements SampleService {
             requireEquality(id, dto.id(), "There are two different values for Sample ID");
         }
 
-        sampleRepository.update(id, dto);
+        var entity = sampleRepository.selectById(id);
+        if (entity.isPresent()) {
+            var value = entity.get();
+            if (!Objects.equals(value.version(), dto.version())) {
+                throw new IllegalStateException(String.format("Sample entity [id %s and version %s] do not match with DTO [id %s and version %s] ", id, value.version(), id, dto.version()));
+            }
+            sampleRepository.update(id, toEntity(dto, value));
+        }else {
+            logger.warn("Sample Entity with id {} not found", id);
+        }
     }
 
     @Override
@@ -59,11 +77,11 @@ public class InMemorySampleServiceImpl implements SampleService {
     }
 
     @Override
-    public List<Long> insertBatch(SampleDto... samples) {
-        requireNotNull(samples, "List of Sample should not be null");
-        requireNotEmpty(samples, "List of Sample should not be empty");
+    public List<Long> insertBatch(SampleDto... dtos) {
+        requireNotNull(dtos, "List of Sample should not be null");
+        requireNotEmpty(dtos, "List of Sample should not be empty");
 
-        return Stream.of(samples)
+        return Stream.of(dtos)
                 .map(this::insert)
                 .map(Optional::orElseThrow)
                 .toList();
@@ -74,7 +92,9 @@ public class InMemorySampleServiceImpl implements SampleService {
         requireNotNull(identities, "List of identities should not be null");
         requireNotEmpty(identities, "List of identifier should not be empty");
 
-        return sampleRepository.selectBatch(identities);
+        return sampleRepository.selectBatch(identities)
+                .map(SampleTransformer::toDto)
+                .toList();
     }
 
     @Override
@@ -87,7 +107,9 @@ public class InMemorySampleServiceImpl implements SampleService {
 
     @Override
     public List<SampleDto> selectAll() {
-        return sampleRepository.selectAll();
+        return sampleRepository.selectAll()
+                .map(SampleTransformer::toDto)
+                .toList();
     }
 
     @Override
@@ -97,7 +119,7 @@ public class InMemorySampleServiceImpl implements SampleService {
 
     @Override
     public List<Long> selectIdentities() {
-        return sampleRepository.selectIdentities();
+        return sampleRepository.selectIdentities().toList();
     }
 
 }

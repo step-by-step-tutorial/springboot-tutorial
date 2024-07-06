@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +19,7 @@ import java.util.stream.Stream;
 import static com.tutorial.springboot.rest_basic.util.ApiErrorUtils.checkValidation;
 import static com.tutorial.springboot.rest_basic.util.CleanUpUtils.clean;
 import static com.tutorial.springboot.rest_basic.util.HttpUtils.createUriFromId;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.*;
 
 @RestController
@@ -49,7 +49,7 @@ public class SampleApi {
     public ResponseEntity<SampleDto> findById(@PathVariable Long id) {
         logger.info("Received an inbound request to retrieve a sample by its unique ID[{}]", id);
         return sampleService.selectById(id)
-                .map(sample -> ok().body(sample))
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> notFound().build());
     }
 
@@ -82,9 +82,7 @@ public class SampleApi {
         logger.info("Received an inbound request to save a batch[{}] of samples", samples.length);
         var identities = sampleService.insertBatch(clean(Stream.of(samples)).toArray(SampleDto[]::new));
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(identities);
+        return ResponseEntity.status(CREATED).body(identities);
     }
 
     @DeleteMapping(value = "/batch")
@@ -100,7 +98,7 @@ public class SampleApi {
         logger.info("Received an inbound request to retrieve all samples");
         final var samples = sampleService.selectAll();
 
-        return ok().body(samples);
+        return ok(samples);
     }
 
     @DeleteMapping

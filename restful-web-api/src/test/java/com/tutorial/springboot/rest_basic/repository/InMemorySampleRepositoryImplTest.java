@@ -2,8 +2,11 @@ package com.tutorial.springboot.rest_basic.repository;
 
 import com.tutorial.springboot.rest_basic.TestFixture;
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
+import com.tutorial.springboot.rest_basic.entity.Entity;
+import com.tutorial.springboot.rest_basic.entity.SampleEntity;
 import com.tutorial.springboot.rest_basic.exception.ValidationException;
 import com.tutorial.springboot.rest_basic.service.SampleService;
+import com.tutorial.springboot.rest_basic.transformer.SampleTransformer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static com.tutorial.springboot.rest_basic.transformer.SampleTransformer.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Sample Repository Unit tests")
@@ -21,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemorySampleRepositoryImplTest {
 
     @Autowired
-    private SampleRepository systemUnderTest;
+    private SampleRepository<Long, SampleEntity> systemUnderTest;
 
     @AfterEach
     void tearDown() {
@@ -34,22 +39,24 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenSample_whenInsert_thenReturnId() {
-            var givenSample = TestFixture.oneSample();
+            var givenSample = toEntity(TestFixture.oneSample());
             var actual = assertDoesNotThrow(() -> systemUnderTest.insert(givenSample));
             assertNotNull(actual);
         }
 
         @Test
         void givenListOfSample_whenInsertAll_thenReturnListOfId() {
-            var givenSamples = TestFixture.multiSample();
+            var givenSamples = Arrays.stream(TestFixture.multiSample())
+                    .map(SampleTransformer::toEntity)
+                    .toArray(SampleEntity[]::new);
             var actual = assertDoesNotThrow(() -> systemUnderTest.insertBatch(givenSamples));
             assertNotNull(actual);
-            assertFalse(actual.isEmpty());
+            assertFalse(actual.toList().isEmpty());
         }
 
         @Test
         void givenEmptyList_whenInsertAll_thenThrowIllegalStateException() {
-            var givenSamples = new SampleDto[0];
+            var givenSamples = new SampleEntity[0];
             var actual = assertThrows(ValidationException.class, () -> systemUnderTest.insertBatch(givenSamples));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
@@ -57,7 +64,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenNullAsList_whenInsertAll_thenThrowNullPointerException() {
-            final SampleDto[] givenSamples = null;
+            final SampleEntity[] givenSamples = null;
             var actual = assertThrows(ValidationException.class, () -> systemUnderTest.insertBatch(givenSamples));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
@@ -71,25 +78,28 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenId_whenSelectById_thenReturnSample() {
-            var givenId = systemUnderTest.insert(TestFixture.oneSample()).orElseThrow();
+            var preparedEntity = toEntity(TestFixture.oneSample());
+            var givenId = systemUnderTest.insert(preparedEntity).orElseThrow();
             var actual = systemUnderTest.selectById(givenId).orElseThrow();
             assertNotNull(actual);
         }
 
         @Test
         void givenNothing_whenSelectAll_thenReturnListOfSample() {
-            systemUnderTest.insertBatch(TestFixture.multiSample());
+            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            systemUnderTest.insertBatch(givenEntities);
             var actual = systemUnderTest.selectAll();
             assertNotNull(actual);
-            assertFalse(actual.isEmpty());
+            assertFalse(actual.toList().isEmpty());
         }
 
         @Test
         void givenListOfId_whenSelectAll_thenReturnListOfSample() {
-            var givenListOfId = systemUnderTest.insertBatch(TestFixture.multiSample());
+            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            var givenListOfId = systemUnderTest.insertBatch(givenEntities);
             var actual = systemUnderTest.selectBatch(givenListOfId.toArray(Long[]::new));
             assertNotNull(actual);
-            assertFalse(actual.isEmpty());
+            assertFalse(actual.toList().isEmpty());
         }
 
         @Test
@@ -110,10 +120,11 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenNothing_whenGetIdentities_thenReturnListOfId() {
-            systemUnderTest.insertBatch(TestFixture.multiSample());
+            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            systemUnderTest.insertBatch(givenEntities);
             var actual = systemUnderTest.selectIdentities();
             assertNotNull(actual);
-            assertFalse(actual.isEmpty());
+            assertFalse(actual.toList().isEmpty());
         }
 
     }
@@ -123,7 +134,7 @@ class InMemorySampleRepositoryImplTest {
     class ExistsSampleTests {
         @Test
         void givenValidId_whenCheckExistence_thenReturnTrue() {
-            var givenId = systemUnderTest.insert(TestFixture.oneSample()).orElseThrow();
+            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
             var actual = systemUnderTest.exists(givenId);
             assertTrue(actual);
         }
@@ -141,13 +152,11 @@ class InMemorySampleRepositoryImplTest {
     class UpdateSampleTests {
         @Test
         void givenSampleAndId_whenUpdate_thenUpdatedSuccessfully() {
-            var givenId = systemUnderTest.insert(TestFixture.oneSample()).orElseThrow();
-            var givenSample = SampleDto.builder()
-                    .id(givenId)
+            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+            var givenSample = new SampleEntity(givenId)
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
-                    .datetime(LocalDateTime.now())
-                    .build();
+                    .datetime(LocalDateTime.now());
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.update(givenId, givenSample);
@@ -160,12 +169,11 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenSampleWithoutIdAndId_whenUpdate_thenUpdatedSuccessfully() {
-            var givenId = systemUnderTest.insert(TestFixture.oneSample()).orElseThrow();
-            var givenSample = SampleDto.builder()
+            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+            var givenSample = new SampleEntity()
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
-                    .datetime(LocalDateTime.now())
-                    .build();
+                    .datetime(LocalDateTime.now());
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.update(givenId, givenSample);
@@ -180,13 +188,11 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenSampleWithDifferentIdAndId_whenUpdate_thenIllegalStateException() {
-            var givenId = systemUnderTest.insert(TestFixture.oneSample()).orElseThrow();
-            var givenSample = SampleDto.builder()
-                    .id(givenId + 1)
+            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+            var givenSample = new SampleEntity(givenId + 1)
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
-                    .datetime(LocalDateTime.now())
-                    .build();
+                    .datetime(LocalDateTime.now());
 
             var actual = assertThrows(ValidationException.class, () -> systemUnderTest.update(givenId, givenSample));
 
@@ -200,7 +206,7 @@ class InMemorySampleRepositoryImplTest {
     class DeleteSampleTests {
         @Test
         void givenId_whenDeleteById_thenDeletedSuccessfully() {
-            var givenId = systemUnderTest.insert(TestFixture.oneSample()).orElseThrow();
+            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteById(givenId);
                 return systemUnderTest.exists(givenId);
@@ -210,7 +216,8 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenIdentities_whenDeleteAllById_thenAllDeletedSuccessfully() {
-            var givenIdentities = systemUnderTest.insertBatch(TestFixture.multiSample()).toArray(Long[]::new);
+            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            var givenIdentities = systemUnderTest.insertBatch(givenEntities).toArray(Long[]::new);
             assertDoesNotThrow(() -> systemUnderTest.deleteBatch(givenIdentities));
             Stream.of(givenIdentities)
                     .forEach(id -> assertFalse(systemUnderTest.exists(id)));
@@ -234,12 +241,13 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenSample_whenTruncate_thenAllDeletedSuccessfully() {
-            systemUnderTest.insertBatch(TestFixture.multiSample());
+            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            systemUnderTest.insertBatch(givenEntities);
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteAll();
                 return systemUnderTest.selectAll();
             });
-            assertEquals(0, actual.size());
+            assertEquals(0, actual.toList().size());
         }
     }
 }

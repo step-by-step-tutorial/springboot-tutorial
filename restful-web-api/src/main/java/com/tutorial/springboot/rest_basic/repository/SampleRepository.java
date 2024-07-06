@@ -1,30 +1,30 @@
 package com.tutorial.springboot.rest_basic.repository;
 
-import com.tutorial.springboot.rest_basic.dto.SampleDto;
+import com.tutorial.springboot.rest_basic.entity.Entity;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-public interface SampleRepository {
-    Optional<Long> insert(SampleDto sample);
+public interface SampleRepository<T, E extends Entity<T>> {
+    Optional<T> insert(E entity);
 
-    Optional<SampleDto> selectById(Long id);
+    Optional<E> selectById(T id);
 
-    void update(Long id, SampleDto dto);
+    void update(T id, E entity);
 
-    void deleteById(Long id);
+    void deleteById(T id);
 
-    boolean exists(Long id);
+    boolean exists(T id);
 
-    List<Long> insertBatch(SampleDto... samples);
+    Stream<T> insertBatch(E... entities);
 
-    List<SampleDto> selectBatch(Long... identities);
+    Stream<E> selectBatch(T... identities);
 
-    void deleteBatch(Long... identities);
+    void deleteBatch(T... identities);
 
-    List<SampleDto> selectAll();
+    Stream<E> selectAll();
 
     void deleteAll();
 
-    List<Long> selectIdentities();
+    Stream<T> selectIdentities();
 }

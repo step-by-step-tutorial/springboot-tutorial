@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SampleService {
-    Optional<Long> insert(SampleDto sample);
+    Optional<Long> insert(SampleDto dto);
 
     Optional<SampleDto> selectById(Long id);
 
@@ -16,7 +16,7 @@ public interface SampleService {
 
     boolean exists(Long id);
 
-    List<Long> insertBatch(SampleDto... samples);
+    List<Long> insertBatch(SampleDto... dtos);
 
     List<SampleDto> selectBatch(Long... identities);
 
