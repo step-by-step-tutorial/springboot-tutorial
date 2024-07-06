@@ -273,10 +273,9 @@ postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.
 mvn  spring-boot:run
 ```
 
-To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator)
-To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
-To access **swagger** ui
-brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+* To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator)
+* To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+* To access **swagger** ui, brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ##
 

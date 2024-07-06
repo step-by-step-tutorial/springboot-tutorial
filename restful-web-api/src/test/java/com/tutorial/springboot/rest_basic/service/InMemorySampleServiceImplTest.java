@@ -3,11 +3,13 @@ package com.tutorial.springboot.rest_basic.service;
 import com.tutorial.springboot.rest_basic.TestFixture;
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
 import com.tutorial.springboot.rest_basic.exception.ValidationException;
-import com.tutorial.springboot.rest_basic.repository.SampleRepository;
+import com.tutorial.springboot.rest_basic.repository.InMemoryDatabase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -15,12 +17,15 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Sample Service Unit tests")
-class SampleServiceInMemoryImplTest {
-    private final SampleService systemUnderTest = new SampleServiceInMemoryImpl();
+@SpringBootTest
+class InMemorySampleServiceImplTest {
+
+    @Autowired
+    private SampleService systemUnderTest;
 
     @AfterEach
     void tearDown() {
-        SampleRepository.OPERATIONS.clear();
+        InMemoryDatabase.SAMPLE_TABLE.clear();
     }
 
     @Nested

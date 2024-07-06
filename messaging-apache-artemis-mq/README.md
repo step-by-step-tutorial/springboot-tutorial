@@ -283,7 +283,7 @@ class TestClass {
 
 ## Make File
 
-```shell
+```makefile
 docker-deploy:
 	docker compose --file docker-compose.yml --project-name artemis up -d
 
@@ -300,10 +300,10 @@ kube-deploy:
 	kubectl apply -f ./kube/artemis-deployment.yml
 	kubectl apply -f ./kube/artemis-service.yml
 
-kube-delete:
+kube-remove:
 	kubectl delete all --all
 
-kube-bind-to-localhost:
+kube-port-forward-web:
 	kubectl port-forward service/artemis 8161:8161
 ```
 

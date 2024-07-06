@@ -106,8 +106,11 @@ docker compose --file ./docker-compose.yml --project-name tools_name up --build 
 ```yaml
 ```
 
+## License
 
-## Make File
+## Appendix
+
+### Make File
 
 ```shell
 docker-deploy:
@@ -129,9 +132,10 @@ kube-deploy:
 kube-delete:
 	kubectl delete all --all
 
-kube-bind-to-localhost:
+kube-port-forward-db:
 	kubectl port-forward service/tools-name port:port
 ```
+
 ##
 
 **<p align="center"> [Top](#title) </p>**

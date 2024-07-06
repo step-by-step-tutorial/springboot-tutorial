@@ -1,12 +1,9 @@
-package com.tutorial.springboot.rest_basic.service;
+package com.tutorial.springboot.rest_basic.repository;
 
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
-import com.tutorial.springboot.rest_basic.repository.SampleRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.tutorial.springboot.rest_basic.validation.CollectionValidation.requireNotEmpty;
@@ -16,14 +13,14 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 
 @Repository
-public class SampleServiceInMemoryImpl implements SampleService {
+public class InMemorySampleRepositoryImpl implements SampleRepository {
 
     @Override
     public Optional<Long> insert(SampleDto sample) {
         requireNotNull(sample, "Sample should not be null");
 
-        final var id = SampleRepository.ID_GENERATOR.incrementAndGet();
-        SampleRepository.OPERATIONS.putIfAbsent(id, SampleDto.builder().from(sample).id(id).build());
+        final var id = InMemoryDatabase.SAMPLE_ID_GENERATOR.incrementAndGet();
+        InMemoryDatabase.SAMPLE_TABLE.putIfAbsent(id, SampleDto.builder().from(sample).id(id).build());
         return Optional.of(id);
     }
 
@@ -31,7 +28,7 @@ public class SampleServiceInMemoryImpl implements SampleService {
     public Optional<SampleDto> selectById(Long id) {
         requireNotNull(id, "ID of Sample should not be null");
 
-        final var sample = SampleRepository.OPERATIONS.get(id);
+        final var sample = InMemoryDatabase.SAMPLE_TABLE.get(id);
         return Optional.ofNullable(sample);
     }
 
@@ -43,18 +40,18 @@ public class SampleServiceInMemoryImpl implements SampleService {
             requireEquality(id, dto.id(), "There are two different values for Sample ID");
         }
 
-        SampleRepository.OPERATIONS.put(id, SampleDto.builder().from(dto).id(id).build());
+        InMemoryDatabase.SAMPLE_TABLE.put(id, SampleDto.builder().from(dto).id(id).build());
     }
 
     @Override
     public void deleteById(Long id) {
         requireNotNull(id, "ID of Sample should not be null");
-        SampleRepository.OPERATIONS.remove(id);
+        InMemoryDatabase.SAMPLE_TABLE.remove(id);
     }
 
     @Override
     public boolean exists(Long id) {
-        return SampleRepository.OPERATIONS.containsKey(id);
+        return InMemoryDatabase.SAMPLE_TABLE.containsKey(id);
     }
 
     @Override
@@ -73,10 +70,10 @@ public class SampleServiceInMemoryImpl implements SampleService {
         requireNotNull(identities, "List of identities should not be null");
         requireNotEmpty(identities, "List of identifier should not be empty");
 
-        final var listOfIdentifiers = asList(identities);
-        return SampleRepository.OPERATIONS.values()
+        final var validIdentifiers = asList(identities);
+        return InMemoryDatabase.SAMPLE_TABLE.values()
                 .stream()
-                .filter(sample -> listOfIdentifiers.contains(sample.id()))
+                .filter(sample -> validIdentifiers.contains(sample.id()))
                 .toList();
     }
 
@@ -87,24 +84,25 @@ public class SampleServiceInMemoryImpl implements SampleService {
 
         Stream.of(identities)
                 .filter(Objects::nonNull)
-                .forEach(SampleRepository.OPERATIONS::remove);
+                .forEach(InMemoryDatabase.SAMPLE_TABLE::remove);
     }
 
     @Override
     public List<SampleDto> selectAll() {
-        return SampleRepository.OPERATIONS.values()
+        return InMemoryDatabase.SAMPLE_TABLE.values()
                 .stream()
                 .toList();
     }
 
     @Override
     public void deleteAll() {
-        SampleRepository.OPERATIONS.clear();
+        InMemoryDatabase.SAMPLE_TABLE.clear();
     }
 
     @Override
     public List<Long> selectIdentities() {
-        return SampleRepository.OPERATIONS.keySet().stream().toList();
+        return InMemoryDatabase.SAMPLE_TABLE.keySet().stream().toList();
     }
+
 
 }

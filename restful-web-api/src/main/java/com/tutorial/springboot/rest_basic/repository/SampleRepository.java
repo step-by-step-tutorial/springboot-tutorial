@@ -2,18 +2,29 @@ package com.tutorial.springboot.rest_basic.repository;
 
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
+import java.util.Optional;
 
-public final class SampleRepository {
+public interface SampleRepository {
+    Optional<Long> insert(SampleDto sample);
 
-    public static final Map<Long, SampleDto> OPERATIONS = Collections.synchronizedMap(new HashMap<>());
+    Optional<SampleDto> selectById(Long id);
 
-    public static final AtomicLong ID_GENERATOR = new AtomicLong();
+    void update(Long id, SampleDto dto);
 
-    private SampleRepository() {
-    }
+    void deleteById(Long id);
 
+    boolean exists(Long id);
+
+    List<Long> insertBatch(SampleDto... samples);
+
+    List<SampleDto> selectBatch(Long... identities);
+
+    void deleteBatch(Long... identities);
+
+    List<SampleDto> selectAll();
+
+    void deleteAll();
+
+    List<Long> selectIdentities();
 }
