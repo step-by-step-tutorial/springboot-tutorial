@@ -1,23 +1,23 @@
-createContainer:
+docker-deploy:
 	docker compose --file docker-compose.yml --project-name rabbitmq up -d
 
-rebuildContainer:
+docker-rebuild-deploy:
 	docker compose --file docker-compose.yml --project-name rabbitmq up --build -d
 
-deleteContainer:
+docker-remove-container:
 	docker rm rabbitmq --force
 
-deleteImage:
+docker-remove-image:
 	docker image rm rabbitmq:management
 
-createKube:
+kube-deploy:
 	kubectl apply -f ./kube/rabbitmq-secrets.yml
 	kubectl apply -f ./kube/rabbitmq-deployment.yml
 	kubectl apply -f ./kube/rabbitmq-service.yml
 
-deleteKube:
+kube-delete:
 	kubectl delete all --all
 	kubectl delete secrets rabbitmq-secrets
 
-localhost:
+kube-port-forward-web:
 	kubectl port-forward service/rabbitmq 15672:15672

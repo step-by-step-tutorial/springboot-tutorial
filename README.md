@@ -63,7 +63,9 @@ This tutorial provides many best practises and examples include documentation.
 * step: oauth-client-credentials
 * step: oauth-Implicit
 
-## Build and Test
+## Pipeline
+
+### Build and Test
 
 ```shell
 mvn -f hello-world/pom.xml clean package

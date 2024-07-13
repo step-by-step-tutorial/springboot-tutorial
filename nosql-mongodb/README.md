@@ -2,21 +2,144 @@
 
 <p align="justify">
 
-This tutorial is included [MongoDB](https://www.mongodb.com/) configuration for test and none test environment.
+This tutorial is about integration of Spring Boot and MongoDB.
 
 </p>
 
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [MongoDB](#mongodb)
+* [MongoDB Use Cases](#mongodb-use-cases)
+* [Install MongoDB on Docker](#install-mongodb-on-docker)
+* [Install MongoDB on Kubernetes](#install-mongodb-on-kubernetes)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [Appendix](#appendix )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [MongoDB](https://www.mongodb.com)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+## MongoDB
+
+<p align="justify">
+
+MongoDB is a document database in NoSQL topic. For more information about MongoDB see
+the [https://www.mongodb.com](https://www.mongodb.com).
+
+</p>
+
+## MongoDB Use Cases
+
+List of use cases for MongoDB
+[https://www.mongodb.com/solutions/use-cases](https://www.mongodb.com/solutions/use-cases).
+
+* Artificial Intelligence
+* Edge Computing
+* Internet of Things
+* Mobile
+* Payments
+* Serverless Development
+* Single View
+* Personalization
+* Catalog
+* Content Management
+* Mainframe Modernization
+* Gaming
+
 ## Install MongoDB on Docker
+
+### Config File
+
+If you set up MongoDB with username and password then you should enable `security.authorization` in `mongod.conf`
+located in `/etc` directory of MongoDB machine. In oder to apply this change,
+add `/path/to/mongod.conf:/etc/mongod.conf` volume to the docker compose file and put the customized config file in
+the `/path/to/` directory in your machine.
+
+In the following you can see the prepared config file and docker compose file.
+
+[mongod.conf](./config/mongod.conf)
+
+```textmate
+#mongod.conf
+
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongodb
+#  engine:
+#  wiredTiger:
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+# network interfaces
+net:
+  port: 27017
+  bindIp: 127.0.0.1
+
+
+# how the process runs
+processManagement:
+  timeZoneInfo: /usr/share/zoneinfo
+
+security:
+  authorization: enabled
+
+#operationProfiling:
+
+#replication:
+
+#sharding:
+
+## Enterprise-Only Options:
+
+#auditLog:
+```
+
+Create a file named `docker-compose.yml` with the following configuration.
 
 ### Docker Compose File
 
-Create a file named docker-compose.yml with the following configuration.
+[docker-compose.yml](docker-compose.yml)
 
 ```yaml
+#docker-compose.yml
 version: '3.8'
 
 services:
-
   mongo:
     image: mongo
     container_name: mongo
@@ -27,6 +150,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - "./config/mongod.conf:/etc/mongod.conf"
   mongo-express:
     image: mongo-express
     container_name: mongo-express
@@ -35,15 +160,18 @@ services:
     ports:
       - "8081:8081"
     environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: "ambiance"
+      ME_CONFIG_BASICAUTH: false
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: root
       ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017
 ```
 
-Execute the `docker compose  up -d` command to install MongoDB and Mongo Express.
+### Apply Docker Compose File
+
+Execute the following command to install MongoDB.
 
 ```shell
-# full command
 docker compose --file ./docker-compose.yml --project-name mongo up --build -d
 
 ```
@@ -51,33 +179,21 @@ docker compose --file ./docker-compose.yml --project-name mongo up --build -d
 ### Mongo Express
 
 In order to connect to MongoDB by Mongo Express through the web browser
-open [http://localhost:8001/](http://localhost:8001/)
+open [http://localhost:8001](http://localhost:8001)
 in the web browser.
 
 ## Install MongoDB on Kubernetes
 
-### MongoDB
-
 Create the following files for installing MongoDB.
 
-**mongo-pvc.yml**
+### MongoDB Kube Files
+
+Use `echo -n secrets | base64` to encode the secrets, i.e, `echo -n root | base64`.
+
+[mongo-secrets.yml](./kube/mongo-secrets.yml)
 
 ```yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mongo-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-```
-
-**mongo-secrets.yml**
-
-```yaml
+# mongo-secrets.yml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -88,11 +204,80 @@ data:
   username: cm9vdA==
   # value: root
   password: cm9vdA==
+
 ```
 
-**mongo-deployment.yml**
+[mongo-configmap.yml](./kube/mongo-configmap.yml)
 
 ```yaml
+# mongo-configmap.yml 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-config
+data:
+  mongod.conf: |
+    # for documentation of all options, see:
+    #   http://docs.mongodb.org/manual/reference/configuration-options/
+
+    # Where and how to store data.
+    storage:
+      dbPath: /var/lib/mongodb
+    #  engine:
+    #  wiredTiger:
+
+    # where to write logging data.
+    systemLog:
+      destination: file
+      logAppend: true
+      path: /var/log/mongodb/mongod.log
+
+    # network interfaces
+    net:
+      port: 27017
+      bindIp: 127.0.0.1
+
+
+    # how the process runs
+    processManagement:
+      timeZoneInfo: /usr/share/zoneinfo
+
+    security:
+      authorization: enabled
+
+    #operationProfiling:
+
+    #replication:
+
+    #sharding:
+
+    ## Enterprise-Only Options:
+
+    #auditLog:
+
+```
+
+[mongo-pvc.yml](./kube/mongo-pvc.yml)
+
+```yaml
+# mongo-pvc.yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+```
+
+[mongo-deployment.yml](./kube/mongo-deployment.yml)
+
+```yaml
+# mongo-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -113,8 +298,11 @@ spec:
           ports:
             - containerPort: 27017
           volumeMounts:
-            - name: mongo-data
-              mountPath: /data/db
+            - mountPath: /data/db
+              name: mongo-data
+            - mountPath: /etc/mongod.conf
+              subPath: mongod.conf
+              name: mongo-config
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
@@ -130,12 +318,16 @@ spec:
         - name: mongo-data
           persistentVolumeClaim:
             claimName: mongo-pvc
+        - name: mongo-config
+          configMap:
+            name: mongo-config
 
 ```
 
-**mongo-service.yml**
+[mongo-service.yml](./kube/mongo-service.yml)
 
 ```yaml
+# mongo-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -146,13 +338,15 @@ spec:
   ports:
     - port: 27017
       targetPort: 27017
+
 ```
 
-### Mongo Express
+### MongoExpress Kube Files
 
-**mongo-express-deployment.yml**
+[mongo-express-deployment.yml](./kube/mongo-express-deployment.yml)
 
 ```yaml
+# mongo-express-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -173,6 +367,8 @@ spec:
           ports:
             - containerPort: 8081
           env:
+            - name: ME_CONFIG_BASICAUTH
+              value: "false"
             - name: ME_CONFIG_MONGODB_ADMINUSERNAME
               valueFrom:
                 secretKeyRef:
@@ -185,11 +381,13 @@ spec:
                   key: password
             - name: ME_CONFIG_MONGODB_URL
               value: "mongodb://$(ME_CONFIG_MONGODB_ADMINUSERNAME):$(ME_CONFIG_MONGODB_ADMINPASSWORD)@mongo:27017"
+
 ```
 
-**mongo-express-service.yml**
+[mongo-express-service.yml](./kube/mongo-express-service.yml)
 
 ```yaml
+# mongo-express-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -200,67 +398,44 @@ spec:
   ports:
     - port: 8081
       targetPort: 8081
+
 ```
 
-### Apply Configuration Files
+### Apply Kube Files
 
-Execute the following commands to install the tools on Kubernetes.
+You can apply Kubernetes files using the following commands.
 
 ```shell
-# ======================================================================================================================
-# MongoDB
-# ======================================================================================================================
-kubectl apply -f ./kube/mongo-pvc.yml
-# kubectl get pvc
-# kubectl describe pvc mongo-pvc
-
 kubectl apply -f ./kube/mongo-secrets.yml
-# kubectl describe secret mongo-secrets -n default
-# kubectl get secret mongo-secrets -n default -o yaml
-
+kubectl apply -f ./kube/mongo-configmap.yml
+kubectl apply -f ./kube/mongo-pvc.yml
 kubectl apply -f ./kube/mongo-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment mongo -n default
-
 kubectl apply -f ./kube/mongo-service.yml
-# kubectl get service -n default
-# kubectl describe service mongo -n default
-
-# ======================================================================================================================
-# Mongo Express
-# ======================================================================================================================
 kubectl apply -f ./kube/mongo-express-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment mongo-express -n default
-
 kubectl apply -f ./kube/mongo-express-service.yml
-# kubectl get services -n default
-# kubectl describe service mongo-express -n default
+```
 
-# ======================================================================================================================
-# After Install
-# ======================================================================================================================
+### Check Status
+
+```shell
 kubectl get all
 ```
 
-For connecting to MongoDB through application on localhost it should be executed the following command.
-
-```shell
-# mongo
-kubectl port-forward service/mongo 27017:27017
-```
+### Port Forwarding
 
 <p align="justify">
 
-In order to connect to Mongo Express from localhost through the web browser use the following command and dashboard of
-Mongo Express is available on [http://localhost:8001](http://localhost:8001) URL.
+In order to connect to tool-name from localhost through the web browser use the following command and dashboard of
+tool-name is available on [http://localhost:8081](http://localhost:8081) URL.
 
 </p>
 
 ```shell
-# mongo-express
-# http://localhost:8001
-kubectl port-forward service/mongo-express 8001:8001
+kubectl port-forward service/mongo 27017:27017
+```
+
+```shell
+kubectl port-forward service/mongo-express 8081:8081
 ```
 
 ## How To Set up Spring Boot
@@ -305,9 +480,9 @@ public class MongoDbConfig {
 
 ```
 
-## How To Set up Test
+## How To Set up Spring Boot Test
 
-### Test Dependency
+### Dependency
 
 ```xml
 
@@ -338,7 +513,7 @@ public class MongoDbConfig {
 </project>
 ```
 
-### Java Config for Test
+### Java Config
 
 ```java
 
@@ -366,28 +541,45 @@ class SampleRepositoryTest {
 }
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
+### Makefile
 
-## Build
+```shell
+docker-deploy:
+	docker compose --file docker-compose.yml --project-name mongo up -d
 
-```bash
-mvn clean package -DskipTests=true 
-```
+docker-rebuild-deploy:
+	docker compose --file docker-compose.yml --project-name mongo up --build -d
 
-## Test
+docker-remove-container:
+	docker rm mongo --force
+	docker rm mongo-express --force
 
-```bash
-mvn test
-```
+docker-remove-image:
+	docker image rm mongo
+	docker image rm mongo-express
 
-## Run
+kube-deploy:
+	kubectl apply -f ./kube/mongo-secrets.yml
+	kubectl apply -f ./kube/mongo-configmap.yml
+	kubectl apply -f ./kube/mongo-pvc.yml
+	kubectl apply -f ./kube/mongo-deployment.yml
+	kubectl apply -f ./kube/mongo-service.yml
+	kubectl apply -f ./kube/mongo-express-deployment.yml
+	kubectl apply -f ./kube/mongo-express-service.yml
 
-```bash
-mvn  spring-boot:run
+kube-remove:
+	kubectl delete all --all
+	kubectl delete secrets mongo-secrets
+	kubectl delete secrets mongo-configmap
+	kubectl delete persistentvolumeclaim mongo-pvc
+
+kube-port-forward-mongo:
+	kubectl port-forward service/mongo 27017:27017
+
+kube-port-forward-mongo-express:
+	kubectl port-forward service/mongo-express 8081:8081
 ```
 
 ##

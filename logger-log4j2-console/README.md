@@ -11,8 +11,8 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [How To Config Application](#how-to-config-application)
 * [Log Level](#log-level)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 
 ## Getting Started
 
@@ -41,7 +41,21 @@ mvn test
 mvn  spring-boot:run
 ```
 
-## How To Config Application
+## Log Level
+
+To filter log messages according to their importance or severity.
+
+```text
+ If log level is OFF    =>  log nothing
+ If log level is ERROR  =>  log errors
+ If log level is WARN   =>  log errors, warns
+ If log level is INFO   =>  log errors, warns, info
+ If log level is DEBUG  =>  log errors, warns, info, debug 
+ If log level is TRACE  =>  log errors, warns, info, debug, trace 
+ If log level is ALL    =>  log everything such as errors, warns, etc
+```
+
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -91,20 +105,6 @@ Add `log4j2.xml` to the **resources** directory.
         </Logger>
     </Loggers>
 </Configuration>
-```
-
-### Log Level
-
-To filter log messages according to their importance or severity.
-
-```text
- If log level is OFF    =>  log nothing
- If log level is ERROR  =>  log errors
- If log level is WARN   =>  log errors, warns
- If log level is INFO   =>  log errors, warns, info
- If log level is DEBUG  =>  log errors, warns, info, debug 
- If log level is TRACE  =>  log errors, warns, info, debug, trace 
- If log level is ALL    =>  log everything such as errors, warns, etc
 ```
 
 ##

@@ -6,14 +6,45 @@ This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 
 ## <p align="center"> Table of Content </p>
 
+* [Getting Started](#getting-started)
 * [Apache Kafka](#apache-kafka)
-* [Apache use cases](#apache-use-cases)
+* [Apache Use Cases](#apache-use-cases)
 * [Install Kafka on Docker](#install-kafka-on-docker)
 * [Install Kafka on Kubernetes](#install-kafka-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [Prerequisites](#prerequisites)
 * [Pipeline](#pipeline )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Kafka](https://kafka.apache.org)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
 
 ## Apache Kafka
 
@@ -50,7 +81,9 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 Create a file named docker-compose.yml with the following configuration. It includes Zookeeper, Kafka and Kafdrop
 services.
 
+[docker-compose.yml](docker-compose.yml)
 ```yaml
+#docker-compose.yml
 version: '3.8'
 services:
   zookeeper:
@@ -93,25 +126,25 @@ services:
     environment:
       KAFKA_BROKERCONNECT: kafka:9093
       JVM_OPTS: "-Xms32M -Xmx64M"
-
 ```
 
-Execute the `docker compose  up -d` command to install Zookeeper, Kafka and Kafdrop.
-
+### Apply Docker Compose File
+Execute the following command to install Apache Kafka.
 ```shell
-# full command
 docker compose --file ./docker-compose.yml --project-name kafka up --build -d
-
 ```
 
-Open [http://localhost:9000/](http://localhost:9000/) in the browser to access Kafdrop dashboard.
+### Web Console
+
+Open [http://localhost:9000](http://localhost:9000) in the browser to access Kafdrop dashboard.
 
 ## Install Kafka on Kubernetes
+Create the following files for installing Apache Kafka.
 
 ### Kube Files
 
-Create the following files for installing Kafka.
-
+### Zookeeper
+[zookeeper-deployment.yml](/kube/zookeeper-deployment.yml)
 ```yaml
 #zookeeper-deployment.yml
 apiVersion: apps/v1
@@ -139,7 +172,7 @@ spec:
             - name: ZOOKEEPER_TICK_TIME
               value: "2000"
 ```
-
+[zookeeper-service.yml](/kube/zookeeper-service.yml)
 ```yaml
 #zookeeper-service.yml
 apiVersion: v1
@@ -153,7 +186,8 @@ spec:
     - port: 2181
       targetPort: 2181
 ```
-
+### Kafka
+[kafka-deployment.yml](/kube/kafka-deployment.yml)
 ```yaml
 #kafka-deployment.yml
 apiVersion: apps/v1
@@ -190,9 +224,9 @@ spec:
               value: "1"
             - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
               value: "1"
-
 ```
 
+[kafka-service.yml](/kube/kafka-service.yml)
 ```yaml
 #kafka-service.yml
 apiVersion: v1
@@ -206,7 +240,8 @@ spec:
     - port: 9092
       targetPort: 9092
 ```
-
+### Kafdrop
+[kafdrop-deployment.yml](/kube/kafdrop-deployment.yml)
 ```yaml
 #kafdrop-deployment.yml
 apiVersion: apps/v1
@@ -235,7 +270,7 @@ spec:
               value: "-Xms32M -Xmx128M"
 
 ```
-
+[kafdrop-service.yml](/kube/kafdrop-service.yml)
 ```yaml
 #kafdrop-service.yml
 apiVersion: v1
@@ -250,49 +285,25 @@ spec:
       targetPort: 9000
 ```
 
-### Apply Configuration Files
+### Apply Kube Files
 
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-# ======================================================================================================================
-# Zookeeper
-# ======================================================================================================================
 kubectl apply -f ./kube/zookeeper-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment zookeeper -n default
-
 kubectl apply -f ./kube/zookeeper-service.yml
-# kubectl get service -n default
-# kubectl describe service zookeeper-service -n default
-
-# ======================================================================================================================
-# Kafka
-# ======================================================================================================================
 kubectl apply -f ./kube/kafka-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment kafka -n default
-
 kubectl apply -f ./kube/kafka-service.yml
-# kubectl get service -n default
-# kubectl describe service kafka-service -n default
-
-# ======================================================================================================================
-# Kafdrop
-# ======================================================================================================================
 kubectl apply -f ./kube/kafdrop-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment kafdrop -n default
-
 kubectl apply -f ./kube/kafdrop-service.yml
-# kubectl get service -n default
-# kubectl describe service kafdrop -n default
+```
 
-# ======================================================================================================================
-# After Install
-# ======================================================================================================================
+### Check Status
+```shell
 kubectl get all
 ```
+
+### Port Forwarding
 
 <p align="justify">
 
@@ -302,8 +313,6 @@ is available on [http://localhost:9000](http://localhost:9000) URL.
 </p>
 
 ```shell
-# kafdrop
-# http://localhost:9000
 kubectl port-forward service/kafdrop-service 9000:9000
 ```
 
@@ -360,7 +369,7 @@ spring:
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
 ```
 
-### Java Config for Test
+### Java Config
 
 ```java
 
@@ -373,31 +382,40 @@ class TestClass {
 }
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-* [Kubernetes](https://kubernetes.io/)
+### Makefile
 
-## Pipeline
+```makefile
+docker-deploy:
+	docker compose --file docker-compose.yml --project-name kafka up -d
 
-### Build
+docker-rebuild-deploy:
+	docker compose --file docker-compose.yml --project-name kafka up --build -d
 
-```bash
-mvn clean package -DskipTests=true 
-```
+docker-remove-container:
+	docker rm zookeeper --force
+	docker rm kafka --force
+	docker rm kafdrop --force
 
-### Test
+docker-remove-image:
+	docker image rm docker.io/bitnami/zookeeper
+	docker image rm docker.io/bitnami/kafka
+	docker image rm obsidiandynamics/kafdrop:latest
 
-```bash
-mvn test
-```
+kube-deploy:
+	kubectl apply -f ./kube/zookeeper-deployment.yml
+	kubectl apply -f ./kube/zookeeper-service.yml
+	kubectl apply -f ./kube/kafka-deployment.yml
+	kubectl apply -f ./kube/kafka-service.yml
+	kubectl apply -f ./kube/kafdrop-deployment.yml
+	kubectl apply -f ./kube/kafdrop-service.yml
 
-### Run
+kube-delete:
+	kubectl delete all --all
 
-```bash
-mvn  spring-boot:run
+kube-port-forward-web:
+	kubectl port-forward service/kafdrop-service 9000:9000
 ```
 
 ##

@@ -8,7 +8,7 @@
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
-        <JDBC name="databaseAppender" tableName="${bundle:log4j2:table_name}" bufferSize="1" ignoreExceptions="false">
+        <JDBC name="databaseAppender" tableName="${bundle:log4j2:table_name}" bufferSize="1" ignoreExceptions="true">
             <DriverManager
                     driverClassName="${bundle:log4j2:driver}"
                     connectionString="${bundle:log4j2:url}"

@@ -11,7 +11,7 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [How To Config Spring Boot](#how-to-config-spring-boot)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 
 ## Getting Started
 
@@ -40,7 +40,7 @@ mvn test
 mvn spring-boot:run
 ```
 
-## How To Config Spring Boot
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -63,7 +63,7 @@ mvn spring-boot:run
 </dependencies>
 ```
 
-### Spring Boot Properties
+### Application Properties
 
 Create `log4j2.xml` in the resources and add the following configuration.
 

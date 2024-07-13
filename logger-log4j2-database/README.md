@@ -1,4 +1,3 @@
-
 # <p align="center">Apache Log4j2 And Relational Database Appender</p>
 
 <p align="justify">
@@ -11,10 +10,8 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [Set up Database](#set-up-database)
-    * [Install Dockerized MySQL](#install-dockerized-mysql)
-    * [Initialize MySQL Manually](#initialize-mysql-manually)
-* [How To Config Application](#how-to-config-application)
+* [Install MySQL on Docker](#install-mysql-on-docker)
+* [How To Set up Spring Boot](#how-to-config-application)
 
 ## Getting Started
 
@@ -25,9 +22,33 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 * [MySQL](https://www.mysql.com)
 * [Docker](https://www.docker.com)
 
-## Set up Database
+### Pipeline
 
-### Install Dockerized MySQL
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+After running tests successfully then connect to MySQL database and execute the following queries to see the result.
+
+```shell
+docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE test_db; SELECT * FROM LOG_TABLE;"
+```
+
+## Install MySQL on Docker
 
 Create a docker compose file named `docker-compose.yml` then copy and paste the following script. There are two clients
 to help you for interacting with MySQL therefore you can select one of
@@ -35,7 +56,16 @@ them, [MySQL workbench](https://www.mysql.com/products/workbench) or [Adminer](h
 MySQL via docker compose script mentioned below then database will be initialized and configured and, you don't need to
 initialize it manually.
 
+### Docker Compose File
+
+There are two options in order to connect to MySQL to management, MySQL Workbench, Adminer.
+
+#### With MySQL Workbench
+
+[docker-compose.yml](docker-compose.yml)
+
 ```yaml
+#docker-compose.yml
 version: "3.8"
 
 services:
@@ -55,21 +85,47 @@ services:
       - "./target/mysql:/etc/mysql/conf.d"
       - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   mysql-workbench:
-    image: linuxserver/mysql-workbench:latest
+    image: lscr.io/linuxserver/mysql-workbench:latest
     container_name: mysql-workbench
     hostname: mysql-workbench
     restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "3001:3001"
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - ./target:/config
-    ports:
-      - "3000:3000"
-      - "3001:3001"
+      - "./target/mysql-workbench/config:/config"
     cap_add:
       - IPC_LOCK
+```
+
+#### With Adminer
+
+[docker-compose.yml](docker-compose.yml)
+
+```yaml
+#docker-compose.yml
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    hostname: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=test_db
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - "./target/mysql:/etc/mysql/conf.d"
+      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   adminer:
     image: adminer
     container_name: adminer
@@ -79,24 +135,36 @@ services:
       - "8080:8080"
 ```
 
-### Initialize MySQL Manually
+### Apply Docker Compose File
 
-After installation a MySQL database, create new user, database and create the `LOG_TABLE` table.
+Execute the following command to install TOOLS_NAME.
+
+```shell
+docker compose --file ./docker-compose.yml --project-name mysql up --build -d
+```
+
+### Init MySQL
+
+After installation a MySQL database, create new user, database and create the `LOG_TABLE` table. This step apply
+automatically in this tutorial.
+
+Connect to MySQL with following command.
 
 ```shell
 # try to connect to docker container
-docker exec -it mysql sh
+docker exec -it mysql mysql -h hostname -u user -p
+
+# Example
+#   user:     user
+#   password: password 
+#   hostname: localhost
+docker exec -it mysql mysql -h localhost -u user -p
 ```
 
-```shell
-# try to connect to mysql via MySQL client
-# user: root
-# password: root 
-# hostname: localhost
-mysql -h hostname -u root -p
-```
+Execute following queries.
 
 ```mysql
+# init.db
 CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
 CREATE DATABASE IF NOT EXISTS test_db;
 USE test_db;
@@ -111,46 +179,35 @@ CREATE TABLE LOG_TABLE
 );
 ```
 
-### Pipeline
+### Web Console
 
-#### Build
+#### MySQL Workbench
 
-```bash
-mvn clean package -DskipTests=true 
+Open [http://localhost:3000](http://localhost:3000) in the browser to access MySQL Workbench dashboard.
+
+```yaml
+Hostname: mysql
+Port: 3306
+Username: user
+Password: password
 ```
 
-#### Test
+#### Adminer
 
-In this tutorial I don't want to use [Testcontainers](https://testcontainers.com) framework to test because I want to
-check database after inserting log. If the MySql instance is ready and already configured then it is possible to run the
-unit tests.
+Open [http://localhost:8080](http://localhost:8080) in the browser to access MySQL Workbench dashboard.
 
-```bash
-mvn test "-Dmysql.isReady=true"
+```yaml
+Server: mysql:3306
+Username: user
+Password: password
 ```
 
-After running tests successfully then connect to MySQL database and execute the following queries to see the result.
-
-```mysql
-show databases;
-use test_db;
-show tables;
-
-SELECT *
-FROM LOG_TABLE;
-```
-
-#### Run
-
-```bash
-mvn  spring-boot:run
-```
-
-## How To Config Application
+## How To Set up Spring Boot
 
 ### Dependencies
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -180,6 +237,7 @@ Create a bundle named `log4j2_en.properties` include the following properties in
 MySQL properties.
 
 ```properties
+#log4j2_en.properties
 driver=com.mysql.cj.jdbc.Driver
 url=jdbc:mysql://localhost:3306/test_db
 table_name=LOG_TABLE
@@ -223,6 +281,29 @@ Create `log4j2.xml` in the resources with proper configuration for the database.
         </Logger>
     </Loggers>
 </Configuration>
+```
+
+## Appendix
+
+### Makefile
+
+```makefile
+docker-deploy:
+	docker compose --file ./docker-compose.yml --project-name mysql up -d
+
+docker-rebuild-deploy:
+	docker compose --file ./docker-compose.yml --project-name mysql up --build -d
+
+docker-remove-container:
+	docker rm mysql --force
+	docker rm mysql-workbench- --force
+	docker rm adminer --force
+
+docker-remove-image:
+	docker image rm mysql:8.0
+	docker image rm lscr.io/linuxserver/mysql-workbench:latest
+	docker image rm adminer
+
 ```
 
 ##

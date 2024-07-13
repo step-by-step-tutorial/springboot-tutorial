@@ -11,16 +11,12 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [Basic Concepts](#basic-concepts)
-* [Dependencies](#dependencies)
-* [Implementation](#implementation)
-    * [Event](#event)
-        * [Java Bean](#java-bean)
-        * [ApplicationEvent](#applicationevent)
-    * [Listener](#listener)
-        * [Annotation Driven](#annotation-driven)
-        * [Programmatically](#programmatically)
-    * [Publisher](#publisher)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+  * [Dependencies](#dependencies)
+  * [Implementation](#implementation)
+      * [Event](#event)
+      * [Listener](#listener)
+      * [Publisher](#publisher)
 
 ## Getting Started
 
@@ -49,7 +45,7 @@ mvn test
 mvn spring-boot:run
 ```
 
-## Basic Concepts
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -76,14 +72,14 @@ Add the following dependencies to the POM file of Maven project.
 There are two mechanisms in the Spring Boot to define an event. One solution is, create a java bean and another one is,
 create a class extended from `ApplicationEvent`.
 
-##### Java Bean
+##### _Java Bean_
 
 ```java
 public record EventModel(String text) {
 }
 ```
 
-##### ApplicationEvent
+##### _ApplicationEvent_
 
 ```java
 import org.springframework.context.ApplicationEvent;
@@ -105,7 +101,7 @@ async listener with using `@Async`.
 
 </p>
 
-##### Annotation Driven
+##### _Annotation Driven_
 
 ```java
 //Sync listener
@@ -139,7 +135,7 @@ public class EventHandler {
 }
 ```
 
-##### Programmatically
+##### _Programmatically_
 
 ```java
 import org.springframework.context.ApplicationListener;

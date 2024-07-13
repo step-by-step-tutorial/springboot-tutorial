@@ -2,20 +2,20 @@
 
 <p align="justify">
 
-There are two distribution of Apache Active MQ, [Classic](https://activemq.apache.org/components/classic/) and the other
-one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial used Artemis distribution. For more
-information see
-[documentation](https://activemq.apache.org/components/artemis/documentation/latest/spring-integration.html)
+This tutorial is about integration of Spring Boot and Apache Active MQ (Artemis).
 
 </p>
 
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
+* [Apache Active MQ Artemis](#apache-active-mq-artemis)
+* [Apache Active MQ Artemis Use Cases](#apache-active-mq-artemis-use-cases)
 * [Install Active MQ Artemis on Docker](#install-active-mq-artemis-on-docker)
 * [Install Active MQ Artemis on Kubernetes](#install-active-mq-artemis-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-* [How To Set up Test](#how-to-set-up-test)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [Appendix](#appendix )
 
 ## Getting Started
 
@@ -23,6 +23,7 @@ information see
 
 * [Java 21](https://www.oracle.com/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
+* [Apache Active MQ (Artemis)](https://activemq.apache.org/components/artemis/)
 * [Docker](https://www.docker.com/)
 * [Kubernetes](https://kubernetes.io/)
 
@@ -46,12 +47,35 @@ mvn test
 mvn  spring-boot:run
 ```
 
+## Apache Active MQ Artemis
+
+<p align="justify">
+
+There are two distribution of Apache Active MQ, [Classic](https://activemq.apache.org/components/classic/) and the other
+one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial used Artemis distribution. For more
+information
+see [documentation](https://activemq.apache.org/components/artemis/documentation/latest/spring-integration.html)
+
+For more information about Apache Active MQ (Artemis)  see
+the [https://activemq.apache.org/components/artemis](https://activemq.apache.org/components/artemis).
+
+</p>
+
+## Apache Active MQ Artemis Use Cases
+
+* Enterprise Application Integration (EAI)
+* Microservices Architecture
+* Event-Driven Architecture
+* Monitoring and Alerts
+* Data Streaming and Processing
+
 ## Install Active MQ Artemis on Docker
 
 ### Docker Compose File
 
-Create docker compose file with the following content.
+Create a file named `docker-compose.yml` with the following configuration.
 
+[docker-compose.yml](docker-compose.yml)
 ```yaml
 #docker-compose.yml
 version: '3.8'
@@ -72,10 +96,9 @@ services:
 
 ### Apply Docker Compose File
 
-Execute the `docker compose  up -d` command to install Artemis.
+Execute the following command to install Apache Active MQ Artemis.
 
 ```shell
-# full command
 docker compose --file docker-compose.yml --project-name artemis up --build -d
 
 ```
@@ -85,11 +108,10 @@ docker compose --file docker-compose.yml --project-name artemis up --build -d
 In order to access Artemis web console open [http://localhost:8161](http://localhost:8161/) in the browser.
 
 ## Install Active MQ Artemis on Kubernetes
+Create the following files for installing Apache Active MQ Artemis.
 
 ### Kube Files
-
-Create the following files in order to apply on Kubernetes.
-
+[artemis-deployment.yml](/kube/artemis-deployment.yml)
 ```yaml
 # artemis-deployment.yml
 apiVersion: apps/v1
@@ -115,7 +137,7 @@ spec:
             - containerPort: 61616
             - containerPort: 8161
 ```
-
+[artemis-service.yml](/kube/artemis-service.yml)
 ```yaml
 # artemis-service.yml
 apiVersion: v1
@@ -143,11 +165,18 @@ kubectl apply -f ./kube/artemis-deployment.yml
 kubectl apply -f ./kube/artemis-service.yml
 ```
 
-To check status, use `kubectl get all` command.
+### Check Status
+
+```shell
+kubectl get all
+```
+
+### Port Forwarding
 
 <p align="justify">
 
-In order to connect to Artemis from localhost through the web browser use the following command
+In order to connect to Artemis from localhost through the web browser use the following command and dashboard of
+Artemis is available on [http://localhost:8161](http://localhost:8161) URL.
 
 </p>
 
@@ -155,14 +184,11 @@ In order to connect to Artemis from localhost through the web browser use the fo
 kubectl port-forward service/artemis 8161:8161
 ```
 
-Dashboard of Artemis is available on [http://localhost:8161](http://localhost:8161) URL.
-
 ## How To Set up Spring Boot
 
 ### Dependencies
 
 ```xml
-
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-artemis</artifactId>
@@ -196,7 +222,7 @@ public class JmsConfig {
 }
 ```
 
-## How To Set up Test
+## How To Set up Spring Boot Test
 
 The embedded Active-MQ used for unit tests.
 
@@ -225,7 +251,7 @@ spring:
     broker-url: localhost:61616
 ```
 
-### Java Config for Test
+### Java Config
 
 ```java
 
@@ -281,7 +307,9 @@ class TestClass {
 
 ```
 
-## Make File
+## Appendix
+
+### Makefile
 
 ```makefile
 docker-deploy:
