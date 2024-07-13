@@ -114,8 +114,8 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to tool-name from localhost through the web browser use the following command and dashboard of
-tool-name is available on [http://localhost:port](http://localhost:port) URL.
+In order to connect to TOOLS_NAME from localhost through the web browser use the following command and dashboard of
+TOOLS_NAME is available on [http://localhost:port](http://localhost:port) URL.
 
 </p>
 

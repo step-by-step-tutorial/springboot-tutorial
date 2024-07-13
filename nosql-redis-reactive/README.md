@@ -1,19 +1,92 @@
-# <p align="center">NoSQL Reactive Redis</p>
+# <p align="center">NoSQL Redis</p>
 
 <p align="justify">
 
-This tutorial is included [Redis](https://redis.io/) configuration for test and none test environment. This tutorial
-uses [Lettuce](https://lettuce.io/) to create connection factories for making connection to the Redis.
+This tutorial is about integration of Spring Boot and Redis.
+
+</p>
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [Redis](#redis)
+* [Redis Use Cases](#redis-use-cases)
+* [Install Redis on Docker](#install-redis-on-docker)
+* [Install Redis on Kubernetes](#install-redis-on-kubernetes)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [License](#license)
+* [Appendix](#appendix )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Redis](https://redis.io)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+## Redis
+
+<p align="justify">
+
+This tutorial is included [Redis](https://redis.io) configuration for test and none test environment. There are two
+libraries to create connection factories for making connection to the Redis.
+
+* [Jedis](https://redis.io/docs/clients/java/)
+* [Lettuce](https://lettuce.io/)
+
+Uses [Lettuce](https://lettuce.io/) to create connection factories for making reactive connection to the Redis.
+
+For more information about Redis see the [https://redis.io](https://redis.io).
 
 </p>
 
+## Redis Use Cases
+
+List of use cases for Redis
+[https://redis.io/docs/latest/develop/interact/search-and-query/query-use-cases/](https://redis.io/docs/latest/develop/interact/search-and-query/query-use-cases/).
+
+* Application search and external secondary index
+* Secondary index for Redis data
+* Geo-distributed search
+* Unified search
+* Analytics
+* Ephemeral search (retail)
+* Real-time inventory (retail)
+* Real-time conversation analysis (telecom)
+* Research portal (academia)
+
 ## Install Redis on Docker
+Create a file named `docker-compose.yml` with the following configuration.
 
 ### Docker Compose File
 
-Create a file named docker-compose.yml with the following configuration.
+[docker-compose.yml](docker-compose.yml)
 
 ```yaml
+#docker-compose.yml
 version: "3.8"
 
 services:
@@ -29,37 +102,8 @@ services:
     container_name: redisinsight
     hostname: redisinsight
     restart: always
-    volumes:
-      - "./target/redislabs:/db"
     ports:
-      - "8001:8001"
-
-```
-
-Execute the `docker compose  up -d` command to install Redis and Redisinsight.
-
-```shell
-# full command
-docker compose --file ./docker-compose.yml --project-name redis up --build -d
-
-```
-
-### Redisinsight
-
-In order to connect to redis by Redisinsight through the web browser open [http://host-IP:8001/](http://host-IP:8001/)
-in the web browser then select the `I already have a database` and continue with the following properties.
-
-  ```yaml
-  host: IP of the host machine (only IP and not localhost)
-  port: 6379
-  database: just a name
-  ```
-
-### Commander
-
-Also, there is another alternative for the Redisinsight to access redis named Commander.
-
-```yaml
+      - "5540:5540"
   commander:
     image: rediscommander/redis-commander:latest
     container_name: commander
@@ -71,18 +115,42 @@ Also, there is another alternative for the Redisinsight to access redis named Co
       - "8081:8081"
 ```
 
-In order to connect to redis through web browser by commander open [http://localhost:8081/](http://localhost:8081/) in
-the web browser.
+### Apply Docker Compose File
+
+Execute the following command to install Redis.
+
+```shell
+docker compose --file ./docker-compose.yml --project-name redis up --build -d
+
+```
+
+### Redisinsight
+
+In order to connect to redis by Redisinsight through the web browser open [http://localhost:5540](http://localhost:5540).
+
+<p align="center">
+
+<img src="redisinsight-login.png" height="30%" width="30%">
+
+</p>
+
+Then select "Add connection details manually" and enter redis as host and 6379 for port. Also, you can enter an alias
+for database.
+
+### Commander
+
+In order to connect to redis by Commander through the web browser open [http://localhost:8081](http://localhost:8081).
 
 ## Install Redis on Kubernetes
 
-### Redis
-
 Create the following files for installing Redis.
 
-**redis-deployment.yml**
+### Kube Files
+
+[redis-deployment.yml](./kube/redis-deployment.yml)
 
 ```yaml
+# redis-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -104,9 +172,10 @@ spec:
             - containerPort: 6379
 ```
 
-**redis-service.yml**
+[redis-service.yml](./kube/redis-service.yml)
 
 ```yaml
+# redis-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -120,11 +189,10 @@ spec:
       targetPort: 6379
 ```
 
-### Redisinsight
-
-**redisinsight-deployment.yml**
+[redisinsight-deployment.yml](./kube/redisinsight-deployment.yml)
 
 ```yaml
+# redisinsight-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -143,12 +211,13 @@ spec:
         - name: redisinsight
           image: redislabs/redisinsight:latest
           ports:
-            - containerPort: 8001
+            - containerPort: 5540
 ```
 
-**redisinsight-service.yml**
+[redisinsight-service.yml](./kube/redisinsight-service.yml)
 
 ```yaml
+# redisinsight-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -158,79 +227,14 @@ spec:
     app: redisinsight
   ports:
     - protocol: TCP
-      port: 8001
-      targetPort: 8001
+      port: 5540
+      targetPort: 5540
 ```
 
-### Apply Configuration Files
-
-Execute the following commands to install the tools on Kubernetes.
-
-```shell
-# ======================================================================================================================
-# Redis
-# ======================================================================================================================
-kubectl apply -f ./kube/redis-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment redis -n default
-
-kubectl apply -f ./kube/redis-service.yml
-# kubectl get service -n default
-# kubectl describe service redis -n default
-
-# ======================================================================================================================
-# Redisinsight
-# ======================================================================================================================
-kubectl apply -f ./kube/redisinsight-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment redisinsight -n default
-
-kubectl apply -f ./kube/redisinsight-service.yml
-# kubectl get services -n default
-# kubectl describe service redisinsight -n default
-
-# ======================================================================================================================
-# After Install
-# ======================================================================================================================
-kubectl get all
-```
-
-For connecting to Redis through application on localhost it should be executed the following command.
-
-```shell
-# redis
-kubectl port-forward service/redis 6379:6379
-```
-
-<p align="justify">
-
-In order to connect to Redisinsight from localhost through the web browser use the following command and dashboard of
-Redisinsight is available on [http://localhost:8001](http://localhost:8001) URL.
-
-</p>
-
-```shell
-# redisinsight
-# http://localhost:8001
-kubectl port-forward service/redisinsight 8001:8001
-```
-
-Then select the `I already have a database` and continue with the following properties.
+[commander-deployment.yml](/kube/commander-deployment.yml)
 
 ```yaml
-  host: IP of the host machine (only IP and not localhost)
-  port: 6379
-  database: just a name
-```
-
-### Commander
-
-Also, there is another alternative for Redisinsight named Commander. Therefore, use the following instruction to install
-that on Kubernetes.
-
-**commander-deployment.yml**
-
-```yaml
+#commander-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -259,9 +263,10 @@ spec:
               value: "6379"
 ```
 
-**commander-service.yml**
+[commander-service.yml](/kube/commander-service.yml)
 
 ```yaml
+#commander-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -276,50 +281,77 @@ spec:
       protocol: TCP
 ```
 
+
+### Apply Kube Files
+
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-# ======================================================================================================================
-# Commander
-# ======================================================================================================================
+kubectl apply -f ./kube/redis-deployment.yml
+kubectl apply -f ./kube/redis-service.yml
+kubectl apply -f ./kube/redisinsight-deployment.yml
+kubectl apply -f ./kube/redisinsight-service.yml
 kubectl apply -f ./kube/commander-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment commander -n default
-
 kubectl apply -f ./kube/commander-service.yml
-# kubectl get services -n default
-# kubectl describe service commander -n default
+```
 
+### Check Status
+
+```shell
 kubectl get all
+```
+
+### Port Forwarding
+
+<p align="justify">
+
+In order to connect to Redis from localhost through the web browser use the following command and dashboard of
+Redis is available on [http://localhost:6379](http://localhost:6379) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/redis 6379:6379
 ```
 
 <p align="justify">
 
-In order to connect to Commander through the web browser on localhost use the following command and dashboard of
+In order to connect to Redisinsight from localhost through the web browser use the following command and dashboard of
+Redisinsight is available on [http://localhost:5540](http://localhost:5540) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/redisinsight 5540:5540
+```
+<p align="justify">
+
+In order to connect to Commander from localhost through the web browser use the following command and dashboard of
 Commander is available on [http://localhost:8081](http://localhost:8081) URL.
 
 </p>
 
 ```shell
-# commander
-# http://localhost:8081
 kubectl port-forward service/commander 8081:8081
 ```
 
-## How To Config Spring Boot
+## How To Set up Spring Boot
 
 ### Dependencies
 
 ```xml
-
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
     <dependency>
         <groupId>io.lettuce</groupId>
         <artifactId>lettuce-core</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>redis.clients</groupId>
+        <artifac>jedis</artifactId>
     </dependency>
     <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -332,19 +364,7 @@ kubectl port-forward service/commander 8081:8081
 </dependencies>
 ```
 
-### Test Dependency
-
-```xml
-
-<dependency>
-    <groupId>com.github.kstyrc</groupId>
-    <artifactId>embedded-redis</artifactId>
-    <version>0.6</version>
-    <scope>test</scope>
-</dependency>
-```
-
-### Spring Boot Properties
+### Application Properties
 
 ```yaml
 spring:
@@ -356,30 +376,62 @@ spring:
         enabled: false
 ```
 
-## Prerequisites
+## How To Set up Spring Boot Test
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
+### Dependency
 
-## Build
+```xml
 
-```bash
-mvn clean package -DskipTests=true
+<dependency>
+    <groupId>com.github.kstyrc</groupId>
+    <artifactId>embedded-redis</artifactId>
+    <version>0.6</version>
+    <scope>test</scope>
+</dependency>
 ```
 
-## Test
 
-```bash
-mvn  test
+## Appendix
+
+### Makefile
+
+```shell
+docker-deploy:
+	docker compose --file docker-compose.yml --project-name redis up -d
+
+docker-rebuild-deploy:
+	docker compose --file docker-compose.yml --project-name redis up --build -d
+
+docker-remove-container:
+	docker rm redis --force
+	docker rm redisinsight --force
+	docker rm commander --force
+
+docker-remove-image:
+	docker image rm redis:latest
+	docker image rm redislabs/redisinsight:latest
+	docker image rm rediscommander/redis-commander:latest
+
+kube-deploy:
+	kubectl apply -f ./kube/redis-deployment.yml
+	kubectl apply -f ./kube/redis-service.yml
+	kubectl apply -f ./kube/redisinsight-deployment.yml
+	kubectl apply -f ./kube/redisinsight-service.yml
+	kubectl apply -f ./kube/commander-deployment.yml
+	kubectl apply -f ./kube/commander-service.yml
+
+kube-remove:
+	kubectl delete all --all
+
+kube-port-forward-redis:
+	kubectl port-forward service/redis 6379:6379
+
+kube-port-forward-redisinsight:
+	kubectl port-forward service/redisinsight 5540:5540
+
+kube-port-forward-commander:
+	kubectl port-forward service/commander 8081:8081
 ```
-
-## Run
-
-```bash
-mvn  spring-boot:run
-```
-
 ##
 
 **<p align="center"> [Top](#nosql-reactive-redis) </p>**

@@ -425,14 +425,21 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to tool-name from localhost through the web browser use the following command and dashboard of
-tool-name is available on [http://localhost:8081](http://localhost:8081) URL.
+In order to connect to MongoDB from localhost through the web browser use the following command and dashboard of
+MongoDB is available on [http://localhost:8081](http://localhost:8081) URL.
 
 </p>
 
 ```shell
 kubectl port-forward service/mongo 27017:27017
 ```
+
+<p align="justify">
+
+In order to connect to Mongo-express from localhost through the web browser use the following command and dashboard of
+Mongo-express is available on [http://localhost:8081](http://localhost:8081) URL.
+
+</p>
 
 ```shell
 kubectl port-forward service/mongo-express 8081:8081
