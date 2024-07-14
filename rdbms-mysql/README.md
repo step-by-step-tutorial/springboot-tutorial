@@ -135,7 +135,7 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ### Docker Compose File
 
-#### With MySQL workbench
+#### With MySQL Workbench
 
 [docker-compose.yml](docker-compose.yml)
 
@@ -280,6 +280,12 @@ Password: password
 #### PhpMyAdmin
 
 Open [http://localhost:8081](http://localhost:8081) in the browser to access MySQL Workbench dashboard.
+
+```yaml
+Server: mysql:3306
+Username: user
+Password: password
+```
 
 ## Install MySQL on Kubernetes
 
@@ -593,17 +599,17 @@ spec:
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-	kubectl apply -f ./kube/mysql-pvc.yml
-	kubectl apply -f ./kube/mysql-configmap.yml
-	kubectl apply -f ./kube/mysql-secrets.yml
-	kubectl apply -f ./kube/mysql-deployment.yml
-	kubectl apply -f ./kube/mysql-service.yml
-	kubectl apply -f ./kube/mysql-workbench-deployment.yml
-	kubectl apply -f ./kube/mysql-workbench-service.yml
-	kubectl apply -f ./kube/adminer-deployment.yml
-	kubectl apply -f ./kube/adminer-service.yml
-	kubectl apply -f ./kube/phpmyadmin-deployment.yml
-	kubectl apply -f ./kube/phpmyadmin-service.yml
+kubectl apply -f ./kube/mysql-pvc.yml
+kubectl apply -f ./kube/mysql-configmap.yml
+kubectl apply -f ./kube/mysql-secrets.yml
+kubectl apply -f ./kube/mysql-deployment.yml
+kubectl apply -f ./kube/mysql-service.yml
+kubectl apply -f ./kube/mysql-workbench-deployment.yml
+kubectl apply -f ./kube/mysql-workbench-service.yml
+kubectl apply -f ./kube/adminer-deployment.yml
+kubectl apply -f ./kube/adminer-service.yml
+kubectl apply -f ./kube/phpmyadmin-deployment.yml
+kubectl apply -f ./kube/phpmyadmin-service.yml
 ```
 
 ### Check Status
