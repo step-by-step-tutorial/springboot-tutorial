@@ -483,16 +483,15 @@ kind: Service
 metadata:
   name: mysql-workbench
 spec:
-  type: NodePort
-  ports:
-    - port: 3000
-      targetPort: 3000
-      nodePort: 30000
-    - port: 3001
-      targetPort: 3001
-      nodePort: 30001
   selector:
     app: mysql-workbench
+  ports:
+    - name: http-port
+      port: 3000
+      targetPort: 3000
+    - name: https-port
+      port: 3001
+      targetPort: 3001
 ```
 
 [adminer-deployment.yml](/kube/adminer-deployment.yml)
