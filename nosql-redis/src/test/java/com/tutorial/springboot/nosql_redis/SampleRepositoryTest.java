@@ -49,6 +49,7 @@ class SampleRepositoryTest {
             LOGGER.error("stopping embedded Redis server failed due to: {}", exception.getMessage());
         }
     }
+
     /**
      * This class includes Stub data.
      */
@@ -175,6 +176,7 @@ class SampleRepositoryTest {
             assertNotNull(systemUnderTest);
             this.id = systemUnderTest.save(StubFixturesFactory.SAMPLE_MODEL).orElseThrow();
         }
+
         @Test
         @DisplayName("delete one model by given Id")
         void shouldDeleteModelFromDatabaseByGivenId() {

@@ -1,5 +1,4 @@
-
-# <p align="center">Event Handling</p>
+# <p align="center">Event Handling In Spring Boot</p>
 
 <p align="justify">
 
@@ -12,11 +11,11 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 
 * [Getting Started](#getting-started)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-  * [Dependencies](#dependencies)
-  * [Implementation](#implementation)
-      * [Event](#event)
-      * [Listener](#listener)
-      * [Publisher](#publisher)
+    * [Dependencies](#dependencies)
+    * [Implementation](#implementation)
+        * [Event](#event)
+        * [Listener](#listener)
+        * [Publisher](#publisher)
 
 ## Getting Started
 
@@ -178,4 +177,4 @@ public class EventPublisher {
 
 ##
 
-**<p align="center"> [Top](#event-handling) </p>**
+**<p align="center"> [Top](#event-handling-in-spring-boot) </p>**

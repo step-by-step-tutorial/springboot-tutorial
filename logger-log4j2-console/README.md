@@ -1,5 +1,4 @@
-
-# <p align="center">Apache Log4j2 And Console Appender</p>
+# <p align="center">Integration of Spring Boot And Apache Log4j2 With Console Appender</p>
 
 <p align="justify">
 
@@ -62,6 +61,7 @@ To filter log messages according to their importance or severity.
 The default logger must be excluded.
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -109,4 +109,4 @@ Add `log4j2.xml` to the **resources** directory.
 
 ##
 
-**<p align="center"> [Top](#apache-log4j2-console) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-console-appender) </p>**

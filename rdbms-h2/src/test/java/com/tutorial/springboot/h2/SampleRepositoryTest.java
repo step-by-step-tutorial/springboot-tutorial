@@ -2,7 +2,10 @@ package com.tutorial.springboot.h2;
 
 import com.tutorial.springboot.h2.entity.SampleEntity;
 import com.tutorial.springboot.h2.repository.SampleRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;

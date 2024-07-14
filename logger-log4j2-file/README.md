@@ -1,5 +1,4 @@
-
-# <p align="center">Apache Log4j2 File</p>
+# <p align="center">Integration of Spring Boot And Apache Log4j2 With File</p>
 
 <p align="justify">
 
@@ -45,6 +44,7 @@ mvn spring-boot:run
 ### Dependencies
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -104,4 +104,4 @@ Create `log4j2.xml` in the resources and add the following configuration.
 
 ##
 
-**<p align="center"> [Top](#apache-log4j2-file) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-file) </p>**

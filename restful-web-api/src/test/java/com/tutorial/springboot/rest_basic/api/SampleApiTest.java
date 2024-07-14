@@ -14,7 +14,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collection;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;

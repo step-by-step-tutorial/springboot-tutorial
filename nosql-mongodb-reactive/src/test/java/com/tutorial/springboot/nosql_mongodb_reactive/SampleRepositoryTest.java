@@ -67,6 +67,7 @@ class SampleRepositoryTest {
         void setUp() {
             assertNotNull(systemUnderTest);
         }
+
         @Test
         @DisplayName("save a document when there is no exception")
         void shouldReturnDocumentWithIdBySuccessfulSave() {
@@ -94,6 +95,7 @@ class SampleRepositoryTest {
                     .blockOptional()
                     .ifPresent(document -> this.id = document.getId());
         }
+
         @Test
         @DisplayName("find one document by given Id")
         void shouldReturnModelByGivenId() {

@@ -17,10 +17,10 @@
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="org.hibernate" level="${LOG_LEVEL}" additivity="false">
-            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="org.hibernate.SQL" level="${LOG_LEVEL}" additivity="false">
-            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
     </Loggers>
 </Configuration>

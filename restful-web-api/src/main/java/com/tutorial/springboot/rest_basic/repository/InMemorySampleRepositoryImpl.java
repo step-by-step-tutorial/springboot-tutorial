@@ -1,7 +1,6 @@
 package com.tutorial.springboot.rest_basic.repository;
 
 import com.tutorial.springboot.rest_basic.entity.SampleEntity;
-import com.tutorial.springboot.rest_basic.transformer.SampleTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;

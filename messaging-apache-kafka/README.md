@@ -1,4 +1,4 @@
-# <p align="center">Spring Boot and Kafka Tutorial</p>
+# <p align="center">Integration of Spring Boot And Apache Kafka</p>
 
 <p align="justify">
 This tutorial shows how to integrate Apache Kafka in Spring Boot application.
@@ -82,6 +82,7 @@ Create a file named docker-compose.yml with the following configuration. It incl
 services.
 
 [docker-compose.yml](docker-compose.yml)
+
 ```yaml
 #docker-compose.yml
 version: '3.8'
@@ -129,7 +130,9 @@ services:
 ```
 
 ### Apply Docker Compose File
+
 Execute the following command to install Apache Kafka.
+
 ```shell
 docker compose --file ./docker-compose.yml --project-name kafka up --build -d
 ```
@@ -139,12 +142,15 @@ docker compose --file ./docker-compose.yml --project-name kafka up --build -d
 Open [http://localhost:9000](http://localhost:9000) in the browser to access Kafdrop dashboard.
 
 ## Install Kafka on Kubernetes
+
 Create the following files for installing Apache Kafka.
 
 ### Kube Files
 
 ### Zookeeper
+
 [zookeeper-deployment.yml](/kube/zookeeper-deployment.yml)
+
 ```yaml
 #zookeeper-deployment.yml
 apiVersion: apps/v1
@@ -172,7 +178,9 @@ spec:
             - name: ZOOKEEPER_TICK_TIME
               value: "2000"
 ```
+
 [zookeeper-service.yml](/kube/zookeeper-service.yml)
+
 ```yaml
 #zookeeper-service.yml
 apiVersion: v1
@@ -186,8 +194,11 @@ spec:
     - port: 2181
       targetPort: 2181
 ```
+
 ### Kafka
+
 [kafka-deployment.yml](/kube/kafka-deployment.yml)
+
 ```yaml
 #kafka-deployment.yml
 apiVersion: apps/v1
@@ -227,6 +238,7 @@ spec:
 ```
 
 [kafka-service.yml](/kube/kafka-service.yml)
+
 ```yaml
 #kafka-service.yml
 apiVersion: v1
@@ -240,8 +252,11 @@ spec:
     - port: 9092
       targetPort: 9092
 ```
+
 ### Kafdrop
+
 [kafdrop-deployment.yml](/kube/kafdrop-deployment.yml)
+
 ```yaml
 #kafdrop-deployment.yml
 apiVersion: apps/v1
@@ -270,7 +285,9 @@ spec:
               value: "-Xms32M -Xmx128M"
 
 ```
+
 [kafdrop-service.yml](/kube/kafdrop-service.yml)
+
 ```yaml
 #kafdrop-service.yml
 apiVersion: v1
@@ -299,6 +316,7 @@ kubectl apply -f ./kube/kafdrop-service.yml
 ```
 
 ### Check Status
+
 ```shell
 kubectl get all
 ```
@@ -420,4 +438,4 @@ kube-port-forward-web:
 
 ##
 
-**<p align="center"> [Top](#spring-boot-and-kafka-tutorial) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**

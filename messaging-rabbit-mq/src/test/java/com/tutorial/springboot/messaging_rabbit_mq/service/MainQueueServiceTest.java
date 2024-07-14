@@ -1,6 +1,5 @@
 package com.tutorial.springboot.messaging_rabbit_mq.service;
 
-import com.tutorial.springboot.messaging_rabbit_mq.service.MainQueueService;
 import com.tutorial.springboot.messaging_rabbit_mq.utils.MessageUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

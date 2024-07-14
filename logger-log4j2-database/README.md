@@ -1,4 +1,4 @@
-# <p align="center">Apache Log4j2 And Relational Database Appender</p>
+# <p align="center">Integration of Spring Boot And Apache Log4j2 With Relational Database Appender</p>
 
 <p align="justify">
 
@@ -137,7 +137,7 @@ services:
 
 ### Apply Docker Compose File
 
-Execute the following command to install TOOLS_NAME.
+Execute the following command to install MySQL.
 
 ```shell
 docker compose --file ./docker-compose.yml --project-name mysql up --build -d
@@ -308,4 +308,4 @@ docker-remove-image:
 
 ##
 
-**<p align="center"> [Top](#apache-log4j2-relational-database) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-relational-database-appender) </p>**

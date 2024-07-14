@@ -1,11 +1,47 @@
-# <p align="center">Profile</p>
+# <p align="center">Spring Boot Profiling</p>
 
 <p align="justify">
 
-This sample is about working with profiles in the Spring Boot. The Profiles provide a possibility to categorized classes
-in order to use for specific goals, for example define specific classes only for test environment, etc.
+This tutorial is about working with profiles in the Spring Boot. The Profiles provide a possibility to categorized
+classes in order to use for specific goals, for example define specific classes only for test environment, etc.
 
 </p>
+
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [Apply Profiling](#apply-profiling)
+* [Active Profile](#active-profile)
+* [Scenario](#scenario)
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+## Apply Profiling
 
 <p align="justify">
 
@@ -13,7 +49,7 @@ In order to apply profiling:
 
 * For classes it uses `@Profile` annotation
 * In `application.yml` file there are two solutions
-    * uUse `---` and `spring.config.activate.on-profile=profile-name` property in yaml format
+    * Use `---` and `spring.config.activate.on-profile=profile-name` property in yaml format
     * The `application.yml` should be included profile name with hyphen as separator, for
       example `application-test.yml`.
 * In `application.properties` file there are two solutions
@@ -23,11 +59,11 @@ In order to apply profiling:
 
 </p>
 
-### How is it possible to specify active profile?
+## Active Profile
 
 There are a few solutions for that as follows.
 
-**JVM**
+### JVM
 
 Execute the following command.
 
@@ -35,7 +71,7 @@ Execute the following command.
 java -jar application.jar -Dspring.profiles.active=profile-name
 ```
 
-**ENV**
+### ENV
 
 Add the following variable as an environment variable.
 
@@ -43,17 +79,17 @@ Add the following variable as an environment variable.
 SPRING_PROFILES_ACTIVE=profile-name
 ```
 
-**Properties**
+### Properties
 
 Add the following properties in `application.yml/properties`.
 
 ```properties
-spring.config.activate.on-profile=profile-name
+spring.profiles.active=profile-name
 ```
 
-**Maven**
+### Maven
 
-Add a profile as follows then execute Maven command include the name of profile.
+Add a profile as follows in the pom.xml file.
 
 ```xml
 
@@ -65,11 +101,13 @@ Add a profile as follows then execute Maven command include the name of profile.
 </profile>
 ```
 
+Execute Maven command include the name of profile.
+
 ```shell
 mvn lifecycle -P profile-name
 ```
 
-**Test Environment**
+### Test Environment
 
 In order to activate a profile in test environment it uses `@ActiveProfiles("profile-name")` on top of test class.
 
@@ -81,7 +119,7 @@ class Test {
 }
 ```
 
-## Description
+## Scenario
 
 In this sample there are two profiles named **dev** and **test**.
 
@@ -91,7 +129,7 @@ In this sample there are two profiles named **dev** and **test**.
 * if active profile set to **test**, spring container scans all decorated classes with `@Profile("test")` and classes do
   not use `@Profile`
 
-## Dependencies
+### Dependencies
 
 ```xml
 
@@ -108,29 +146,6 @@ In this sample there are two profiles named **dev** and **test**.
 </dependencies>
 ```
 
-## Prerequisites
-
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-
-## Build
-
-```bash
-mvn clean package -DskipTests=true
-```
-
-## Test
-
-```bash
-mvn  test
-```
-
-## Run
-
-```bash
-mvn  spring-boot:run
-```
-
 ##
 
-**<p align="center"> [Top](#profile) </p>**
+**<p align="center"> [Top](#spring-boot-profiling) </p>**

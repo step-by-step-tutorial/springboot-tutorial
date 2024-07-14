@@ -1,4 +1,4 @@
-# <p align="center">Rabbit MQ</p>
+# <p align="center">Integration of Spring Boot And Rabbit MQ</p>
 
 <p align="justify">
 
@@ -346,4 +346,4 @@ kube-port-forward-web:
 
 ##
 
-**<p align="center"> [Top](#rabbit-mq) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-rabbit-mq) </p>**

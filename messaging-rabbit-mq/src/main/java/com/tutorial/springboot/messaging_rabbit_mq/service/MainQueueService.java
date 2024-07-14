@@ -17,8 +17,7 @@ public class MainQueueService {
     private final RabbitTemplate rabbitTemplate;
 
     public MainQueueService(
-            @Value("${queue.main}")
-            final String queue,
+            @Value("${queue.main}") final String queue,
             final RabbitTemplate rabbitTemplate) {
         this.queue = queue;
         this.rabbitTemplate = rabbitTemplate;

@@ -1,4 +1,4 @@
-# <p align="center">NoSQL Redis</p>
+# <p align="center">Integration of Spring Boot And Reactive Redis</p>
 
 <p align="justify">
 
@@ -79,6 +79,7 @@ List of use cases for Redis
 * Research portal (academia)
 
 ## Install Redis on Docker
+
 Create a file named `docker-compose.yml` with the following configuration.
 
 ### Docker Compose File
@@ -126,7 +127,8 @@ docker compose --file ./docker-compose.yml --project-name redis up --build -d
 
 ### Redisinsight
 
-In order to connect to redis by Redisinsight through the web browser open [http://localhost:5540](http://localhost:5540).
+In order to connect to redis by Redisinsight through the web browser
+open [http://localhost:5540](http://localhost:5540).
 
 <p align="center">
 
@@ -281,7 +283,6 @@ spec:
       protocol: TCP
 ```
 
-
 ### Apply Kube Files
 
 Execute the following commands to install the tools on Kubernetes.
@@ -324,6 +325,7 @@ Redisinsight is available on [http://localhost:5540](http://localhost:5540) URL.
 ```shell
 kubectl port-forward service/redisinsight 5540:5540
 ```
+
 <p align="justify">
 
 In order to connect to Commander from localhost through the web browser use the following command and dashboard of
@@ -340,6 +342,7 @@ kubectl port-forward service/commander 8081:8081
 ### Dependencies
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -390,7 +393,6 @@ spring:
 </dependency>
 ```
 
-
 ## Appendix
 
 ### Makefile
@@ -432,6 +434,7 @@ kube-port-forward-redisinsight:
 kube-port-forward-commander:
 	kubectl port-forward service/commander 8081:8081
 ```
+
 ##
 
-**<p align="center"> [Top](#nosql-reactive-redis) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-reactive-redis) </p>**
