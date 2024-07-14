@@ -15,6 +15,7 @@ for using externalized properties.
     * [Implementation](#implementation)
         * [Based on Properties File](#based-on-properties-file)
         * [Based on YAML File](#based-on-yaml-file)
+* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -179,6 +180,21 @@ import org.springframework.context.annotation.PropertySource;
 public record SampleYaml(int number, String string, String dateTime, String[] array) {
 
 }
+```
+
+## Appendix
+
+### Makefile
+
+```makefile
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
 ```
 
 ##

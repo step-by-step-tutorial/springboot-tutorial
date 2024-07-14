@@ -11,6 +11,7 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 
 * [Getting Started](#getting-started)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -100,6 +101,21 @@ Create `log4j2.xml` in the resources and add the following configuration.
         </Logger>
     </Loggers>
 </Configuration>
+```
+
+## Appendix
+
+### Makefile
+
+```makefile
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
 ```
 
 ##

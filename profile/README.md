@@ -13,6 +13,7 @@ classes in order to use for specific goals, for example define specific classes 
 * [Apply Profiling](#apply-profiling)
 * [Active Profile](#active-profile)
 * [Scenario](#scenario)
+* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -144,6 +145,21 @@ In this sample there are two profiles named **dev** and **test**.
         <scope>test</scope>
     </dependency>
 </dependencies>
+```
+
+## Appendix
+
+### Makefile
+
+```makefile
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
 ```
 
 ##

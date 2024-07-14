@@ -1,4 +1,4 @@
-# <p align="center">RDBMS H2</p>
+# <p align="center">Integration of Spring Boot And H2</p>
 
 <p align="justify">
 
@@ -8,13 +8,55 @@ For more information about H2 go to the [website of H2](https://www.h2database.c
 
 </p>
 
-## How To Config Spring Boot
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [Appendix](#appendix )
+*
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [H2](https://www.h2database.com/html/main.html)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+After running, see H2 web console [localhost:8080/h2-console](localhost:8080/h2-console).
+
+## How To Set up Spring Boot
 
 ### Dependencies
 
 ```xml
 
 <dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -39,7 +81,7 @@ In order to access to the ht web console the application should be included the 
 </dependency>
 ```
 
-### Spring Boot Configuration
+### Application Properties
 
 ```yaml
 
@@ -73,31 +115,21 @@ spring:
       path: ${H2_CONSOLE:/h2-console}
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
+### Makefile
 
-## Build
+```makefile
+build:
+	mvn clean package -DskipTests=true
 
-```bash
-mvn clean package -DskipTests=true
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
 ```
-
-## Test
-
-```bash
-mvn  test
-```
-
-## Run
-
-```bash
-mvn  spring-boot:run
-```
-
-After running, see H2 web console [localhost:8080/h2-console](localhost:8080/h2-console).
 
 ##
 
-**<p align="center"> [Top](#rdbms-h2) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-h2) </p>**

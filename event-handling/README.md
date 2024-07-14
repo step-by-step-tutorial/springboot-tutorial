@@ -16,6 +16,7 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
         * [Event](#event)
         * [Listener](#listener)
         * [Publisher](#publisher)
+* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -173,6 +174,21 @@ public class EventPublisher {
         publisher.publishEvent(event);
     }
 }
+```
+
+## Appendix
+
+### Makefile
+
+```makefile
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
 ```
 
 ##

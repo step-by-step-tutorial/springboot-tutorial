@@ -12,6 +12,7 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 * [Getting Started](#getting-started)
 * [Install MySQL on Docker](#install-mysql-on-docker)
 * [How To Set up Spring Boot](#how-to-config-application)
+* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -304,6 +305,21 @@ docker-remove-image:
 	docker image rm lscr.io/linuxserver/mysql-workbench:latest
 	docker image rm adminer
 
+```
+
+## Appendix
+
+### Makefile
+
+```makefile
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
 ```
 
 ##

@@ -12,6 +12,7 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 * [Getting Started](#getting-started)
 * [Log Level](#log-level)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -105,6 +106,21 @@ Add `log4j2.xml` to the **resources** directory.
         </Logger>
     </Loggers>
 </Configuration>
+```
+
+## Appendix
+
+### Makefile
+
+```makefile
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
 ```
 
 ##

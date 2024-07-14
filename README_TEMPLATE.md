@@ -154,6 +154,15 @@ kubectl port-forward service/tools_name port:port
 ### Makefile
 
 ```shell
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+	
 docker-deploy:
 	docker compose --file docker-compose.yml --project-name tools-name up -d
 

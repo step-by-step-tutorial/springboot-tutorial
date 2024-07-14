@@ -195,6 +195,7 @@ kubectl port-forward service/artemis 8161:8161
 ### Dependencies
 
 ```xml
+
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-artemis</artifactId>
