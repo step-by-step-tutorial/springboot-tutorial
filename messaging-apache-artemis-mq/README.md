@@ -338,7 +338,7 @@ kube-deploy:
 kube-remove:
 	kubectl delete all --all
 
-kube-port-forward-web:
+kube-port-forward-artemis:
 	kubectl port-forward service/artemis 8161:8161
 ```
 

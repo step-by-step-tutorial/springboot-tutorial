@@ -432,7 +432,7 @@ kube-deploy:
 kube-delete:
 	kubectl delete all --all
 
-kube-port-forward-web:
+kube-port-forward-kafkadrop:
 	kubectl port-forward service/kafdrop-service 9000:9000
 ```
 

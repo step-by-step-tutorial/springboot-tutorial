@@ -1,10 +1,54 @@
-# <p align="center">RDBMS MySQL</p>
+# <p align="center">Integration of Spring Boot And MySQL</p>
 
 <p align="justify">
 
-This tutorial is included [MySQL database](https://www.mysql.com/) configuration for test and none test environments.
+This tutorial is about integration of Spring Boot and [MySQL](https://www.mysql.com) and included configuration for test
+and none test environments.
 
 </p>
+
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [MySQL](#mysql)
+* [MySQL Use Cases](#mysql-use-cases)
+* [Install MySQL on Docker](#install-mysql-on-docker)
+* [Install MySQL on Kubernetes](#install-mysql-on-kubernetes)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [Appendix](#appendix )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [MySQL](https://www.mysql.com)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+## MySQL
 
 ### URL
 
@@ -22,11 +66,9 @@ There are a few parameters included in the connection string of MySQL as follows
 * serverTimezone=UTC
 * pinGlobalTxToPhysicalConnection=TRUE
 
-### How To
+### Service Commands
 
 After installing MySQL, it is possible to work with MySQL service based on command line.
-
-#### MySQL Service.
 
 Use `mysql -u root -p -h localhost` in order to connect to MySQL database in `localhost` also you need password of
 user `root`.
@@ -47,25 +89,24 @@ mysqldump mysql -u root -p [–no-data] all-databases [–no-create-info] > file
 mysqldump mysql -u root -p [–no-data] db-name table-name1 table-name2 ... [–no-create-info] > file.sql
 ```
 
-#### SQL Commands
+### SQL Commands
 
 A few SQL commands to create schema (database), user and grant to the user.
 
-```iso92-sql
+```mysql
 # schema (database)
 SHOW DATABASES;
 CREATE DATABASE IF NOT EXISTS 'db-name' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-USE db-name;
-DROP DATABASE db-name;
+USE dbname;
+DROP DATABASE dbname;
 SHOW TABLES;
 
 # user
-CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
+CREATE USER IF NOT EXISTS 'user'@'hostname' IDENTIFIED BY 'password';
 
 # gran
-GRANT privilege-type ON db-name.table-name TO 'user'@'host';
+GRANT privilege ON dbname.tablename TO 'user'@'hostname';
 FLUSH PRIVILEGES;
-
 
 # example, assign gran to an user for executing XA transactions 
 GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user'@'%';
@@ -77,13 +118,29 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
+<p align="justify">
+
+For more information about MySQL see the [MySQL](https://www.mysql.com).
+
+</p>
+
+## MySQL Use Cases
+
+* Web Applications
+* E-commerce
+
 ## Install MySQL on Docker
+
+Create a file named `docker-compose.yml` with the following configuration.
 
 ### Docker Compose File
 
-Create a file named docker-compose.yml with the following configuration.
+#### With MySQL workbench
+
+[docker-compose.yml](docker-compose.yml)
 
 ```yaml
+#docker-compose.yml
 version: "3.8"
 
 services:
@@ -101,6 +158,49 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
+      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+  mysql-workbench:
+    image: lscr.io/linuxserver/mysql-workbench:latest
+    container_name: mysql-workbench
+    hostname: mysql-workbench
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - "./target/mysql-workbench/config:/config"
+    cap_add:
+      - IPC_LOCK
+```
+
+#### With Adminer
+
+[docker-compose.yml](docker-compose.yml)
+
+```yaml
+#docker-compose.yml
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    hostname: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=test_db
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - "./target/mysql:/etc/mysql/conf.d"
+      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   adminer:
     image: adminer
     container_name: adminer
@@ -110,58 +210,87 @@ services:
       - "8080:8080"
 ```
 
-Execute the `docker compose  up -d` command to install MySQL and Adminer.
+#### With PhpMyAdmin
 
-```shell
-# full command
-docker compose --file ./docker-compose.yml --project-name mysql up --build -d
-
-```
-
-### Adminer
-
-<p align="justify">
-
-In order to connect to MySQL by Adminer, open [http://localhost:8080](http://localhost:8080/) in the web browser and use
-the following properties in the login page.
-
-</p>
+[docker-compose.yml](docker-compose.yml)
 
 ```yaml
-system: MySQL
-server: mysql:3306 #host:port
-username: user
-password: password
-database: test_db
-```
+#docker-compose.yml
+version: "3.8"
 
-### PhpMyAdmin
-
-There is another alternative for Adminer named phpMyAdmin.
-
-```yaml
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    hostname: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=test_db
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - "./target/mysql:/etc/mysql/conf.d"
+      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   phpmyadmin:
     image: phpmyadmin
     container_name: phpmyadmin
     hostname: phpmyadmin
     restart: always
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       - PMA_ARBITRARY=1
 ```
 
-In order to connect to MySQL by phpMyAdmin open [http://localhost:8080](http://localhost:8080/) in the web browser.
+### Apply Docker Compose File
+
+Execute the following command to install MySQL.
+
+```shell
+docker compose --file ./docker-compose.yml --project-name mysql up --build -d
+
+```
+
+### Web Console
+
+#### MySQL Workbench
+
+Open [http://localhost:3000](http://localhost:3000) in the browser to access MySQL Workbench dashboard.
+
+```yaml
+Hostname: mysql
+Port: 3306
+Username: user
+Password: password
+```
+
+#### Adminer
+
+Open [http://localhost:8080](http://localhost:8080) in the browser to access MySQL Workbench dashboard.
+
+```yaml
+Server: mysql:3306
+Username: user
+Password: password
+```
+
+#### PhpMyAdmin
+
+Open [http://localhost:8081](http://localhost:8081) in the browser to access MySQL Workbench dashboard.
 
 ## Install MySQL on Kubernetes
 
-### MySQL
-
 Create the following files for installing MySQL.
 
-**mysql-secrets.yml**
+### Kube Files
+
+[mysql-secrets.yml](/kube/mysql-secrets.yml)
 
 ```yaml
+# mysql-secrets.yml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -176,9 +305,10 @@ data:
   mysql-password: cGFzc3dvcmQ=
 ```
 
-**mysql-configmap.yml**
+[mysql-configmap.yml](/kube/mysql-configmap.yml)
 
 ```yaml
+# mysql-configmap.yml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -195,9 +325,10 @@ data:
 #    FLUSH PRIVILEGES;
 ```
 
-**mysql-pvc.yml**
+[mysql-pvc.yml](/kube/mysql-pvc.yml)
 
 ```yaml
+# mysql-pvc.yml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -213,9 +344,10 @@ spec:
       storage: 1Gi
 ```
 
-**mysql-deployment.yml**
+[mysql-deployment.yml](/kube/mysql-deployment.yml)
 
 ```yaml
+# mysql-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -278,9 +410,10 @@ spec:
 #            name: mysql-configmap
 ```
 
-**mysql-service.yml**
+[mysql-service.yml](/kube/mysql-service.yml)
 
 ```yaml
+# mysql-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -297,13 +430,69 @@ spec:
       targetPort: 3306
 ```
 
-### Adminer
-
-Create the following files for installing Adminer.
-
-**adminer-deployment.yml**
+[mysql-workbench-deployment.yml](/kube/mysql-workbench-deployment.yml)
 
 ```yaml
+# mysql-workbench-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-workbench
+  labels:
+    app: mysql-workbench
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-workbench
+  template:
+    metadata:
+      labels:
+        app: mysql-workbench
+    spec:
+      containers:
+        - name: mysql-workbench
+          image: lscr.io/linuxserver/mysql-workbench:latest
+          ports:
+            - containerPort: 3000
+            - containerPort: 3001
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Etc/UTC"
+          securityContext:
+            capabilities:
+              add: [ "IPC_LOCK" ]
+```
+
+[mysql-workbench-service.yml](/kube/mysql-workbench-service.yml)
+
+```yaml
+# mysql-workbench-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-workbench
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30000
+    - port: 3001
+      targetPort: 3001
+      nodePort: 30001
+  selector:
+    app: mysql-workbench
+```
+
+[adminer-deployment.yml](/kube/adminer-deployment.yml)
+
+```yaml
+# adminer-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -325,9 +514,10 @@ spec:
             - containerPort: 8080
 ```
 
-**adminer-service.yml**
+[adminer-service.yml](/kube/adminer-service.yml)
 
 ```yaml
+# adminer-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -341,88 +531,10 @@ spec:
       targetPort: 8080
 ```
 
-### Apply Configuration Files
-
-Execute the following commands to install the tools on Kubernetes.
-
-```shell
-# ======================================================================================================================
-# MySQL
-# ======================================================================================================================
-kubectl apply -f ./kube/mysql-pvc.yml
-# kubectl get pvc 
-# kubectl describe pvc mysql-pvc
-
-kubectl apply -f ./kube/mysql-configmap.yml
-# kubectl describe configmap mysql-configmap -n default
-
-kubectl apply -f ./kube/mysql-secrets.yml
-# kubectl describe secret mysql-secrets -n default
-# kubectl get secret mysql-secrets -n default -o yaml
-
-kubectl apply -f ./kube/mysql-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment mysql -n default
-
-kubectl apply -f ./kube/mysql-service.yml
-# kubectl get service -n default
-# kubectl describe service mysql -n default
-
-# ======================================================================================================================
-# Adminer
-# ======================================================================================================================
-kubectl apply -f ./kube/adminer-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment adminer -n default
-
-kubectl apply -f ./kube/adminer-service.yml
-# kubectl get services -n default
-# kubectl describe service adminer -n default
-
-# ======================================================================================================================
-# After Install
-# ======================================================================================================================
-kubectl get all
-```
-
-For connecting to MySQL through application on localhost it should be executed the following command.
-
-```shell
-# mysql
-kubectl port-forward service/mysql 3306:3306
-```
-
-<p align="justify">
-
-In order to connect to Adminer from localhost through the web browser use the following command and dashboard of Adminer
-is available on [http://localhost:8080](http://localhost:8080) URL.
-
-</p>
-
-```shell
-# adminer
-# http://localhost:8080
-kubectl port-forward service/adminer 8080:8080
-```
-
-Use the following properties for Adminer.
+[phpmyadmin-deployment.yml](/kube/phpmyadmin-deployment.yml)
 
 ```yaml
-system: MySQL
-server: mysql:3306 #host:port
-username: user
-password: password
-database: test_db
-```
-
-### PhpMyAdmin
-
-Also, there is another alternative for Adminer named phpMyAdmin. Therefore, use the following instruction to install
-that on Kubernetes.
-
-**phpmyadmin-deployment.yml**
-
-```yaml
+# phpmyadmin-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -459,9 +571,10 @@ spec:
                   key: mysql-root-password
 ```
 
-**phpmyadmin-service.yml**
+[phpmyadmin-service.yml](/kube/phpmyadmin-service.yml)
 
 ```yaml
+# phpmyadmin-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -475,37 +588,77 @@ spec:
       targetPort: 80
 ```
 
+### Apply Kube Files
+
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-# ======================================================================================================================
-# PhpMyAdmin
-# ======================================================================================================================
-kubectl apply -f ./kube/phpmyadmin-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment phpmyadmin -n default
+	kubectl apply -f ./kube/mysql-pvc.yml
+	kubectl apply -f ./kube/mysql-configmap.yml
+	kubectl apply -f ./kube/mysql-secrets.yml
+	kubectl apply -f ./kube/mysql-deployment.yml
+	kubectl apply -f ./kube/mysql-service.yml
+	kubectl apply -f ./kube/mysql-workbench-deployment.yml
+	kubectl apply -f ./kube/mysql-workbench-service.yml
+	kubectl apply -f ./kube/adminer-deployment.yml
+	kubectl apply -f ./kube/adminer-service.yml
+	kubectl apply -f ./kube/phpmyadmin-deployment.yml
+	kubectl apply -f ./kube/phpmyadmin-service.yml
+```
 
-kubectl apply -f ./kube/phpmyadmin-service.yml
-# kubectl get services -n default
-# kubectl describe service phpmyadmin -n default
+### Check Status
 
+```shell
 kubectl get all
 ```
 
+### Port Forwarding
+
 <p align="justify">
 
-In order to connect to phpMyAdmin through the web browser on localhost use the following command and dashboard of
-phpMyAdmin is available on [http://localhost:8080](http://localhost:8080) URL.
+In order to connect to MySQL from localhost through the terminal use the following command and
+MySQL is available on `localhost:3306` URL.
 
 </p>
 
 ```shell
-# phpmyadmin
-# http://localhost:8080
-kubectl port-forward service/phpmyadmin 8080:80
+kubectl port-forward service/mysql port:port
 ```
 
-## How To Config Spring Boot
+<p align="justify">
+
+In order to connect to MySQL-Workbench from localhost through the web browser use the following command and dashboard of
+MySQL-Workbench is available on [http://localhost:3000](http://localhost:3000) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/mysql-workbench 3306:3306
+```
+
+<p align="justify">
+
+In order to connect to Adminer from localhost through the web browser use the following command and dashboard of
+Adminer is available on [http://localhost:8080](http://localhost:8080) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/adminer 8080:8080
+```
+
+<p align="justify">
+
+In order to connect to PhpMyAdmin from localhost through the web browser use the following command and dashboard of
+PhpMyAdmin is available on [http://localhost:8081](http://localhost:8081) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/phpmyadmin 8081:80
+```
+
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -524,7 +677,40 @@ kubectl port-forward service/phpmyadmin 8080:80
 </dependencies>
 ```
 
-### Test Dependency
+### Application Properties
+
+```yaml
+spring:
+  datasource:
+    username: ${DATABASE_NAME:user}
+    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:test_db}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: MYSQL
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: true
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ${DATABASE_SCHEMA:sample}
+```
+
+## How To Set up Spring Boot Test
+
+### Dependencies
 
 ```xml
 
@@ -555,35 +741,9 @@ kubectl port-forward service/phpmyadmin 8080:80
 </project>
 ```
 
-### Spring Boot Properties
+### Application Properties
 
 ```yaml
-spring:
-  datasource:
-    username: ${DATABASE_NAME:user}
-    password: ${DATABASE_PASSWORD:password}
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:test_db}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  data:
-    jpa:
-      repositories:
-        enabled: true
-  jpa:
-    database: MYSQL
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    defer-datasource-initialization: true
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      javax:
-        persistence:
-          create-database-schemas: true
-      hibernate:
-        generate_statistics: true
-        format_sql: true
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        default_schema: ${DATABASE_SCHEMA:sample}
 ---
 spring:
   config:
@@ -592,34 +752,72 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-* [Kubernetes](https://kubernetes.io/) (optional)
+### Makefile
 
-## Build
+```shell
+build:
+	mvn clean package -DskipTests=true
 
-```bash
-mvn clean package -DskipTests=true
-```
+test:
+	mvn test
 
-## Test
+run:
+	mvn spring-boot:run
 
-```bash
-mvn  test
-```
+docker-deploy:
+	docker compose --file docker-compose.yml --project-name mysql up -d
 
-## Run
+docker-rebuild-deploy:
+	docker compose --file docker-compose.yml --project-name mysql up --build -d
 
-```bash
-mvn  spring-boot:run
+docker-remove-container:
+	docker rm mysql --force
+	docker rm mysql-workbench- --force
+	docker rm adminer --force
+	docker rm phpmyadmin --force
+
+docker-remove-image:
+	docker image rm mysql:8.0
+	docker image rm lscr.io/linuxserver/mysql-workbench:latest
+	docker image rm adminer
+	docker image rm phpmyadmin
+
+kube-deploy:
+	kubectl apply -f ./kube/mysql-pvc.yml
+	kubectl apply -f ./kube/mysql-configmap.yml
+	kubectl apply -f ./kube/mysql-secrets.yml
+	kubectl apply -f ./kube/mysql-deployment.yml
+	kubectl apply -f ./kube/mysql-service.yml
+	kubectl apply -f ./kube/mysql-workbench-deployment.yml
+	kubectl apply -f ./kube/mysql-workbench-service.yml
+	kubectl apply -f ./kube/adminer-deployment.yml
+	kubectl apply -f ./kube/adminer-service.yml
+	kubectl apply -f ./kube/phpmyadmin-deployment.yml
+	kubectl apply -f ./kube/phpmyadmin-service.yml
+
+kube-delete:
+	kubectl delete all --all
+	kubectl delete secrets mysql-secrets
+	kubectl delete configMap mysql-configmap
+	kubectl delete persistentvolumeclaim mysql-pvc
+
+kube-port-forward-mysql:
+	kubectl port-forward service/mysql 3306:3306
+
+kube-port-forward-adminer:
+	kubectl port-forward service/adminer 8080:8080
+
+kube-port-forward-phpmyadmin:
+	kubectl port-forward service/phpmyadmin 8081:80
+
+kube-port-forward-mysql-workbench:
+	kubectl port-forward service/mysql-workbench 3000:3000
 ```
 
 ##
 
-**<p align="center">[Top](#rdbms-mysql)</p>**
+**<p align="center">[Top](#integration-of-spring-boot-and-mysql)</p>**

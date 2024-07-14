@@ -1,3 +1,12 @@
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
 docker-deploy:
 	docker compose --file docker-compose.yml --project-name kafka up -d
 
@@ -25,5 +34,5 @@ kube-deploy:
 kube-delete:
 	kubectl delete all --all
 
-kube-port-forward-web:
+kube-port-forward-kafkadrop:
 	kubectl port-forward service/kafdrop-service 9000:9000

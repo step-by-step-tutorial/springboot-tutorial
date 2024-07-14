@@ -1,3 +1,12 @@
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
 docker-deploy:
 	docker compose --file docker-compose.yml --project-name artemis up -d
 
@@ -17,5 +26,5 @@ kube-deploy:
 kube-remove:
 	kubectl delete all --all
 
-kube-port-forward-web:
+kube-port-forward-artemis:
 	kubectl port-forward service/artemis 8161:8161

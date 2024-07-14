@@ -1,3 +1,12 @@
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
 docker-deploy:
 	docker compose --file docker-compose.yml --project-name rabbitmq up -d
 
@@ -19,5 +28,5 @@ kube-delete:
 	kubectl delete all --all
 	kubectl delete secrets rabbitmq-secrets
 
-kube-port-forward-web:
+kube-port-forward-rabbitmq:
 	kubectl port-forward service/rabbitmq 15672:15672

@@ -1,3 +1,12 @@
+build:
+	mvn clean package -DskipTests=true
+
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
 docker-deploy:
 	docker compose --file docker-compose.yml --project-name mongo up -d
 
