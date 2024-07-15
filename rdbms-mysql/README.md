@@ -621,8 +621,8 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to MySQL from localhost through the terminal use the following command and
-MySQL is available on `localhost:3306` URL.
+In order to connect to MySQL from localhost through the application use the following command and MySQL is available
+on `localhost:3306`.
 
 </p>
 

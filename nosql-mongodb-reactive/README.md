@@ -425,8 +425,8 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to MongoDB from localhost through the web browser use the following command and dashboard of
-MongoDB is available on [http://localhost:8081](http://localhost:8081) URL.
+In order to connect to MongoDB from localhost through the application use the following command and MongoDB is available
+on `localhost:27017`.
 
 </p>
 

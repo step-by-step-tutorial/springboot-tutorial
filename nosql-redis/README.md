@@ -304,8 +304,8 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to Redis from localhost through the web browser use the following command and dashboard of
-Redis is available on [http://localhost:6379](http://localhost:6379) URL.
+In order to connect to Redis from localhost through the application use the following command and Redis is available
+on `localhost:6379`.
 
 </p>
 

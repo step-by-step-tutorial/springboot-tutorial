@@ -1,12 +1,62 @@
-# <p align="center">RDBMS Oracle</p>
+# <p align="center">Integration of Spring Boot And Oracle</p>
 
 <p align="justify">
 
-This tutorial is included [Oracle database](https://www.oracle.com/) configuration for test and none test environment.
+This tutorial is about integration of Spring Boot and Oracle and is
+included [Oracle](https://www.oracle.com) configuration for test and none test environment.
 
 </p>
 
-### URL Example
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [Oracle](#oracle)
+* [Install Oracle on Docker](#install-oracle-on-docker)
+* [Install Oracle on Kubernetes](#install-oracle-on-kubernetes)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [License](#license)
+* [Appendix](#appendix )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Oracle](https://www.oracle.com)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test "-longTimeTest.isActivate=true"
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+## Oracle
+
+<p align="justify">
+
+For more information about Oracle see the [Oracle](https://www.oracle.com).
+
+</p>
+
+### URL
 
 ```yaml
 url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
@@ -14,27 +64,14 @@ url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NA
 
 ## Install Oracle on Docker
 
-### ORDS Pre-Config
-
-If you want to install ORDS then you have to create the following directory and connection file.
-
-```shell
-mkdir ords_secrets
-mkdir ords_config
-# linux/unix
-echo CONN_STRING="sys as sysdba/password@oracle:1521/xepdb1" > ords_secrets/conn_string.txt
-# windows powershell
-echo 'CONN_STRING="sys as sysdba/password@oracle:1521/xepdb1"' > ords_secrets/conn_string.txt
-# windows cmd
-echo CONN_STRING=^"sys as sysdba/password@oracle:1521/xepdb1^" > ords_secrets/conn_string.txt
-
-```
+Create a file named `docker-compose.yml` with the following configuration.
 
 ### Docker Compose File
 
-Create a file named docker-compose.yml with the following configuration.
+[docker-compose.yml](docker-compose.yml)
 
 ```yaml
+#docker-compose.yml
 version: "3.8"
 
 services:
@@ -48,36 +85,31 @@ services:
       - "5500:5500"
     environment:
       ORACLE_PWD: password
-      ORACLE_CHARACTERSET: utf-8
     volumes:
       - "./target/oracle_data:/opt/oracle/oradata"
   ords:
     image: container-registry.oracle.com/database/ords:latest
     container_name: ords
     hostname: ords
-    restart: always
-    links:
+    depends_on:
       - oracle
     ports:
-      - "8181:8181"
+      - "8080:8080"
     volumes:
-      - "./ords_secrets/:/opt/oracle/variables/"
-      - "./ords_config/:/etc/ords/config/"
+      - "ords_config:/etc/ords/config"
+    entrypoint: [ "ords", "serve" ]
+
+volumes:
+  ords_config:
+    driver: local
 ```
 
-Execute the `docker compose  up -d` command to install Oracle database.
+### Apply Docker Compose File
 
-### Set up Database
-
-Install [SqlPlus](https://www.oracle.com/database/technologies/instant-client/downloads.html) then connect to oracle
-db-service by following command and after that create your target user. Use the system or sys user.
+Execute the following command to install Oracle.
 
 ```shell
-sqlplus system/password@//localhost:1521/xepdb1
-```
-
-```oracle-sql
-CREATE USER target_user IDENTIFIED BY target_password;
+docker compose --file ./docker-compose.yml --project-name oracle up --build -d
 ```
 
 ### Enterprise Manager
@@ -88,36 +120,258 @@ Open https://localhost:5500/em in web browser.
 * password: password
 * container name: xepdb1
 
-### ORDS
+### ORDS (Sql Developer Web)
 
-You have to enable the ORDS schema for the target user. Therefor connect to the db-service by target user and execute
-the procedure.
+Open [http://localhost:8080/ords](http://localhost:8080/ords/sql-developer) but, you cannot log in to SQL Developer
+before applying the following configuration.
+
+Get `ords_installer_privileges.sql` file and then connect to the database.
 
 ```shell
-sqlplus target_user/target_password@//localhost:1521/xepdb1
+# download from ords container
+docker cp ords:/opt/oracle/ords/scripts/installer/ords_installer_privileges.sql ./
+# upload to oracle container
+docker cp ./ords_installer_privileges.sql oracle:/tmp
+# connect to database
+docker exec -it oracle sqlplus sys/password@//localhost:1521/xepdb1 as sysdba
+```
+
+You have to enable the ORDS schema for the target user.
+
+```oracle-sql
+CREATE USER testuser IDENTIFIED BY password;
+GRANT DBA TO testuser;
+@/tmp/ords_installer_privileges.sql testuser;
+```
+
+Apply configuration to ORDS instance.
+
+```shell
+docker exec -it ords ords --config /opt/ords/config install
+# hostname: oracle
+# port: 1521
+# service name: xepdb1
+# username: testuser
+# password: password
+
+docker restart ords
+```
+
+Connect to Oracle database and execute the procedure.
+
+```shell
+docker exec -it oracle sqlplus testuser/password@//localhost:1521/xepdb1
+
 ```
 
 ```oracle-plsql
- DECLARE
-     PRAGMA AUTONOMOUS_TRANSACTION;
-   BEGIN
- 
-        ORDS.ENABLE_SCHEMA(p_enabled => TRUE,
-                           p_schema => 'TARGET_USER',
-                           p_url_mapping_type => 'BASE_PATH',
-                           p_url_mapping_pattern => 'target_user',
-                           p_auto_rest_auth => FALSE);
-
-      commit;
-
-  END;
+ begin
+    ords.enable_schema(
+        p_enabled => true,
+        p_schema => 'testuser',
+        p_url_mapping_type => 'BASE_PATH',
+        p_url_mapping_pattern => 'testuser',
+        p_auto_rest_auth => false
+    );
+    commit;
+end;
 /
 ```
 
-Open http://localhost:8181/ords in web browser, then use target_user and its password to log in to
-the `Sql Developer Web`.
+Open [http://localhost:8080/ords/sql-developer](http://localhost:8080/ords/sql-developer) in web browser, then use
+following credentials to log in to the `Sql Developer Web`.
 
-## How To Config Spring Boot
+```yaml
+Username: testuser
+Password: password
+```
+
+## Install Oracle on Kubernetes
+
+Create the following files for installing Oracle.
+
+### Kube Files
+
+[oracle-pvc.yml](/kube/oracle-pvc.yml)
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: oracle-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+[oracle-deployment.yml](/kube/oracle-deployment.yml)
+
+```yaml
+#oracle-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle
+  template:
+    metadata:
+      labels:
+        app: oracle
+    spec:
+      containers:
+        - name: oracle
+          image: container-registry.oracle.com/database/express:21.3.0-xe
+          ports:
+            - containerPort: 1521
+            - containerPort: 5500
+          env:
+            - name: ORACLE_PWD
+              value: password
+          volumeMounts:
+            - mountPath: /opt/oracle/oradata
+              name: oracle-data
+      volumes:
+        - name: oracle-data
+          persistentVolumeClaim:
+            claimName: ords-config-pvc
+```
+
+[oracle-service.yml](/kube/oracle-service.yml)
+
+```yaml
+#oracle-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: oracle
+spec:
+  selector:
+    app: oracle
+  ports:
+    - name: tcp
+      port: 1521
+      targetPort: 1521
+    - name: em
+      port: 5500
+      targetPort: 5500
+```
+
+[ords-pvc.yml](/kube/ords-pvc.yml)
+
+```yaml
+#ords-pvc.yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ords-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+```
+
+[ords-deployment.yml](/kube/ords-deployment.yml)
+
+```yaml
+#ords-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ords
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ords
+  template:
+    metadata:
+      labels:
+        app: ords
+    spec:
+      containers:
+        - name: ords
+          image: container-registry.oracle.com/database/ords:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /etc/ords/config
+              name: ords-config
+          command: [ "ords", "serve" ]
+      volumes:
+        - name: ords-config
+          persistentVolumeClaim:
+            claimName: ords-config-pvc
+```
+
+[ords-service.yml](/kube/ords-service.yml)
+
+```yaml
+#ords-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ords
+spec:
+  selector:
+    app: ords
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+```
+
+### Apply Kube Files
+
+Execute the following commands to install the tools on Kubernetes.
+
+```shell
+kubectl apply -f ./kube/oracle-pvc.yml
+kubectl apply -f ./kube/oracle-deployment.yml
+kubectl apply -f ./kube/oracle-service.yml
+kubectl apply -f ./kube/ords-pvc.yml
+kubectl apply -f ./kube/ords-deployment.yml
+kubectl apply -f ./kube/ords-service.yml
+```
+
+### Check Status
+
+```shell
+kubectl get all
+```
+
+### Port Forwarding
+
+<p align="justify">
+
+In order to connect to Oracle from localhost through the application use the following command and Oracle is available
+on `localhost:1521`.
+
+</p>
+
+```shell
+kubectl port-forward service/oracle 1521:1521
+```
+
+<p align="justify">
+
+In order to connect to Ords from localhost through the web browser use the following command and dashboard of Ords is
+available on [http://localhost:8080](http://localhost:8080) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/ords 8080:8080
+```
+
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -125,7 +379,7 @@ The Oracle database driver should
 be [downloaded](https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html) and install manually with
 following command.
 
-**Linux/Unix**
+#### Linux/Unix
 
 ```shell
 #!/usr/bin/env bash
@@ -138,7 +392,7 @@ mvn install:install-file \
 -Dpackaging=jar
 ```
 
-**Windows**
+#### Windows
 
 ```shell
 mvn install:install-file ^
@@ -166,7 +420,41 @@ mvn install:install-file ^
 </dependencies>
 ```
 
-### Test Dependency
+### Application Properties
+
+```yaml
+spring:
+  datasource:
+    username: ${DATABASE_USERNAME:system}
+    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: ORACLE
+    database-platform: org.hibernate.dialect.OracleDialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: true
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ${spring.datasource.username}
+
+```
+
+## How To Set up Spring Boot Test
+
+### Dependency
 
 ```xml
 
@@ -197,35 +485,9 @@ mvn install:install-file ^
 </project>
 ```
 
-### Spring Boot Properties
+### Application Properties
 
 ```yaml
-spring:
-  datasource:
-    username: ${DATABASE_USERNAME:system}
-    password: ${DATABASE_PASSWORD:password}
-    url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
-    driver-class-name: oracle.jdbc.driver.OracleDriver
-  data:
-    jpa:
-      repositories:
-        enabled: true
-  jpa:
-    database: ORACLE
-    database-platform: org.hibernate.dialect.OracleDialect
-    defer-datasource-initialization: true
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      javax:
-        persistence:
-          create-database-schemas: true
-      hibernate:
-        generate_statistics: true
-        format_sql: true
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        default_schema: ${spring.datasource.username}
 ---
 spring:
   config:
@@ -236,31 +498,52 @@ spring:
       ddl-auto: create
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
+### Makefile
 
-## Build
+```makefile
+build:
+	mvn clean package -DskipTests=true
 
-```bash
+test:
+	mvn test
 
-mvn clean package -DskipTests=true
-```
+run:
+	mvn spring-boot:run
 
-## Test
+docker-deploy:
+	docker compose --file docker-compose.yml --project-name oracle up -d
 
-```bash
-mvn  test "-longTimeTest.isActivate=true"
-```
+docker-rebuild-deploy:
+	docker compose --file docker-compose.yml --project-name oracle up --build -d
 
-## Run
+docker-remove-container:
+	docker rm oracle --force
+	docker rm ords --force
 
-```bash
-mvn  spring-boot:run
+docker-remove-image:
+	docker image rm container-registry.oracle.com/database/express:21.3.0-xe
+	docker image rm container-registry.oracle.com/database/ords:latest
+
+kube-deploy:
+	kubectl apply -f ./kube/oracle-pvc.yml
+	kubectl apply -f ./kube/oracle-deployment.yml
+	kubectl apply -f ./kube/oracle-service.yml
+	kubectl apply -f ./kube/ords-pvc.yml
+	kubectl apply -f ./kube/ords-deployment.yml
+	kubectl apply -f ./kube/ords-service.yml
+
+kube-delete:
+	kubectl delete all --all
+
+kube-port-forward-oracle:
+	kubectl port-forward service/oracle 1521:1521
+
+kube-port-forward-ords:
+	kubectl port-forward service/ords 8080:8080
 ```
 
 ##
 
-**<p align="center"> [Top](#rdbms-oracle) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-oracle) </p>**
