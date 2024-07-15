@@ -85,7 +85,7 @@ services:
     environment:
       ORACLE_PWD: password
     volumes:
-      - "./target/oracle_data:/opt/oracle/oradata"
+      - "oracle_data:/opt/oracle/oradata"
   ords:
     image: container-registry.oracle.com/database/ords:latest
     container_name: ords
@@ -96,10 +96,12 @@ services:
       - "8080:8080"
     volumes:
       - "ords_config:/etc/ords/config"
-    entrypoint: [ "ords", "serve" ]
+    entrypoint: ["ords", "serve"]
 
 volumes:
   ords_config:
+    driver: local
+  oracle_data:
     driver: local
 ```
 
@@ -362,7 +364,7 @@ kubectl port-forward service/oracle 1521:1521
 <p align="justify">
 
 In order to connect to Ords from localhost through the web browser use the following command and dashboard of Ords is
-available on [http://localhost:8080](http://localhost:8080) URL.
+available on [http://localhost:8080/ords](http://localhost:8080/ords) URL.
 
 </p>
 
