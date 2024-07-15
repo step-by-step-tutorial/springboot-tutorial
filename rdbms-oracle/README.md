@@ -96,7 +96,7 @@ services:
       - "8080:8080"
     volumes:
       - "ords_config:/etc/ords/config"
-    entrypoint: ["ords", "serve"]
+    entrypoint: [ "ords", "serve" ]
 
 volumes:
   ords_config:
@@ -194,6 +194,7 @@ Create the following files for installing Oracle.
 ### Kube Files
 
 [oracle-pvc.yml](/kube/oracle-pvc.yml)
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -201,11 +202,12 @@ metadata:
   name: oracle-pvc
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
 ```
+
 [oracle-deployment.yml](/kube/oracle-deployment.yml)
 
 ```yaml
