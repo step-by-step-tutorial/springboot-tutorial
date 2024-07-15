@@ -15,7 +15,6 @@ included [Oracle](https://www.oracle.com) configuration for test and none test e
 * [Install Oracle on Kubernetes](#install-oracle-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
-* [License](#license)
 * [Appendix](#appendix )
 
 ## Getting Started
@@ -39,7 +38,7 @@ mvn clean package -DskipTests=true
 #### Test
 
 ```bash
-mvn test "-longTimeTest.isActivate=true"
+mvn test
 ```
 
 #### Run
