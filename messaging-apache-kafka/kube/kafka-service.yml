@@ -6,5 +6,9 @@ spec:
   selector:
     app: kafka
   ports:
-    - port: 9092
+    - name: localhost
+      port: 9092
       targetPort: 9092
+    - name: container
+      port: 9093
+      targetPort: 9093

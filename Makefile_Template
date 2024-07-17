@@ -8,9 +8,9 @@ run:
 	mvn spring-boot:run
 
 docker-deploy:
-	docker compose --file docker-compose.yml --project-name tools-name up -d
+	docker run --name containername -p 8080:8080 -h hostname -itd imagename
 
-docker-rebuild-deploy:
+docker-compose-deploy:
 	docker compose --file docker-compose.yml --project-name tools-name up --build -d
 
 docker-remove-container:

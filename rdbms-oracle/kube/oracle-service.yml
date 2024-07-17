@@ -6,9 +6,9 @@ spec:
   selector:
     app: oracle
   ports:
-  - name: tcp
-    port: 1521
-    targetPort: 1521
-  - name: em
-    port: 5500
-    targetPort: 5500
+    - name: tcp
+      port: 1521
+      targetPort: 1521
+    - name: em
+      port: 5500
+      targetPort: 5500

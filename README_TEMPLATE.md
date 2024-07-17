@@ -163,10 +163,7 @@ test:
 run:
 	mvn spring-boot:run
 	
-docker-deploy:
-	docker compose --file docker-compose.yml --project-name tools-name up -d
-
-docker-rebuild-deploy:
+docker-compose-deploy:
 	docker compose --file docker-compose.yml --project-name tools-name up --build -d
 
 docker-remove-container:

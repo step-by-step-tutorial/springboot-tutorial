@@ -1,20 +1,50 @@
-# <p align="center">Spring Boot and Kafka Tutorial</p>
+# <p align="center">Integration of Spring Boot And Apache Kafka Streaming</p>
 
 <p align="justify">
-This tutorial shows how to integrate Apache Kafka streaming in Spring Boot application.
+This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 </p>
 
 ## <p align="center"> Table of Content </p>
 
+* [Getting Started](#getting-started)
 * [Apache Kafka](#apache-kafka)
-* [Apache kafka use cases](#apache-kafka-use-cases)
-* [Apache Kafka Streaming Concepts](#apache-kafka-streaming-concepts)
+* [Apache Use Cases](#apache-use-cases)
 * [Install Kafka on Docker](#install-kafka-on-docker)
 * [Install Kafka on Kubernetes](#install-kafka-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [Prerequisites](#prerequisites)
 * [Pipeline](#pipeline )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Kafka](https://kafka.apache.org)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
 
 ## Apache Kafka
 
@@ -34,7 +64,40 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 
 </p>
 
-## Apache Kafka Use Cases
+### Apache Kafka Streaming Concepts
+
+#### Stream
+
+It is a sequence of immutable key-value data.
+
+#### Stream Processing Topology
+
+It is a data flow of data in key-value format includes entry point/consuming data, processing data and out
+point/producing data. These steps (processors) are in directed acyclic graph (DAG) relation. Indeed, it is a logical
+abstraction of your stream processing implementation.
+
+#### Source Processor
+
+It is a processor that consume data from the input Topics.
+
+#### Sink Processor
+
+It is a processor that produce data for the output Topics.
+
+<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/streaming-apache-kafka/doc/kafka-streaming-processor-topology.png" width="426" height="240">
+
+#### Streams and Tables
+
+#### Aggregations
+
+An aggregation takes an input stream or table then, yields a new table by combining multiple input records into a single
+output record.
+
+```text
+KStream/KTable  ==aggregation==>  KTable.
+```
+
+## Apache Use Cases
 
 * Messaging
 * Website Activity Tracking
@@ -44,41 +107,6 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 * Event Sourcing
 * Commit Log
 
-In this tutorial I'm talking stream processing.
-
-## Apache Kafka Streaming Concepts
-
-### Stream
-
-It is a sequence of immutable key-value data.
-
-### Stream Processing Topology
-
-It is a data flow of data in key-value format includes entry point/consuming data, processing data and out
-point/producing data. These steps (processors) are in directed acyclic graph (DAG) relation. Indeed, it is a logical
-abstraction of your stream processing implementation.
-
-### Source Processor
-
-It is a processor that consume data from the input Topics.
-
-### Sink Processor
-
-It is a processor that produce data for the output Topics.
-
-<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/streaming-apache-kafka/doc/kafka-streaming-processor-topology.png" width="426" height="240">
-
-### Streams and Tables
-
-### Aggregations
-
-An aggregation takes an input stream or table then, yields a new table by combining multiple input records into a single
-output record.
-
-```text
-KStream/KTable  ==aggregation==>  KTable.
-```
-
 ## Install Kafka on Docker
 
 ### Docker Compose File
@@ -86,65 +114,73 @@ KStream/KTable  ==aggregation==>  KTable.
 Create a file named docker-compose.yml with the following configuration. It includes Zookeeper, Kafka and Kafdrop
 services.
 
+[docker-compose.yml](docker-compose.yml)
+
 ```yaml
-version: '2'
+#docker-compose.yml
+version: '3.8'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: docker.io/bitnami/zookeeper
     container_name: zookeeper
     hostname: zookeeper
+    restart: always
     ports:
       - "2181:2181"
+    volumes:
+      - "./target/zookeeper:/bitnami"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-
+      - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: docker.io/bitnami/kafka
     container_name: kafka
     hostname: kafka
-    depends_on:
-      - zookeeper
+    restart: always
     ports:
       - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
     volumes:
-      - "./target/kafka:/var/lib/kafka/data"
+      - "./target/kafka:/bitnami"
+    environment:
+      KAFKA_CFG_BROKER_ID: 1
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: LOCALHOST://:9092,CONTAINER://:9093
+      KAFKA_CFG_ADVERTISED_LISTENERS: LOCALHOST://localhost:9092,CONTAINER://kafka:9093
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LOCALHOST
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
+    hostname: kafdrop
+    restart: always
     ports:
       - "9000:9000"
     environment:
-      KAFKA_BROKERCONNECT: kafka:9092
+      KAFKA_BROKERCONNECT: kafka:9093
       JVM_OPTS: "-Xms32M -Xmx64M"
 ```
 
-Execute the `docker compose  up -d` command to install Zookeeper, Kafka and Kafdrop.
+### Apply Docker Compose File
+
+Execute the following command to install Apache Kafka.
 
 ```shell
-# full command
 docker compose --file ./docker-compose.yml --project-name kafka up --build -d
-
 ```
 
-```shell
-docker run --name kcat --network kafka-network --rm -it edenhill/kcat:1.7.1 -b kafka:9092 -t test-topic
-```
+### Web Console
 
-Open [http://localhost:9000/](http://localhost:9000/) in the browser to access Kafdrop dashboard.
+Open [http://localhost:9000](http://localhost:9000) in the browser to access Kafdrop dashboard.
 
 ## Install Kafka on Kubernetes
 
+Create the following files for installing Apache Kafka.
+
 ### Kube Files
 
-Create the following files for installing Kafka.
+[zookeeper-deployment.yml](/kube/zookeeper-deployment.yml)
 
 ```yaml
 #zookeeper-deployment.yml
@@ -164,15 +200,21 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: confluentinc/cp-zookeeper:latest
+          image: docker.io/bitnami/zookeeper
           ports:
             - containerPort: 2181
           env:
-            - name: ZOOKEEPER_CLIENT_PORT
-              value: "2181"
-            - name: ZOOKEEPER_TICK_TIME
-              value: "2000"
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
+          volumeMounts:
+            - name: zookeeper-data
+              mountPath: /bitnami
+      volumes:
+        - name: zookeeper-data
+          emptyDir: { }
 ```
+
+[zookeeper-service.yml](/kube/zookeeper-service.yml)
 
 ```yaml
 #zookeeper-service.yml
@@ -187,6 +229,8 @@ spec:
     - port: 2181
       targetPort: 2181
 ```
+
+[kafka-deployment.yml](/kube/kafka-deployment.yml)
 
 ```yaml
 #kafka-deployment.yml
@@ -206,26 +250,34 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: confluentinc/cp-kafka:latest
+          image: docker.io/bitnami/kafka
           ports:
             - containerPort: 9092
+            - containerPort: 9093
           env:
-            - name: KAFKA_BROKER_ID
+            - name: KAFKA_CFG_BROKER_ID
               value: "1"
-            - name: KAFKA_ZOOKEEPER_CONNECT
-              value: 'zookeeper-service:2181'
-            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-              value: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-            - name: KAFKA_ADVERTISED_LISTENERS
-              value: PLAINTEXT://:29092,PLAINTEXT_INTERNAL://kafka-service:9092
-            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
-              value: "1"
-            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
-              value: "1"
-            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
-              value: "1"
-
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "zookeeper-service:2181"
+            - name: KAFKA_CFG_LISTENERS
+              value: "LOCALHOST://:9092,CONTAINER://:9093"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "LOCALHOST://localhost:9092,CONTAINER://kafka-service:9093"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT"
+            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+              value: "LOCALHOST"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami
+      volumes:
+        - name: kafka-data
+          emptyDir: { }
 ```
+
+[kafka-service.yml](/kube/kafka-service.yml)
 
 ```yaml
 #kafka-service.yml
@@ -237,9 +289,15 @@ spec:
   selector:
     app: kafka
   ports:
-    - port: 9092
+    - name: localhost
+      port: 9092
       targetPort: 9092
+    - name: container
+      port: 9093
+      targetPort: 9093
 ```
+
+[kafdrop-deployment.yml](/kube/kafdrop-deployment.yml)
 
 ```yaml
 #kafdrop-deployment.yml
@@ -264,11 +322,12 @@ spec:
             - containerPort: 9000
           env:
             - name: KAFKA_BROKERCONNECT
-              value: kafka-service:9092
+              value: "kafka-service:9093"
             - name: JVM_OPTS
-              value: "-Xms32M -Xmx128M"
-
+              value: "-Xms32M -Xmx64M"
 ```
+
+[kafdrop-service.yml](/kube/kafdrop-service.yml)
 
 ```yaml
 #kafdrop-service.yml
@@ -284,49 +343,26 @@ spec:
       targetPort: 9000
 ```
 
-### Apply Configuration Files
+### Apply Kube Files
 
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-# ======================================================================================================================
-# Zookeeper
-# ======================================================================================================================
 kubectl apply -f ./kube/zookeeper-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment zookeeper -n default
-
 kubectl apply -f ./kube/zookeeper-service.yml
-# kubectl get service -n default
-# kubectl describe service zookeeper-service -n default
-
-# ======================================================================================================================
-# Kafka
-# ======================================================================================================================
 kubectl apply -f ./kube/kafka-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment kafka -n default
-
 kubectl apply -f ./kube/kafka-service.yml
-# kubectl get service -n default
-# kubectl describe service kafka-service -n default
-
-# ======================================================================================================================
-# Kafdrop
-# ======================================================================================================================
 kubectl apply -f ./kube/kafdrop-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment kafdrop -n default
-
 kubectl apply -f ./kube/kafdrop-service.yml
-# kubectl get service -n default
-# kubectl describe service kafdrop -n default
+```
 
-# ======================================================================================================================
-# After Install
-# ======================================================================================================================
+### Check Status
+
+```shell
 kubectl get all
 ```
+
+### Port Forwarding
 
 <p align="justify">
 
@@ -336,8 +372,6 @@ is available on [http://localhost:9000](http://localhost:9000) URL.
 </p>
 
 ```shell
-# kafdrop
-# http://localhost:9000
 kubectl port-forward service/kafdrop-service 9000:9000
 ```
 
@@ -394,7 +428,7 @@ spring:
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
 ```
 
-### Java Config for Test
+### Java Config
 
 ```java
 
@@ -407,33 +441,48 @@ class TestClass {
 }
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-* [Kubernetes](https://kubernetes.io/)
+### Makefile
 
-## Pipeline
+```makefile
+build:
+	mvn clean package -DskipTests=true
 
-### Build
+test:
+	mvn test
 
-```bash
-mvn clean package -DskipTests=true 
-```
+run:
+	mvn spring-boot:run
 
-### Test
+docker-compose-deploy:
+	docker compose --file docker-compose.yml --project-name kafka up --build -d
 
-```bash
-mvn test
-```
+docker-remove-container:
+	docker rm zookeeper --force
+	docker rm kafka --force
+	docker rm kafdrop --force
 
-### Run
+docker-remove-image:
+	docker image rm docker.io/bitnami/zookeeper
+	docker image rm docker.io/bitnami/kafka
+	docker image rm obsidiandynamics/kafdrop:latest
 
-```bash
-mvn  spring-boot:run
+kube-deploy:
+	kubectl apply -f ./kube/zookeeper-deployment.yml
+	kubectl apply -f ./kube/zookeeper-service.yml
+	kubectl apply -f ./kube/kafka-deployment.yml
+	kubectl apply -f ./kube/kafka-service.yml
+	kubectl apply -f ./kube/kafdrop-deployment.yml
+	kubectl apply -f ./kube/kafdrop-service.yml
+
+kube-delete:
+	kubectl delete all --all
+
+kube-port-forward-kafkadrop:
+	kubectl port-forward service/kafdrop-service 9000:9000
 ```
 
 ##
 
-**<p align="center"> [Top](#spring-boot-and-kafka-tutorial) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**

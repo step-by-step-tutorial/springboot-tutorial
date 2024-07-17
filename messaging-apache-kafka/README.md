@@ -1,4 +1,4 @@
-# <p align="center">Integration of Spring Boot And Apache Kafka</p>
+# <p align="center">Integration of Spring Boot And Apache Kafka Messaging</p>
 
 <p align="justify">
 This tutorial shows how to integrate Apache Kafka in Spring Boot application.
@@ -147,8 +147,6 @@ Create the following files for installing Apache Kafka.
 
 ### Kube Files
 
-### Zookeeper
-
 [zookeeper-deployment.yml](/kube/zookeeper-deployment.yml)
 
 ```yaml
@@ -169,14 +167,18 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: confluentinc/cp-zookeeper:latest
+          image: docker.io/bitnami/zookeeper
           ports:
             - containerPort: 2181
           env:
-            - name: ZOOKEEPER_CLIENT_PORT
-              value: "2181"
-            - name: ZOOKEEPER_TICK_TIME
-              value: "2000"
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
+          volumeMounts:
+            - name: zookeeper-data
+              mountPath: /bitnami
+      volumes:
+        - name: zookeeper-data
+          emptyDir: { }
 ```
 
 [zookeeper-service.yml](/kube/zookeeper-service.yml)
@@ -194,8 +196,6 @@ spec:
     - port: 2181
       targetPort: 2181
 ```
-
-### Kafka
 
 [kafka-deployment.yml](/kube/kafka-deployment.yml)
 
@@ -217,24 +217,31 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: confluentinc/cp-kafka:latest
+          image: docker.io/bitnami/kafka
           ports:
             - containerPort: 9092
+            - containerPort: 9093
           env:
-            - name: KAFKA_BROKER_ID
+            - name: KAFKA_CFG_BROKER_ID
               value: "1"
-            - name: KAFKA_ZOOKEEPER_CONNECT
-              value: 'zookeeper-service:2181'
-            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-              value: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-            - name: KAFKA_ADVERTISED_LISTENERS
-              value: PLAINTEXT://:29092,PLAINTEXT_INTERNAL://kafka-service:9092
-            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
-              value: "1"
-            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
-              value: "1"
-            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
-              value: "1"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "zookeeper-service:2181"
+            - name: KAFKA_CFG_LISTENERS
+              value: "LOCALHOST://:9092,CONTAINER://:9093"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "LOCALHOST://localhost:9092,CONTAINER://kafka-service:9093"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT"
+            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+              value: "LOCALHOST"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /bitnami
+      volumes:
+        - name: kafka-data
+          emptyDir: { }
 ```
 
 [kafka-service.yml](/kube/kafka-service.yml)
@@ -249,11 +256,13 @@ spec:
   selector:
     app: kafka
   ports:
-    - port: 9092
+    - name: localhost
+      port: 9092
       targetPort: 9092
+    - name: container
+      port: 9093
+      targetPort: 9093
 ```
-
-### Kafdrop
 
 [kafdrop-deployment.yml](/kube/kafdrop-deployment.yml)
 
@@ -280,10 +289,9 @@ spec:
             - containerPort: 9000
           env:
             - name: KAFKA_BROKERCONNECT
-              value: kafka-service:9092
+              value: "kafka-service:9093"
             - name: JVM_OPTS
-              value: "-Xms32M -Xmx128M"
-
+              value: "-Xms32M -Xmx64M"
 ```
 
 [kafdrop-service.yml](/kube/kafdrop-service.yml)
@@ -405,10 +413,16 @@ class TestClass {
 ### Makefile
 
 ```makefile
-docker-deploy:
-	docker compose --file docker-compose.yml --project-name kafka up -d
+build:
+	mvn clean package -DskipTests=true
 
-docker-rebuild-deploy:
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
+docker-compose-deploy:
 	docker compose --file docker-compose.yml --project-name kafka up --build -d
 
 docker-remove-container:

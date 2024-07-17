@@ -135,7 +135,6 @@ Open https://localhost:5500/em in web browser.
 * password: password
 * container name: xepdb1
 
-
 ### Sqlplus
 
 ```shell
@@ -539,10 +538,7 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-deploy:
-	docker compose --file docker-compose.yml --project-name oracle up -d
-
-docker-rebuild-deploy:
+docker-compose-deploy:
 	docker compose --file docker-compose.yml --project-name oracle up --build -d
 
 docker-remove-container:

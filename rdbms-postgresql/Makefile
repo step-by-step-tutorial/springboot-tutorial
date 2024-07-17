@@ -7,10 +7,7 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-deploy:
-	docker compose --file docker-compose.yml --project-name postgres up -d
-
-docker-rebuild-deploy:
+docker-compose-deploy:
 	docker compose --file docker-compose.yml --project-name postgres up --build -d
 
 docker-remove-container:

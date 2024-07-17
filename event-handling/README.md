@@ -52,6 +52,7 @@ mvn spring-boot:run
 Add the following dependencies to the POM file of Maven project.
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>

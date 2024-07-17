@@ -29,4 +29,4 @@ spec:
               value: "Etc/UTC"
           securityContext:
             capabilities:
-              add: ["IPC_LOCK"]
+              add: [ "IPC_LOCK" ]

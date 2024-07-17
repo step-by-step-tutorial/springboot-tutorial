@@ -23,7 +23,7 @@ services:
       - "8080:8080"
     volumes:
       - "ords_config:/etc/ords/config"
-    entrypoint: ["ords", "serve"]
+    entrypoint: [ "ords", "serve" ]
 
 volumes:
   ords_config:

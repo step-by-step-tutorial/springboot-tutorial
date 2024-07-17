@@ -3,7 +3,6 @@ package com.tutorial.springboot.rdbms_oracle;
 import com.tutorial.springboot.rdbms_oracle.entity.SampleEntity;
 import com.tutorial.springboot.rdbms_oracle.repository.SampleRepository;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

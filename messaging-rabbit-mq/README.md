@@ -319,10 +319,16 @@ class TestClass {
 ### Makefile
 
 ```makefile
-docker-deploy:
-	docker compose --file docker-compose.yml --project-name rabbitmq up -d
+build:
+	mvn clean package -DskipTests=true
 
-docker-rebuild-deploy:
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
+docker-compose-deploy:
 	docker compose --file docker-compose.yml --project-name rabbitmq up --build -d
 
 docker-remove-container:

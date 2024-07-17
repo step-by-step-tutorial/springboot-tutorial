@@ -13,18 +13,18 @@ spec:
         app: oracle
     spec:
       containers:
-      - name: oracle
-        image: container-registry.oracle.com/database/express:21.3.0-xe
-        ports:
-        - containerPort: 1521
-        - containerPort: 5500
-        env:
-        - name: ORACLE_PWD
-          value: password
-        volumeMounts:
-        - mountPath: /opt/oracle/oradata
-          name: oracle-data
+        - name: oracle
+          image: container-registry.oracle.com/database/express:21.3.0-xe
+          ports:
+            - containerPort: 1521
+            - containerPort: 5500
+          env:
+            - name: ORACLE_PWD
+              value: password
+          volumeMounts:
+            - mountPath: /opt/oracle/oradata
+              name: oracle-data
       volumes:
-      - name: oracle-data
-        persistentVolumeClaim:
-          claimName: ords-config-pvc
+        - name: oracle-data
+          persistentVolumeClaim:
+            claimName: ords-config-pvc

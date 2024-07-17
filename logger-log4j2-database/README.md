@@ -289,10 +289,16 @@ Create `log4j2.xml` in the resources with proper configuration for the database.
 ### Makefile
 
 ```makefile
-docker-deploy:
-	docker compose --file ./docker-compose.yml --project-name mysql up -d
+build:
+	mvn clean package -DskipTests=true
 
-docker-rebuild-deploy:
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
+docker-compose-deploy:
 	docker compose --file ./docker-compose.yml --project-name mysql up --build -d
 
 docker-remove-container:

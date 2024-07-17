@@ -144,7 +144,7 @@ public ResponseEntity<String> options() {
 
 ### Dependencies
 
-#### Main Dependencies
+#### Dependencies
 
 ```xml
 
@@ -201,7 +201,7 @@ In order to support JSON, the following dependencies must be added.
 </dependencies>
 ```
 
-### Spring Boot Properties
+### Application Properties
 
 ```yaml
 server:

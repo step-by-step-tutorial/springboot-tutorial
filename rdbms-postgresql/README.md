@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is included [PostgreSQL database](https://www.postgresql.org/) configuration for test and none test
+This tutorial is included [PostgreSQL](https://www.postgresql.org/) configuration for test and none test
 environment.
 
 </p>
@@ -23,6 +23,7 @@ environment.
 
 * [Java 21](https://www.oracle.com/java/technologies/downloads/)
 * [Maven 3](https://maven.apache.org/index.html)
+* [PostgreSQL](https://www.postgresql.org/)
 * [Docker](https://www.docker.com/)
 * [Kubernetes](https://kubernetes.io/)
 
@@ -50,7 +51,7 @@ mvn  spring-boot:run
 
 <p align="justify">
 
-For more information about PostgreSQL see the []().
+For more information about PostgreSQL see the [PostgreSQL database](https://www.postgresql.org/).
 
 </p>
 
@@ -614,10 +615,7 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-deploy:
-	docker compose --file docker-compose.yml --project-name postgres up -d
-
-docker-rebuild-deploy:
+docker-compose-deploy:
 	docker compose --file docker-compose.yml --project-name postgres up --build -d
 
 docker-remove-container:

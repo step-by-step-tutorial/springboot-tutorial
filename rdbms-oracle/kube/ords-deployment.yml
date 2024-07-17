@@ -13,15 +13,15 @@ spec:
         app: ords
     spec:
       containers:
-      - name: ords
-        image: container-registry.oracle.com/database/ords:latest
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-        - mountPath: /etc/ords/config
-          name: ords-config
-        command: ["ords", "serve"]
+        - name: ords
+          image: container-registry.oracle.com/database/ords:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /etc/ords/config
+              name: ords-config
+          command: [ "ords", "serve" ]
       volumes:
-      - name: ords-config
-        persistentVolumeClaim:
-          claimName: ords-config-pvc
+        - name: ords-config
+          persistentVolumeClaim:
+            claimName: ords-config-pvc
