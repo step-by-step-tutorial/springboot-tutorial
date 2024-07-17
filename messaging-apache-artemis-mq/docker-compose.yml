@@ -7,7 +7,7 @@ services:
     hostname: artemis
     restart: always
     ports:
-      - "61616:61616"
+      - "6161:61616"
       - "8161:8161"
     volumes:
       - "./target/broker:/opt/broker"

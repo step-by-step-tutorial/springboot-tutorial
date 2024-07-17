@@ -7,8 +7,8 @@ spec:
     app: artemis
   ports:
     - name: queue-port
-      port: 61616
-      targetPort: 61616
+      port: 6161
+      targetPort: 6161
     - name: management-ui-port
       port: 8161
       targetPort: 8161

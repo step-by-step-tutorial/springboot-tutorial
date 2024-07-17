@@ -1,74 +1,41 @@
-REM check if docker is set up
-docker --version
-docker-compose --version
-docker-machine --version
-REM ====================================================================================================================
+@REM remove containers
+docker rm -f ^
+mysql ^
+mysql-workbench ^
+postgresql ^
+pgadmin ^
+oracle ^
+ords ^
+adminer ^
+phpmyadmin ^
+redis ^
+redisinsight ^
+commander ^
+mongo ^
+mongo-express ^
+rabbitmq ^
+artemis ^
+zookeeper ^
+kafka ^
+kafdrop
 
-REM mysql ==============================================================================================================
-docker rm mysql --force
-docker image rm mysql:8.0
-REM ====================================================================================================================
-
-REM adminer ============================================================================================================
-docker rm adminer --force
-docker image rm adminer
-REM ====================================================================================================================
-
-REM postgresql =========================================================================================================
-docker rm postgresql --force
-docker image rm postgres:13.9-alpine
-REM ====================================================================================================================
-
-REM pgadmin ============================================================================================================
-docker rm pgadmin --force
-docker image rm dpage/pgadmin4
-REM ====================================================================================================================
-
-REM oracle db ==========================================================================================================
-docker rm oracle --force
-docker image rm container-registry.oracle.com/database/express:21.3.0-xe
-REM ====================================================================================================================
-
-REM redis ==============================================================================================================
-docker rm redis --force
-docker image rm redis:latest
-REM ====================================================================================================================
-
-REM redis ==============================================================================================================
-docker rm redisinsight --force
-docker image rm redislabs/redisinsight:latest
-REM ====================================================================================================================
-
-REM mongo ==============================================================================================================
-docker rm mongo --force
-docker image rm mongo
-
-REM ====================================================================================================================
-
-REM mongo-express ======================================================================================================
-docker rm mongo-express --force
-docker image rm mongo-express
-REM ====================================================================================================================
-
-REM apache activemq artemis ============================================================================================
-docker rm artemis --force
-docker image rm apache/activemq-artemis:latest
-REM ====================================================================================================================
-
-REM rabbitmq ===========================================================================================================
-docker rm rabbitmq --force
-docker image rm rabbitmq:management
-REM ====================================================================================================================
-
-REM kafka ==============================================================================================================
-docker rm kafka --force
-docker rm zookeeper --force
-docker image rm confluentinc/cp-zookeeper:latest
-docker image rm confluentinc/cp-kafka:latest
-REM ====================================================================================================================
-
-REM kafdrop ============================================================================================================
-docker rm kafdrop --force
-docker image rm obsidiandynamics/kafdrop:latest
-REM ====================================================================================================================
-
+@REM remove images
+docker rmi ^
+mysql:8.0 ^
+lscr.io/linuxserver/mysql-workbench:latest ^
+postgres:13.9-alpine ^
+dpage/pgadmin4 ^
+container-registry.oracle.com/database/express:21.3.0-xe ^
+container-registry.oracle.com/database/ords:latest ^
+adminer ^
+phpmyadmin ^
+redis:latest ^
+redislabs/redisinsight:latest ^
+rediscommander/redis-commander:latest ^
+mongo ^
+mongo-express ^
+rabbitmq:management ^
+apache/activemq-artemis:latest ^
+docker.io/bitnami/zookeeper ^
+docker.io/bitnami/kafka ^
+obsidiandynamics/kafdrop:latest

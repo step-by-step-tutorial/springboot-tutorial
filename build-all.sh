@@ -17,3 +17,4 @@ mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
 mvn -f messaging-apache-kafka/pom.xml clean package
 mvn -f restful-web-api/pom.xml clean package
+mvn -f streaming-apache-kafka/pom.xml clean package

@@ -17,3 +17,4 @@ call mvn -f messaging-apache-artemis-mq/pom.xml clean
 call mvn -f messaging-rabbit-mq/pom.xml clean
 call mvn -f messaging-apache-kafka/pom.xml clean
 call mvn -f restful-web-api/pom.xml clean
+call mvn -f streaming-apache-kafka/pom.xml clean

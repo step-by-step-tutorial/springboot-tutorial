@@ -3,7 +3,7 @@ spring:
     mode: native
     user: ${ACTIVE_MQ_USER:artemis}
     password: ${ACTIVE_MQ_PASS:artemis}
-    broker-url: ${ACTIVE_MQ_HOST:localhost}:${ACTIVE_MQ_PORT:61616}
+    broker-url: ${ACTIVE_MQ_HOST:localhost}:${ACTIVE_MQ_PORT:6161}
   jms:
     pub-sub-domain: true
 
@@ -23,7 +23,7 @@ spring:
       enabled: true
     # localhost:61616
     # vm://embeddedartemis
-    broker-url: localhost:61616
+    broker-url: localhost:6161
 
 ---
 spring:

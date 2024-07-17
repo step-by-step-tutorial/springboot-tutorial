@@ -88,7 +88,7 @@ services:
     hostname: artemis
     restart: always
     ports:
-      - "61616:61616"
+      - "6161:61616"
       - "8161:8161"
     volumes:
       - "./target/broker:/opt/broker"
@@ -138,7 +138,7 @@ spec:
         - name: artemis
           image: apache/activemq-artemis:latest
           ports:
-            - containerPort: 61616
+            - containerPort: 6161
             - containerPort: 8161
 ```
 
@@ -155,8 +155,8 @@ spec:
     app: artemis
   ports:
     - name: queue-port
-      port: 61616
-      targetPort: 61616
+      port: 6161
+      targetPort: 6161
     - name: management-ui-port
       port: 8161
       targetPort: 8161
@@ -210,7 +210,7 @@ spring:
     mode: native
     user: ${ACTIVE_MQ_USER:artemis}
     password: ${ACTIVE_MQ_PASS:artemis}
-    broker-url: ${ACTIVE_MQ_HOST:localhost}:${ACTIVE_MQ_PORT:61616}
+    broker-url: ${ACTIVE_MQ_HOST:localhost}:${ACTIVE_MQ_PORT:6161}
   jms:
     pub-sub-domain: true
 
@@ -255,7 +255,7 @@ spring:
     mode: embedded
     embedded:
       enabled: true
-    broker-url: localhost:61616
+    broker-url: localhost:6161
 ```
 
 ### Java Config
