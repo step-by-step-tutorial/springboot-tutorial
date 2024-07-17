@@ -1,4 +1,4 @@
-# <p align="center">RDBMS PostgreSQL</p>
+# <p align="center">Integration of Spring Boot And PostgreSQL</p>
 
 <p align="justify">
 
@@ -7,13 +7,62 @@ environment.
 
 </p>
 
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [PostgreSQL](#postgresql)
+* [Install PostgreSQL on Docker](#install-postgresql-on-docker)
+* [Install PostgreSQL on Kubernetes](#install-postgresql-on-kubernetes)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
+* [Appendix](#appendix )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+
+### Pipeline
+
+#### Build
+
+```bash
+mvn clean package -DskipTests=true 
+```
+
+#### Test
+
+```bash
+mvn test
+```
+
+#### Run
+
+```bash
+mvn  spring-boot:run
+```
+
+## PostgreSQL
+
+<p align="justify">
+
+For more information about PostgreSQL see the []().
+
+</p>
+
 ### URL
+
+The URL follows the syntax that mentioned below.
 
 ```yaml
 url: jdbc:postgresql://host:port/database-name
 ```
 
-### How To
+### Service Commands
 
 ```shell
 # try to connect
@@ -43,11 +92,16 @@ sudo -u test_user psql -d test_db -f test_db_schema.sql
 
 ## Install PostgreSQL on Docker
 
+Create a file named `docker-compose.yml` with the following configuration.
+
 ### Docker Compose File
 
-Create a file named docker-compose.yml with the following configuration.
+#### With Pgadmin
+
+[docker-compose.yml](docker-compose.yml)
 
 ```yaml
+#docker-compose.yml
 version: "3.8"
 
 services:
@@ -71,7 +125,7 @@ services:
     hostname: pgadmin
     restart: always
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: "password"
@@ -80,13 +134,51 @@ services:
       - "./target/pgadmin:/var/lib/pgadmin"
 ```
 
-Execute the `docker compose  up -d` command to install PostgreSQL and pgadmin.
+#### With Adminer
+
+[docker-compose.yml](docker-compose.yml)
+
+```yaml
+#docker-compose.yml
+version: "3.8"
+
+services:
+  postgresql:
+    image: postgres:13.9-alpine
+    container_name: postgresql
+    hostname: postgresql
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test_db
+      PGDATA: /data/postgres
+    volumes:
+      - "./target/postgresql:/data/postgres"
+  adminer:
+    image: adminer
+    container_name: adminer
+    hostname: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+```
+
+### Apply Docker Compose File
+
+Execute the following command to install PostgreSQL.
+
+```shell
+docker compose --file ./docker-compose.yml --project-name postgresql up --build -d
+```
 
 ### PGADMIN
 
 <p align="justify">
 
-In order to connect to PostgreSQL via Pgadmin open [http://localhost:8080](http://localhost:8080/) through web browser
+In order to connect to PostgreSQL via Pgadmin open [http://localhost:8081](http://localhost:8081/) through web browser
 and use the following properties in the add-server popup.
 
 </p>
@@ -99,18 +191,6 @@ Password: password
 ```
 
 ### Adminer
-
-Also, there is another alternative for Pgadmin for developing SQL named Adminer.
-
-```yaml
-adminer:
-  image: adminer
-  container_name: adminer
-  hostname: adminer
-  restart: always
-  ports:
-    - "8080:8080"
-```
 
 <p align="justify">
 
@@ -133,9 +213,10 @@ database: test_db
 
 Create the following file for installing PostgreSQL.
 
-**postgres-secrets.yml**
+[postgres-secrets.yml](/kube/postgres-secrets.yml)
 
 ```yaml
+#postgres-secrets.yml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -148,20 +229,22 @@ data:
   postgres-password: cGFzc3dvcmQ=
 ```
 
-**postgres-configmap.yml**
+[postgres-configmap.yml](/kube/postgres-configmap.yml)
 
 ```yaml
+#postgres-configmap.yml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: postgres-configmap
 data:
-  postgres-database: test_db
+  postgres-database: "test_db"
 ```
 
-**postgres-pvc.yml**
+[postgres-pvc.yml](/kube/postgres-pvc.yml)
 
 ```yaml
+#postgres-pvc.yml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -177,9 +260,10 @@ spec:
       storage: 1Gi
 ```
 
-**postgres-deployment.yml**
+[postgres-deployment.yml](/kube/postgres-deployment.yml)
 
 ```yaml
+#postgres-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -235,9 +319,10 @@ spec:
             claimName: postgres-pvc
 ```
 
-**postgres-service.yml**
+[postgres-service.yml](/kube/postgres-service.yml)
 
 ```yaml
+#postgres-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -255,11 +340,10 @@ spec:
       targetPort: 5432
 ```
 
-### PGADMIN
-
-**pgadmin-secrets.yml**
+[pgadmin-secrets.yml](/kube/pgadmin-secrets.yml)
 
 ```yaml
+#pgadmin-secrets.yml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -270,9 +354,10 @@ data:
   pgadmin_default_password: cGFzc3dvcmQ=
 ```
 
-**pgadmin-deployment.yml**
+[pgadmin-deployment.yml](/kube/pgadmin-deployment.yml)
 
 ```yaml
+#pgadmin-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -306,9 +391,10 @@ spec:
               value: "False"
 ```
 
-**pgadmin-service.yml**
+[pgadmin-service.yml](/kube/pgadmin-service.yml)
 
 ```yaml
+#pgadmin-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -321,90 +407,10 @@ spec:
       targetPort: 80
 ```
 
-### Apply the Files
-
-Execute the following commands to install tools on Kubernetes.
-
-```shell
-# ======================================================================================================================
-# PostgreSQL
-# ======================================================================================================================
-kubectl apply -f ./kube/postgres-pvc.yml
-# kubectl get pvc 
-# kubectl describe pvc postgres-pvc
-
-kubectl apply -f ./kube/postgres-configmap.yml
-# kubectl describe configmap postgres-configmap -n default
-
-kubectl apply -f ./kube/postgres-secrets.yml
-# kubectl describe secret postgres-secrets -n default
-# kubectl get secret postgres-secrets -n default -o yaml
-
-kubectl apply -f ./kube/postgres-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment postgres -n default
-
-kubectl apply -f ./kube/postgres-service.yml
-# kubectl get service -n default
-# kubectl describe service postgres -n default
-
-# ======================================================================================================================
-# Pgadmin
-# ======================================================================================================================
-
-kubectl apply -f ./kube/pgadmin-secrets.yml
-# kubectl describe secret pgadmin-secrets -n default
-# kubectl get secret pgadmin-secrets -n default -o yaml
-
-kubectl apply -f ./kube/pgadmin-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment pgadmin -n default
-
-kubectl apply -f ./kube/pgadmin-service.yml
-# kubectl get services -n default
-# kubectl describe service pgadmin -n default
-
-# ======================================================================================================================
-# After Install
-# ======================================================================================================================
-
-kubectl get all
-```
-
-For connecting to PostgreSQL through application in localhost.
-
-```shell
-# postgres
-kubectl port-forward service/postgres 5432:5432
-```
-
-<p align="justify">
-
-To access to Pgadmin from localhost through the web browser use the following command and dashboard of Pgadmin is
-available with [http://localhost:8080](http://localhost:8080) URL.
-
-</p>
-
-```shell
-# pgadmin
-# http://localhost:8080
-kubectl port-forward service/pgadmin 8080:80
-```
-
-Use the following properties in the add-server popup.
+[adminer-deployment.yml](/kube/adminer-deployment.yml)
 
 ```yaml
-hostname: postgresql
-port: 5432
-Username: user
-Password: password
-```
-
-### Adminer
-
-**adminer-deployment.yml**
-
-```yaml
+#adminer-deployment.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -426,9 +432,10 @@ spec:
             - containerPort: 8080
 ```
 
-**adminer-service.yml**
+[adminer-service.yml](/kube/adminer-service.yml)
 
 ```yaml
+#adminer-service.yml
 apiVersion: v1
 kind: Service
 metadata:
@@ -442,21 +449,47 @@ spec:
       targetPort: 8080
 ```
 
-Execute the following commands to install tools on Kubernetes.
+### Apply Kube Files
+
+Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-# ======================================================================================================================
-# Adminer
-# ======================================================================================================================
+kubectl apply -f ./kube/postgres-pvc.yml
+kubectl apply -f ./kube/postgres-configmap.yml
+kubectl apply -f ./kube/postgres-secrets.yml
+kubectl apply -f ./kube/postgres-deployment.yml
+kubectl apply -f ./kube/postgres-service.yml
+kubectl apply -f ./kube/pgadmin-secrets.yml
+kubectl apply -f ./kube/pgadmin-deployment.yml
+kubectl apply -f ./kube/pgadmin-service.yml
 kubectl apply -f ./kube/adminer-deployment.yml
-# kubectl get deployments -n default
-# kubectl describe deployment adminer -n default
-
 kubectl apply -f ./kube/adminer-service.yml
-# kubectl get services -n default
-# kubectl describe service adminer -n default
+```
 
+### Check Status
+
+```shell
 kubectl get all
+```
+
+For connecting to PostgreSQL through application in localhost.
+
+```shell
+# postgres
+kubectl port-forward service/postgres 5432:5432
+```
+
+### Port Forwarding
+
+<p align="justify">
+
+To access to Pgadmin from localhost through the web browser use the following command and dashboard of Pgadmin is
+available with [http://localhost:8081](http://localhost:8081) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/pgadmin 8081:80
 ```
 
 <p align="justify">
@@ -467,23 +500,11 @@ available with [http://localhost:8080](http://localhost:8080) URL.
 </p>
 
 ```shell
-# adminer
-# http://localhost:8080
 kubectl port-forward service/adminer 8080:8080
 
 ```
 
-Use the following properties for Adminer.
-
-```yaml
-system: PostgreSQL
-server: postgres:5432
-username: user
-password: password
-database: test_db
-```
-
-## How To Config Spring Boot
+## How To Set up Spring Boot
 
 ### Dependencies
 
@@ -501,7 +522,40 @@ database: test_db
 </dependencies>
 ```
 
-### Test Dependency
+### Application Properties
+
+```yaml
+spring:
+  datasource:
+    username: ${DATABASE_NAME:user}
+    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:test_db}
+    driver-class-name: org.postgresql.Driver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: true
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ${DATABASE_SCHEMA:sample}
+```
+
+## How To Set up Spring Boot Test
+
+### Dependency
 
 ```xml
 
@@ -532,35 +586,9 @@ database: test_db
 </project>
 ```
 
-### Spring Boot Properties
+### Application Properties
 
 ```yaml
-spring:
-  datasource:
-    username: ${DATABASE_NAME:user}
-    password: ${DATABASE_PASSWORD:password}
-    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:test_db}
-    driver-class-name: org.postgresql.Driver
-  data:
-    jpa:
-      repositories:
-        enabled: true
-  jpa:
-    database: POSTGRESQL
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      javax:
-        persistence:
-          create-database-schemas: true
-      hibernate:
-        generate_statistics: true
-        format_sql: true
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        default_schema: ${DATABASE_SCHEMA:sample}
 ---
 spring:
   config:
@@ -572,30 +600,66 @@ spring:
         ddl-auto: create
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
+### Makefile
 
-## Build
+```makefile
+build:
+	mvn clean package -DskipTests=true
 
-```bash
-mvn clean package -DskipTests=true
-```
+test:
+	mvn test
 
-## Test
+run:
+	mvn spring-boot:run
 
-```bash
-mvn  test
-```
+docker-deploy:
+	docker compose --file docker-compose.yml --project-name postgres up -d
 
-## Run
+docker-rebuild-deploy:
+	docker compose --file docker-compose.yml --project-name postgres up --build -d
 
-```bash
-mvn  spring-boot:run
+docker-remove-container:
+	docker rm postgres --force
+	docker rm pgadmin --force
+	docker rm adminer --force
+
+docker-remove-image:
+	docker image rm postgres:13.9-alpine
+	docker image rm dpage/pgadmin4
+	docker image rm adminer
+
+kube-deploy:
+	kubectl apply -f ./kube/postgres-pvc.yml
+	kubectl apply -f ./kube/postgres-configmap.yml
+	kubectl apply -f ./kube/postgres-secrets.yml
+	kubectl apply -f ./kube/postgres-deployment.yml
+	kubectl apply -f ./kube/postgres-service.yml
+	kubectl apply -f ./kube/pgadmin-secrets.yml
+	kubectl apply -f ./kube/pgadmin-deployment.yml
+	kubectl apply -f ./kube/pgadmin-service.yml
+	kubectl apply -f ./kube/adminer-deployment.yml
+	kubectl apply -f ./kube/adminer-service.yml
+
+kube-delete:
+	kubectl delete all --all
+	kubectl delete secrets postgres-secrets
+	kubectl delete configMap postgres-configmap
+	kubectl delete persistentvolumeclaim postgres-pvc
+	kubectl delete secrets pgadmin-secrets
+	kubectl delete ingress pgadmin
+
+kube-port-forward-postgres:
+	kubectl port-forward service/postgres 5432:5432
+
+kube-port-forward-pgadmin:
+	kubectl port-forward service/pgadmin 8080:80
+
+kube-port-forward-adminer:
+	kubectl port-forward service/adminer 8080:8080
 ```
 
 ##
 
-**<p align="center"> [Top](#rdbms-postgresql) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-postgresql) </p>**

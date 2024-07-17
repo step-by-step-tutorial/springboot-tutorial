@@ -21,10 +21,17 @@ services:
     hostname: pgadmin
     restart: always
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
       - "./target/pgadmin:/var/lib/pgadmin"
+  adminer:
+    image: adminer
+    container_name: adminer
+    hostname: adminer
+    restart: always
+    ports:
+      - "8080:8080"

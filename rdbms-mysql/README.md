@@ -54,8 +54,8 @@ mvn  spring-boot:run
 
 The URL follows the syntax that mentioned below.
 
-```text
-jdbc:mysql://host:port/database-name
+```yaml
+url: jdbc:mysql://host:port/database-name
 ```
 
 There are a few parameters included in the connection string of MySQL as follows.
@@ -113,9 +113,6 @@ GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user'@'%';
 GRANT XA_RECOVER_ADMIN ON *.* TO 'user'@'%';
 GRANT ALL ON `test_db`.* TO 'user'@'%';
 FLUSH PRIVILEGES;
-
-# exit
-EXIT;
 ```
 
 <p align="justify">

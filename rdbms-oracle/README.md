@@ -61,6 +61,20 @@ For more information about Oracle see the [Oracle](https://www.oracle.com).
 url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
 ```
 
+### Sqlplus Command
+
+```oraclesqlplus
+-- execute sql file
+@/tmp/ords_installer_privileges.sql testuser;
+```
+
+### SQL Command
+
+```oracle
+CREATE USER testuser IDENTIFIED BY password;
+GRANT DBA TO testuser;
+```
+
 ## Install Oracle on Docker
 
 Create a file named `docker-compose.yml` with the following configuration.
@@ -121,6 +135,16 @@ Open https://localhost:5500/em in web browser.
 * password: password
 * container name: xepdb1
 
+
+### Sqlplus
+
+```shell
+sqlplus username/password@//hostname:port/servicename
+
+# Example
+sqlplus sys/password@//localhost:1521/xepdb1
+```
+
 ### ORDS (Sql Developer Web)
 
 Open [http://localhost:8080/ords](http://localhost:8080/ords/sql-developer) but, you cannot log in to SQL Developer
@@ -139,7 +163,7 @@ docker exec -it oracle sqlplus sys/password@//localhost:1521/xepdb1 as sysdba
 
 You have to enable the ORDS schema for the target user.
 
-```oracle-sql
+```oraclesqlplus
 CREATE USER testuser IDENTIFIED BY password;
 GRANT DBA TO testuser;
 @/tmp/ords_installer_privileges.sql testuser;
