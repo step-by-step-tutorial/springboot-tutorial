@@ -130,7 +130,7 @@ For more information about MySQL see the [MySQL](https://www.mysql.com).
 
 Create a file named `docker-compose.yml` with the following configuration.
 
-### Docker Compose File
+### Docker Compose
 
 #### With MySQL Workbench
 
@@ -242,7 +242,7 @@ services:
       - PMA_ARBITRARY=1
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install MySQL.
 

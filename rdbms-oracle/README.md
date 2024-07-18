@@ -79,7 +79,7 @@ GRANT DBA TO testuser;
 
 Create a file named `docker-compose.yml` with the following configuration.
 
-### Docker Compose File
+### Docker Compose
 
 [docker-compose.yml](docker-compose.yml)
 
@@ -119,7 +119,7 @@ volumes:
     driver: local
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install Oracle.
 

@@ -71,7 +71,7 @@ the [https://activemq.apache.org/components/artemis](https://activemq.apache.org
 
 ## Install Active MQ Artemis on Docker
 
-### Docker Compose File
+### Docker Compose
 
 Create a file named `docker-compose.yml` with the following configuration.
 
@@ -95,7 +95,7 @@ services:
       - "./target/broker:/opt/artemis"
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install Apache Active MQ Artemis.
 

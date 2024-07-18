@@ -95,7 +95,7 @@ sudo -u test_user psql -d test_db -f test_db_schema.sql
 
 Create a file named `docker-compose.yml` with the following configuration.
 
-### Docker Compose File
+### Docker Compose
 
 #### With Pgadmin
 
@@ -167,7 +167,7 @@ services:
       - "8080:8080"
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install PostgreSQL.
 

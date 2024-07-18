@@ -131,7 +131,7 @@ security:
 
 Create a file named `docker-compose.yml` with the following configuration.
 
-### Docker Compose File
+### Docker Compose
 
 [docker-compose.yml](docker-compose.yml)
 
@@ -167,7 +167,7 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install MongoDB.
 

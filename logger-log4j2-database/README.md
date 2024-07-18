@@ -57,7 +57,7 @@ them, [MySQL workbench](https://www.mysql.com/products/workbench) or [Adminer](h
 MySQL via docker compose script mentioned below then database will be initialized and configured and, you don't need to
 initialize it manually.
 
-### Docker Compose File
+### Docker Compose
 
 There are two options in order to connect to MySQL to management, MySQL Workbench, Adminer.
 
@@ -136,7 +136,7 @@ services:
       - "8080:8080"
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install MySQL.
 

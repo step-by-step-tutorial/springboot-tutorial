@@ -66,7 +66,7 @@ RabbitMq is a message queue for more information see the [https://www.rabbitmq.c
 
 Create a file named `docker-compose.yml` with the following configuration.
 
-### Docker Compose File
+### Docker Compose
 
 [docker-compose.yml](docker-compose.yml)
 
@@ -84,7 +84,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install RabbitMQ.
 

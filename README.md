@@ -9,14 +9,7 @@ This tutorial provides many best practises and examples include documentation.
 
 * [Spring Boot Generator](https://start.spring.io)
 
-## Prerequisites
-
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com)
-* [Kubernetes](https://kubernetes.io)
-
-## Steps
+## <p align="center"> Table of Content </p>
 
 * [step: hello-world](hello-world)
 * [step: profile](profile)
@@ -63,9 +56,60 @@ This tutorial provides many best practises and examples include documentation.
 * step: oauth-client-credentials
 * step: oauth-Implicit
 
-## Pipeline
+## Getting Started
 
-### Build and Test
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
+
+### Pipeline
+
+#### Clean Repository
+
+[clean-all.sh](clean-all.sh)
+
+```shell
+mvn -f hello-world/pom.xml clean
+mvn -f profile/pom.xml clean
+mvn -f properties/pom.xml clean
+mvn -f logger-log4j2-console/pom.xml clean
+mvn -f logger-log4j2-file/pom.xml clean
+mvn -f logger-log4j2-database/pom.xml clean
+mvn -f event-handling/pom.xml clean
+mvn -f rdbms-h2/pom.xml clean
+mvn -f rdbms-mysql/pom.xml clean
+mvn -f rdbms-postgresql/pom.xml clean
+mvn -f rdbms-oracle/pom.xml clean
+mvn -f nosql-redis/pom.xml clean
+mvn -f nosql-redis-reactive/pom.xml clean
+mvn -f nosql-mongodb/pom.xml clean
+mvn -f nosql-mongodb-reactive/pom.xml clean
+mvn -f messaging-apache-artemis-mq/pom.xml clean
+mvn -f messaging-rabbit-mq/pom.xml clean
+mvn -f messaging-apache-kafka/pom.xml clean
+mvn -f streaming-apache-kafka/pom.xml clean
+```
+
+#### Clean Docker
+
+[docker-clean.sh](docker-clean.sh)
+
+```shell
+docker container prune
+docker image prune
+docker volume prune
+docker network prune
+docker system prune
+docker system prune -a
+docker system prune -a --volumes
+```
+
+[build-all.sh](build-all.sh)
+
+#### Build and Test
 
 ```shell
 mvn -f hello-world/pom.xml clean package
@@ -87,6 +131,91 @@ mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
 mvn -f messaging-apache-kafka/pom.xml clean package
 mvn -f restful-web-api/pom.xml clean package
+```
+
+## Install Tools on Docker
+
+### Docker Compose
+
+[docker-compose.yml](docker-compose.yml)
+
+### Apply Docker Compose
+
+Execute the following command to install tools.
+
+```shell
+docker compose --file .\docker-compose.yml --project-name springboot_tutorial up -d
+
+```
+
+### Remove Docker Compose
+
+Execute the following command to remove containers and images.
+
+#### Remove Docker Containers
+
+[docker-rm-containers](docker-rm-containers.sh)
+
+```shell
+# remove containers
+docker rm -f \
+  mysql \
+  mysql-workbench \
+  postgresql \
+  pgadmin \
+  oracle \
+  ords \
+  adminer \
+  phpmyadmin \
+  redis \
+  redisinsight \
+  commander \
+  mongo \
+  mongo-express \
+  rabbitmq \
+  artemis \
+  zookeeper \
+  kafka \
+  kafdrop
+```
+
+#### Remove Docker Images
+
+[docker-rm-images](docker-rm-images.sh)
+
+```shell
+# remove images
+docker rmi \
+  mysql:8.0 \
+  lscr.io/linuxserver/mysql-workbench:latest \
+  postgres:13.9-alpine \
+  dpage/pgadmin4 \
+  container-registry.oracle.com/database/express:21.3.0-xe \
+  container-registry.oracle.com/database/ords:latest \
+  adminer \
+  phpmyadmin \
+  redis:latest \
+  redislabs/redisinsight:latest \
+  rediscommander/redis-commander:latest \
+  mongo \
+  mongo-express \
+  rabbitmq:management \
+  apache/activemq-artemis:latest \
+  docker.io/bitnami/zookeeper \
+  docker.io/bitnami/kafka \
+  obsidiandynamics/kafdrop:latest
+```
+
+#### Remove Docker Volumes
+
+```shell
+docker volume rm ords_config oracle_config
+```
+
+#### Remove Docker Network
+
+```shell
+docker network rm springboot_tutorial_default
 ```
 
 ##

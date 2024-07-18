@@ -76,7 +76,7 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 
 ## Install Kafka on Docker
 
-### Docker Compose File
+### Docker Compose
 
 Create a file named docker-compose.yml with the following configuration. It includes Zookeeper, Kafka and Kafdrop
 services.
@@ -129,7 +129,7 @@ services:
       JVM_OPTS: "-Xms32M -Xmx64M"
 ```
 
-### Apply Docker Compose File
+### Apply Docker Compose
 
 Execute the following command to install Apache Kafka.
 
