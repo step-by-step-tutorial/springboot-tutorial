@@ -13,9 +13,6 @@ services:
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=test_db
       - MYSQL_ROOT_PASSWORD=root
-    volumes:
-      - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   mysql-workbench:
     image: lscr.io/linuxserver/mysql-workbench:latest
     container_name: mysql-workbench
@@ -28,8 +25,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-    volumes:
-      - "./target/mysql-workbench/config:/config"
     cap_add:
       - IPC_LOCK
   postgresql:
@@ -44,8 +39,6 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: test_db
       PGDATA: /data/postgres
-    volumes:
-      - "./target/postgresql:/data/postgres"
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -57,8 +50,6 @@ services:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
-    volumes:
-      - "./target/pgadmin:/var/lib/pgadmin"
   oracle:
     image: container-registry.oracle.com/database/express:21.3.0-xe
     container_name: oracle
@@ -131,8 +122,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-    volumes:
-      - "./config/mongod.conf:/etc/mongod.conf"
   mongo-express:
     image: mongo-express
     container_name: mongo-express
@@ -165,9 +154,6 @@ services:
     ports:
       - "6161:61616"
       - "8161:8161"
-    volumes:
-      - "./target/broker:/opt/broker"
-      - "./target/broker:/opt/artemis"
   zookeeper:
     image: docker.io/bitnami/zookeeper
     container_name: zookeeper
@@ -175,8 +161,6 @@ services:
     restart: always
     ports:
       - "2181:2181"
-    volumes:
-      - "./target/zookeeper:/bitnami"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
@@ -188,8 +172,6 @@ services:
       - "9092:9092"
     depends_on:
       - zookeeper
-    volumes:
-      - "./target/kafka:/bitnami"
     environment:
       KAFKA_CFG_BROKER_ID: 1
       ALLOW_PLAINTEXT_LISTENER: yes

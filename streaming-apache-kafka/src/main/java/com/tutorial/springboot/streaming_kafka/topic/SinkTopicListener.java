@@ -20,9 +20,9 @@ public class SinkTopicListener {
             @Payload String message,
             @Header(KafkaHeaders.CORRELATION_ID) String correlationId
     ) {
-        requireNonNull(message, "message should not be null");
-        requireNonNull(correlationId, "correlation Id should not be null");
+        requireNonNull(message, "Message should not be null");
+        requireNonNull(correlationId, "Correlation Id should not be null");
 
-        logger.info("message received from {}: {}", correlationId, message);
+        logger.info("Message received from: {}", message);
     }
 }

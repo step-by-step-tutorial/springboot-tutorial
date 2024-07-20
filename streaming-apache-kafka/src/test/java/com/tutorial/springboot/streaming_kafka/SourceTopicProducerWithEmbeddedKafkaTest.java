@@ -33,7 +33,7 @@ class SourceTopicProducerWithEmbeddedKafkaTest {
         final String givenMessage = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "message should not be null";
+        final var expectedExceptionMessage = "Message should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenMessage));
 

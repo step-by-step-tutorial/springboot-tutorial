@@ -25,28 +25,18 @@ public class SourceTopicProducer {
 
     public SourceTopicProducer(final KafkaTemplate<String, String> template) {
         this.template = template;
-
-        for (int i = 0; i < 10; i++) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            push("a" + 1);
-        }
-
     }
 
     public void push(final String message) {
-        requireNonNull(message, "message should not be null");
+        requireNonNull(message, "Message should not be null");
 
         Message<String> kafkaMessage = MessageBuilder
                 .withPayload(message)
                 .setHeader(KafkaHeaders.CORRELATION_ID, UUID.randomUUID().toString())
-                .setHeader(KafkaHeaders.TOPIC, "sourceTopic")
+                .setHeader(KafkaHeaders.TOPIC, topic)
                 .build();
 
         template.send(kafkaMessage);
-        logger.info("message sent: {}", message);
+        logger.info("Message sent to: {}", message);
     }
 }

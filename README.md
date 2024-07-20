@@ -9,7 +9,7 @@ This tutorial provides many best practises and examples include documentation.
 
 * [Spring Boot Generator](https://start.spring.io)
 
-## <p align="center"> Table of Content </p>
+## <p align="center"> Steps </p>
 
 * [step: hello-world](hello-world)
 * [step: profile](profile)
