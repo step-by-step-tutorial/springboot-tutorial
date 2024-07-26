@@ -58,12 +58,6 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 
 </p>
 
-<p align="center">
-
-<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/streaming-apache-kafka/doc/kafka-solution.gif" width="426" height="240">
-
-</p>
-
 ### Apache Kafka Streaming Concepts
 
 #### Stream
@@ -84,7 +78,11 @@ It is a processor that consume data from the input Topics.
 
 It is a processor that produce data for the output Topics.
 
+<p align="center">
+
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/streaming-apache-kafka/doc/kafka-streaming-processor-topology.png" width="426" height="240">
+
+</p>
 
 #### Streams and Tables
 
@@ -94,7 +92,7 @@ An aggregation takes an input stream or table then, yields a new table by combin
 output record.
 
 ```text
-KStream/KTable  ==aggregation==>  KTable.
+KStream/KTable  -- aggregation -->  KTable.
 ```
 
 ## Apache Use Cases
