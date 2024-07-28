@@ -7,16 +7,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class TestConfig {
+public class LogConfig {
 
     @Bean
     public TestLogRepository createTestLogRepositoryBean() {
-        final var appender = new TestLogRepository();
+        final var appender = new TestLogRepository("testLogRepository");
         appender.start();
 
         ((LoggerContext) LogManager.getContext(false))
                 .getConfiguration()
-                .getLoggerConfig("")
+                .getRootLogger()
                 .addAppender(appender, Level.INFO, null);
 
         return appender;

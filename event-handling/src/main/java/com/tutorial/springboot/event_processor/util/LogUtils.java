@@ -1,5 +1,6 @@
 package com.tutorial.springboot.event_processor.util;
 
+import com.tutorial.springboot.event_processor.model.LogModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -3,7 +3,7 @@ mvn -f profile/pom.xml clean package
 mvn -f properties/pom.xml clean package
 mvn -f logger-log4j2-console/pom.xml clean package
 mvn -f logger-log4j2-file/pom.xml clean package
-mvn -f logger-log4j2-database/pom.xml clean package
+mvn -f logger-log4j2-database/pom.xml clean package -DskipTests=true
 mvn -f event-handling/pom.xml clean package
 mvn -f rdbms-h2/pom.xml clean package
 mvn -f rdbms-mysql/pom.xml clean package

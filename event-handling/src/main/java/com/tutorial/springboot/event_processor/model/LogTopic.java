@@ -1,4 +1,4 @@
-package com.tutorial.springboot.event_processor.util;
+package com.tutorial.springboot.event_processor.model;
 
 public enum LogTopic {
     INPUT_EVENT("Event is subscribed"),

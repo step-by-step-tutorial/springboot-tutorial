@@ -2,7 +2,7 @@ package com.tutorial.springboot.event_processor.service;
 
 import com.tutorial.springboot.event_processor.config.TestLogRepository;
 import com.tutorial.springboot.event_processor.model.EventModel;
-import com.tutorial.springboot.event_processor.util.LogTopic;
+import com.tutorial.springboot.event_processor.model.LogTopic;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ class EventSubscriberTest {
     ApplicationEventPublisher publisher;
 
     @Autowired
-    TestLogRepository testLogRepository;
+    private TestLogRepository testLogRepository;
 
     @Test
     @DisplayName("should receive an event")
