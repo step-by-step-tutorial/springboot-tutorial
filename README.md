@@ -39,7 +39,7 @@ This tutorial provides many best practises and examples include documentation.
 * step: ELK
 * step: Jaeger
 * step: security-authentication-basic
-* step: security-authentication-inmemory
+* step: [security-authentication-inmemory](security-authentication-inmemory)
 * step: security-authentication-UserEntity-service
 * step: security-authentication-ldap
 * step: security-authentication-remember-me

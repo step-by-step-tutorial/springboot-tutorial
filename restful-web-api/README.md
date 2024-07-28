@@ -2,6 +2,68 @@
 
 This tutorial is about develop a RESTful web services includes API documentation based on Swagger.
 
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [API Design](#api-design)
+* [Http Verbs](#http-verbs)
+* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [Appendix](#appendix )
+
+## Getting Started
+
+### Prerequisites
+
+* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Maven 3](https://maven.apache.org/index.html)
+* [Docker](https://www.docker.com/) (Optional)
+* [Postman CLI](https://learning.postman.com/docs/postman-cli/postman-cli-installation/) (Optional)
+
+### Build
+
+```bash
+mvn clean package -DskipTests=true
+```
+
+### Test
+
+#### Unit Test
+
+```bash
+mvn  test
+```
+
+#### E2E Test
+
+##### Command Line
+
+```shell
+# Unix/Linux
+./e2eTest/shell/e2etest.sh
+```
+
+```shell
+# Windows
+./e2eTest/shell/e2etest.bat
+```
+
+##### Postman CLI
+
+```shell
+postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/Spring Boot Tutorial.postman_environment.json'
+```
+
+### Run
+
+```shell
+mvn  spring-boot:run
+```
+
+* To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator)
+* To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+* To access **swagger** ui,
+  brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
 ## API Design
 
 To develop an efficient and standard-conforming RESTful web API, keep in mind the following tips and recommendations:
@@ -140,11 +202,9 @@ public ResponseEntity<String> options() {
 }
 ```
 
-## How To Config Spring Boot
+## How To Set up Spring Boot
 
 ### Dependencies
-
-#### Dependencies
 
 ```xml
 
@@ -226,57 +286,51 @@ public class OpenApiConfig {
 }
 ```
 
-## Prerequisites
+## Appendix
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
-* [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/) (Optional)
-* [Postman CLI](https://learning.postman.com/docs/postman-cli/postman-cli-installation/) (Optional)
+### Makefile
 
-## Build
+```makefile
+build:
+	mvn clean package -DskipTests=true
 
-```bash
-mvn clean package -DskipTests=true
+test:
+	mvn test
+
+run:
+	mvn spring-boot:run
+
+docker-build:
+	docker build -t samanalishiri/restfulwebapi:latest .
+
+docker-deploy:
+	docker run \
+	--name restfulwebapi \
+	-p 8080:8080 \
+	-h restfulwebapi \
+	-e APP_HOST=0.0.0.0 \
+	-e APP_PORT=8080 \
+	-itd samanalishiri/restfulwebapi:latest
+
+docker-compose-deploy:
+	docker compose --file ./docker-compose.yml --project-name restfulwebapi up --build -d
+
+docker-remove-container:
+	docker rm restfulwebapi --force
+
+docker-remove-image:
+	docker image rm samanalishiri/restfulwebapi:latest
+
+kube-deploy:
+	kubectl apply -f ./kube/app-deployment.yml
+	kubectl apply -f ./kube/app-service.yml
+
+kube-delete:
+	kubectl delete all --all
+
+kube-port-forward-app:
+	kubectl port-forward service/restfulwebapi 8080:8080
 ```
-
-## Test
-
-### Unit Test
-
-```bash
-mvn  test
-```
-
-### E2E Test
-
-#### Command Line
-
-```shell
-# Unix/Linux
-./e2eTest/shell/e2etest.sh
-```
-
-```shell
-# Windows
-./e2eTest/shell/e2etest.bat
-```
-
-#### Postman CLI
-
-```shell
-postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/Spring Boot Tutorial.postman_environment.json'
-```
-
-## Run
-
-```shell
-mvn  spring-boot:run
-```
-
-* To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator)
-* To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
-* To access **swagger** ui,
-  brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ##
 
