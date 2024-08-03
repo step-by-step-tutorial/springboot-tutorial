@@ -155,7 +155,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+#      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   mysql-workbench:
     image: lscr.io/linuxserver/mysql-workbench:latest
     container_name: mysql-workbench
@@ -197,7 +197,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+#      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   adminer:
     image: adminer
     container_name: adminer
@@ -230,7 +230,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+#      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   phpmyadmin:
     image: phpmyadmin
     container_name: phpmyadmin
@@ -684,7 +684,7 @@ kubectl port-forward service/phpmyadmin 8081:80
 ```yaml
 spring:
   datasource:
-    username: ${DATABASE_NAME:user}
+    username: ${DATABASE_USERNAME:user}
     password: ${DATABASE_PASSWORD:password}
     url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DATABASE_NAME:test_db}
     driver-class-name: com.mysql.cj.jdbc.Driver

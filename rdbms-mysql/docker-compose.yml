@@ -15,7 +15,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+#      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   mysql-workbench:
     image: lscr.io/linuxserver/mysql-workbench:latest
     container_name: mysql-workbench

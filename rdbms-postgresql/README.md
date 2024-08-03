@@ -528,7 +528,7 @@ kubectl port-forward service/adminer 8080:8080
 ```yaml
 spring:
   datasource:
-    username: ${DATABASE_NAME:user}
+    username: ${DATABASE_USERNAME:user}
     password: ${DATABASE_PASSWORD:password}
     url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:test_db}
     driver-class-name: org.postgresql.Driver
