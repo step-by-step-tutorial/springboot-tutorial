@@ -26,13 +26,11 @@ public class SecurityConfig {
         var user = User.withDefaultPasswordEncoder()
                 .username("user")
                 .password("password")
-                .roles("USER")
                 .build();
 
         var admin = User.withDefaultPasswordEncoder()
                 .username("admin")
                 .password("admin")
-                .roles("ADMIN")
                 .build();
 
         return new InMemoryUserDetailsManager(user, admin);

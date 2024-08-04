@@ -26,7 +26,6 @@ This tutorial provides many best practises and examples include documentation.
 * [step: nosql-redis-reactive](nosql-redis-reactive)
 * [step: nosql-mongodb](nosql-mongodb)
 * [step: nosql-mongodb-reactive](nosql-mongodb-reactive)
-* step: nosql-hadoop
 * [step: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
 * [step: messaging-rabbit-mq](messaging-rabbit-mq)
 * [step: messaging-apache-kafka](messaging-apache-kafka)
@@ -40,7 +39,7 @@ This tutorial provides many best practises and examples include documentation.
 * step: Jaeger
 * step: security-authentication-basic
 * step: [security-authentication-inmemory](security-authentication-inmemory)
-* step: security-authentication-UserEntity-service
+* step: [security-abac](security-abac)
 * step: security-authentication-ldap
 * step: security-authentication-remember-me
 * step: security-authentication-csrf
@@ -49,7 +48,6 @@ This tutorial provides many best practises and examples include documentation.
 * step: security-authentication-mfa
 * step: security-authentication-open-id
 * step: security-authorization-rbac
-* step: security-authorization-abac
 * step: security-authorization-acl
 * step: oauth-authorization-code
 * step: oauth-password

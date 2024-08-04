@@ -132,7 +132,7 @@ open [http://localhost:5540](http://localhost:5540).
 
 <p align="center">
 
-<img src="redisinsight-login.png" height="30%" width="30%">
+<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/nosql-redis-reactive/doc/redisinsight-login.png" height="30%" width="30%">
 
 </p>
 

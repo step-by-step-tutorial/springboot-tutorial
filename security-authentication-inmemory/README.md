@@ -35,6 +35,16 @@ mvn  test
 mvn  spring-boot:run
 ```
 
+#### Web Console
+
+```yaml
+URL: http://localhost:8080/login
+Username: admin
+Password: admin
+```
+
+<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-authentication-inmemory/doc/spring-security-inmemory.png"  height="30%" width="30%">
+
 #### Check Status
 
 ```shell

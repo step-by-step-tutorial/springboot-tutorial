@@ -8,25 +8,25 @@ run:
 	mvn spring-boot:run
 
 docker-build:
-	docker build -t samanalishiri/securityauthenticateinmemory:latest .
+	docker build -t samanalishiri/securityauthenticationinmemory:latest .
 
 docker-deploy:
 	docker run \
-	--name securityauthenticateinmemory \
+	--name securityauthenticationinmemory \
 	-p 8080:8080 \
-	-h securityauthenticateinmemory \
+	-h securityauthenticationinmemory \
 	-e APP_HOST=0.0.0.0 \
 	-e APP_PORT=8080 \
-	-itd samanalishiri/securityauthenticateinmemory:latest
+	-itd samanalishiri/securityauthenticationinmemory:latest
 
 docker-compose-deploy:
-	docker compose --file ./docker-compose.yml --project-name securityauthenticateinmemory up --build -d
+	docker compose --file ./docker-compose.yml --project-name securityauthenticationinmemory up --build -d
 
 docker-remove-container:
-	docker rm securityauthenticateinmemory --force
+	docker rm securityauthenticationinmemory --force
 
 docker-remove-image:
-	docker image rm samanalishiri/securityauthenticateinmemory:latest
+	docker image rm samanalishiri/securityauthenticationinmemory:latest
 
 kube-deploy:
 	kubectl apply -f ./kube/app-deployment.yml
@@ -36,4 +36,4 @@ kube-delete:
 	kubectl delete all --all
 
 kube-port-forward-app:
-	kubectl port-forward service/securityauthenticateinmemory 8080:8080
+	kubectl port-forward service/securityauthenticationinmemory 8080:8080
