@@ -1,6 +1,6 @@
 package com.tutorial.springboot.abac.repository;
 
-import com.tutorial.springboot.abac.model.User;
+import com.tutorial.springboot.abac.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

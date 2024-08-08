@@ -1,29 +1,17 @@
-package com.tutorial.springboot.abac.model;
+package com.tutorial.springboot.abac.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 
 import java.util.Set;
 
 @Entity
-public class Permission {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Permission extends AbstractEntity<Long, Permission> {
 
     private String name;
 
     @ManyToMany(mappedBy = "permissions")
     private Set<Role> authorities;
-
-    public Long getId() {
-        return id;
-    }
-
-    public Permission setId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public String getName() {
         return name;
@@ -42,4 +30,5 @@ public class Permission {
         this.authorities = roles;
         return this;
     }
+
 }

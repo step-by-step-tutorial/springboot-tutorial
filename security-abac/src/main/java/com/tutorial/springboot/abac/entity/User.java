@@ -1,20 +1,13 @@
-package com.tutorial.springboot.abac.model;
+package com.tutorial.springboot.abac.entity;
 
 import jakarta.persistence.*;
-import org.springframework.data.jpa.domain.AbstractAuditable;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User extends AbstractAuditable<User, Long> implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     private String username;
 
@@ -28,23 +21,8 @@ public class User extends AbstractAuditable<User, Long> implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> authorities;
+    private List<Role> authorities;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Transient
-    public User addId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     @Override
     public String getUsername() {
@@ -77,11 +55,11 @@ public class User extends AbstractAuditable<User, Long> implements UserDetails {
     }
 
     @Override
-    public Collection<Role> getAuthorities() {
+    public List<Role> getAuthorities() {
         return authorities;
     }
 
-    public User setAuthorities(Set<Role> roles) {
+    public User setAuthorities(List<Role> roles) {
         this.authorities = roles;
         return this;
     }
@@ -91,7 +69,7 @@ public class User extends AbstractAuditable<User, Long> implements UserDetails {
         return getAuthorities()
                 .stream()
                 .map(Role::getPermissions)
-                .flatMap(Set::stream)
+                .flatMap(List::stream)
                 .map(Permission::getName)
                 .toList();
     }

@@ -1,9 +1,8 @@
 package com.tutorial.springboot.abac.service;
 
-import com.tutorial.springboot.abac.model.User;
+import com.tutorial.springboot.abac.entity.User;
 import com.tutorial.springboot.abac.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,8 +15,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("User %s not found", username)));
+                .orElseThrow(() -> new RuntimeException(String.format("User %s not found", username)));
     }
 }
