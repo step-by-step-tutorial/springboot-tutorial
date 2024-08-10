@@ -25,7 +25,16 @@ spring:
         generate_statistics: true
         format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+  sql:
+    init:
+      mode: always
   h2:
     console:
       enabled: true
       path: ${H2_CONSOLE:/h2-console}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test

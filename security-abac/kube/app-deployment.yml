@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: securityabac
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: securityabac
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: securityabac
+    spec:
+      containers:
+        - name: securityabac
+          image: samanalishiri/securityabac:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_HOST
+              value: "0.0.0.0"
+            - name: APP_PORT
+              value: "8080"

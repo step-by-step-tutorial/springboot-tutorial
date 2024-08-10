@@ -8,25 +8,25 @@ run:
 	mvn spring-boot:run
 
 docker-build:
-	docker build -t samanalishiri/securityabac:latest .
+	docker build -t samanalishiri/securityrbac:latest .
 
 docker-deploy:
 	docker run \
-	--name securityabac \
+	--name securityrbac \
 	-p 8080:8080 \
-	-h securityabac \
+	-h securityrbac \
 	-e APP_HOST=0.0.0.0 \
 	-e APP_PORT=8080 \
-	-itd samanalishiri/securityabac:latest
+	-itd samanalishiri/securityrbac:latest
 
 docker-compose-deploy:
-	docker compose --file ./docker-compose.yml --project-name securityabac up --build -d
+	docker compose --file ./docker-compose.yml --project-name securityrbac up --build -d
 
 docker-remove-container:
-	docker rm securityabac --force
+	docker rm securityrbac --force
 
 docker-remove-image:
-	docker image rm samanalishiri/securityabac:latest
+	docker image rm samanalishiri/securityrbac:latest
 
 kube-deploy:
 	kubectl apply -f ./kube/app-deployment.yml
@@ -36,4 +36,4 @@ kube-delete:
 	kubectl delete all --all
 
 kube-port-forward-app:
-	kubectl port-forward service/securityabac 8080:8080
+	kubectl port-forward service/securityrbac 8080:8080
