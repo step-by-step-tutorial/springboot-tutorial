@@ -39,6 +39,7 @@ This tutorial provides many best practises and examples include documentation.
 * step: Jaeger
 * step: security-authentication-basic
 * step: [security-authentication-inmemory](security-authentication-inmemory)
+* step: [security-rbac](security-rbac)
 * step: [security-abac](security-abac)
 * step: security-authentication-ldap
 * step: security-authentication-remember-me
@@ -47,7 +48,6 @@ This tutorial provides many best practises and examples include documentation.
 * step: security-authentication-xss
 * step: security-authentication-mfa
 * step: security-authentication-open-id
-* step: security-authorization-rbac
 * step: security-authorization-acl
 * step: oauth-authorization-code
 * step: oauth-password
