@@ -4,6 +4,7 @@ import com.tutorial.springboot.rbac.dto.AbstractDto;
 import com.tutorial.springboot.rbac.entity.AbstractEntity;
 
 import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {
@@ -21,7 +22,7 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
     public DTO toDto(ENTITY entity) {
         DTO dto = createDto();
 
-        if (nonNull(entity) || nonNull(dto)) {
+        if (isNull(entity) || isNull(dto)) {
             return null;
         }
 
@@ -39,7 +40,7 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
     public ENTITY toEntity(DTO dto) {
         ENTITY entity = createEntity();
 
-        if (nonNull(entity) || nonNull(dto)) {
+        if (isNull(entity) || isNull(dto)) {
             return null;
         }
 

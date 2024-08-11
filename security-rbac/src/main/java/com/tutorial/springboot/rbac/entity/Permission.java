@@ -35,4 +35,10 @@ public class Permission extends AbstractEntity<Long, Permission> {
     public void setRolePermissions(List<RolePermission> rolePermissions) {
         this.rolePermissions = rolePermissions;
     }
+
+    @Override
+    public void updateFrom(Permission newOne) {
+        super.updateFrom(newOne);
+        this.name = newOne.name;
+    }
 }

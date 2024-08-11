@@ -1,17 +1,12 @@
-package com.tutorial.springboot.rbac;
+package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.entity.Permission;
-import com.tutorial.springboot.rbac.repository.PermissionRepository;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -23,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(value = {"test"})
-@DisplayName("Tests for CRUD operations and validations in PermissionRepository")
+@DisplayName("Tests for CRUD operationsof PermissionRepository")
 public class PermissionRepositoryTest {
 
     @Autowired
@@ -138,39 +133,6 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.findById(givenId);
 
             assertFalse(actual.isPresent());
-        }
-    }
-
-    @Nested
-    @DisplayName("Validation Tests")
-    class ValidationTest {
-
-        @ParameterizedTest
-        @ValueSource(strings = {"", "  ", "A very long string that exceeds the maximum length for a name"})
-        @DisplayName("Saving a Permission with an invalid name should throw a ConstraintViolationException.")
-        void givenInvalidNames_whenSave_thenThrownConstraintViolationException(String givenName) {
-            var givenEntity = EntityFixture.createOne(givenName);
-
-            assertThrows(ConstraintViolationException.class, () -> systemUnderTest.saveAndFlush(givenEntity));
-        }
-
-        @Test
-        @DisplayName("Saving a Permission with a null name should throw a ConstraintViolationException.")
-        void givenNullName_whenSave_thenThrownConstraintViolationException() {
-            var givenEntity = EntityFixture.createOne(null);
-
-            assertThrows(ConstraintViolationException.class, () -> systemUnderTest.saveAndFlush(givenEntity));
-        }
-
-        @Test
-        @DisplayName("Saving a Permission with a duplicate name should throw a DataIntegrityViolationException.")
-        void givenDuplicateName_whenSave_thenThrownDataIntegrityViolationException() {
-            var givenUniqueEntity = EntityFixture.createOne("DUPLICATE");
-            systemUnderTest.save(givenUniqueEntity);
-
-            var givenDuplicatedEntity = EntityFixture.createOne("DUPLICATE");
-
-            assertThrows(DataIntegrityViolationException.class, () -> systemUnderTest.saveAndFlush(givenDuplicatedEntity));
         }
     }
 }

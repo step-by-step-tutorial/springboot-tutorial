@@ -1,11 +1,8 @@
-package com.tutorial.springboot.rbac;
+package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.entity.Permission;
 import com.tutorial.springboot.rbac.entity.Role;
 import com.tutorial.springboot.rbac.entity.RolePermission;
-import com.tutorial.springboot.rbac.repository.PermissionRepository;
-import com.tutorial.springboot.rbac.repository.RolePermissionRepository;
-import com.tutorial.springboot.rbac.repository.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(value = {"test"})
-@DisplayName("Tests for CRUD operations in RolePermissionRepository")
+@DisplayName("Tests for CRUD operations of RolePermissionRepository")
 public class RolePermissionRepositoryTest {
 
     @Autowired

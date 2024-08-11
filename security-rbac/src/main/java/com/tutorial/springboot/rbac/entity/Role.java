@@ -49,4 +49,10 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     public void setRolePermissions(List<RolePermission> rolePermissions) {
         this.rolePermissions = rolePermissions;
     }
+
+    @Override
+    public void updateFrom(Role newOne) {
+        super.updateFrom(newOne);
+        this.authority = newOne.authority;
+    }
 }

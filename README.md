@@ -37,7 +37,6 @@ This tutorial provides many best practises and examples include documentation.
 * step: webflux
 * step: ELK
 * step: Jaeger
-* step: security-authentication-basic
 * step: [security-authentication-inmemory](security-authentication-inmemory)
 * step: [security-rbac](security-rbac)
 * step: [security-abac](security-abac)

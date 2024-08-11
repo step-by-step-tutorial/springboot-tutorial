@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -80,13 +81,21 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         return userRoles.stream().map(UserRole::getRole).toList();
     }
 
+    @Override
+    public void updateFrom(User newOne) {
+        super.updateFrom(newOne);
+        this.username = newOne.username;
+        this.password = newOne.password;
+        this.email = newOne.email;
+        this.enabled = newOne.enabled;
+    }
+
     @Transient
     public List<String> getPermission() {
         return getAuthorities()
                 .stream()
-                .map(role -> role.getRolePermissions().stream().map(rolePermission -> rolePermission.getPermission()).toList())
-                .flatMap(List::stream)
-                .map(Permission::getName)
+                .flatMap(role -> role.getRolePermissions().stream())
+                .map(rolePermission -> rolePermission.getPermission().getName())
                 .toList();
     }
 }

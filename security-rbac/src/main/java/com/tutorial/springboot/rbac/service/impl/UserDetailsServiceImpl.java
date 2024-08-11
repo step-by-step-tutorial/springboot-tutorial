@@ -1,4 +1,4 @@
-package com.tutorial.springboot.rbac.service;
+package com.tutorial.springboot.rbac.service.impl;
 
 import com.tutorial.springboot.rbac.entity.User;
 import com.tutorial.springboot.rbac.repository.UserRepository;

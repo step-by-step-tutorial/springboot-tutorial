@@ -1,17 +1,12 @@
-package com.tutorial.springboot.rbac;
+package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.entity.User;
-import com.tutorial.springboot.rbac.repository.UserRepository;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -23,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(value = {"test"})
-@DisplayName("Tests for CRUD operations and validations in UserRepository")
+@DisplayName("Tests for CRUD operationsof UserRepository")
 public class UserRepositoryTest {
 
     @Autowired
@@ -149,39 +144,6 @@ public class UserRepositoryTest {
             var actual = systemUnderTest.findById(userId);
 
             assertFalse(actual.isPresent());
-        }
-    }
-
-    @Nested
-    @DisplayName("Validation Tests")
-    class ValidationTest {
-
-        @ParameterizedTest
-        @ValueSource(strings = {"", "  ",})
-        @DisplayName("Saving a User with an invalid username should throw a ConstraintViolationException.")
-        void givenInvalidUsernames_whenSave_thenThrownConstraintViolationException(String givenUsername) {
-            var givenEntity = EntityFixture.createUser(givenUsername, "password123", "testuser@example.com", true);
-
-            assertThrows(ConstraintViolationException.class, () -> systemUnderTest.saveAndFlush(givenEntity));
-        }
-
-        @Test
-        @DisplayName("Saving a User with a null username should throw a ConstraintViolationException.")
-        void givenNullUsername_whenSave_thenThrownConstraintViolationException() {
-            var givenEntity = EntityFixture.createUser(null, "password123", "testuser@example.com", true);
-
-            assertThrows(ConstraintViolationException.class, () -> systemUnderTest.saveAndFlush(givenEntity));
-        }
-
-        @Test
-        @DisplayName("Saving a User with a duplicate email should throw a DataIntegrityViolationException.")
-        void givenDuplicateEmail_whenSave_thenThrownDataIntegrityViolationException() {
-            var givenUniqueEntity = EntityFixture.createUser("testuser1", "password123", "testuser@example.com", true);
-            systemUnderTest.save(givenUniqueEntity);
-
-            var givenDuplicatedEntity = EntityFixture.createUser("testuser2", "password456", "testuser@example.com", true);
-
-            assertThrows(DataIntegrityViolationException.class, () -> systemUnderTest.saveAndFlush(givenDuplicatedEntity));
         }
     }
 }

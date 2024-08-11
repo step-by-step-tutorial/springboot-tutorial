@@ -1,5 +1,6 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.service.impl.UserService;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;

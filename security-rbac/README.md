@@ -48,9 +48,7 @@ mvn  spring-boot:run
 ```
 
 ```yaml
-URL: http://localhost:8080/hello
-ADMIN_URL: http://localhost:8080/admin/hello
-USER_URL: http://localhost:8080/user/hello
+URL: http://localhost:8080
 ```
 
 ## RBAC
