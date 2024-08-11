@@ -9,7 +9,6 @@ import com.tutorial.springboot.rbac.service.CrudService;
 import com.tutorial.springboot.rbac.transformer.UserTransformer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,8 +32,7 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
     }
 
     public User extract(Authentication auth) {
-        var username = ((UserDetails) auth.getPrincipal()).getUsername();
-        return findByUsername(username);
+        return findByUsername(String.valueOf(auth.getPrincipal()));
     }
 
 }
