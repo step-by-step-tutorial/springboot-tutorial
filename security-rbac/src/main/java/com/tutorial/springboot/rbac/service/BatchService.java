@@ -5,11 +5,11 @@ import com.tutorial.springboot.rbac.dto.AbstractDto;
 import java.util.List;
 
 public interface BatchService<ID, DTO extends AbstractDto<ID, DTO>> {
-    List<ID> saveBatch(DTO... dtos);
+    List<ID> saveBatch(List<DTO> dtos);
 
     List<DTO> getAll();
 
     void deleteAll();
 
-    void deleteBatch(ID... identities);
+    void deleteBatch(List<ID> identities);
 }

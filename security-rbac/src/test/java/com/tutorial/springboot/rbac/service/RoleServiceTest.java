@@ -1,5 +1,6 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.dto.PermissionDto;
 import com.tutorial.springboot.rbac.dto.RoleDto;
 import com.tutorial.springboot.rbac.entity.Role;
 import com.tutorial.springboot.rbac.repository.RoleRepository;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +63,25 @@ public class RoleServiceTest {
             assertTrue(actual.isPresent());
             assertTrue(actual.get() > 0);
         }
+
+        @Test
+        @DisplayName("Given valid DTO, When creating role, Then role is saved in repository")
+        @DirtiesContext
+        void givenRoleWithPermission_whenSave_thenReturnID() {
+            var givenPermissions = List.of(
+                    new PermissionDto().setName("READ"),
+                    new PermissionDto().setName("WRITE")
+            );
+            var givenDto = Fixture.createDto()
+                    .setPermissions(givenPermissions);
+
+            var actual = systemUnderTest.save(givenDto);
+
+            assertNotNull(actual);
+            assertTrue(actual.isPresent());
+            assertTrue(actual.get() > 0);
+        }
+
     }
 
     @Nested

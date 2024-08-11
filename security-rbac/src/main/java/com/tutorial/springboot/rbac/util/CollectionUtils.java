@@ -1,5 +1,6 @@
 package com.tutorial.springboot.rbac.util;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public final class CollectionUtils {
@@ -13,8 +14,9 @@ public final class CollectionUtils {
         return (int) Math.ceil((double) length / BATCH_SIZE);
     }
 
-    public static <T> Stream<T> selectBatch(T[] array, int batchIndex) {
-        return Stream.of(array)
+    public static <T> Stream<T> selectBatch(List<T> list, int batchIndex) {
+        return list
+                .stream()
                 .skip((long) batchIndex * BATCH_SIZE)
                 .limit(BATCH_SIZE);
     }

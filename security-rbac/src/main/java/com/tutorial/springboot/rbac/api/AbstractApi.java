@@ -77,9 +77,9 @@ public abstract class AbstractApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>,
     }
 
     @PostMapping(value = "/batch")
-    public ResponseEntity<List<ID>> saveBatch(@RequestBody DTO[] dtos) {
-        logger.info("Received an inbound request to save a batch[{}] of permission", dtos.length);
-        var identities = service.saveBatch(arrayFrom(clean(Stream.of(dtos)), dtoClass));
+    public ResponseEntity<List<ID>> saveBatch(@RequestBody List<DTO> dtos) {
+        logger.info("Received an inbound request to save a batch[{}] of permission", dtos.stream());
+        var identities = service.saveBatch(clean(dtos.stream()).toList());
 
         return ResponseEntity.status(CREATED).body(identities);
     }
@@ -92,8 +92,8 @@ public abstract class AbstractApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>,
     }
 
     @DeleteMapping(value = "/batch")
-    public ResponseEntity<Void> deleteBatch(@RequestBody ID[] identities) {
-        logger.info("Received an inbound request to delete a batch[{}] of permission", identities.length);
+    public ResponseEntity<Void> deleteBatch(@RequestBody List<ID> identities) {
+        logger.info("Received an inbound request to delete a batch[{}] of permission", identities.size());
         service.deleteBatch(identities);
 
         return noContent().build();

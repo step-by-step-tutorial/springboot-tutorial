@@ -1,13 +1,14 @@
 package com.tutorial.springboot.rbac.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDto extends AbstractDto<Long, UserDto> {
     private String username;
     private String password;
     private String email;
-    private boolean enabled;
-    private List<RoleDto> roles;
+    private boolean enabled = true;
+    private List<RoleDto> roles = new ArrayList<>();
 
     public String getUsername() {
         return username;

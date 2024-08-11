@@ -1,9 +1,6 @@
 package com.tutorial.springboot.rbac.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class RolePermission extends AbstractEntity<Long, RolePermission> {
@@ -33,4 +30,12 @@ public class RolePermission extends AbstractEntity<Long, RolePermission> {
         this.permission = permission;
         return this;
     }
+
+    @Transient
+    public static RolePermission of(Role role, Permission permission) {
+        return new RolePermission()
+                .setRole(role)
+                .setPermission(permission);
+    }
+
 }

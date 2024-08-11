@@ -1,11 +1,12 @@
 package com.tutorial.springboot.rbac.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RoleDto extends AbstractDto<Long, RoleDto> {
     private String authority;
 
-    private List<PermissionDto> permissions;
+    private List<PermissionDto> permissions = new ArrayList<>();
 
     public String getAuthority() {
         return authority;
