@@ -10,11 +10,11 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Component
-public class PermissionEvaluatorImpl implements PermissionEvaluator {
+public class PermissionEvaluatorService implements PermissionEvaluator {
 
     private final UserService userService;
 
-    public PermissionEvaluatorImpl(UserService userService) {
+    public PermissionEvaluatorService(UserService userService) {
         this.userService = userService;
     }
 

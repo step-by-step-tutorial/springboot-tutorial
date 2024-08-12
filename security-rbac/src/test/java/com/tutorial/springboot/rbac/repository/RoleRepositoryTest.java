@@ -1,16 +1,12 @@
 package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.entity.Role;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -30,7 +26,7 @@ public class RoleRepositoryTest {
 
     static class EntityFixture {
         public static Role createOne(String authority) {
-            return new Role().setAuthority(authority);
+            return new Role().setName(authority);
         }
 
         public static List<Role> createMulti(String... authorities) {
@@ -53,7 +49,7 @@ public class RoleRepositoryTest {
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
-            assertEquals("ROLE_USER", actual.getAuthority());
+            assertEquals("ROLE_USER", actual.getName());
         }
 
         @Test
@@ -88,7 +84,7 @@ public class RoleRepositoryTest {
             var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
-            assertEquals("ROLE_USER", actual.get().getAuthority());
+            assertEquals("ROLE_USER", actual.get().getName());
         }
     }
 
@@ -107,12 +103,12 @@ public class RoleRepositoryTest {
         @Test
         @DisplayName("Updating a saved Role entity should modify its properties.")
         void givenUpdatedEntity_whenUpdate_thenEntityIsUpdated() {
-            givenEntity.setAuthority("ROLE_UPDATED");
+            givenEntity.setName("ROLE_UPDATED");
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
-            assertEquals("ROLE_UPDATED", actual.getAuthority());
+            assertEquals("ROLE_UPDATED", actual.getName());
         }
     }
 

@@ -9,7 +9,7 @@ public class IndexApi {
 
     @GetMapping("/")
     @PreAuthorize("isAuthenticated()")
-    public String hello() {
+    public String home() {
         return "Login successful!";
     }
 }

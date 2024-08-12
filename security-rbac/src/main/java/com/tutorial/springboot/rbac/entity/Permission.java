@@ -16,7 +16,7 @@ public class Permission extends AbstractEntity<Long, Permission> {
     @Size(max = 50, message = "Name cannot be longer than 50 characters")
     private String name;
 
-    @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
     private List<Role> roles = new ArrayList<>();
 
     public String getName() {

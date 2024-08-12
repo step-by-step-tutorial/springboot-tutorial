@@ -2,6 +2,7 @@ package com.tutorial.springboot.rbac.service;
 
 import com.tutorial.springboot.rbac.dto.PermissionDto;
 import com.tutorial.springboot.rbac.dto.RoleDto;
+import com.tutorial.springboot.rbac.entity.Permission;
 import com.tutorial.springboot.rbac.entity.Role;
 import com.tutorial.springboot.rbac.repository.RoleRepository;
 import com.tutorial.springboot.rbac.service.impl.RoleService;
@@ -38,12 +39,12 @@ public class RoleServiceTest {
     private static class Fixture {
         static Role createEntity() {
             return new Role()
-                    .setAuthority("ADMIN");
+                    .setName("ADMIN");
         }
 
         static RoleDto createDto() {
             return new RoleDto()
-                    .setAuthority("ADMIN");
+                    .setName("ADMIN");
         }
     }
 
@@ -65,7 +66,7 @@ public class RoleServiceTest {
         }
 
         @Test
-        @DisplayName("Given valid DTO, When creating role, Then role is saved in repository")
+        @DisplayName("Given valid DTO with list of Permission, When creating role, Then role is saved in repository")
         @DirtiesContext
         void givenRoleWithPermission_whenSave_thenReturnID() {
             var givenPermissions = List.of(
@@ -102,7 +103,7 @@ public class RoleServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertEquals("ADMIN", actual.get().getAuthority());
+            assertEquals("ADMIN", actual.get().getName());
         }
     }
 
@@ -113,7 +114,11 @@ public class RoleServiceTest {
 
         @BeforeEach
         void init() {
-            targetEntity = systemAssistant.save(Fixture.createEntity());
+            targetEntity = systemAssistant.save(Fixture.createEntity()
+                    .setPermissions(List.of(
+                            new Permission().setName("READ"),
+                            new Permission().setName("WRITE")
+                    )));
         }
 
         @Test
@@ -121,16 +126,15 @@ public class RoleServiceTest {
         @DirtiesContext
         void givenValidDto_whenUpdate_thenJustRunSuccessful() {
             var givenId = targetEntity.getId();
-            var givenDto = roleTransformer
-                    .toDto(targetEntity)
-                    .setAuthority("USER");
+            var givenDto = roleTransformer.toDto(targetEntity);
+            givenDto.setName("USER");
 
             systemUnderTest.update(givenId, givenDto);
             var actual = systemAssistant.findById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertThat(actual.get().getAuthority()).isEqualTo("USER");
+            assertThat(actual.get().getName()).isEqualTo("USER");
         }
     }
 

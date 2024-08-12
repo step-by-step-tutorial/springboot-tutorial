@@ -6,8 +6,8 @@ import com.tutorial.springboot.rbac.transformer.AbstractTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -46,10 +46,11 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<DTO> getById(ID id) {
         requireNonNull(id);
 
-        return repository.findById(id).map(entity -> transformer.toDto(entity));
+        return repository.findById(id).map(transformer::toDto);
     }
 
     @Override
@@ -88,7 +89,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
         return IntStream.range(0, numberOfBatches)
                 .mapToObj(i -> selectBatch(dtos, i))
-                .map(stream -> stream.map(dto -> transformer.toEntity(dto)))
+                .map(stream -> stream.map(transformer::toEntity))
                 .map(batch -> repository.saveAll(batch.toList()))
                 .flatMap(List::stream)
                 .map(AbstractEntity::getId)
@@ -96,8 +97,9 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DTO> getAll() {
-        return repository.findAll().stream().map(entity -> transformer.toDto(entity)).toList();
+        return repository.findAll().stream().map(transformer::toDto).toList();
     }
 
     @Override

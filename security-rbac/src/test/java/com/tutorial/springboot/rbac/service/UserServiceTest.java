@@ -1,6 +1,5 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.dto.PermissionDto;
 import com.tutorial.springboot.rbac.dto.RoleDto;
 import com.tutorial.springboot.rbac.dto.UserDto;
 import com.tutorial.springboot.rbac.entity.User;
@@ -13,11 +12,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.util.List;
 
@@ -79,8 +78,8 @@ public class UserServiceTest {
         @DirtiesContext
         void givenRoleWithPermission_whenSave_thenReturnID() {
             var givenRole = List.of(
-                    new RoleDto().setAuthority("READ"),
-                    new RoleDto().setAuthority("WRITE")
+                    new RoleDto().setName("READ"),
+                    new RoleDto().setName("WRITE")
             );
             var givenDto = Fixture.createDto()
                     .setRoles(givenRole);

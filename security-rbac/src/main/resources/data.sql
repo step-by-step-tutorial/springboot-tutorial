@@ -5,9 +5,9 @@ VALUES (1000, 'admin', '$2a$10$r5p.DEUMgBCpDasy86n/Ue4aNYvDYAt8EkYt4EziQHWrTPKoq
 INSERT INTO users (id, username, password, email, enabled)
 VALUES (2000, 'user', '$2a$10$kdbtEguaRRGv3.y/wVIToOLIz4TzqIp2fk5E8slB.YOWvuyX.Z4u.', 'user@email.com', true);
 
-INSERT INTO role (id, authority)
+INSERT INTO role (id, name)
 VALUES (1000, 'ADMIN');
-INSERT INTO role (id, authority)
+INSERT INTO role (id, name)
 VALUES (2000, 'USER');
 
 INSERT INTO permission (id, name)

@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoleDto extends AbstractDto<Long, RoleDto> {
-    private String authority;
+
+    private String name;
 
     private List<PermissionDto> permissions = new ArrayList<>();
 
-    public String getAuthority() {
-        return authority;
+    public String getName() {
+        return name;
     }
 
-    public RoleDto setAuthority(String authority) {
-        this.authority = authority;
+    public RoleDto setName(String name) {
+        this.name = name;
         return this;
     }
 

@@ -3,6 +3,7 @@ package com.tutorial.springboot.rbac.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -25,13 +26,13 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     private boolean enabled = true;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> authorities = new ArrayList<>();
+    private List<Role> roles = new ArrayList<>();
 
     @Override
     public String getUsername() {
@@ -72,9 +73,17 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         return this;
     }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
-    public List<Role> getAuthorities() {
-        return authorities;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
     }
 
     @Override
@@ -84,11 +93,12 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         this.password = newOne.password;
         this.email = newOne.email;
         this.enabled = newOne.enabled;
+        this.roles = newOne.roles;
     }
 
     @Transient
     public List<String> getPermission() {
-        return getAuthorities()
+        return getRoles()
                 .stream()
                 .flatMap(role -> role.getPermissions().stream())
                 .map(Permission::getName)

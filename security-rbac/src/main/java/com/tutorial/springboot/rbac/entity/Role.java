@@ -13,12 +13,12 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
 
     @NotBlank(message = "Role is mandatory")
     @Size(max = 50, message = "Role cannot be longer than 50 characters")
-    private String authority;
+    private String name;
 
-    @ManyToMany(mappedBy = "authorities")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -28,11 +28,15 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
 
     @Override
     public String getAuthority() {
-        return authority;
+        return getName();
     }
 
-    public Role setAuthority(String name) {
-        this.authority = name;
+    public String getName() {
+        return name;
+    }
+
+    public Role setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -56,6 +60,7 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     @Override
     public void updateFrom(Role newOne) {
         super.updateFrom(newOne);
-        this.authority = newOne.authority;
+        this.name = newOne.name;
+        this.permissions = newOne.permissions;
     }
 }

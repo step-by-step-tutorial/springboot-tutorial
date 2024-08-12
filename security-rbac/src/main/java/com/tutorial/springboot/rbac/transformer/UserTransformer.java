@@ -7,12 +7,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
 
+    private final RoleTransformer roleTransformer;
+
+    public UserTransformer(RoleTransformer roleTransformer) {
+        super();
+        this.roleTransformer = roleTransformer;
+    }
+
     @Override
     protected void copyEntityToDto(User entity, UserDto dto) {
         dto.setUsername(entity.getUsername())
                 .setPassword(entity.getPassword())
                 .setEmail(entity.getEmail())
-                .setEnabled(entity.isEnabled());
+                .setEnabled(entity.isEnabled())
+                .setRoles(entity.getRoles().stream().map(roleTransformer::toDto).toList());
     }
 
     @Override
@@ -20,7 +28,8 @@ public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
         entity.setUsername(dto.getUsername())
                 .setPassword(dto.getPassword())
                 .setEmail(dto.getEmail())
-                .setEnabled(dto.isEnabled());
+                .setEnabled(dto.isEnabled())
+                .setRoles(dto.getRoles().stream().map(roleTransformer::toEntity).toList());
     }
 
 }

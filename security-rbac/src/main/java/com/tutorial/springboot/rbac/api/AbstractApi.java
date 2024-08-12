@@ -12,12 +12,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static com.tutorial.springboot.rbac.util.ApiErrorUtils.checkValidation;
 import static com.tutorial.springboot.rbac.util.CleanUpUtils.clean;
 import static com.tutorial.springboot.rbac.util.HttpUtils.createUriFromId;
-import static com.tutorial.springboot.rbac.util.ReflectionUtils.arrayFrom;
 import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.*;

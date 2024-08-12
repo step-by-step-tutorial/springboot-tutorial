@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rbac.config;
 
-import com.tutorial.springboot.rbac.service.PermissionEvaluatorImpl;
+import com.tutorial.springboot.rbac.service.PermissionEvaluatorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -25,9 +25,9 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-    private final PermissionEvaluatorImpl permissionEvaluator;
+    private final PermissionEvaluatorService permissionEvaluator;
 
-    public SecurityConfig(UserDetailsService userDetailsService, PermissionEvaluatorImpl permissionEvaluator) {
+    public SecurityConfig(UserDetailsService userDetailsService, PermissionEvaluatorService permissionEvaluator) {
         this.userDetailsService = userDetailsService;
         this.permissionEvaluator = permissionEvaluator;
     }
