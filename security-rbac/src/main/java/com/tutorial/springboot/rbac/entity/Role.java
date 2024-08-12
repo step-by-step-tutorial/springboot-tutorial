@@ -1,9 +1,6 @@
 package com.tutorial.springboot.rbac.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,11 +15,16 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     @Size(max = 50, message = "Role cannot be longer than 50 characters")
     private String authority;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserRole> userRoles = new ArrayList<>();
+    @ManyToMany(mappedBy = "authorities")
+    private List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<RolePermission> rolePermissions = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "role_permission",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private List<Permission> permissions = new ArrayList<>();
 
     @Override
     public String getAuthority() {
@@ -34,21 +36,21 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
         return this;
     }
 
-    public List<UserRole> getUserRoles() {
-        return userRoles;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public Role setUserRoles(List<UserRole> userRoles) {
-        this.userRoles = userRoles;
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public Role setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
         return this;
-    }
-
-    public List<RolePermission> getRolePermissions() {
-        return rolePermissions;
-    }
-
-    public void setRolePermissions(List<RolePermission> rolePermissions) {
-        this.rolePermissions = rolePermissions;
     }
 
     @Override

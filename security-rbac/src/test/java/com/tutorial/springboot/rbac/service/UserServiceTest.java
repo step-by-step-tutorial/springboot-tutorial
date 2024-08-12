@@ -1,5 +1,7 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.dto.PermissionDto;
+import com.tutorial.springboot.rbac.dto.RoleDto;
 import com.tutorial.springboot.rbac.dto.UserDto;
 import com.tutorial.springboot.rbac.entity.User;
 import com.tutorial.springboot.rbac.repository.UserRepository;
@@ -16,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +73,26 @@ public class UserServiceTest {
             assertTrue(actual.isPresent());
             assertTrue(actual.get() > 0);
         }
+
+        @Test
+        @DisplayName("Given valid DTO, When creating user, Then user is saved in repository")
+        @DirtiesContext
+        void givenRoleWithPermission_whenSave_thenReturnID() {
+            var givenRole = List.of(
+                    new RoleDto().setAuthority("READ"),
+                    new RoleDto().setAuthority("WRITE")
+            );
+            var givenDto = Fixture.createDto()
+                    .setRoles(givenRole);
+
+            var actual = systemUnderTest.save(givenDto);
+
+            assertNotNull(actual);
+            assertTrue(actual.isPresent());
+            assertTrue(actual.get() > 0);
+        }
+
+
     }
 
     @Nested
@@ -180,18 +204,6 @@ public class UserServiceTest {
 
             assertNotNull(actual);
             assertEquals("new_password", actual.getPassword());
-        }
-
-        @Test
-        @DisplayName("Given authentication, When extracting user, Then user is returned")
-        @DirtiesContext
-        void givenAuthentication_whenExtract_thenReturnUser() {
-            var auth = SecurityContextHolder.getContext().getAuthentication();
-            var actual = systemUnderTest.extract(auth);
-
-            assertNotNull(actual);
-            assertEquals("john_doe", actual.getUsername());
-            assertEquals("john@example.com", actual.getEmail());
         }
 
     }

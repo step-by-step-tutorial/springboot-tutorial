@@ -25,8 +25,13 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     private boolean enabled = true;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserRole> userRoles = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> authorities = new ArrayList<>();
 
     @Override
     public String getUsername() {
@@ -67,18 +72,9 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         return this;
     }
 
-    public List<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public User setUserRoles(List<UserRole> roles) {
-        this.userRoles = roles;
-        return this;
-    }
-
     @Override
     public List<Role> getAuthorities() {
-        return userRoles.stream().map(UserRole::getRole).toList();
+        return authorities;
     }
 
     @Override
@@ -94,8 +90,8 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     public List<String> getPermission() {
         return getAuthorities()
                 .stream()
-                .flatMap(role -> role.getRolePermissions().stream())
-                .map(rolePermission -> rolePermission.getPermission().getName())
+                .flatMap(role -> role.getPermissions().stream())
+                .map(Permission::getName)
                 .toList();
     }
 }

@@ -1,8 +1,8 @@
 package com.tutorial.springboot.rbac.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -16,8 +16,8 @@ public class Permission extends AbstractEntity<Long, Permission> {
     @Size(max = 50, message = "Name cannot be longer than 50 characters")
     private String name;
 
-    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RolePermission> rolePermissions = new ArrayList<>();
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
+    private List<Role> roles = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -28,12 +28,13 @@ public class Permission extends AbstractEntity<Long, Permission> {
         return this;
     }
 
-    public List<RolePermission> getRolePermissions() {
-        return rolePermissions;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setRolePermissions(List<RolePermission> rolePermissions) {
-        this.rolePermissions = rolePermissions;
+    public Permission setRoles(List<Role> roles) {
+        this.roles = roles;
+        return this;
     }
 
     @Override

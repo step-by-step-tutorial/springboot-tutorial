@@ -24,7 +24,7 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
             return false;
         }
 
-        return userService.extract(authentication)
+        return userService.findByUsername(String.valueOf(authentication.getPrincipal()))
                 .getPermission()
                 .contains(String.valueOf(permission));
     }

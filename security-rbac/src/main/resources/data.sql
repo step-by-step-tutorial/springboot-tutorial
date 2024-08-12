@@ -16,17 +16,17 @@ INSERT INTO permission (id, name)
 VALUES (2000, 'WRITE_PRIVILEGE');
 
 -- admin has ADMIN role with read and write permission
-INSERT INTO role_permission (id, role_id, permission_id)
-VALUES (1000, 1000, 1000);
-INSERT INTO role_permission (id, role_id, permission_id)
-VALUES (2000, 1000, 2000);
+INSERT INTO role_permission (role_id, permission_id)
+VALUES (1000, 1000);
+INSERT INTO role_permission (role_id, permission_id)
+VALUES (1000, 2000);
 -- user has USER role with read permission
-INSERT INTO role_permission (id, role_id, permission_id)
-VALUES (3000, 2000, 1000);
+INSERT INTO role_permission (role_id, permission_id)
+VALUES (2000, 1000);
 
 -- admin has ADMIN role
-INSERT INTO user_role (id, user_id, role_id)
-VALUES (1000, 1000, 1000);
+INSERT INTO user_role (user_id, role_id)
+VALUES (1000, 1000);
 -- user has USER
-INSERT INTO user_role (id, user_id, role_id)
-VALUES (2000, 2000, 2000);
+INSERT INTO user_role (user_id, role_id)
+VALUES (2000, 2000);
