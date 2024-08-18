@@ -1,61 +1,50 @@
 package com.tutorial.springboot.rbac.repository;
 
-import com.tutorial.springboot.rbac.entity.Role;
-import org.junit.jupiter.api.BeforeEach;
+import com.tutorial.springboot.rbac.fixture.EntityFixture;
+import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(value = {"test"})
-@DisplayName("Tests for CRUD operationsof RoleRepository")
+@DisplayName("Tests for CRUD operations of RoleRepository")
 public class RoleRepositoryTest {
 
     @Autowired
-    private RoleRepository systemUnderTest;
+    RoleRepository systemUnderTest;
 
-    static class EntityFixture {
-        public static Role createOne(String authority) {
-            return new Role().setName(authority);
-        }
+    @Autowired
+    TestDatabaseAssistant testDatabaseAssistant;
 
-        public static List<Role> createMulti(String... authorities) {
-            return Arrays.stream(authorities)
-                    .map(EntityFixture::createOne)
-                    .toList();
-        }
-    }
 
     @Nested
     @DisplayName("Create Operation Tests")
     class CreateTest {
 
         @Test
-        @DisplayName("Saving a valid Role entity should persist it and generate an ID.")
+        @DisplayName("Saving a valid Role entity should persist it and return an entity include generated ID")
         void givenValidEntity_whenSave_thenReturnID() {
-            var givenEntity = EntityFixture.createOne("ROLE_USER");
+            var givenEntity = EntityFixture.createTestRole();
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
-            assertEquals("ROLE_USER", actual.getName());
+            assertEquals(EntityFixture.TEST_ROLE_NAME, actual.getName());
         }
 
         @Test
-        @DisplayName("Saving multiple Role entities should persist all and return correct count.")
+        @DisplayName("Saving multiple Role entities should persist all and return list of entities include generated ID")
         void givenValidEntities_whenSaveAll_thenReturnSavedEntities() {
-            var entities = EntityFixture.createMulti("ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER");
+            var entities = EntityFixture.createMultiTestRole(3);
 
             var actual = systemUnderTest.saveAll(entities);
 
@@ -69,22 +58,18 @@ public class RoleRepositoryTest {
     @DisplayName("Read Operation Tests")
     class ReadTest {
 
-        private Long givenId;
-
-        @BeforeEach
-        void setUp() {
-            var entity = EntityFixture.createOne("ROLE_USER");
-            systemUnderTest.save(entity);
-            givenId = entity.getId();
-        }
-
         @Test
         @DisplayName("Retrieving a Role entity by ID should return the correct entity.")
         void givenID_whenFindById_thenReturnEntity() {
+            var givenId = testDatabaseAssistant.newTestRole()
+                    .asEntity
+                    .getId();
+
             var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
-            assertEquals("ROLE_USER", actual.get().getName());
+            assertEquals(givenId, actual.get().getId());
+            assertEquals(EntityFixture.TEST_ROLE_NAME, actual.get().getName());
         }
     }
 
@@ -92,22 +77,17 @@ public class RoleRepositoryTest {
     @DisplayName("Update Operation Tests")
     class UpdateTest {
 
-        private Role givenEntity;
-
-        @BeforeEach
-        void setUp() {
-            givenEntity = EntityFixture.createOne("ROLE_USER");
-            systemUnderTest.save(givenEntity);
-        }
-
         @Test
-        @DisplayName("Updating a saved Role entity should modify its properties.")
+        @DisplayName("Updating a Role entity should modify its properties")
         void givenUpdatedEntity_whenUpdate_thenEntityIsUpdated() {
-            givenEntity.setName("ROLE_UPDATED");
+            var givenEntity = testDatabaseAssistant.newTestRole()
+                    .asEntity
+                    .setName("ROLE_UPDATED");
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
+            assertEquals(givenEntity.getId(), actual.getId());
             assertEquals("ROLE_UPDATED", actual.getName());
         }
     }
@@ -116,18 +96,13 @@ public class RoleRepositoryTest {
     @DisplayName("Delete Operation Tests")
     class DeleteTest {
 
-        private Long givenId;
-
-        @BeforeEach
-        void setUp() {
-            var entity = EntityFixture.createOne("ROLE_USER");
-            systemUnderTest.save(entity);
-            givenId = entity.getId();
-        }
-
         @Test
-        @DisplayName("Deleting a Role entity by ID should remove it from the repository.")
+        @DisplayName("Deleting a Role entity by ID should remove it from the repository")
         void givenID_whenDeleteById_thenEntityIsDeleted() {
+            var givenId = testDatabaseAssistant.newTestRole()
+                    .asEntity
+                    .getId();
+
             systemUnderTest.deleteById(givenId);
             var actual = systemUnderTest.findById(givenId);
 

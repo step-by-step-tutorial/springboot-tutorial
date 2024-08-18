@@ -28,7 +28,7 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
             user.setPassword(newPassword);
             repository.save(user);
         } else {
-            throw new RuntimeException("There is a problem, please try again or later");
+            throw new RuntimeException("Password could not be changed, due to incorrect password.");
         }
     }
 }

@@ -77,8 +77,15 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public User setRoles(List<Role> roles) {
         this.roles = roles;
+        return this;
+    }
+
+    @Transient
+    public User addRole(Role role) {
+        this.roles.add(role);
+        return this;
     }
 
     @Override
@@ -97,7 +104,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     }
 
     @Transient
-    public List<String> getPermission() {
+    public List<String> getPermissions() {
         return getRoles()
                 .stream()
                 .flatMap(role -> role.getPermissions().stream())

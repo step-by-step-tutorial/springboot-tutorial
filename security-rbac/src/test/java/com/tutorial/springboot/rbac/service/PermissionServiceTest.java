@@ -1,11 +1,8 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.dto.PermissionDto;
-import com.tutorial.springboot.rbac.entity.Permission;
-import com.tutorial.springboot.rbac.repository.PermissionRepository;
+import com.tutorial.springboot.rbac.fixture.DtoFixture;
+import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.PermissionService;
-import com.tutorial.springboot.rbac.transformer.PermissionTransformer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.tutorial.springboot.rbac.fixture.Fixture.TEST_PERMISSION_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -24,25 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PermissionServiceTest {
 
     @Autowired
-    private PermissionRepository systemAssistant;
+    PermissionService systemUnderTest;
 
     @Autowired
-    private PermissionTransformer permissionTransformer;
-
-    @Autowired
-    private PermissionService systemUnderTest;
-
-    private static class Fixture {
-        static Permission creatEntity() {
-            return new Permission()
-                    .setName("READ");
-        }
-
-        static PermissionDto createDto() {
-            return new PermissionDto()
-                    .setName("READ");
-        }
-    }
+    TestDatabaseAssistant testDatabaseAssistant;
 
     @Nested
     @DisplayName("Save Tests")
@@ -50,9 +32,8 @@ public class PermissionServiceTest {
 
         @Test
         @DisplayName("Given valid DTO, When creating permission, Then permission is saved in repository")
-        @DirtiesContext
         void givenValidDto_whenSave_thenReturnID() {
-            var givenDto = Fixture.createDto();
+            var givenDto = DtoFixture.createTestPermission();
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -65,50 +46,38 @@ public class PermissionServiceTest {
     @Nested
     @DisplayName("Find Tests")
     class FindTests {
-        private Long givenId;
-
-        @BeforeEach
-        void init() {
-            givenId = systemAssistant.save(Fixture.creatEntity()).getId();
-        }
 
         @Test
         @DisplayName("Given existing ID, When finding permission, Then permission is returned from repository")
-        @DirtiesContext
         void givenExistingId_whenFind_thenReturnDto() {
+            var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
+
             var actual = systemUnderTest.getById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertEquals("READ", actual.get().getName());
+            assertEquals(TEST_PERMISSION_NAME, actual.get().getName());
         }
     }
 
     @Nested
     @DisplayName("Update Tests")
     class UpdateTests {
-        private Permission targetEntity;
-
-        @BeforeEach
-        void init() {
-            targetEntity = systemAssistant.save(Fixture.creatEntity());
-        }
 
         @Test
         @DisplayName("Given valid DTO, When updating permission, Then permission is updated in repository")
-        @DirtiesContext
         void givenValidDto_whenUpdate_thenJustRunSuccessful() {
-            var givenId = targetEntity.getId();
-            var givenDto = permissionTransformer
-                    .toDto(targetEntity)
-                    .setName("WRITE");
+            var givenDto = testDatabaseAssistant.newTestPermission()
+                    .asDto
+                    .setName("Updated Permission");
+            var givenId = givenDto.getId();
+
 
             systemUnderTest.update(givenId, givenDto);
-            var actual = systemAssistant.findById(givenId);
+            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
 
             assertNotNull(actual);
-            assertTrue(actual.isPresent());
-            assertThat(actual.get().getName()).isEqualTo("WRITE");
+            assertEquals("Updated Permission", actual.getName());
         }
     }
 
@@ -116,24 +85,15 @@ public class PermissionServiceTest {
     @DisplayName("Delete Tests")
     class DeleteTests {
 
-        private Permission targetEntity;
-
-        @BeforeEach
-        void init() {
-            targetEntity = systemAssistant.save(Fixture.creatEntity());
-        }
-
         @Test
         @DisplayName("Given existing ID, When deleting permission, Then permission is removed from repository")
-        @DirtiesContext
         void givenExistingId_whenDelete_thenJustRunSuccessful() {
-            var givenId = targetEntity.getId();
+            var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
 
             systemUnderTest.delete(givenId);
-            var actual = systemAssistant.findById(givenId);
+            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
 
-            assertNotNull(actual);
-            assertFalse(actual.isPresent());
+            assertNull(actual);
         }
 
     }

@@ -57,6 +57,12 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
         return this;
     }
 
+    @Transient
+    public Role addPermissions(Permission permission) {
+        this.permissions.add(permission);
+        return this;
+    }
+
     @Override
     public void updateFrom(Role newOne) {
         super.updateFrom(newOne);

@@ -1,11 +1,8 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.dto.RoleDto;
-import com.tutorial.springboot.rbac.dto.UserDto;
-import com.tutorial.springboot.rbac.entity.User;
-import com.tutorial.springboot.rbac.repository.UserRepository;
+import com.tutorial.springboot.rbac.fixture.DtoFixture;
+import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.UserService;
-import com.tutorial.springboot.rbac.transformer.UserTransformer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,9 +15,6 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -30,31 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest {
 
     @Autowired
-    private UserRepository systemAssistant;
-
-    @Autowired
-    private UserTransformer userTransformer;
-
-    @Autowired
     private UserService systemUnderTest;
 
-    private static class Fixture {
-        static User createEntity() {
-            return new User()
-                    .setUsername("john_doe")
-                    .setPassword("password")
-                    .setEmail("john@example.com")
-                    .setEnabled(true);
-        }
+    @Autowired
+    TestDatabaseAssistant testDatabaseAssistant;
 
-        static UserDto createDto() {
-            return new UserDto()
-                    .setUsername("john_doe")
-                    .setPassword("password")
-                    .setEmail("john@example.com")
-                    .setEnabled(true);
-        }
-    }
 
     @Nested
     @DisplayName("Save Tests")
@@ -64,7 +38,7 @@ public class UserServiceTest {
         @DisplayName("Given valid DTO, When creating user, Then user is saved in repository")
         @DirtiesContext
         void givenValidDto_whenSave_thenReturnID() {
-            var givenDto = Fixture.createDto();
+            var givenDto = DtoFixture.createTestUser();
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -76,13 +50,8 @@ public class UserServiceTest {
         @Test
         @DisplayName("Given valid DTO, When creating user, Then user is saved in repository")
         @DirtiesContext
-        void givenRoleWithPermission_whenSave_thenReturnID() {
-            var givenRole = List.of(
-                    new RoleDto().setName("READ"),
-                    new RoleDto().setName("WRITE")
-            );
-            var givenDto = Fixture.createDto()
-                    .setRoles(givenRole);
+        void givenUserIncludeRoleWithPermission_whenSave_thenReturnID() {
+            var givenDto = DtoFixture.createTestUserIncludeRoleAndPermission();
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -97,51 +66,39 @@ public class UserServiceTest {
     @Nested
     @DisplayName("Find Tests")
     class FindTests {
-        private Long givenId;
-
-        @BeforeEach
-        void init() {
-            givenId = systemAssistant.save(Fixture.createEntity()).getId();
-        }
 
         @Test
         @DisplayName("Given existing ID, When finding user, Then user is returned from repository")
         @DirtiesContext
         void givenExistingId_whenFind_thenReturnDto() {
+            var givenId = testDatabaseAssistant.newTestUser().asDto.getId();
             var actual = systemUnderTest.getById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertEquals("john_doe", actual.get().getUsername());
-            assertEquals("john@example.com", actual.get().getEmail());
+            assertEquals("test", actual.get().getUsername());
+            assertEquals("test@example.com", actual.get().getEmail());
         }
     }
 
     @Nested
     @DisplayName("Update Tests")
     class UpdateTests {
-        private User targetEntity;
-
-        @BeforeEach
-        void init() {
-            targetEntity = systemAssistant.save(Fixture.createEntity());
-        }
 
         @Test
         @DisplayName("Given valid DTO, When updating user, Then user is updated in repository")
         @DirtiesContext
         void givenValidDto_whenUpdate_thenJustRunSuccessful() {
-            var givenId = targetEntity.getId();
-            var givenDto = userTransformer
-                    .toDto(targetEntity)
-                    .setEmail("john_new@example.com");
+            var givenDto = testDatabaseAssistant.newTestUserIncludeRoleAndPermission()
+                    .asDto
+                    .setEmail("updatedtest@example.com");
+            var givenId = givenDto.getId();
 
             systemUnderTest.update(givenId, givenDto);
-            var actual = systemAssistant.findById(givenId);
+            var actual = testDatabaseAssistant.fetchTestUser().asDto;
 
             assertNotNull(actual);
-            assertTrue(actual.isPresent());
-            assertThat(actual.get().getEmail()).isEqualTo("john_new@example.com");
+            assertEquals("updatedtest@example.com", actual.getEmail());
         }
     }
 
@@ -149,37 +106,29 @@ public class UserServiceTest {
     @DisplayName("Delete Tests")
     class DeleteTests {
 
-        private User targetEntity;
-
-        @BeforeEach
-        void init() {
-            targetEntity = systemAssistant.save(Fixture.createEntity());
-        }
 
         @Test
         @DisplayName("Given existing ID, When deleting user, Then user is removed from repository")
         @DirtiesContext
         void givenExistingId_whenDelete_thenJustRunSuccessful() {
-            var givenId = targetEntity.getId();
+            var givenId = testDatabaseAssistant.newTestUser().asDto.getId();
 
             systemUnderTest.delete(givenId);
-            var actual = systemAssistant.findById(givenId);
+            var actual = testDatabaseAssistant.fetchTestUser().asDto;
 
-            assertNotNull(actual);
-            assertFalse(actual.isPresent());
+            assertNull(actual);
         }
     }
 
     @Nested
     @DisplayName("Custom Method Tests")
     class CustomMethodTests {
-        private User targetEntity;
 
         @BeforeEach
         void init() {
-            targetEntity = systemAssistant.save(Fixture.createEntity());
+            var user = testDatabaseAssistant.newTestUser().asDto;
 
-            var auth = new UsernamePasswordAuthenticationToken(targetEntity.getUsername(), targetEntity.getPassword());
+            var auth = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
             SecurityContextHolder.setContext(new SecurityContextImpl(auth));
         }
 
@@ -187,22 +136,22 @@ public class UserServiceTest {
         @DisplayName("Given username, When finding user by username, Then user is returned")
         @DirtiesContext
         void givenUsername_whenFindByUsername_thenReturnUser() {
-            var actual = systemUnderTest.findByUsername("john_doe");
+            var actual = systemUnderTest.findByUsername("test");
 
             assertNotNull(actual);
-            assertEquals("john_doe", actual.getUsername());
-            assertEquals("john@example.com", actual.getEmail());
+            assertEquals("test", actual.getUsername());
+            assertEquals("test@example.com", actual.getEmail());
         }
 
         @Test
         @DisplayName("Given old and new passwords, When changing password, Then password is updated")
         @DirtiesContext
         void givenOldPasswordAndNewPassword_whenChangePassword_thenUpdatePassword() {
-            systemUnderTest.changePassword("password", "new_password");
-            var actual = systemAssistant.findByUsername("john_doe").orElse(null);
+            systemUnderTest.changePassword("test", "new_test");
+            var actual = testDatabaseAssistant.fetchTestUser().asDto;
 
             assertNotNull(actual);
-            assertEquals("new_password", actual.getPassword());
+            assertEquals("new_test", actual.getPassword());
         }
 
     }
