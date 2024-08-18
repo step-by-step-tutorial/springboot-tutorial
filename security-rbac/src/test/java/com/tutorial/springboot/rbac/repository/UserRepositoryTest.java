@@ -2,7 +2,6 @@ package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.fixture.EntityFixture;
 import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(value = {"test"})
-@DisplayName("Tests for CRUD operations of UserRepository")
 public class UserRepositoryTest {
 
     @Autowired
@@ -27,14 +25,11 @@ public class UserRepositoryTest {
     @Autowired
     TestDatabaseAssistant testDatabaseAssistant;
 
-
     @Nested
-    @DisplayName("Create Operation Tests")
     class CreateTest {
 
         @Test
-        @DisplayName("Saving a valid User entity should persist it and generate an ID.")
-        void givenValidEntity_whenSave_thenReturnID() {
+        void givenValidEntity_whenSave_thenReturnPersistedEntity() {
             var givenEntity = createTestUser();
 
             var actual = systemUnderTest.save(givenEntity);
@@ -48,8 +43,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Saving multiple User entities should persist all and return correct count.")
-        void givenValidEntities_whenSaveAll_thenReturnSavedEntities() {
+        void givenValidEntities_whenSaveAll_thenReturnPersistedEntities() {
             var users = EntityFixture.createMultipleTestUser(3);
 
             var actual = systemUnderTest.saveAll(users);
@@ -60,7 +54,6 @@ public class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Saving a User entity with Role and Permission should persist correctly.")
         void givenUserIncludeRoleAndPermission_whenSave_thenReturnEntityIncludeId() {
             var givenUser = createTestUser()
                     .addRole(createTestRole().addPermissions(createTestPermission()));
@@ -75,17 +68,14 @@ public class UserRepositoryTest {
             assertTrue(actual.isEnabled());
             assertThat(actual.getAuthorities().stream().map(GrantedAuthority::getAuthority)).containsOnly(TEST_ROLE_NAME);
             assertThat(actual.getPermissions()).containsOnly(TEST_PERMISSION_NAME);
-
         }
 
     }
 
     @Nested
-    @DisplayName("Read Operation Tests")
     class ReadTest {
 
         @Test
-        @DisplayName("Retrieving a User entity by ID should return the correct entity.")
         void givenID_whenFindById_thenReturnEntity() {
             var givenId = testDatabaseAssistant.newTestUser().asEntity.getId();
 
@@ -101,12 +91,10 @@ public class UserRepositoryTest {
     }
 
     @Nested
-    @DisplayName("Update Operation Tests")
     class UpdateTest {
 
         @Test
-        @DisplayName("Updating a User entity should modify its properties.")
-        void givenUpdatedEntity_whenUpdate_thenEntityIsUpdated() {
+        void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
             var givenEntity = testDatabaseAssistant.newTestUser().asEntity
                     .setUsername("newusername")
                     .setPassword("newpassword")
@@ -125,12 +113,10 @@ public class UserRepositoryTest {
     }
 
     @Nested
-    @DisplayName("Delete Operation Tests")
     class DeleteTest {
 
         @Test
-        @DisplayName("Deleting a User entity by ID should remove it from the repository.")
-        void givenID_whenDeleteById_thenEntityIsDeleted() {
+        void givenID_whenDeleteById_thenJustRunSuccessful() {
             var givenId = testDatabaseAssistant.newTestUser().asEntity.getId();
 
             systemUnderTest.deleteById(givenId);

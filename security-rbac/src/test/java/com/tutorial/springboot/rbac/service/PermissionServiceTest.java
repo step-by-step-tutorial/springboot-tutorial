@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
-@DisplayName("Tests for CRUD operationsof PermissionService")
 public class PermissionServiceTest {
 
     @Autowired
@@ -27,11 +26,9 @@ public class PermissionServiceTest {
     TestDatabaseAssistant testDatabaseAssistant;
 
     @Nested
-    @DisplayName("Save Tests")
     class SaveTests {
 
         @Test
-        @DisplayName("Given valid DTO, When creating permission, Then permission is saved in repository")
         void givenValidDto_whenSave_thenReturnID() {
             var givenDto = DtoFixture.createTestPermission();
 
@@ -44,12 +41,10 @@ public class PermissionServiceTest {
     }
 
     @Nested
-    @DisplayName("Find Tests")
     class FindTests {
 
         @Test
-        @DisplayName("Given existing ID, When finding permission, Then permission is returned from repository")
-        void givenExistingId_whenFind_thenReturnDto() {
+        void givenId_whenFind_thenReturnDto() {
             var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
 
             var actual = systemUnderTest.getById(givenId);
@@ -61,15 +56,13 @@ public class PermissionServiceTest {
     }
 
     @Nested
-    @DisplayName("Update Tests")
     class UpdateTests {
 
         @Test
-        @DisplayName("Given valid DTO, When updating permission, Then permission is updated in repository")
-        void givenValidDto_whenUpdate_thenJustRunSuccessful() {
+        void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
             var givenDto = testDatabaseAssistant.newTestPermission()
                     .asDto
-                    .setName("Updated Permission");
+                    .setName("UPDATED_PRIVILEGE");
             var givenId = givenDto.getId();
 
 
@@ -77,7 +70,7 @@ public class PermissionServiceTest {
             var actual = testDatabaseAssistant.fetchTestPermission().asDto;
 
             assertNotNull(actual);
-            assertEquals("Updated Permission", actual.getName());
+            assertEquals("UPDATED_PRIVILEGE", actual.getName());
         }
     }
 
@@ -86,8 +79,7 @@ public class PermissionServiceTest {
     class DeleteTests {
 
         @Test
-        @DisplayName("Given existing ID, When deleting permission, Then permission is removed from repository")
-        void givenExistingId_whenDelete_thenJustRunSuccessful() {
+        void givenId_whenDelete_thenJustRunSuccessful() {
             var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
 
             systemUnderTest.delete(givenId);

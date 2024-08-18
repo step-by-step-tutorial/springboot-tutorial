@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(value = {"test"})
-@DisplayName("Tests for CRUD operations of RoleRepository")
 public class RoleRepositoryTest {
 
     @Autowired
@@ -26,12 +25,10 @@ public class RoleRepositoryTest {
 
 
     @Nested
-    @DisplayName("Create Operation Tests")
     class CreateTest {
 
         @Test
-        @DisplayName("Saving a valid Role entity should persist it and return an entity include generated ID")
-        void givenValidEntity_whenSave_thenReturnID() {
+        void givenValidEntity_whenSave_thenReturnPersistedEntity() {
             var givenEntity = EntityFixture.createTestRole();
 
             var actual = systemUnderTest.save(givenEntity);
@@ -42,8 +39,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        @DisplayName("Saving multiple Role entities should persist all and return list of entities include generated ID")
-        void givenValidEntities_whenSaveAll_thenReturnSavedEntities() {
+        void givenValidEntities_whenSaveAll_thenReturnPersistedEntities() {
             var entities = EntityFixture.createMultiTestRole(3);
 
             var actual = systemUnderTest.saveAll(entities);
@@ -55,11 +51,9 @@ public class RoleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("Read Operation Tests")
     class ReadTest {
 
         @Test
-        @DisplayName("Retrieving a Role entity by ID should return the correct entity.")
         void givenID_whenFindById_thenReturnEntity() {
             var givenId = testDatabaseAssistant.newTestRole()
                     .asEntity
@@ -74,12 +68,10 @@ public class RoleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("Update Operation Tests")
     class UpdateTest {
 
         @Test
-        @DisplayName("Updating a Role entity should modify its properties")
-        void givenUpdatedEntity_whenUpdate_thenEntityIsUpdated() {
+        void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
             var givenEntity = testDatabaseAssistant.newTestRole()
                     .asEntity
                     .setName("ROLE_UPDATED");
@@ -93,12 +85,10 @@ public class RoleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("Delete Operation Tests")
     class DeleteTest {
 
         @Test
-        @DisplayName("Deleting a Role entity by ID should remove it from the repository")
-        void givenID_whenDeleteById_thenEntityIsDeleted() {
+        void givenID_whenDeleteById_thenJustRunSuccessful() {
             var givenId = testDatabaseAssistant.newTestRole()
                     .asEntity
                     .getId();

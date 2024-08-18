@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(value = {"test"})
-@DisplayName("Tests for CRUD operations of PermissionRepository")
 public class PermissionRepositoryTest {
 
     @Autowired
@@ -26,12 +25,10 @@ public class PermissionRepositoryTest {
 
 
     @Nested
-    @DisplayName("Create Operation Tests")
     class CreateTest {
 
         @Test
-        @DisplayName("Saving a valid Permission entity should persist it and return an entity include generated ID")
-        void givenValidEntity_whenSave_thenReturnID() {
+        void givenValidEntity_whenSave_thenReturnPersistedEntity() {
             var givenEntity = EntityFixture.createTestPermission();
 
             var actual = systemUnderTest.save(givenEntity);
@@ -42,8 +39,7 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        @DisplayName("Saving multiple Permission entities should persist all and return list of entities include generated ID")
-        void givenValidEntities_whenSaveAll_thenReturnSavedEntities() {
+        void givenValidEntities_whenSaveAll_thenReturnPersistedEntities() {
             var entities = EntityFixture.createMultiTestPermission(3);
 
             var actual = systemUnderTest.saveAll(entities);
@@ -55,11 +51,9 @@ public class PermissionRepositoryTest {
     }
 
     @Nested
-    @DisplayName("Read Operation Tests")
     class ReadTest {
 
         @Test
-        @DisplayName("Retrieving a Permission entity by ID should return the correct entity.")
         void givenID_whenFindById_thenReturnEntity() {
             var givenId = testDatabaseAssistant.newTestPermission()
                     .asEntity
@@ -74,31 +68,27 @@ public class PermissionRepositoryTest {
     }
 
     @Nested
-    @DisplayName("Update Operation Tests")
     class UpdateTest {
 
         @Test
-        @DisplayName("Updating a Permission entity should modify its properties")
-        void givenUpdatedEntity_whenUpdate_thenEntityIsUpdated() {
+        void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
             var givenEntity = testDatabaseAssistant.newTestPermission()
                     .asEntity
-                    .setName("UPDATED");
+                    .setName("UPDATED_PRIVILEGE");
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
             assertEquals(givenEntity.getId(), actual.getId());
-            assertEquals("UPDATED", actual.getName());
+            assertEquals("UPDATED_PRIVILEGE", actual.getName());
         }
     }
 
     @Nested
-    @DisplayName("Delete Operation Tests")
     class DeleteTest {
 
         @Test
-        @DisplayName("Deleting a Permission entity by ID should remove it from the repository")
-        void givenID_whenDeleteById_thenEntityIsDeleted() {
+        void givenID_whenDeleteById_thenJustRunSuccessful() {
             var givenId = testDatabaseAssistant.newTestPermission()
                     .asEntity
                     .getId();
