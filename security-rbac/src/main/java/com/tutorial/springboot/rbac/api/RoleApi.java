@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/roles")
-public class RoleApi extends AbstractApi<Long, Role, RoleDto> {
+public class RoleApi extends AllApi<Long, Role, RoleDto> {
 
     public RoleApi(RoleService service) {
         super(service);

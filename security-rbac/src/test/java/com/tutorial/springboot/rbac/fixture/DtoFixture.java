@@ -36,6 +36,10 @@ public final class DtoFixture implements Fixture {
                 .toList();
     }
 
+    public static RoleDto createTestRoleIncludePermission() {
+        return createTestRole().setPermissions(createMultiTestPermission(2));
+    }
+
     public static UserDto createTestUser() {
         return new UserDto()
                 .setUsername(Fixture.TEST_USER_USERNAME)

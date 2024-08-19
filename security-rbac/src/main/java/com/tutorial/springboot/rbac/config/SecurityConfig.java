@@ -3,6 +3,7 @@ package com.tutorial.springboot.rbac.config;
 import com.tutorial.springboot.rbac.service.PermissionEvaluatorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -47,9 +48,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated())
+        http.authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers("/h2-console/**").permitAll()
+                                .requestMatchers(HttpMethod.HEAD, "/api/v1/**").permitAll()
+                                .anyRequest().authenticated()
+                )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .logout(LogoutConfigurer::permitAll)
                 .csrf(AbstractHttpConfigurer::disable)

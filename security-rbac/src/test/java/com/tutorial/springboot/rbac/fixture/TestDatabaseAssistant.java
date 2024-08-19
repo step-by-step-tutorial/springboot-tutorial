@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.tutorial.springboot.rbac.fixture.EntityFixture.*;
+import java.util.List;
+
+import static com.tutorial.springboot.rbac.fixture.EntityFixture.createTestUser;
 
 @Component
 @Transactional
@@ -38,9 +40,34 @@ public class TestDatabaseAssistant {
         return new ResultHelper<>(entity, permissionTransformer.toDto(entity));
     }
 
+    public ResultHelper<List<Permission>, List<PermissionDto>> newTestPermission(int numberOfPermissions) {
+        var entities = EntityFixture.createMultiTestPermission(numberOfPermissions);
+
+        entities.forEach(entityManager::persist);
+        entityManager.flush();
+        var dtos = entities.stream()
+                .map(permissionTransformer::toDto)
+                .toList();
+
+        return new ResultHelper<>(entities, dtos);
+    }
+
     public ResultHelper<Permission, PermissionDto> fetchTestPermission() {
-            var entity = entityManager.find(Permission.class, 1L);
-            return new ResultHelper<>(entity, permissionTransformer.toDto(entity));
+        var entity = entityManager.find(Permission.class, 1L);
+        return new ResultHelper<>(entity, permissionTransformer.toDto(entity));
+    }
+
+    public ResultHelper<List<Permission>, List<PermissionDto>> fetchMultiTestPermission() {
+        var query = entityManager.createQuery(
+                "SELECT p FROM Permission p WHERE p.id IN :listOfId", Permission.class);
+        query.setParameter("listOfId", List.of(1L, 2L));
+
+        var entities = query.getResultList();
+        var dtos = entities.stream()
+                .map(permissionTransformer::toDto)
+                .toList();
+
+        return new ResultHelper<>(entities, dtos);
     }
 
     public ResultHelper<Role, RoleDto> newTestRole() {
@@ -56,8 +83,8 @@ public class TestDatabaseAssistant {
     }
 
     public ResultHelper<Role, RoleDto> fetchTestRole() {
-            var entity = entityManager.find(Role.class, 1L);
-            return new ResultHelper<>(entity, roleTransformer.toDto(entity));
+        var entity = entityManager.find(Role.class, 1L);
+        return new ResultHelper<>(entity, roleTransformer.toDto(entity));
     }
 
     public ResultHelper<User, UserDto> newTestUser() {
@@ -73,8 +100,8 @@ public class TestDatabaseAssistant {
     }
 
     public ResultHelper<User, UserDto> fetchTestUser() {
-            var entity = entityManager.find(User.class, 1L);
-            return new ResultHelper<>(entity, userTransformer.toDto(entity));
+        var entity = entityManager.find(User.class, 1L);
+        return new ResultHelper<>(entity, userTransformer.toDto(entity));
     }
 
 }

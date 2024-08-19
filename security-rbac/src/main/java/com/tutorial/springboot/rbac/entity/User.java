@@ -26,7 +26,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     private boolean enabled = true;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

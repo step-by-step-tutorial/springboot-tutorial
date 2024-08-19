@@ -20,9 +20,9 @@ import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.*;
 
-public abstract class AbstractApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {
+public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {
 
-    protected final Logger logger = LoggerFactory.getLogger(AbstractApi.class.getSimpleName());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     protected final AbstractService<ID, ENTITY, DTO> service;
 
@@ -30,7 +30,7 @@ public abstract class AbstractApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>,
 
     protected Class<DTO> dtoClass;
 
-    protected AbstractApi(AbstractService<ID, ENTITY, DTO> service) {
+    protected CrudApi(AbstractService<ID, ENTITY, DTO> service) {
         this.service = service;
         entityClass = identifyType(1, getClass());
         dtoClass = identifyType(2, getClass());
@@ -72,36 +72,6 @@ public abstract class AbstractApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>,
     public ResponseEntity<Void> exists(@PathVariable ID id) {
         logger.info("Received an inbound request to check existence of a sample by its unique ID[{}]", id);
         return service.exists(id) ? ok().build() : notFound().build();
-    }
-
-    @PostMapping(value = "/batch")
-    public ResponseEntity<List<ID>> saveBatch(@RequestBody List<DTO> dtos) {
-        logger.info("Received an inbound request to save a batch[{}] of permission", dtos.stream());
-        var identities = service.saveBatch(clean(dtos.stream()).toList());
-
-        return ResponseEntity.status(CREATED).body(identities);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<DTO>> findAll() {
-        logger.info("Received an inbound request to retrieve all permissions");
-        final var permissions = service.getAll();
-        return ok(permissions);
-    }
-
-    @DeleteMapping(value = "/batch")
-    public ResponseEntity<Void> deleteBatch(@RequestBody List<ID> identities) {
-        logger.info("Received an inbound request to delete a batch[{}] of permission", identities.size());
-        service.deleteBatch(identities);
-
-        return noContent().build();
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAll() {
-        logger.info("Received an inbound request to delete all permissions");
-        service.deleteAll();
-        return noContent().build();
     }
 
     @RequestMapping(value = "/options", method = RequestMethod.OPTIONS)
