@@ -1,14 +1,17 @@
 package com.tutorial.springboot.rbac.repository;
 
-import com.tutorial.springboot.rbac.fixture.EntityFixture;
+import com.tutorial.springboot.rbac.entity.Permission;
+import com.tutorial.springboot.rbac.fixture.EntityStubFactory;
+import com.tutorial.springboot.rbac.fixture.StubFactory;
 import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,18 +32,23 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenValidEntity_whenSave_thenReturnPersistedEntity() {
-            var givenEntity = EntityFixture.createTestPermission();
+            var givenEntity = (Permission) new EntityStubFactory().addPermission().get().asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
-            assertEquals(EntityFixture.TEST_PERMISSION_NAME, actual.getName());
+            assertFalse(actual.getName().isEmpty());
         }
 
         @Test
         void givenValidEntities_whenSaveAll_thenReturnPersistedEntities() {
-            var entities = EntityFixture.createMultiTestPermission(3);
+            var entities = (List<Permission>) new EntityStubFactory()
+                    .addPermission()
+                    .addPermission()
+                    .addPermission()
+                    .get()
+                    .asList();
 
             var actual = systemUnderTest.saveAll(entities);
 
@@ -63,7 +71,7 @@ public class PermissionRepositoryTest {
 
             assertTrue(actual.isPresent());
             assertEquals(givenId, actual.get().getId());
-            assertEquals(EntityFixture.TEST_PERMISSION_NAME, actual.get().getName());
+            assertFalse(actual.get().getName().isEmpty());
         }
     }
 

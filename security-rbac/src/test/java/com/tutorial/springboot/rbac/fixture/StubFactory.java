@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rbac.fixture;
 
-public interface Fixture {
+public interface StubFactory {
 
     String TEST_USER_USERNAME = "test";
 
@@ -11,4 +11,12 @@ public interface Fixture {
     String TEST_ROLE_NAME = "ROLE_TEST";
 
     String TEST_PERMISSION_NAME = "TEST_PRIVILEGE";
+
+    StubFactory addPermission();
+
+    StubFactory addRole();
+
+    StubFactory addUser();
+
+    StubHelper<?> get();
 }

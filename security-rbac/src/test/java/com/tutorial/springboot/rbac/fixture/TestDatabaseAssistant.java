@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.tutorial.springboot.rbac.fixture.EntityFixture.createTestUser;
 
 @Component
 @Transactional
@@ -35,13 +34,18 @@ public class TestDatabaseAssistant {
     UserTransformer userTransformer;
 
     public ResultHelper<Permission, PermissionDto> newTestPermission() {
-        var entity = EntityFixture.createTestPermission();
+        var entity = (Permission) new EntityStubFactory().addPermission().get().asOne();
         entityManager.persist(entity);
         return new ResultHelper<>(entity, permissionTransformer.toDto(entity));
     }
 
-    public ResultHelper<List<Permission>, List<PermissionDto>> newTestPermission(int numberOfPermissions) {
-        var entities = EntityFixture.createMultiTestPermission(numberOfPermissions);
+    public ResultHelper<List<Permission>, List<PermissionDto>> newTestPermission(int number) {
+        var entities = (List<Permission>) new EntityStubFactory()
+                .addPermission()
+                .addPermission()
+                .addPermission()
+                .get()
+                .asList();
 
         entities.forEach(entityManager::persist);
         entityManager.flush();
@@ -57,7 +61,7 @@ public class TestDatabaseAssistant {
         return new ResultHelper<>(entity, permissionTransformer.toDto(entity));
     }
 
-    public ResultHelper<List<Permission>, List<PermissionDto>> fetchMultiTestPermission() {
+    public ResultHelper<List<Permission>, List<PermissionDto>> fetchTestPermissions() {
         var query = entityManager.createQuery(
                 "SELECT p FROM Permission p WHERE p.id IN :listOfId", Permission.class);
         query.setParameter("listOfId", List.of(1L, 2L));
@@ -71,13 +75,19 @@ public class TestDatabaseAssistant {
     }
 
     public ResultHelper<Role, RoleDto> newTestRole() {
-        var entity = EntityFixture.createTestRole();
+        var entity = (Role) new EntityStubFactory().addRole().get().asOne();
+        ;
         entityManager.persist(entity);
         return new ResultHelper<>(entity, roleTransformer.toDto(entity));
     }
 
     public ResultHelper<Role, RoleDto> newTestRoleIncludePermission() {
-        var entity = EntityFixture.createTestRoleIncludePermission();
+        var entity = (Role) new EntityStubFactory()
+                .addPermission()
+                .addRole()
+                .get()
+                .asOne();
+        ;
         entityManager.persist(entity);
         return new ResultHelper<>(entity, roleTransformer.toDto(entity));
     }
@@ -88,13 +98,18 @@ public class TestDatabaseAssistant {
     }
 
     public ResultHelper<User, UserDto> newTestUser() {
-        var entity = createTestUser();
+        var entity = (User) new EntityStubFactory().addUser().get().asOne();
         entityManager.persist(entity);
         return new ResultHelper<>(entity, userTransformer.toDto(entity));
     }
 
     public ResultHelper<User, UserDto> newTestUserIncludeRoleAndPermission() {
-        var entity = EntityFixture.createTestUserIncludeRoleAndPermission();
+        var entity = (User) new EntityStubFactory()
+                .addPermission()
+                .addRole()
+                .addUser()
+                .get()
+                .asOne();
         entityManager.persist(entity);
         return new ResultHelper<>(entity, userTransformer.toDto(entity));
     }

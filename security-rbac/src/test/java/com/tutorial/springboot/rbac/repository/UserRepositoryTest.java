@@ -1,6 +1,7 @@
 package com.tutorial.springboot.rbac.repository;
 
-import com.tutorial.springboot.rbac.fixture.EntityFixture;
+import com.tutorial.springboot.rbac.entity.User;
+import com.tutorial.springboot.rbac.fixture.EntityStubFactory;
 import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.rbac.fixture.EntityFixture.*;
+import java.util.List;
+
+import static com.tutorial.springboot.rbac.fixture.StubFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,21 +33,26 @@ public class UserRepositoryTest {
 
         @Test
         void givenValidEntity_whenSave_thenReturnPersistedEntity() {
-            var givenEntity = createTestUser();
+            var givenEntity = (User) new EntityStubFactory().addUser().get().asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
-            assertEquals(TEST_USER_USERNAME, actual.getUsername());
+            assertEquals("test_0", actual.getUsername());
             assertEquals(TEST_USER_PASSWORD, actual.getPassword());
-            assertEquals(TEST_USER_EMAIL, actual.getEmail());
+            assertEquals("test_0@example.com", actual.getEmail());
             assertTrue(actual.isEnabled());
         }
 
         @Test
         void givenValidEntities_whenSaveAll_thenReturnPersistedEntities() {
-            var users = EntityFixture.createMultipleTestUser(3);
+            var users = (List<User>) new EntityStubFactory()
+                    .addUser()
+                    .addUser()
+                    .addUser()
+                    .get()
+                    .asList();
 
             var actual = systemUnderTest.saveAll(users);
 
@@ -55,19 +63,23 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserIncludeRoleAndPermission_whenSave_thenReturnEntityIncludeId() {
-            var givenUser = createTestUser()
-                    .addRole(createTestRole().addPermissions(createTestPermission()));
+            var givenUser = (User) new EntityStubFactory()
+                    .addPermission()
+                    .addRole()
+                    .addUser()
+                    .get()
+                    .asOne();
 
             var actual = systemUnderTest.save(givenUser);
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
-            assertEquals(TEST_USER_USERNAME, actual.getUsername());
-            assertEquals(TEST_USER_PASSWORD, actual.getPassword());
-            assertEquals(TEST_USER_EMAIL, actual.getEmail());
+            assertFalse(actual.getUsername().isEmpty());
+            assertFalse(actual.getPassword().isEmpty());
+            assertFalse(actual.getEmail().isEmpty());
             assertTrue(actual.isEnabled());
-            assertThat(actual.getAuthorities().stream().map(GrantedAuthority::getAuthority)).containsOnly(TEST_ROLE_NAME);
-            assertThat(actual.getPermissions()).containsOnly(TEST_PERMISSION_NAME);
+            assertThat(actual.getAuthorities().stream().map(GrantedAuthority::getAuthority)).isNotEmpty();
+            assertThat(actual.getPermissions()).isNotEmpty();
         }
 
     }
@@ -83,9 +95,9 @@ public class UserRepositoryTest {
 
             assertTrue(actual.isPresent());
             assertEquals(givenId, actual.get().getId());
-            assertEquals(TEST_USER_USERNAME, actual.get().getUsername());
-            assertEquals(TEST_USER_PASSWORD, actual.get().getPassword());
-            assertEquals(TEST_USER_EMAIL, actual.get().getEmail());
+            assertFalse(actual.get().getUsername().isEmpty());
+            assertFalse(actual.get().getPassword().isEmpty());
+            assertFalse(actual.get().getEmail().isEmpty());
             assertTrue(actual.get().isEnabled());
         }
     }

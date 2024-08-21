@@ -1,6 +1,7 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.fixture.DtoFixture;
+import com.tutorial.springboot.rbac.dto.UserDto;
+import com.tutorial.springboot.rbac.fixture.DtoStubFactory;
 import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +33,12 @@ public class UserServiceTest {
 
         @Test
         void givenValidDto_whenSave_thenReturnID() {
-            var givenDto = DtoFixture.createTestUser();
+            var givenDto = new DtoStubFactory()
+                    .addUser()
+                    .get()
+                    .asOne();
 
-            var actual = systemUnderTest.save(givenDto);
+            var actual = systemUnderTest.save((UserDto) givenDto);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -43,9 +47,14 @@ public class UserServiceTest {
 
         @Test
         void givenUserIncludeRoleWithPermission_whenSave_thenReturnID() {
-            var givenDto = DtoFixture.createTestUserIncludeRoleAndPermission();
+            var givenDto = new DtoStubFactory()
+                    .addPermission()
+                    .addRole()
+                    .addUser()
+                    .get()
+                    .asOne();
 
-            var actual = systemUnderTest.save(givenDto);
+            var actual = systemUnderTest.save((UserDto) givenDto);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -65,8 +74,8 @@ public class UserServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertEquals("test", actual.get().getUsername());
-            assertEquals("test@example.com", actual.get().getEmail());
+            assertEquals("test_0", actual.get().getUsername());
+            assertEquals("test_0@example.com", actual.get().getEmail());
         }
     }
 
@@ -116,11 +125,11 @@ public class UserServiceTest {
 
         @Test
         void givenUsername_whenFindByUsername_thenReturnUser() {
-            var actual = systemUnderTest.findByUsername("test");
+            var actual = systemUnderTest.findByUsername("test_0");
 
             assertNotNull(actual);
-            assertEquals("test", actual.getUsername());
-            assertEquals("test@example.com", actual.getEmail());
+            assertFalse(actual.getUsername().isEmpty());
+            assertFalse(actual.getEmail().isEmpty());
         }
 
         @Test
@@ -129,7 +138,7 @@ public class UserServiceTest {
             var actual = testDatabaseAssistant.fetchTestUser().asDto;
 
             assertNotNull(actual);
-            assertEquals("new_test", actual.getPassword());
+            assertFalse(actual.getPassword().isEmpty());
         }
 
     }

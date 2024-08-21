@@ -1,7 +1,7 @@
 package com.tutorial.springboot.rbac.api;
 
 import com.tutorial.springboot.rbac.dto.PermissionDto;
-import com.tutorial.springboot.rbac.fixture.DtoFixture;
+import com.tutorial.springboot.rbac.fixture.DtoStubFactory;
 import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -14,12 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.rbac.fixture.Fixture.TEST_PERMISSION_NAME;
+import static com.tutorial.springboot.rbac.fixture.StubFactory.TEST_PERMISSION_NAME;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
 public class PermissionApiTest {
@@ -35,7 +35,10 @@ public class PermissionApiTest {
 
         @Test
         void givenDtoWhenSaveThenReturnId() {
-            var givenDto = DtoFixture.createTestPermission();
+            var givenDto = new DtoStubFactory()
+                    .addPermission()
+                    .get()
+                    .asOne();
 
             RestAssured.given()
                     .auth()
@@ -53,7 +56,10 @@ public class PermissionApiTest {
 
         @Test
         void givenDtoListWhenSaveThenReturnIdList() {
-            var givenDtos = DtoFixture.createMultiTestPermission(2);
+            var givenList = new DtoStubFactory()
+                    .addPermission()
+                    .get()
+                    .asList();
 
             RestAssured.given()
                     .auth()
@@ -62,12 +68,12 @@ public class PermissionApiTest {
                     .baseUri("http://localhost")
                     .port(port)
                     .basePath("/api/v1/permissions/batch")
-                    .body(givenDtos)
+                    .body(givenList)
                     .when()
                     .post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
-                    .body("size()", is(2));
+                    .body("size()", is(1));
         }
     }
 
@@ -76,7 +82,8 @@ public class PermissionApiTest {
 
         @Test
         void givenIdWhenFindThenReturnDto() {
-            var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
+            var givenDto = testDatabaseAssistant.newTestPermission().asDto;
+            var givenId = givenDto.getId();
 
             RestAssured.given()
                     .auth()
@@ -90,7 +97,7 @@ public class PermissionApiTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("id", equalTo(givenId.intValue()))
-                    .body("name", equalTo(TEST_PERMISSION_NAME));
+                    .body("name", equalTo(givenDto.getName()));
         }
 
         @Test

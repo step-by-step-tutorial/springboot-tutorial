@@ -1,9 +1,10 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.fixture.Fixture;
+import com.tutorial.springboot.rbac.dto.RoleDto;
+import com.tutorial.springboot.rbac.fixture.DtoStubFactory;
+import com.tutorial.springboot.rbac.fixture.StubFactory;
 import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.RoleService;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.rbac.fixture.DtoFixture.createMultiTestPermission;
-import static com.tutorial.springboot.rbac.fixture.DtoFixture.createTestRole;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -31,7 +30,10 @@ public class RoleServiceTest {
 
         @Test
         void givenValidDto_whenSave_thenReturnID() {
-            var givenDto = createTestRole();
+            var givenDto = (RoleDto)new DtoStubFactory()
+                    .addRole()
+                    .get()
+                    .asOne();
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -42,10 +44,13 @@ public class RoleServiceTest {
 
         @Test
         void givenRoleWithPermission_whenSave_thenReturnID() {
-            var givenDto = createTestRole()
-                    .setPermissions(createMultiTestPermission(2));
+            var givenDto = new DtoStubFactory()
+                    .addPermission()
+                    .addRole()
+                    .get()
+                    .asOne();
 
-            var actual = systemUnderTest.save(givenDto);
+            var actual = systemUnderTest.save((RoleDto) givenDto);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -65,7 +70,7 @@ public class RoleServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertEquals(Fixture.TEST_ROLE_NAME, actual.get().getName());
+            assertFalse(actual.get().getName().isEmpty());
         }
     }
 

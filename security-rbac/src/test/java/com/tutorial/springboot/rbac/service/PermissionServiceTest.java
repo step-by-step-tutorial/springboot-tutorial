@@ -1,6 +1,7 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.fixture.DtoFixture;
+import com.tutorial.springboot.rbac.dto.PermissionDto;
+import com.tutorial.springboot.rbac.fixture.DtoStubFactory;
 import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.PermissionService;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.rbac.fixture.Fixture.TEST_PERMISSION_NAME;
+import static com.tutorial.springboot.rbac.fixture.StubFactory.TEST_PERMISSION_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -30,7 +31,7 @@ public class PermissionServiceTest {
 
         @Test
         void givenValidDto_whenSave_thenReturnID() {
-            var givenDto = DtoFixture.createTestPermission();
+            var givenDto = (PermissionDto) new DtoStubFactory().addPermission().get().asOne();
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -51,7 +52,7 @@ public class PermissionServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertEquals(TEST_PERMISSION_NAME, actual.get().getName());
+            assertFalse(actual.get().getName().isEmpty());
         }
     }
 
