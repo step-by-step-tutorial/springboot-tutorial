@@ -1,8 +1,8 @@
 package com.tutorial.springboot.rbac.api;
 
 import com.tutorial.springboot.rbac.dto.PermissionDto;
-import com.tutorial.springboot.rbac.fixture.DtoStubFactory;
-import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.assistant.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.stub.TransientStubFactory;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.rbac.fixture.StubFactory.TEST_PERMISSION_NAME;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,46 +33,31 @@ public class PermissionApiTest {
     class SaveTests {
 
         @Test
-        void givenDtoWhenSaveThenReturnId() {
-            var givenDto = new DtoStubFactory()
-                    .addPermission()
-                    .get()
-                    .asOne();
+        void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
+            var givenDto = TransientStubFactory.createPermission(1).asOne();
 
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions")
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
                     .body(givenDto)
-                    .when()
-                    .post()
-                    .then()
-                    .statusCode(HttpStatus.CREATED.value());
+                    .when().post()
+                    .then().statusCode(HttpStatus.CREATED.value());
         }
 
         @Test
-        void givenDtoListWhenSaveThenReturnIdList() {
-            var givenList = new DtoStubFactory()
-                    .addPermission()
-                    .get()
-                    .asList();
+        void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
+            var givenList = TransientStubFactory.createPermission(2).asList();
 
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions/batch")
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions/batch")
                     .body(givenList)
-                    .when()
-                    .post()
+                    .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
-                    .body("size()", is(1));
+                    .body("size()", is(2));
         }
     }
 
@@ -81,19 +65,16 @@ public class PermissionApiTest {
     class FindTests {
 
         @Test
-        void givenIdWhenFindThenReturnDto() {
-            var givenDto = testDatabaseAssistant.newTestPermission().asDto;
+        void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
+            var givenDto = testDatabaseAssistant.insertTestPermission().asDto;
             var givenId = givenDto.getId();
 
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions/{id}")
-                    .pathParam("id", givenId)
-                    .get()
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port)
+                    .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
+                    .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("id", equalTo(givenId.intValue()))
@@ -101,16 +82,12 @@ public class PermissionApiTest {
         }
 
         @Test
-        void whenFindAllThenReturnListOfPermissions() {
+        void whenFindAll_thenReturnListOfDtoWithOKStatus() {
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions")
-                    .when()
-                    .get()
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
+                    .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("size()", is(2));
@@ -121,27 +98,21 @@ public class PermissionApiTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedDtoWhenUpdateThenRunSuccessfully() {
-            var givenDto = testDatabaseAssistant.newTestPermission()
-                    .asDto
+        void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
+            var givenDto = testDatabaseAssistant.insertTestPermission().asDto
                     .setName("UPDATED_PRIVILEGE");
             var givenId = givenDto.getId();
 
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions/{id}")
-                    .pathParam("id", givenId)
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port)
+                    .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .body(givenDto)
-                    .when()
-                    .put()
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
+                    .when().put()
+                    .then().statusCode(HttpStatus.NO_CONTENT.value());
 
-            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
+            var actual = testDatabaseAssistant.selectTestPermission().asDto;
             assertNotNull(actual);
             assertEquals("UPDATED_PRIVILEGE", actual.getName());
         }
@@ -151,73 +122,53 @@ public class PermissionApiTest {
     class DeleteTests {
 
         @Test
-        void givenIdWhenDeleteThenRunSuccessfully() {
-            var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
+        void givenId_whenDeleteOne_thenReturnNoContentStatus() {
+            var givenId = testDatabaseAssistant.insertTestPermission().asDto.getId();
 
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions/{id}")
-                    .pathParam("id", givenId)
-                    .when()
-                    .delete()
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port)
+                    .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
+                    .when().delete()
+                    .then().statusCode(HttpStatus.NO_CONTENT.value());
 
-            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
+            var actual = testDatabaseAssistant.selectTestPermission().asDto;
             assertNull(actual);
         }
 
         @Test
-        void givenIdListWhenDeleteThenRunSuccessfully() {
-            var givenIds = testDatabaseAssistant.newTestPermission(2)
-                    .asDto
+        void givenIdList_whenDeleteBatch_thenReturnNoContentStatus() {
+            var givenIds = testDatabaseAssistant.insertTestPermission(2).asDto
                     .stream()
                     .map(PermissionDto::getId)
                     .toList();
 
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions/batch")
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions/batch")
                     .body(givenIds)
-                    .when()
-                    .delete()
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
+                    .when().delete()
+                    .then().statusCode(HttpStatus.NO_CONTENT.value());
 
-            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
-            assertNull(actual);
+            var actual = testDatabaseAssistant.selectAllTestPermissions().asDto;
+            assertTrue(actual.isEmpty());
         }
 
         @Test
-        void givenNothingWhenDeleteThenDeleteEveryThing() {
-            var givenIds = testDatabaseAssistant.newTestPermission(2)
-                    .asDto
-                    .stream()
-                    .map(PermissionDto::getId)
-                    .toList();
+        void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
+            testDatabaseAssistant.insertTestPermission(2);
 
             RestAssured.given()
-                    .auth()
-                    .form("admin", "admin")
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions")
-                    .when()
-                    .delete()
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value());
+                    .auth().form("admin", "admin")
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
+                    .when().delete()
+                    .then().statusCode(HttpStatus.NO_CONTENT.value());
 
-            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
-            assertNull(actual);
+            var actual = testDatabaseAssistant.selectAllTestPermissions().asDto;
+            assertTrue(actual.isEmpty());
         }
     }
 
@@ -225,19 +176,27 @@ public class PermissionApiTest {
     class ExistsTests {
 
         @Test
-        void givenIdWhenCheckExistenceThenReturnAppropriateStatus() {
-            var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
+        void givenId_whenExists_ThenReturnOKStatus() {
+            var givenId = testDatabaseAssistant.insertTestPermission().asDto.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .baseUri("http://localhost")
-                    .port(port)
-                    .basePath("/api/v1/permissions/{id}")
-                    .pathParam("id", givenId)
-                    .when()
-                    .head()
-                    .then()
-                    .statusCode(HttpStatus.OK.value());
+                    .baseUri("http://localhost").port(port)
+                    .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
+                    .when().head()
+                    .then().statusCode(HttpStatus.OK.value());
+        }
+
+        @Test
+        void givenId_whenNotExist_ThenReturnNotFoundStatus() {
+            var givenId = -1;
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .baseUri("http://localhost").port(port)
+                    .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
+                    .when().head()
+                    .then().statusCode(HttpStatus.NOT_FOUND.value());
         }
     }
 }

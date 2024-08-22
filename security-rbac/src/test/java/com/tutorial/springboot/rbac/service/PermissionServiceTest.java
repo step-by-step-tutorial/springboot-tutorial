@@ -1,8 +1,7 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.dto.PermissionDto;
-import com.tutorial.springboot.rbac.fixture.DtoStubFactory;
-import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.stub.TransientStubFactory;
+import com.tutorial.springboot.rbac.test_utils.assistant.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.PermissionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.rbac.fixture.StubFactory.TEST_PERMISSION_NAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -30,8 +28,8 @@ public class PermissionServiceTest {
     class SaveTests {
 
         @Test
-        void givenValidDto_whenSave_thenReturnID() {
-            var givenDto = (PermissionDto) new DtoStubFactory().addPermission().get().asOne();
+        void givenValidDto_whenSaveOne_thenReturnId() {
+            var givenDto = TransientStubFactory.createPermission(1).asOne();
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -45,8 +43,8 @@ public class PermissionServiceTest {
     class FindTests {
 
         @Test
-        void givenId_whenFind_thenReturnDto() {
-            var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
+        void givenId_whenFindById_thenReturnDto() {
+            var givenId = testDatabaseAssistant.insertTestPermission().asDto.getId();
 
             var actual = systemUnderTest.getById(givenId);
 
@@ -61,14 +59,14 @@ public class PermissionServiceTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
-            var givenDto = testDatabaseAssistant.newTestPermission()
+            var givenDto = testDatabaseAssistant.insertTestPermission()
                     .asDto
                     .setName("UPDATED_PRIVILEGE");
             var givenId = givenDto.getId();
 
 
             systemUnderTest.update(givenId, givenDto);
-            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
+            var actual = testDatabaseAssistant.selectTestPermission().asDto;
 
             assertNotNull(actual);
             assertEquals("UPDATED_PRIVILEGE", actual.getName());
@@ -80,11 +78,11 @@ public class PermissionServiceTest {
     class DeleteTests {
 
         @Test
-        void givenId_whenDelete_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.newTestPermission().asDto.getId();
+        void givenId_whenDeleteById_thenJustRunSuccessful() {
+            var givenId = testDatabaseAssistant.insertTestPermission().asDto.getId();
 
             systemUnderTest.delete(givenId);
-            var actual = testDatabaseAssistant.fetchTestPermission().asDto;
+            var actual = testDatabaseAssistant.selectTestPermission().asDto;
 
             assertNull(actual);
         }

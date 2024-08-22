@@ -1,17 +1,13 @@
 package com.tutorial.springboot.rbac.repository;
 
-import com.tutorial.springboot.rbac.entity.Permission;
-import com.tutorial.springboot.rbac.fixture.EntityStubFactory;
-import com.tutorial.springboot.rbac.fixture.StubFactory;
-import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.stub.EntityStubFactory;
+import com.tutorial.springboot.rbac.test_utils.assistant.TestDatabaseAssistant;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,8 +27,8 @@ public class PermissionRepositoryTest {
     class CreateTest {
 
         @Test
-        void givenValidEntity_whenSave_thenReturnPersistedEntity() {
-            var givenEntity = (Permission) new EntityStubFactory().addPermission().get().asOne();
+        void givenValidEntity_whenSaveOne_thenReturnPersistedEntity() {
+            var givenEntity = EntityStubFactory.createPermission(1).asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -42,18 +38,13 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenValidEntities_whenSaveAll_thenReturnPersistedEntities() {
-            var entities = (List<Permission>) new EntityStubFactory()
-                    .addPermission()
-                    .addPermission()
-                    .addPermission()
-                    .get()
-                    .asList();
+        void givenValidEntities_whenSaveAll_thenReturnListOfPersistedEntity() {
+            var givenEntities = EntityStubFactory.createPermission(2).asList();
 
-            var actual = systemUnderTest.saveAll(entities);
+            var actual = systemUnderTest.saveAll(givenEntities);
 
             assertNotNull(actual);
-            assertEquals(3, actual.size());
+            assertEquals(2, actual.size());
             assertTrue(actual.stream().allMatch(entity -> entity.getId() != null));
         }
     }
@@ -62,10 +53,8 @@ public class PermissionRepositoryTest {
     class ReadTest {
 
         @Test
-        void givenID_whenFindById_thenReturnEntity() {
-            var givenId = testDatabaseAssistant.newTestPermission()
-                    .asEntity
-                    .getId();
+        void givenId_whenFindById_thenReturnEntity() {
+            var givenId = testDatabaseAssistant.insertTestPermission().asEntity.getId();
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -80,7 +69,7 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = testDatabaseAssistant.newTestPermission()
+            var givenEntity = testDatabaseAssistant.insertTestPermission()
                     .asEntity
                     .setName("UPDATED_PRIVILEGE");
 
@@ -96,8 +85,8 @@ public class PermissionRepositoryTest {
     class DeleteTest {
 
         @Test
-        void givenID_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.newTestPermission()
+        void givenId_whenDeleteById_thenJustRunSuccessful() {
+            var givenId = testDatabaseAssistant.insertTestPermission()
                     .asEntity
                     .getId();
 

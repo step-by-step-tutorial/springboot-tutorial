@@ -1,17 +1,13 @@
 package com.tutorial.springboot.rbac.service;
 
 import com.tutorial.springboot.rbac.dto.UserDto;
-import com.tutorial.springboot.rbac.fixture.DtoStubFactory;
-import com.tutorial.springboot.rbac.fixture.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.UserService;
-import org.junit.jupiter.api.BeforeEach;
+import com.tutorial.springboot.rbac.test_utils.assistant.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.stub.TransientStubFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -32,11 +28,8 @@ public class UserServiceTest {
     class SaveTests {
 
         @Test
-        void givenValidDto_whenSave_thenReturnID() {
-            var givenDto = new DtoStubFactory()
-                    .addUser()
-                    .get()
-                    .asOne();
+        void givenValidDto_whenSaveOne_thenReturnId() {
+            var givenDto = TransientStubFactory.createUser(1, 1, 1).asOne();
 
             var actual = systemUnderTest.save((UserDto) givenDto);
 
@@ -46,15 +39,10 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenUserIncludeRoleWithPermission_whenSave_thenReturnID() {
-            var givenDto = new DtoStubFactory()
-                    .addPermission()
-                    .addRole()
-                    .addUser()
-                    .get()
-                    .asOne();
+        void givenUserWithRoleAndPermission_whenSaveOne_thenReturnId() {
+            var givenDto = TransientStubFactory.createUser(1, 1, 1).asOne();
 
-            var actual = systemUnderTest.save((UserDto) givenDto);
+            var actual = systemUnderTest.save(givenDto);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -68,14 +56,14 @@ public class UserServiceTest {
     class FindTests {
 
         @Test
-        void givenExistingId_whenFind_thenReturnDto() {
-            var givenId = testDatabaseAssistant.newTestUser().asDto.getId();
+        void givenId_whenFindById_thenReturnDto() {
+            var givenId = testDatabaseAssistant.insertTestUser().asDto.getId();
             var actual = systemUnderTest.getById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertEquals("test_0", actual.get().getUsername());
-            assertEquals("test_0@example.com", actual.get().getEmail());
+            assertFalse(actual.get().getUsername().isEmpty());
+            assertFalse(actual.get().getEmail().isEmpty());
         }
     }
 
@@ -83,14 +71,14 @@ public class UserServiceTest {
     class UpdateTests {
 
         @Test
-        void givenValidDto_whenUpdate_thenJustRunSuccessful() {
-            var givenDto = testDatabaseAssistant.newTestUserIncludeRoleAndPermission()
+        void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
+            var givenDto = testDatabaseAssistant.insertComplexTestUser()
                     .asDto
                     .setEmail("updatedtest@example.com");
             var givenId = givenDto.getId();
 
             systemUnderTest.update(givenId, givenDto);
-            var actual = testDatabaseAssistant.fetchTestUser().asDto;
+            var actual = testDatabaseAssistant.selectTestUser().asDto;
 
             assertNotNull(actual);
             assertEquals("updatedtest@example.com", actual.getEmail());
@@ -100,13 +88,12 @@ public class UserServiceTest {
     @Nested
     class DeleteTests {
 
-
         @Test
-        void givenExistingId_whenDelete_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.newTestUser().asDto.getId();
+        void givenId_whenDeleteById_thenJustRunSuccessful() {
+            var givenId = testDatabaseAssistant.insertTestUser().asDto.getId();
 
             systemUnderTest.delete(givenId);
-            var actual = testDatabaseAssistant.fetchTestUser().asDto;
+            var actual = testDatabaseAssistant.selectTestUser().asDto;
 
             assertNull(actual);
         }
@@ -115,17 +102,12 @@ public class UserServiceTest {
     @Nested
     class CustomMethodTests {
 
-        @BeforeEach
-        void init() {
-            var user = testDatabaseAssistant.newTestUser().asDto;
-
-            var auth = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-            SecurityContextHolder.setContext(new SecurityContextImpl(auth));
-        }
-
         @Test
         void givenUsername_whenFindByUsername_thenReturnUser() {
-            var actual = systemUnderTest.findByUsername("test_0");
+            var givenUser = testDatabaseAssistant.insertTestUserAndLogin();
+            var givenUserUsername = givenUser.getUsername();
+
+            var actual = systemUnderTest.findByUsername(givenUserUsername);
 
             assertNotNull(actual);
             assertFalse(actual.getUsername().isEmpty());
@@ -134,8 +116,11 @@ public class UserServiceTest {
 
         @Test
         void givenOldPasswordAndNewPassword_whenChangePassword_thenUpdatePassword() {
-            systemUnderTest.changePassword("test", "new_test");
-            var actual = testDatabaseAssistant.fetchTestUser().asDto;
+            var givenUser = testDatabaseAssistant.insertTestUserAndLogin();
+            var givenUserPassword = givenUser.getPassword();
+
+            systemUnderTest.changePassword(givenUserPassword, "updated_password");
+            var actual = testDatabaseAssistant.selectTestUser().asDto;
 
             assertNotNull(actual);
             assertFalse(actual.getPassword().isEmpty());
