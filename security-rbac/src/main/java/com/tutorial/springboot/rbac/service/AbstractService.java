@@ -36,13 +36,8 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
         requireNonNull(dto);
 
         var entity = repository.save(transformer.toEntity(dto));
-        afterSave(entity, dto);
         logger.info("Entity saved with ID: {}", entity.getId());
         return Optional.of(entity.getId());
-    }
-
-    protected void afterSave(ENTITY entity, DTO dto) {
-
     }
 
     @Override
@@ -81,14 +76,14 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
-    public List<ID> saveBatch(List<DTO> dtos) {
-        requireNotNull(dtos, "List of DTOs should not be null");
-        requireNotEmpty(dtos, "List of DTOs should not be empty");
+    public List<ID> saveBatch(List<DTO> dtoList) {
+        requireNotNull(dtoList, "List of DTOs should not be null");
+        requireNotEmpty(dtoList, "List of DTOs should not be empty");
 
-        int numberOfBatches = calculateNumberOfBatch(dtos.size());
+        int numberOfBatches = calculateNumberOfBatch(dtoList.size());
 
         return IntStream.range(0, numberOfBatches)
-                .mapToObj(i -> selectBatch(dtos, i))
+                .mapToObj(i -> selectBatch(dtoList, i))
                 .map(stream -> stream.map(transformer::toEntity))
                 .map(batch -> repository.saveAll(batch.toList()))
                 .flatMap(List::stream)

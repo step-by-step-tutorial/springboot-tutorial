@@ -2,6 +2,7 @@ package com.tutorial.springboot.rbac.dto;
 
 import java.time.LocalDateTime;
 
+@SuppressWarnings("unchecked")
 public abstract class AbstractDto<ID, SELF extends AbstractDto<ID, SELF>> {
 
     private ID id;

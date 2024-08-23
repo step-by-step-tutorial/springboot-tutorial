@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
 
-
 @Component
 @Transactional
 public class TestDatabaseAssistant {

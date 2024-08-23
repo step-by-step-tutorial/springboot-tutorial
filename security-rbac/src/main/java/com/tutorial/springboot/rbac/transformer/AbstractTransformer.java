@@ -3,22 +3,19 @@ package com.tutorial.springboot.rbac.transformer;
 import com.tutorial.springboot.rbac.dto.AbstractDto;
 import com.tutorial.springboot.rbac.entity.AbstractEntity;
 
-import java.util.List;
-
 import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
 import static java.util.Objects.isNull;
 
 public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {
 
-    private Class<ENTITY> entityClass;
+    private final Class<ENTITY> entityClass;
 
-    private Class<DTO> dtoClass;
+    private final Class<DTO> dtoClass;
 
     public AbstractTransformer() {
         entityClass = identifyType(1, getClass());
         dtoClass = identifyType(2, getClass());
     }
-
 
     public DTO toDto(ENTITY entity) {
         DTO dto = createDto();
@@ -54,12 +51,6 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
 
         copyDtoToEntity(dto, entity);
         return entity;
-    }
-
-    public List<ENTITY> toEntity(List<DTO> list) {
-        return list.stream()
-                .map(this::toEntity)
-                .toList();
     }
 
     protected DTO createDto() {

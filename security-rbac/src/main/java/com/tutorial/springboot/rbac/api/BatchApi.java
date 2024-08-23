@@ -23,9 +23,9 @@ public abstract class BatchApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DT
     }
 
     @PostMapping(value = "/batch")
-    public ResponseEntity<List<ID>> saveBatch(@RequestBody List<DTO> dtos) {
-        logger.info("Received an inbound request to save a batch[{}] of permission", dtos.stream());
-        var identities = service.saveBatch(clean(dtos.stream()).toList());
+    public ResponseEntity<List<ID>> saveBatch(@RequestBody List<DTO> dtoList) {
+        logger.info("Received an inbound request to save a batch[{}] of permission", dtoList.stream());
+        var identities = service.saveBatch(clean(dtoList.stream()).toList());
 
         return ResponseEntity.status(CREATED).body(identities);
     }

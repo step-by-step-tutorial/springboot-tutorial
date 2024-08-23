@@ -26,7 +26,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     private boolean enabled = true;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -79,12 +79,6 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     public User setRoles(List<Role> roles) {
         this.roles = roles;
-        return this;
-    }
-
-    @Transient
-    public User addRole(Role role) {
-        this.roles.add(role);
         return this;
     }
 

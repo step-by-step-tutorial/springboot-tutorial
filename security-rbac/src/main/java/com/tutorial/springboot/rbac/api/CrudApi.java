@@ -11,13 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.tutorial.springboot.rbac.util.ApiErrorUtils.checkValidation;
-import static com.tutorial.springboot.rbac.util.CleanUpUtils.clean;
 import static com.tutorial.springboot.rbac.util.HttpUtils.createUriFromId;
 import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
-import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.*;
 
 public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {

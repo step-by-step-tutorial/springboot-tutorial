@@ -18,7 +18,7 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -54,12 +54,6 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
 
     public Role setPermissions(List<Permission> permissions) {
         this.permissions = permissions;
-        return this;
-    }
-
-    @Transient
-    public Role addPermissions(Permission permission) {
-        this.permissions.add(permission);
         return this;
     }
 

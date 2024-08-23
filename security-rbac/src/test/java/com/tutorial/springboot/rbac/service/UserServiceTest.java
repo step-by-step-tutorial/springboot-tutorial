@@ -1,9 +1,8 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.dto.UserDto;
 import com.tutorial.springboot.rbac.service.impl.UserService;
-import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
+import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
