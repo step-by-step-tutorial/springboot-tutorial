@@ -5,7 +5,6 @@ import com.tutorial.springboot.rbac.entity.Role;
 import com.tutorial.springboot.rbac.entity.User;
 import net.datafaker.Faker;
 
-import java.util.Random;
 import java.util.stream.IntStream;
 
 import static com.tutorial.springboot.rbac.test_utils.TestUtils.chooseRandom;
@@ -25,23 +24,20 @@ public final class EntityStubFactory {
         return new StubHelper<>(array);
     }
 
-    public static StubHelper<Role> createRole(int number, int maxPermissionNumber) {
+    public static StubHelper<Role> createRole(int number, int randomPermissionNumber) {
         var faker = new Faker();
         var array = IntStream.range(0, number)
                 .boxed()
                 .map(i -> new Role()
                         .setName(faker.job().title())
-                        .setPermissions(createPermission(chooseRandom(maxPermissionNumber)).asList())
-                )
+                        .setPermissions(createPermission(chooseRandom(randomPermissionNumber)).asList()))
                 .toArray(Role[]::new);
 
         return new StubHelper<>(array);
     }
 
-    public static StubHelper<User> createUser(int number, int maxRoleNumber, int maxPermissionNumber) {
+    public static StubHelper<User> createUser(int number, int randomRoleNumber, int randomPermissionNumber) {
         var faker = new Faker();
-        var random = new Random();
-
         var array = IntStream.range(0, number)
                 .boxed()
                 .map(i -> new User()
@@ -49,7 +45,7 @@ public final class EntityStubFactory {
                         .setPassword(faker.internet().password())
                         .setEmail(faker.internet().emailAddress())
                         .setEnabled(true)
-                        .setRoles(createRole(chooseRandom(maxRoleNumber), maxPermissionNumber).asList()))
+                        .setRoles(createRole(chooseRandom(randomRoleNumber), randomPermissionNumber).asList()))
                 .toArray(User[]::new);
 
         return new StubHelper<>(array);

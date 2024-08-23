@@ -1,7 +1,7 @@
 package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.test_utils.stub.EntityStubFactory;
-import com.tutorial.springboot.rbac.test_utils.assistant.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,8 @@ public class UserRepositoryTest {
     class CreateTest {
 
         @Test
-        void givenValidEntity_whenSaveOne_thenReturnPersistedEntity() {
-            var givenEntity = EntityStubFactory.createUser(1, 1, 1).asOne();
+        void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
+            var givenEntity = EntityStubFactory.createUser(1, 0, 0).asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -42,13 +42,14 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void givenValidEntities_whenSaveAll_thenReturnListOfPersistedEntity() {
-            var givenEntities = EntityStubFactory.createUser(2, 1, 1).asList();
+        void givenListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
+            int numberOfEntities = 2;
+            var givenEntities = EntityStubFactory.createUser(numberOfEntities, 0, 0).asList();
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
             assertNotNull(actual);
-            assertEquals(2, actual.size());
+            assertEquals(numberOfEntities, actual.size());
             assertTrue(actual.stream().allMatch(user -> user.getId() != null));
         }
 
@@ -67,7 +68,6 @@ public class UserRepositoryTest {
             assertThat(actual.getAuthorities().stream().map(GrantedAuthority::getAuthority)).isNotEmpty();
             assertThat(actual.getPermissions()).isNotEmpty();
         }
-
     }
 
     @Nested
@@ -75,7 +75,10 @@ public class UserRepositoryTest {
 
         @Test
         void givenID_whenFindById_thenReturnEntity() {
-            var givenId = testDatabaseAssistant.insertTestUser().asEntity.getId();
+            var givenId = testDatabaseAssistant.insertTestUser(1, 0, 0)
+                    .entity()
+                    .asOne()
+                    .getId();
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -93,10 +96,12 @@ public class UserRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = testDatabaseAssistant.insertTestUser().asEntity
+            var givenEntity = testDatabaseAssistant.insertTestUser(1, 0, 0)
+                    .entity()
+                    .asOne()
                     .setUsername("newusername")
                     .setPassword("newpassword")
-                    .setEmail("newusername@example.com")
+                    .setEmail("newusername@host.com")
                     .setEnabled(false);
 
             var actual = systemUnderTest.save(givenEntity);
@@ -105,7 +110,7 @@ public class UserRepositoryTest {
             assertEquals(givenEntity.getId(), actual.getId());
             assertEquals("newusername", actual.getUsername());
             assertEquals("newpassword", actual.getPassword());
-            assertEquals("newusername@example.com", actual.getEmail());
+            assertEquals("newusername@host.com", actual.getEmail());
             assertFalse(actual.isEnabled());
         }
     }
@@ -115,7 +120,10 @@ public class UserRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestUser().asEntity.getId();
+            var givenId = testDatabaseAssistant.insertTestUser(1, 1, 1)
+                    .entity()
+                    .asOne()
+                    .getId();
 
             systemUnderTest.deleteById(givenId);
             var actual = systemUnderTest.findById(givenId);

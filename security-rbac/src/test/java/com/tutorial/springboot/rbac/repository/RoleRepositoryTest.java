@@ -1,7 +1,7 @@
 package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.test_utils.stub.EntityStubFactory;
-import com.tutorial.springboot.rbac.test_utils.assistant.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +22,11 @@ public class RoleRepositoryTest {
     @Autowired
     TestDatabaseAssistant testDatabaseAssistant;
 
-
     @Nested
     class CreateTest {
 
         @Test
-        void givenValidEntity_whenSaveOne_thenReturnPersistedEntity() {
+        void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
             var givenEntity = EntityStubFactory.createRole(1, 1).asOne();
 
             var actual = systemUnderTest.save(givenEntity);
@@ -38,13 +37,14 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenValidEntities_whenSaveAll_thenReturnListOfPersistedEntity() {
-            var givenEntities = EntityStubFactory.createRole(2, 1).asList();
+        void givenListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
+            var numberOfEntities = 2;
+            var givenEntities = EntityStubFactory.createRole(numberOfEntities, 1).asList();
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
             assertNotNull(actual);
-            assertEquals(2, actual.size());
+            assertEquals(numberOfEntities, actual.size());
             assertTrue(actual.stream().allMatch(entity -> entity.getId() != null));
         }
     }
@@ -54,7 +54,10 @@ public class RoleRepositoryTest {
 
         @Test
         void givenId_whenFindById_thenReturnEntity() {
-            var givenId = testDatabaseAssistant.insertTestRole().asEntity.getId();
+            var givenId = testDatabaseAssistant.insertTestRole(1, 1)
+                    .entity()
+                    .asOne()
+                    .getId();
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -69,15 +72,15 @@ public class RoleRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = testDatabaseAssistant.insertTestRole()
-                    .asEntity
-                    .setName("ROLE_UPDATED");
+            var givenEntity = testDatabaseAssistant.insertTestRole(1, 1)
+                    .entity().asOne()
+                    .setName("updated_value");
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
             assertEquals(givenEntity.getId(), actual.getId());
-            assertEquals("ROLE_UPDATED", actual.getName());
+            assertEquals("updated_value", actual.getName());
         }
     }
 
@@ -86,7 +89,10 @@ public class RoleRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestRole().asEntity.getId();
+            var givenId = testDatabaseAssistant.insertTestRole(1, 1)
+                    .entity()
+                    .asOne()
+                    .getId();
 
             systemUnderTest.deleteById(givenId);
             var actual = systemUnderTest.findById(givenId);

@@ -7,13 +7,13 @@ public final class TestUtils {
     private TestUtils() {
     }
 
-    public static int chooseRandom(int permissionNo) {
-        if (permissionNo <= 0) {
+    public static int chooseRandom(int bound) {
+        if (bound <= 0) {
             return 0;
         }
 
         var random = new Random();
-        return random.nextInt(1, 1 + permissionNo);
+        return random.nextInt(1, 1 + bound);
     }
 
 }

@@ -13,6 +13,9 @@ public class StubHelper<ELEMENT> {
     }
 
     public ELEMENT asOne() {
+        if (elements == null || elements.length == 0) {
+            return null;
+        }
         return elements[0];
     }
 

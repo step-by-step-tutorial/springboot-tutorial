@@ -1,7 +1,7 @@
 package com.tutorial.springboot.rbac.repository;
 
 import com.tutorial.springboot.rbac.test_utils.stub.EntityStubFactory;
-import com.tutorial.springboot.rbac.test_utils.assistant.TestDatabaseAssistant;
+import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class PermissionRepositoryTest {
     class CreateTest {
 
         @Test
-        void givenValidEntity_whenSaveOne_thenReturnPersistedEntity() {
+        void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
             var givenEntity = EntityStubFactory.createPermission(1).asOne();
 
             var actual = systemUnderTest.save(givenEntity);
@@ -38,13 +38,14 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenValidEntities_whenSaveAll_thenReturnListOfPersistedEntity() {
-            var givenEntities = EntityStubFactory.createPermission(2).asList();
+        void givenListOfEntities_whenSaveAll_thenReturnListOfPersistedEntity() {
+            var numberOfEntities = 2;
+            var givenEntities = EntityStubFactory.createPermission(numberOfEntities).asList();
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
             assertNotNull(actual);
-            assertEquals(2, actual.size());
+            assertEquals(numberOfEntities, actual.size());
             assertTrue(actual.stream().allMatch(entity -> entity.getId() != null));
         }
     }
@@ -54,7 +55,7 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenId_whenFindById_thenReturnEntity() {
-            var givenId = testDatabaseAssistant.insertTestPermission().asEntity.getId();
+            var givenId = testDatabaseAssistant.insertTestPermission(1).entity().asOne().getId();
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -69,15 +70,16 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = testDatabaseAssistant.insertTestPermission()
-                    .asEntity
-                    .setName("UPDATED_PRIVILEGE");
+            var givenEntity = testDatabaseAssistant.insertTestPermission(1)
+                    .entity()
+                    .asOne()
+                    .setName("updated_value");
 
             var actual = systemUnderTest.save(givenEntity);
 
             assertNotNull(actual);
             assertEquals(givenEntity.getId(), actual.getId());
-            assertEquals("UPDATED_PRIVILEGE", actual.getName());
+            assertEquals("updated_value", actual.getName());
         }
     }
 
@@ -86,8 +88,9 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestPermission()
-                    .asEntity
+            var givenId = testDatabaseAssistant.insertTestPermission(1)
+                    .entity()
+                    .asOne()
                     .getId();
 
             systemUnderTest.deleteById(givenId);
