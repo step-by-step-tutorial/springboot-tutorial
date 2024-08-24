@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test database initialized by data.sql
  * Username: admin
  * Password: admin
- * */
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
@@ -36,10 +36,9 @@ public class RoleApiTest {
     @Nested
     class SaveTests {
 
-
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
-            var givenDto = DtoStubFactory.createRole(1,1).asOne();
+            var givenDto = DtoStubFactory.createRole(1, 1).asOne();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -56,7 +55,7 @@ public class RoleApiTest {
         @Test
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
             var numberOfRoles = 2;
-            var givenDtoList = DtoStubFactory.createRole(numberOfRoles,1).asList();
+            var givenDtoList = DtoStubFactory.createRole(numberOfRoles, 1).asList();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -76,7 +75,7 @@ public class RoleApiTest {
 
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
-            var givenDto = testDatabaseAssistant.insertTestRole(1,1).dto().asOne();
+            var givenDto = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne();
             var givenId = givenDto.getId();
 
             RestAssured.given()
@@ -111,7 +110,7 @@ public class RoleApiTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
-            var givenDto = testDatabaseAssistant.insertTestRole(1,1)
+            var givenDto = testDatabaseAssistant.insertTestRole(1, 1)
                     .dto()
                     .asOne()
                     .setName("updated_value");
@@ -139,7 +138,7 @@ public class RoleApiTest {
 
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
-            var givenId = testDatabaseAssistant.insertTestRole(1,1).dto().asOne().getId();
+            var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -157,7 +156,7 @@ public class RoleApiTest {
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
-            var givenIds = testDatabaseAssistant.insertTestRole(2,1)
+            var givenIds = testDatabaseAssistant.insertTestRole(2, 1)
                     .dto()
                     .asList()
                     .stream()
@@ -180,7 +179,7 @@ public class RoleApiTest {
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
-            testDatabaseAssistant.insertTestRole(2,1);
+            testDatabaseAssistant.insertTestRole(2, 1);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -201,7 +200,7 @@ public class RoleApiTest {
 
         @Test
         void givenId_whenExists_ThenReturnOKStatus() {
-            var givenId = testDatabaseAssistant.insertTestRole(1,1).dto().asOne().getId();
+            var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)

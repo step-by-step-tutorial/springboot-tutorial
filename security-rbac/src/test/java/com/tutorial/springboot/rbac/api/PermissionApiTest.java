@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test database initialized by data.sql
  * Username: admin
  * Password: admin
- * */
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
@@ -35,7 +35,6 @@ public class PermissionApiTest {
 
     @Nested
     class SaveTests {
-
 
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {

@@ -1,8 +1,8 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.service.impl.PermissionService;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
-import com.tutorial.springboot.rbac.service.impl.PermissionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -20,11 +20,11 @@ public final class TestUtils {
         return random.nextInt(1, 1 + bound);
     }
 
-    public static void loginByAdmin(){
+    public static void loginByAdmin() {
         loginByUser("admin", "admin");
     }
 
-    public static void loginByUser(String username, String password){
+    public static void loginByUser(String username, String password) {
         var auth = new UsernamePasswordAuthenticationToken(username, password);
         SecurityContextHolder.setContext(new SecurityContextImpl(auth));
     }
