@@ -17,7 +17,6 @@ public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
     @Override
     protected void copyEntityToDto(User entity, UserDto dto) {
         dto.setUsername(entity.getUsername())
-                .setPassword(entity.getPassword())
                 .setEmail(entity.getEmail())
                 .setEnabled(entity.isEnabled())
                 .setRoles(entity.getRoles().stream().map(roleTransformer::toDto).toList());

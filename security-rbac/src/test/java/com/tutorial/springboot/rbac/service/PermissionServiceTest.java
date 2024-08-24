@@ -3,6 +3,7 @@ package com.tutorial.springboot.rbac.service;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
 import com.tutorial.springboot.rbac.service.impl.PermissionService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.rbac.test_utils.TestUtils.loginByAdmin;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -23,6 +25,11 @@ public class PermissionServiceTest {
 
     @Autowired
     TestDatabaseAssistant testDatabaseAssistant;
+
+    @BeforeEach
+    void login() {
+        loginByAdmin();
+    }
 
     @Nested
     class SaveTests {
@@ -69,7 +76,7 @@ public class PermissionServiceTest {
             var givenId = givenDto.getId();
 
             systemUnderTest.update(givenId, givenDto);
-            var actual = testDatabaseAssistant.selectTestPermissions().dto().asOne();
+            var actual = testDatabaseAssistant.selectTestPermission().dto().asOne();
 
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());
@@ -88,7 +95,7 @@ public class PermissionServiceTest {
                     .getId();
 
             systemUnderTest.delete(givenId);
-            var actual = testDatabaseAssistant.selectTestPermissions().dto().asOne();
+            var actual = testDatabaseAssistant.selectTestPermission().dto().asOne();
 
             assertNull(actual);
         }

@@ -26,7 +26,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     private boolean enabled = true;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -94,7 +94,8 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         this.password = newOne.password;
         this.email = newOne.email;
         this.enabled = newOne.enabled;
-        this.roles = newOne.roles;
+        this.roles.clear();
+        this.roles.addAll(newOne.roles);
     }
 
     @Transient

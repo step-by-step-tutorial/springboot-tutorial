@@ -5,6 +5,7 @@ import com.tutorial.springboot.rbac.entity.Role;
 import com.tutorial.springboot.rbac.entity.User;
 import net.datafaker.Faker;
 
+import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
 import static com.tutorial.springboot.rbac.test_utils.TestUtils.chooseRandom;
@@ -18,7 +19,12 @@ public final class EntityStubFactory {
         var faker = new Faker();
         var array = IntStream.range(0, number)
                 .boxed()
-                .map(i -> new Permission().setName(faker.hacker().verb()))
+                .map(i -> new Permission()
+                        .setName(faker.hacker().verb())
+                        .setCreatedBy("admin")
+                        .setCreatedAt(LocalDateTime.now())
+                        .setVersion(1)
+                )
                 .toArray(Permission[]::new);
 
         return new StubHelper<>(array);
@@ -30,6 +36,9 @@ public final class EntityStubFactory {
                 .boxed()
                 .map(i -> new Role()
                         .setName(faker.job().title())
+                        .setCreatedBy("admin")
+                        .setCreatedAt(LocalDateTime.now())
+                        .setVersion(1)
                         .setPermissions(createPermission(chooseRandom(randomPermissionNumber)).asList()))
                 .toArray(Role[]::new);
 
@@ -45,6 +54,9 @@ public final class EntityStubFactory {
                         .setPassword(faker.internet().password())
                         .setEmail(faker.internet().emailAddress())
                         .setEnabled(true)
+                        .setCreatedBy("admin")
+                        .setCreatedAt(LocalDateTime.now())
+                        .setVersion(1)
                         .setRoles(createRole(chooseRandom(randomRoleNumber), randomPermissionNumber).asList()))
                 .toArray(User[]::new);
 

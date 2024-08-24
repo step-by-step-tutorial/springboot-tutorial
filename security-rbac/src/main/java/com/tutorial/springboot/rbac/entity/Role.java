@@ -15,10 +15,10 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     @Size(max = 50, message = "Role cannot be longer than 50 characters")
     private String name;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -61,6 +61,7 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     public void updateFrom(Role newOne) {
         super.updateFrom(newOne);
         this.name = newOne.name;
-        this.permissions = newOne.permissions;
+        this.permissions.clear();
+        this.permissions.addAll(newOne.permissions);
     }
 }

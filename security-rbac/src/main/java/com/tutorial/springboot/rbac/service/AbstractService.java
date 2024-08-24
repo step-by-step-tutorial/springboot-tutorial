@@ -6,8 +6,10 @@ import com.tutorial.springboot.rbac.transformer.AbstractTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -35,6 +37,10 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     public Optional<ID> save(DTO dto) {
         requireNonNull(dto);
 
+        dto.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName())
+                .setCreatedAt(LocalDateTime.now())
+                .setVersion(1);
+
         var entity = repository.save(transformer.toEntity(dto));
         logger.info("Entity saved with ID: {}", entity.getId());
         return Optional.of(entity.getId());
@@ -49,14 +55,16 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @Transactional
     public void update(ID id, DTO dto) {
         requireNonNull(id);
         requireNonNull(dto);
 
-        var entity = repository.findById(id);
-        if (entity.isPresent()) {
-            entity.get().updateFrom(transformer.toEntity(dto));
-            repository.save(entity.get());
+        var entityHolder = repository.findById(id);
+        if (entityHolder.isPresent()) {
+            ENTITY entity = entityHolder.get();
+            entity.updateFrom(transformer.toEntity(dto));
+            repository.save(entity);
         } else {
             logger.warn("Entity not found with ID: {}", id);
         }

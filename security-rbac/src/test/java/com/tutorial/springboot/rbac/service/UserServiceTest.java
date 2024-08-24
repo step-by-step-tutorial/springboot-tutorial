@@ -3,6 +3,7 @@ package com.tutorial.springboot.rbac.service;
 import com.tutorial.springboot.rbac.service.impl.UserService;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.rbac.test_utils.TestUtils.loginByAdmin;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -22,6 +24,11 @@ public class UserServiceTest {
 
     @Autowired
     TestDatabaseAssistant testDatabaseAssistant;
+
+    @BeforeEach
+    void login() {
+        loginByAdmin();
+    }
 
     @Nested
     class SaveTests {
@@ -77,18 +84,17 @@ public class UserServiceTest {
                     .asOne()
                     .setUsername("newusername")
                     .setPassword("newpassword")
-                    .setEmail("newusername@host.com")
-                    .setEnabled(false);
+                    .setEmail("newusername@host.com");
             var givenId = givenDto.getId();
 
             systemUnderTest.update(givenId, givenDto);
-            var actual = testDatabaseAssistant.selectTestUser().dto().asOne();
+            var actual = testDatabaseAssistant.selectTestUser().entity().asOne();
 
             assertNotNull(actual);
             assertEquals("newusername", actual.getUsername());
             assertEquals("newpassword", actual.getPassword());
             assertEquals("newusername@host.com", actual.getEmail());
-            assertFalse(actual.isEnabled());
+            assertTrue(actual.isEnabled());
         }
     }
 
@@ -114,7 +120,7 @@ public class UserServiceTest {
 
         @Test
         void givenUsername_whenFindByUsername_thenReturnUser() {
-            var givenUser = testDatabaseAssistant.insertTestUserAndLogin();
+            var givenUser = testDatabaseAssistant.insertTestUserAndLogin().entity().asOne();
             var givenUserUsername = givenUser.getUsername();
 
             var actual = systemUnderTest.findByUsername(givenUserUsername);
@@ -126,11 +132,11 @@ public class UserServiceTest {
 
         @Test
         void givenOldPasswordAndNewPassword_whenChangePassword_thenUpdatePassword() {
-            var givenUser = testDatabaseAssistant.insertTestUserAndLogin();
+            var givenUser = testDatabaseAssistant.insertTestUserAndLogin().entity().asOne();
             var givenUserPassword = givenUser.getPassword();
 
             systemUnderTest.changePassword(givenUserPassword, "updated_password");
-            var actual = testDatabaseAssistant.selectTestUser().dto().asOne();
+            var actual = testDatabaseAssistant.selectTestUser().entity().asOne();
 
             assertNotNull(actual);
             assertFalse(actual.getPassword().isEmpty());

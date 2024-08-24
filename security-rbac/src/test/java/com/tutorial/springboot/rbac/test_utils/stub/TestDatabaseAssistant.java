@@ -11,13 +11,12 @@ import com.tutorial.springboot.rbac.transformer.RoleTransformer;
 import com.tutorial.springboot.rbac.transformer.UserTransformer;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
+
+import static com.tutorial.springboot.rbac.test_utils.TestUtils.loginByUser;
 
 @Component
 @Transactional
@@ -42,7 +41,7 @@ public class TestDatabaseAssistant {
         return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
 
-    public ResultHelper<Permission, PermissionDto> selectTestPermissions() {
+    public ResultHelper<Permission, PermissionDto> selectTestPermission() {
         var query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.id < 1000", Permission.class);
 
         var entities = query.getResultList().toArray(Permission[]::new);
@@ -84,13 +83,11 @@ public class TestDatabaseAssistant {
         return new ResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoList));
     }
 
-    public UserDto insertTestUserAndLogin() {
-        var user = insertTestUser(1, 1, 1).dto().asOne();
-
-        var auth = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-        SecurityContextHolder.setContext(new SecurityContextImpl(auth));
-
-        return user;
+    public ResultHelper<User, UserDto> insertTestUserAndLogin() {
+        var entity = insertTestUser(1, 1, 1).entity().asOne();
+        loginByUser(entity.getUsername(), entity.getPassword());
+        var dto = userTransformer.toDto(entity);
+        return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
 
 }

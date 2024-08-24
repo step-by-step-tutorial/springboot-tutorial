@@ -1,8 +1,9 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.service.impl.RoleService;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
-import com.tutorial.springboot.rbac.service.impl.RoleService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.rbac.test_utils.TestUtils.loginByAdmin;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -22,6 +24,11 @@ public class RoleServiceTest {
 
     @Autowired
     TestDatabaseAssistant testDatabaseAssistant;
+
+    @BeforeEach
+    void login() {
+        loginByAdmin();
+    }
 
     @Nested
     class SaveTests {
@@ -73,7 +80,7 @@ public class RoleServiceTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
-            var givenDto = testDatabaseAssistant.insertTestRole(1,1)
+            var givenDto = testDatabaseAssistant.insertTestRole(1, 1)
                     .dto()
                     .asOne()
                     .setName("updated_value");
