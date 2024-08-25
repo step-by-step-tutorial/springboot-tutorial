@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rbac.util;
 
-import com.tutorial.springboot.rbac.exception.ValidationException;
+import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;
 
@@ -18,7 +18,7 @@ public final class ApiErrorUtils {
                     .stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .toList();
-            throw new ValidationException(errorMessages);
+            throw new ArrayOfValidationException(errorMessages);
         }
     }
 }

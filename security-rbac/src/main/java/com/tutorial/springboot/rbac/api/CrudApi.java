@@ -3,12 +3,14 @@ package com.tutorial.springboot.rbac.api;
 import com.tutorial.springboot.rbac.dto.AbstractDto;
 import com.tutorial.springboot.rbac.entity.AbstractEntity;
 import com.tutorial.springboot.rbac.service.AbstractService;
-import jakarta.validation.Valid;
+import com.tutorial.springboot.rbac.validation.SaveValidation;
+import com.tutorial.springboot.rbac.validation.UpdateValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.tutorial.springboot.rbac.util.ApiErrorUtils.checkValidation;
@@ -33,8 +35,8 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
     }
 
     @PostMapping
-    public ResponseEntity<ID> save(@RequestBody @Valid DTO dto, BindingResult bindingResult) {
-        logger.info("Received an inbound request to save a permission");
+    public ResponseEntity<ID> save(@RequestBody @Validated(value = SaveValidation.class) DTO dto, BindingResult bindingResult) {
+        logger.info("Received an inbound request to save a {}", dtoClass.getSimpleName());
         checkValidation(bindingResult);
         return service.save(dto)
                 .map(id -> created(createUriFromId(id)).body(id))
@@ -43,15 +45,17 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
 
     @GetMapping("/{id}")
     public ResponseEntity<DTO> findById(@PathVariable ID id) {
-        logger.info("Received an inbound request to retrieve a permission by its unique ID[{}]", id);
+        logger.info("Received an inbound request to retrieve a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable ID id, @RequestBody @Valid DTO dto, BindingResult bindingResult) {
-        logger.info("Received an inbound request to update a permission by its unique ID[{}]", id);
+    public ResponseEntity<Void> update(@PathVariable ID id,
+                                       @RequestBody @Validated(value = UpdateValidation.class) DTO dto,
+                                       BindingResult bindingResult) {
+        logger.info("Received an inbound request to update a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
         checkValidation(bindingResult);
         service.update(id, dto);
         return noContent().build();
@@ -59,14 +63,14 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable ID id) {
-        logger.info("Received an inbound request to delete a permission by its unique ID[{}]", id);
+        logger.info("Received an inbound request to delete a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
         service.delete(id);
         return noContent().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.HEAD)
     public ResponseEntity<Void> exists(@PathVariable ID id) {
-        logger.info("Received an inbound request to check existence of a sample by its unique ID[{}]", id);
+        logger.info("Received an inbound request to check existence of a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
         return service.exists(id) ? ok().build() : notFound().build();
     }
 

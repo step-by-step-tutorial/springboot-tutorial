@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rbac.util;
 
-import com.tutorial.springboot.rbac.exception.ValidationException;
+import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -17,7 +17,7 @@ public final class HttpUtils {
     public static <ID> URI createUriFromId(ID id) {
         requireNotNull(id, "ID should not be null");
         if (isNull(id)) {
-            throw new ValidationException(List.of("ID should not be null"));
+            throw new ArrayOfValidationException(List.of("ID should not be null"));
         }
 
         return ServletUriComponentsBuilder.fromCurrentRequest()

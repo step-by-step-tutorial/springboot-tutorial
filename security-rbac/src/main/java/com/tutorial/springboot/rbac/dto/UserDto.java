@@ -1,14 +1,21 @@
 package com.tutorial.springboot.rbac.dto;
 
+import com.tutorial.springboot.rbac.validation.SaveValidation;
+import com.tutorial.springboot.rbac.validation.UpdateValidation;
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDto extends AbstractDto<Long, UserDto> {
 
+    @NotBlank(groups = {SaveValidation.class, UpdateValidation.class}, message = "username should not be blank")
     private String username;
 
+    @NotBlank(groups = {SaveValidation.class, UpdateValidation.class}, message = "password should not be blank")
     private String password;
 
+    @NotBlank(groups = {SaveValidation.class, UpdateValidation.class}, message = "email should not be blank")
     private String email;
 
     private boolean enabled = true;

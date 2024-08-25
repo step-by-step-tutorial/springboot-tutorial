@@ -15,8 +15,7 @@ public final class CollectionUtils {
     }
 
     public static <T> Stream<T> selectBatch(List<T> list, int batchIndex) {
-        return list
-                .stream()
+        return list.stream()
                 .skip((long) batchIndex * BATCH_SIZE)
                 .limit(BATCH_SIZE);
     }

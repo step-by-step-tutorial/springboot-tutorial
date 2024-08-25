@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static com.tutorial.springboot.rbac.test_utils.SecurityTestUtils.getTestToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,6 +74,39 @@ public class UserApiTest {
                     .body("size()", is(numberOfUsers));
         }
 
+        @Test
+        void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
+            var givenToken = getTestToken();
+            var givenBody = new UserDto();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/users")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(3))
+                    .body("errors", hasItems("username should not be blank", "password should not be blank", "email should not be blank"));
+        }
+
+        @Test
+        void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
+            var givenToken = getTestToken();
+            var givenBody = List.of(new UserDto(), new UserDto());
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/users/batch")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(6))
+                    .body("errors", hasItems("username should not be blank", "password should not be blank", "email should not be blank"));
+        }
     }
 
     @Nested
@@ -109,6 +144,23 @@ public class UserApiTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("size()", is(expectedUserNumber));
+        }
+
+        @Test
+        void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
+            var givenToken = getTestToken();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri("http://localhost").port(port)
+                    .basePath("/api/v1/users/batch/{page}/{size}")
+                    .pathParam("page", 0)
+                    .pathParam("size", 10)
+                    .when().get()
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("content.size()", is(2));
         }
     }
 

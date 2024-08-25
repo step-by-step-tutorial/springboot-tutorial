@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static com.tutorial.springboot.rbac.test_utils.SecurityTestUtils.getTestToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,6 +73,41 @@ public class RoleApiTest {
                     .body("size()", is(numberOfRoles));
         }
 
+
+        @Test
+        void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
+            var givenToken = getTestToken();
+            var givenBody = new RoleDto();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/roles")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(1))
+                    .body("errors", hasItem("name should not be blank"));
+        }
+
+        @Test
+        void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
+            var givenToken = getTestToken();
+            var givenBody = List.of(new RoleDto(), new RoleDto());
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri("http://localhost").port(port).basePath("/api/v1/roles/batch")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(2))
+                    .body("errors", hasItem("name should not be blank"));
+        }
+
     }
 
     @Nested
@@ -107,6 +144,23 @@ public class RoleApiTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("size()", is(expectedRoleNumber));
+        }
+
+        @Test
+        void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
+            var givenToken = getTestToken();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri("http://localhost").port(port)
+                    .basePath("/api/v1/roles/batch/{page}/{size}")
+                    .pathParam("page", 0)
+                    .pathParam("size", 10)
+                    .when().get()
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("content.size()", is(2));
         }
     }
 

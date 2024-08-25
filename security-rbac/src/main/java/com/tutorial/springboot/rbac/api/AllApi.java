@@ -21,15 +21,14 @@ public abstract class AllApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO 
 
     @GetMapping
     public ResponseEntity<List<DTO>> findAll() {
-        logger.info("Received an inbound request to retrieve all permissions");
-        final var permissions = service.getAll();
-        return ok(permissions);
+        logger.info("Received an inbound request to retrieve all {}", dtoClass.getSimpleName());
+        final var dtoList = service.getAll();
+        return ok(dtoList);
     }
-
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAll() {
-        logger.info("Received an inbound request to delete all permissions");
+        logger.info("Received an inbound request to delete all {}", dtoClass.getSimpleName());
         service.deleteAll();
         return noContent().build();
     }

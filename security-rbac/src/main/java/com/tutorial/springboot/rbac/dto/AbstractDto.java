@@ -1,10 +1,14 @@
 package com.tutorial.springboot.rbac.dto;
 
+import com.tutorial.springboot.rbac.validation.UpdateValidation;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractDto<ID, SELF extends AbstractDto<ID, SELF>> {
 
+    @NotNull(groups = {UpdateValidation.class}, message = "ID should not be null")
     private ID id;
 
     private String createdBy;

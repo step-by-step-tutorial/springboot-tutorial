@@ -1,7 +1,7 @@
 package com.tutorial.springboot.rbac.api.impl;
 
 import com.tutorial.springboot.rbac.dto.ErrorDto;
-import com.tutorial.springboot.rbac.exception.ValidationException;
+import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,8 +20,8 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 public class ExceptionApi {
     private final Logger logger = LoggerFactory.getLogger(ExceptionApi.class.getSimpleName());
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorDto> catchValidationException(ValidationException ex) {
+    @ExceptionHandler(ArrayOfValidationException.class)
+    public ResponseEntity<ErrorDto> catchArrayOfValidationException(ArrayOfValidationException ex) {
         var details = ex.getDetails().toArray(new String[0]);
         logger.error(Arrays.toString(details));
         return ResponseEntity.badRequest()

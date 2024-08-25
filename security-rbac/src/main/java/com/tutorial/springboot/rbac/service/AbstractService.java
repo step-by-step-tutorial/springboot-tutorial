@@ -5,6 +5,8 @@ import com.tutorial.springboot.rbac.entity.AbstractEntity;
 import com.tutorial.springboot.rbac.transformer.AbstractTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,6 +99,11 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
                 .flatMap(List::stream)
                 .map(AbstractEntity::getId)
                 .toList();
+    }
+
+    @Override
+    public Page<DTO> getBatch(Pageable pageable) {
+        return repository.findAll(pageable).map(transformer::toDto);
     }
 
     @Override

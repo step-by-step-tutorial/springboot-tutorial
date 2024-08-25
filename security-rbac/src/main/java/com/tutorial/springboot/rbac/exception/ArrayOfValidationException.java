@@ -2,10 +2,10 @@ package com.tutorial.springboot.rbac.exception;
 
 import java.util.Collection;
 
-public class ValidationException extends RuntimeException {
+public class ArrayOfValidationException extends RuntimeException {
     private final Collection<String> details;
 
-    public ValidationException(Collection<String> errorMessages) {
+    public ArrayOfValidationException(Collection<String> errorMessages) {
         super("There are invalid values, please refer to the details!");
         this.details = errorMessages;
     }
