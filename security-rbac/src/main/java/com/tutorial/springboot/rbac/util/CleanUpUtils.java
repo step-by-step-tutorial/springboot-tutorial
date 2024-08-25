@@ -1,6 +1,7 @@
 package com.tutorial.springboot.rbac.util;
 
 import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 
@@ -24,7 +25,7 @@ public final class CleanUpUtils {
         var errorMessages = stream.filter(Objects::nonNull)
                 .map((T object) -> validator.validate(object, groups))
                 .filter(errors -> !errors.isEmpty())
-                .flatMap(errors -> errors.stream().map(error -> error.getMessage()))
+                .flatMap(errors -> errors.stream().map(ConstraintViolation::getMessage))
                 .toList();
         if (!errorMessages.isEmpty()) {
             throw new ArrayOfValidationException(errorMessages);
