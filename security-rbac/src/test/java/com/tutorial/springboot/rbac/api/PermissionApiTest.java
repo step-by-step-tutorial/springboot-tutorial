@@ -209,10 +209,12 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenExists_ThenReturnOKStatus() {
+            var givenToken = getTestToken();
             var givenId = testDatabaseAssistant.insertTestPermission(1).dto().asOne().getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().head()
@@ -223,10 +225,12 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenNotExist_ThenReturnNotFoundStatus() {
+            var givenToken = getTestToken();
             var givenId = -1;
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().head()

@@ -216,10 +216,12 @@ public class UserApiTest {
 
         @Test
         void givenId_whenExists_ThenReturnOKStatus() {
+            var givenToken = getTestToken();
             var givenId = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne().getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/users/{id}").pathParam("id", givenId)
                     .when().head()
@@ -230,10 +232,12 @@ public class UserApiTest {
 
         @Test
         void givenId_whenNotExist_ThenReturnNotFoundStatus() {
+            var givenToken = getTestToken();
             var givenId = -1;
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/users/{id}").pathParam("id", givenId)
                     .when().head()

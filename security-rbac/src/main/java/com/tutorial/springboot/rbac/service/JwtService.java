@@ -6,7 +6,10 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -14,7 +17,7 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
-    private final String secretKey = "3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007";
+    private final String secretKey = generateSecretKey();
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
@@ -52,6 +55,17 @@ public class JwtService {
 
     public Boolean isTokenValid(String token, String username) {
         return (extractUsername(token).equals(username) && !isTokenExpired(token));
+    }
+
+    private String generateSecretKey() {
+        try {
+            var keyGen = KeyGenerator.getInstance("HmacSHA256");
+            keyGen.init(256);
+            var secretKey = keyGen.generateKey();
+            return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
     }
 
     private SecretKey getSignInKey() {
