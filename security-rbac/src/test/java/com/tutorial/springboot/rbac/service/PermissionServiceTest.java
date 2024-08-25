@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.rbac.test_utils.TestUtils.loginByAdmin;
+import static com.tutorial.springboot.rbac.test_utils.SecurityTestUtils.authenticateToTestEnv;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -27,8 +27,8 @@ public class PermissionServiceTest {
     TestDatabaseAssistant testDatabaseAssistant;
 
     @BeforeEach
-    void login() {
-        loginByAdmin();
+    void setup() {
+        authenticateToTestEnv();
     }
 
     @Nested

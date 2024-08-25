@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.rbac.test_utils.SecurityTestUtils.getTestToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Username: admin
  * Password: admin
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
 public class UserApiTest {
@@ -39,11 +40,12 @@ public class UserApiTest {
 
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
+            var givenToken = getTestToken();
             var givenDto = DtoStubFactory.createUser(1, 1, 1).asOne();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users")
                     .body(givenDto)
                     .when().post()
@@ -55,12 +57,13 @@ public class UserApiTest {
 
         @Test
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
+            var givenToken = getTestToken();
             var numberOfUsers = 2;
             var givenDtoList = DtoStubFactory.createUser(numberOfUsers, 1, 1).asList();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users/batch")
                     .body(givenDtoList)
                     .when().post()
@@ -76,12 +79,13 @@ public class UserApiTest {
 
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
+            var givenToken = getTestToken();
             var givenDto = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne();
             var givenId = givenDto.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/users/{id}").pathParam("id", givenId)
                     .when().get()
@@ -94,11 +98,12 @@ public class UserApiTest {
 
         @Test
         void givenNothing_whenFindAll_thenReturnListOfDtoWithOKStatus() {
+            var givenToken = getTestToken();
             var expectedUserNumber = 2;
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users")
                     .when().get()
                     .then()
@@ -112,6 +117,7 @@ public class UserApiTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
+            var givenToken = getTestToken();
             var givenDto = testDatabaseAssistant.insertTestUser(1, 1, 1)
                     .dto()
                     .asOne()
@@ -122,7 +128,7 @@ public class UserApiTest {
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/users/{id}").pathParam("id", givenId)
                     .body(givenDto)
@@ -145,11 +151,12 @@ public class UserApiTest {
 
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
+            var givenToken = getTestToken();
             var givenId = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne().getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/users/{id}").pathParam("id", givenId)
                     .when().delete()
@@ -163,6 +170,7 @@ public class UserApiTest {
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
+            var givenToken = getTestToken();
             var givenIds = testDatabaseAssistant.insertTestUser(2, 1, 1)
                     .dto()
                     .asList()
@@ -172,7 +180,7 @@ public class UserApiTest {
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users/batch")
                     .body(givenIds)
                     .when().delete()
@@ -186,11 +194,12 @@ public class UserApiTest {
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
+            var givenToken = getTestToken();
             testDatabaseAssistant.insertTestUser(2, 1, 1);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .auth().form("admin", "admin")
+                    .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users")
                     .when().delete()
                     .then()
