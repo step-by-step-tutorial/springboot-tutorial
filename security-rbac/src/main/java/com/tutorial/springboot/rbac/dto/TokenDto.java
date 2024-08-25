@@ -2,5 +2,5 @@ package com.tutorial.springboot.rbac.dto;
 
 import java.util.Date;
 
-public record LoginResponse(String token, Date expiresIn) {
+public record TokenDto(String token, Date expiration) {
 }

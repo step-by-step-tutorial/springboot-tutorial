@@ -1,13 +1,11 @@
 package com.tutorial.springboot.rbac.poc;
 
-import io.jsonwebtoken.io.Encoders;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 

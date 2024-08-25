@@ -41,13 +41,13 @@ public class UserApiTest {
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
             var givenToken = getTestToken();
-            var givenDto = DtoStubFactory.createUser(1, 1, 1).asOne();
+            var givenBody = DtoStubFactory.createUser(1, 1, 1).asOne();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users")
-                    .body(givenDto)
+                    .body(givenBody)
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
@@ -59,13 +59,13 @@ public class UserApiTest {
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
             var givenToken = getTestToken();
             var numberOfUsers = 2;
-            var givenDtoList = DtoStubFactory.createUser(numberOfUsers, 1, 1).asList();
+            var givenBody = DtoStubFactory.createUser(numberOfUsers, 1, 1).asList();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users/batch")
-                    .body(givenDtoList)
+                    .body(givenBody)
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
@@ -80,8 +80,8 @@ public class UserApiTest {
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
             var givenToken = getTestToken();
-            var givenDto = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne();
-            var givenId = givenDto.getId();
+            var givenUser = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne();
+            var givenId = givenUser.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -92,8 +92,8 @@ public class UserApiTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("id", equalTo(givenId.intValue()))
-                    .body("username", equalTo(givenDto.getUsername()))
-                    .body("email", equalTo(givenDto.getEmail()));
+                    .body("username", equalTo(givenUser.getUsername()))
+                    .body("email", equalTo(givenUser.getEmail()));
         }
 
         @Test
@@ -118,20 +118,20 @@ public class UserApiTest {
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
             var givenToken = getTestToken();
-            var givenDto = testDatabaseAssistant.insertTestUser(1, 1, 1)
+            var givenBody = testDatabaseAssistant.insertTestUser(1, 1, 1)
                     .dto()
                     .asOne()
                     .setUsername("newusername")
                     .setPassword("newpassword")
                     .setEmail("newusername@host.com");
-            var givenId = givenDto.getId();
+            var givenId = givenBody.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/users/{id}").pathParam("id", givenId)
-                    .body(givenDto)
+                    .body(givenBody)
                     .when().put()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
@@ -171,7 +171,7 @@ public class UserApiTest {
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
             var givenToken = getTestToken();
-            var givenIds = testDatabaseAssistant.insertTestUser(2, 1, 1)
+            var givenBody = testDatabaseAssistant.insertTestUser(2, 1, 1)
                     .dto()
                     .asList()
                     .stream()
@@ -182,7 +182,7 @@ public class UserApiTest {
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/users/batch")
-                    .body(givenIds)
+                    .body(givenBody)
                     .when().delete()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())

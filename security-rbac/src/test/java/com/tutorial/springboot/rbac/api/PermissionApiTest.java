@@ -40,13 +40,13 @@ public class PermissionApiTest {
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
             var givenToken = getTestToken();
-            var givenDto = DtoStubFactory.createPermission(1).asOne();
+            var givenBody = DtoStubFactory.createPermission(1).asOne();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
-                    .body(givenDto)
+                    .body(givenBody)
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
@@ -58,13 +58,13 @@ public class PermissionApiTest {
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
             var givenToken = getTestToken();
             var numberOfPermissions = 2;
-            var givenDtoList = DtoStubFactory.createPermission(numberOfPermissions).asList();
+            var givenBody = DtoStubFactory.createPermission(numberOfPermissions).asList();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/permissions/batch")
-                    .body(givenDtoList)
+                    .body(givenBody)
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
@@ -79,8 +79,8 @@ public class PermissionApiTest {
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
             var givenToken = getTestToken();
-            var givenDto = testDatabaseAssistant.insertTestPermission(1).dto().asOne();
-            var givenId = givenDto.getId();
+            var givenPermission = testDatabaseAssistant.insertTestPermission(1).dto().asOne();
+            var givenId = givenPermission.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -91,7 +91,7 @@ public class PermissionApiTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("id", equalTo(givenId.intValue()))
-                    .body("name", equalTo(givenDto.getName()));
+                    .body("name", equalTo(givenPermission.getName()));
         }
 
         @Test
@@ -116,18 +116,18 @@ public class PermissionApiTest {
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
             var givenToken = getTestToken();
-            var givenDto = testDatabaseAssistant.insertTestPermission(1)
+            var givenBody = testDatabaseAssistant.insertTestPermission(1)
                     .dto()
                     .asOne()
                     .setName("updated_value");
-            var givenId = givenDto.getId();
+            var givenId = givenBody.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
-                    .body(givenDto)
+                    .body(givenBody)
                     .when().put()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
@@ -164,7 +164,7 @@ public class PermissionApiTest {
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
             var givenToken = getTestToken();
-            var givenIds = testDatabaseAssistant.insertTestPermission(2)
+            var givenBody = testDatabaseAssistant.insertTestPermission(2)
                     .dto()
                     .asList()
                     .stream()
@@ -175,7 +175,7 @@ public class PermissionApiTest {
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/permissions/batch")
-                    .body(givenIds)
+                    .body(givenBody)
                     .when().delete()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())

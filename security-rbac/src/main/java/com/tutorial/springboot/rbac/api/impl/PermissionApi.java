@@ -1,5 +1,6 @@
-package com.tutorial.springboot.rbac.api;
+package com.tutorial.springboot.rbac.api.impl;
 
+import com.tutorial.springboot.rbac.api.AllApi;
 import com.tutorial.springboot.rbac.dto.PermissionDto;
 import com.tutorial.springboot.rbac.entity.Permission;
 import com.tutorial.springboot.rbac.service.impl.PermissionService;

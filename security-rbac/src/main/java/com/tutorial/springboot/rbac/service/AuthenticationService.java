@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rbac.service;
 
-import com.tutorial.springboot.rbac.dto.LoginUserDto;
+import com.tutorial.springboot.rbac.dto.CredentialsDto;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public void authenticate(LoginUserDto dto) {
+    public void authenticate(CredentialsDto dto) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
     }
 }

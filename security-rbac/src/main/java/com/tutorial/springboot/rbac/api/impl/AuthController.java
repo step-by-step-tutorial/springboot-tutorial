@@ -1,7 +1,7 @@
-package com.tutorial.springboot.rbac.api;
+package com.tutorial.springboot.rbac.api.impl;
 
-import com.tutorial.springboot.rbac.dto.LoginResponse;
-import com.tutorial.springboot.rbac.dto.LoginUserDto;
+import com.tutorial.springboot.rbac.dto.CredentialsDto;
+import com.tutorial.springboot.rbac.dto.TokenDto;
 import com.tutorial.springboot.rbac.service.AuthenticationService;
 import com.tutorial.springboot.rbac.service.JwtService;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +26,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto dto) {
+    public ResponseEntity<TokenDto> authenticate(@RequestBody CredentialsDto dto) {
         authenticationService.authenticate(dto);
         var jwtToken = jwtService.generateToken(dto.username());
-        return ok(new LoginResponse(jwtToken, jwtService.extractExpiration(jwtToken)));
+        return ok(new TokenDto(jwtToken, jwtService.extractExpiration(jwtToken)));
     }
 }

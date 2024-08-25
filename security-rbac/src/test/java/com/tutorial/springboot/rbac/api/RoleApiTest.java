@@ -40,13 +40,13 @@ public class RoleApiTest {
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
             var givenToken = getTestToken();
-            var givenDto = DtoStubFactory.createRole(1, 1).asOne();
+            var givenBody = DtoStubFactory.createRole(1, 1).asOne();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/roles")
-                    .body(givenDto)
+                    .body(givenBody)
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
@@ -58,13 +58,13 @@ public class RoleApiTest {
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
             var givenToken = getTestToken();
             var numberOfRoles = 2;
-            var givenDtoList = DtoStubFactory.createRole(numberOfRoles, 1).asList();
+            var givenBody = DtoStubFactory.createRole(numberOfRoles, 1).asList();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/roles/batch")
-                    .body(givenDtoList)
+                    .body(givenBody)
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
@@ -79,8 +79,8 @@ public class RoleApiTest {
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
             var givenToken = getTestToken();
-            var givenDto = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne();
-            var givenId = givenDto.getId();
+            var givenRole = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne();
+            var givenId = givenRole.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -91,7 +91,7 @@ public class RoleApiTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("id", equalTo(givenId.intValue()))
-                    .body("name", equalTo(givenDto.getName()));
+                    .body("name", equalTo(givenRole.getName()));
         }
 
         @Test
@@ -116,18 +116,18 @@ public class RoleApiTest {
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
             var givenToken = getTestToken();
-            var givenDto = testDatabaseAssistant.insertTestRole(1, 1)
+            var givenBody = testDatabaseAssistant.insertTestRole(1, 1)
                     .dto()
                     .asOne()
                     .setName("updated_value");
-            var givenId = givenDto.getId();
+            var givenId = givenBody.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port)
                     .basePath("/api/v1/roles/{id}").pathParam("id", givenId)
-                    .body(givenDto)
+                    .body(givenBody)
                     .when().put()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
@@ -164,7 +164,7 @@ public class RoleApiTest {
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
             var givenToken = getTestToken();
-            var givenIds = testDatabaseAssistant.insertTestRole(2, 1)
+            var givenBody = testDatabaseAssistant.insertTestRole(2, 1)
                     .dto()
                     .asList()
                     .stream()
@@ -175,7 +175,7 @@ public class RoleApiTest {
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
                     .baseUri("http://localhost").port(port).basePath("/api/v1/roles/batch")
-                    .body(givenIds)
+                    .body(givenBody)
                     .when().delete()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())

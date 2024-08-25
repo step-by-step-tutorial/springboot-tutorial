@@ -1,5 +1,6 @@
-package com.tutorial.springboot.rbac.api;
+package com.tutorial.springboot.rbac.api.impl;
 
+import com.tutorial.springboot.rbac.api.AllApi;
 import com.tutorial.springboot.rbac.dto.UserDto;
 import com.tutorial.springboot.rbac.entity.User;
 import com.tutorial.springboot.rbac.service.impl.UserService;
