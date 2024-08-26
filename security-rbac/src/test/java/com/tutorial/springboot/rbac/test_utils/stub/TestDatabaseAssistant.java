@@ -12,6 +12,7 @@ import com.tutorial.springboot.rbac.transformer.UserTransformer;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
@@ -20,6 +21,7 @@ import static com.tutorial.springboot.rbac.test_utils.SecurityTestUtils.authenti
 
 @Component
 @Transactional
+@ActiveProfiles("test")
 public class TestDatabaseAssistant {
 
     @Autowired

@@ -3,6 +3,7 @@ package com.tutorial.springboot.rbac.poc;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -11,6 +12,7 @@ import java.util.Base64;
 
 import static com.tutorial.springboot.rbac.test_utils.TestUtils.chooseRandom;
 
+@ActiveProfiles("test")
 class TechnicalTest {
 
     @Test
