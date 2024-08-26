@@ -10,9 +10,9 @@ This tutorial is about integration of Spring Boot and RBAC.
 
 * [Getting Started](#getting-started)
 * [RBAC](#rbac)
-* [RBAC Use Cases](#rbac-use-cases)
-* [Install Application on Docker](#install-app-on-docker)
-* [Install Application on Kubernetes](#install-app-on-kubernetes)
+* [JWT](#jwt)
+* [Install Application on Docker](#install-application-on-docker)
+* [Install Application on Kubernetes](#install-application-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [Appendix](#appendix )
