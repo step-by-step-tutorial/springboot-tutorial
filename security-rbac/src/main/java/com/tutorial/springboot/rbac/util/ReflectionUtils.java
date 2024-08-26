@@ -1,7 +1,6 @@
 package com.tutorial.springboot.rbac.util;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 @SuppressWarnings("unchecked")
 public final class ReflectionUtils {
