@@ -19,3 +19,4 @@ mvn -f messaging-apache-kafka/pom.xml clean package
 mvn -f restful-web-api/pom.xml clean package
 mvn -f streaming-apache-kafka/pom.xml clean package
 mvn -f security-authentication-inmemory/pom.xml clean package
+mvn -f security-rbac/pom.xml clean package
