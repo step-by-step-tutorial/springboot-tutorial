@@ -30,8 +30,8 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
 
     protected CrudApi(AbstractService<ID, ENTITY, DTO> service) {
         this.service = service;
-        entityClass = identifyType(1, getClass());
-        dtoClass = identifyType(2, getClass());
+        this.entityClass = identifyType(1, getClass());
+        this.dtoClass = identifyType(2, getClass());
     }
 
     @PostMapping

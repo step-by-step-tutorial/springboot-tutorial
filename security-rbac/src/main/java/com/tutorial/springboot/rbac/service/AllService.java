@@ -6,10 +6,10 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface BatchService<ID, DTO extends AbstractDto<ID, DTO>> {
-    List<ID> saveBatch(List<DTO> dtoList);
+public interface AllService<ID, DTO extends AbstractDto<ID, DTO>> {
 
-    Page<DTO> getBatch(Pageable pageable);
+    List<DTO> getAll();
 
-    void deleteBatch(List<ID> identities);
+    void deleteAll();
+
 }

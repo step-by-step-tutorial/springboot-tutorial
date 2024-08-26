@@ -10,7 +10,7 @@ public final class CollectionUtils {
     private CollectionUtils() {
     }
 
-    public static int calculateNumberOfBatch(int length) {
+    public static int calculateBatchNumber(int length) {
         return (int) Math.ceil((double) length / BATCH_SIZE);
     }
 

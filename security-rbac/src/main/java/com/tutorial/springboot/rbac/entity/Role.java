@@ -11,8 +11,8 @@ import java.util.List;
 @Entity
 public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority {
 
-    @NotBlank(message = "Role is mandatory")
-    @Size(max = 50, message = "Role cannot be longer than 50 characters")
+    @NotBlank(message = "Name is mandatory")
+    @Size(max = 50, message = "Name cannot be longer than 50 characters")
     private String name;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)

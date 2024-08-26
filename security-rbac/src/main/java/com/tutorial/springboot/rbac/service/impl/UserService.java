@@ -7,8 +7,9 @@ import com.tutorial.springboot.rbac.service.AbstractService;
 import com.tutorial.springboot.rbac.service.BatchService;
 import com.tutorial.springboot.rbac.service.CrudService;
 import com.tutorial.springboot.rbac.transformer.UserTransformer;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import static com.tutorial.springboot.rbac.util.SecurityUtils.getCurrentUsername;
 
 @Service
 public class UserService extends AbstractService<Long, User, UserDto> implements CrudService<Long, UserDto>, BatchService<Long, UserDto> {
@@ -22,13 +23,13 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
     }
 
     public void changePassword(String oldPassword, String newPassword) {
-        var user = findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        var user = findByUsername(getCurrentUsername());
 
         if (user.getPassword().equals(oldPassword)) {
             user.setPassword(newPassword);
             repository.save(user);
         } else {
-            throw new RuntimeException("Password could not be changed, due to incorrect password.");
+            throw new RuntimeException("Password could not be changed, due to incorrect password");
         }
     }
 }

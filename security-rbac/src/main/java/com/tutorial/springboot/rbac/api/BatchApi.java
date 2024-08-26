@@ -25,7 +25,7 @@ public abstract class BatchApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DT
 
     @PostMapping(value = "/batch")
     public ResponseEntity<List<ID>> saveBatch(@RequestBody List<DTO> dtoList) {
-        logger.info("Received an inbound request to save a batch[{}] of {}", dtoList.stream(), dtoClass.getSimpleName());
+        logger.info("Received an inbound request to save a batch[{}] of {}", dtoList.size(), dtoClass.getSimpleName());
         CleanUpUtils.validate(dtoList.stream(), SaveValidation.class);
         var identities = service.saveBatch(dtoList);
         return ResponseEntity.status(CREATED).body(identities);
@@ -41,8 +41,8 @@ public abstract class BatchApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DT
     @GetMapping(value = "/batch/{page}/{size}")
     public ResponseEntity<Page<DTO>> findBatch(@PathVariable int page, @PathVariable int size) {
         logger.info("Received an inbound request to find a page[{},{}] of {}", page, size, dtoClass.getSimpleName());
-        var dtoList = service.getBatch(PageRequest.of(page, size));
-        return ok(dtoList);
+        var pageOfDto = service.getBatch(PageRequest.of(page, size));
+        return ok(pageOfDto);
     }
 }
 

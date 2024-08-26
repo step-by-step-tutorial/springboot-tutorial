@@ -27,6 +27,7 @@ public final class CleanUpUtils {
                 .filter(errors -> !errors.isEmpty())
                 .flatMap(errors -> errors.stream().map(ConstraintViolation::getMessage))
                 .toList();
+
         if (!errorMessages.isEmpty()) {
             throw new ArrayOfValidationException(errorMessages);
         }

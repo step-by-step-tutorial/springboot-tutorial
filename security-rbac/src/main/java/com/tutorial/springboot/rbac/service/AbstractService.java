@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -16,13 +15,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static com.tutorial.springboot.rbac.util.CollectionUtils.calculateNumberOfBatch;
+import static com.tutorial.springboot.rbac.util.CollectionUtils.calculateBatchNumber;
 import static com.tutorial.springboot.rbac.util.CollectionUtils.selectBatch;
+import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
+import static com.tutorial.springboot.rbac.util.SecurityUtils.getCurrentUsername;
 import static com.tutorial.springboot.rbac.validation.CollectionValidation.requireNotEmpty;
 import static com.tutorial.springboot.rbac.validation.ObjectValidation.requireNotNull;
 import static java.util.Objects.requireNonNull;
 
-public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> implements CrudService<ID, DTO>, BatchService<ID, DTO> {
+public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
+        implements CrudService<ID, DTO>, BatchService<ID, DTO>, AllService<ID, DTO> {
+
+    public static final int INIT_VERSION = 1;
 
     protected final Logger logger = LoggerFactory.getLogger(AbstractService.class);
 
@@ -30,21 +34,27 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     protected final AbstractTransformer<ID, ENTITY, DTO> transformer;
 
+    protected final Class<ENTITY> entityClass;
+
+    protected final Class<DTO> dtoClass;
+
     public AbstractService(JpaRepository<ENTITY, ID> repository, AbstractTransformer<ID, ENTITY, DTO> transformer) {
         this.repository = repository;
         this.transformer = transformer;
+        this.entityClass = identifyType(1, getClass());
+        this.dtoClass = identifyType(2, getClass());
     }
 
     @Override
     public Optional<ID> save(DTO dto) {
         requireNonNull(dto);
 
-        dto.setCreatedBy(SecurityContextHolder.getContext().getAuthentication().getName())
+        dto.setCreatedBy(getCurrentUsername())
                 .setCreatedAt(LocalDateTime.now())
-                .setVersion(1);
+                .setVersion(INIT_VERSION);
 
         var entity = repository.save(transformer.toEntity(dto));
-        logger.info("Entity saved with ID: {}", entity.getId());
+        logger.info("{} entity saved with ID: {}", entityClass.getSimpleName(), entity.getId());
         return Optional.of(entity.getId());
     }
 
@@ -59,38 +69,40 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     @Override
     @Transactional
     public void update(ID id, DTO dto) {
-        requireNonNull(id);
-        requireNonNull(dto);
+        requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
+        requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
-        var entityHolder = repository.findById(id);
-        if (entityHolder.isPresent()) {
-            ENTITY entity = entityHolder.get();
-            entity.updateFrom(transformer.toEntity(dto));
-            repository.save(entity);
-        } else {
-            logger.warn("Entity not found with ID: {}", id);
-        }
+        repository.findById(id)
+                .ifPresentOrElse(
+                        entity -> {
+                            entity.updateFrom(transformer.toEntity(dto));
+                            repository.save(entity);
+                            logger.info("{} entity updated with ID: {}", entityClass.getSimpleName(), entity.getId());
+                        },
+                        () -> logger.warn("{} entity not found with ID: {}", entityClass.getSimpleName(), id)
+                );
     }
 
     @Override
     public void delete(ID id) {
-        requireNonNull(id);
+        requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
 
         repository.deleteById(id);
-        logger.info("Entity deleted with ID: {}", id);
+        logger.info("{} entity deleted with ID: {}", entityClass.getSimpleName(), id);
     }
 
     @Override
     public boolean exists(ID id) {
+        requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
         return repository.existsById(id);
     }
 
     @Override
     public List<ID> saveBatch(List<DTO> dtoList) {
-        requireNotNull(dtoList, "List of DTOs should not be null");
-        requireNotEmpty(dtoList, "List of DTOs should not be empty");
+        requireNotNull(dtoList, String.format("List of %s should not be null", entityClass.getSimpleName()));
+        requireNotEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
 
-        int numberOfBatches = calculateNumberOfBatch(dtoList.size());
+        int numberOfBatches = calculateBatchNumber(dtoList.size());
 
         return IntStream.range(0, numberOfBatches)
                 .mapToObj(i -> selectBatch(dtoList, i))
@@ -103,24 +115,29 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     public Page<DTO> getBatch(Pageable pageable) {
+        requireNotNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
         return repository.findAll(pageable).map(transformer::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<DTO> getAll() {
-        return repository.findAll().stream().map(transformer::toDto).toList();
+        return repository.findAll()
+                .stream()
+                .map(transformer::toDto)
+                .toList();
     }
 
     @Override
     public void deleteAll() {
+        logger.info("Delete all {} entities", entityClass.getSimpleName());
         repository.deleteAll();
     }
 
     @Override
     public void deleteBatch(List<ID> identities) {
-        requireNotNull(identities, "List of identities should not be null");
-        requireNotEmpty(identities, "List of IDs should not be empty");
+        requireNotNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
+        requireNotEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
 
         repository.deleteAllByIdInBatch(identities);
     }

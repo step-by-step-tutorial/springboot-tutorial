@@ -15,9 +15,9 @@ public final class HttpUtils {
     }
 
     public static <ID> URI createUriFromId(ID id) {
-        requireNotNull(id, "ID should not be null");
+        requireNotNull(id, "URI: ID should not be null");
         if (isNull(id)) {
-            throw new ArrayOfValidationException(List.of("ID should not be null"));
+            throw new ArrayOfValidationException(List.of("URI: ID should not be null"));
         }
 
         return ServletUriComponentsBuilder.fromCurrentRequest()

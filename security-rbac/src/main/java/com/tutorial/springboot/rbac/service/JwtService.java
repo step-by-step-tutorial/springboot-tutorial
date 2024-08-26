@@ -1,11 +1,13 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.dto.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static com.tutorial.springboot.rbac.util.KeyUtils.generateSecretKey;
@@ -36,22 +38,24 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String generateToken(String username) {
-        return Jwts.builder()
+    public Optional<TokenDto> generateToken(String username) {
+        var token = Jwts.builder()
                 .claims(new HashMap<>())
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getSignInKey(secretKey))
                 .compact();
+
+        return Optional.of(new TokenDto(token, extractExpiration(token)));
     }
 
-    private Boolean isTokenExpired(String token) {
+    private Boolean isExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean isTokenValid(String token, String username) {
-        return (extractUsername(token).equals(username) && !isTokenExpired(token));
+    public Boolean isValid(String token, String username) {
+        return (extractUsername(token).equals(username) && !isExpired(token));
     }
 
 }

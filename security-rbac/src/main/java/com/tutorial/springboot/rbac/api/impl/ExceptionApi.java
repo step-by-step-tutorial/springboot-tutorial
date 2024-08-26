@@ -18,6 +18,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestControllerAdvice
 public class ExceptionApi {
+
     private final Logger logger = LoggerFactory.getLogger(ExceptionApi.class.getSimpleName());
 
     @ExceptionHandler(ArrayOfValidationException.class)

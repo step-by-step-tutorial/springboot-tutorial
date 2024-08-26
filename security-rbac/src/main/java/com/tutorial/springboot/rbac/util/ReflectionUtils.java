@@ -11,8 +11,8 @@ public final class ReflectionUtils {
 
     public static <T> Class<T> identifyType(int index, Class<?> clazz) {
         try {
-            Type superClass = clazz.getGenericSuperclass();
-            Type entityArgument = ((ParameterizedType) superClass).getActualTypeArguments()[index];
+            var superClass = clazz.getGenericSuperclass();
+            var entityArgument = ((ParameterizedType) superClass).getActualTypeArguments()[index];
             return (Class<T>) Class.forName(entityArgument.getTypeName());
         } catch (ClassNotFoundException e) {
             return null;
