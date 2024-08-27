@@ -1,8 +1,10 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.dto.RoleDto;
 import com.tutorial.springboot.rbac.service.impl.RoleService;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -55,6 +57,15 @@ public class RoleServiceTest {
             assertTrue(actual.get() > 0);
         }
 
+        @Test
+        void givenNull_whenSaveOne_thenReturnNullPointerException() {
+            final RoleDto givenDto = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.save(givenDto));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
     }
 
     @Nested
@@ -62,16 +73,23 @@ public class RoleServiceTest {
 
         @Test
         void givenId_whenFindById_thenReturnDto() {
-            var givenId = testDatabaseAssistant.insertTestRole(1, 1)
-                    .dto()
-                    .asOne()
-                    .getId();
+            var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
 
             var actual = systemUnderTest.getById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
             assertFalse(actual.get().getName().isEmpty());
+        }
+
+        @Test
+        void givenNull_whenFindById_thenReturnNullPointerException() {
+            final Long givenId = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.getById(givenId));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
         }
     }
 
@@ -80,10 +98,7 @@ public class RoleServiceTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
-            var givenDto = testDatabaseAssistant.insertTestRole(1, 1)
-                    .dto()
-                    .asOne()
-                    .setName("updated_value");
+            var givenDto = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().setName("updated_value");
             var givenId = givenDto.getId();
 
             systemUnderTest.update(givenId, givenDto);
@@ -92,6 +107,17 @@ public class RoleServiceTest {
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());
         }
+
+        @Test
+        void givenNull_whenUpdate_thenReturnNullPointerException() {
+            final RoleDto givenDto = null;
+            final Long givenId = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.update(givenId, givenDto));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
     }
 
     @Nested
@@ -99,15 +125,23 @@ public class RoleServiceTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestRole(1, 1)
-                    .dto()
-                    .asOne()
-                    .getId();
+            var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
 
-            systemUnderTest.delete(givenId);
+            systemUnderTest.deleteById(givenId);
             var actual = testDatabaseAssistant.selectTestRole().dto().asOne();
 
             assertNull(actual);
         }
+
+        @Test
+        void givenNull_whenDeleteById_thenReturnNullPointerException() {
+            final Long givenId = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(givenId));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
+
     }
 }

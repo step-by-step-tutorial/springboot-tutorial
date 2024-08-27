@@ -1,5 +1,6 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.dto.UserDto;
 import com.tutorial.springboot.rbac.service.impl.UserService;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
@@ -54,6 +55,16 @@ public class UserServiceTest {
             assertTrue(actual.isPresent());
             assertTrue(actual.get() > 0);
         }
+
+        @Test
+        void givenNull_whenSaveOne_thenReturnNullPointerException() {
+            final UserDto givenDto = null;
+
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.save(givenDto));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
     }
 
     @Nested
@@ -71,6 +82,16 @@ public class UserServiceTest {
             assertTrue(actual.isPresent());
             assertFalse(actual.get().getUsername().isEmpty());
             assertFalse(actual.get().getEmail().isEmpty());
+        }
+
+        @Test
+        void givenNull_whenFindById_thenReturnNullPointerException() {
+            final Long givenId = null;
+
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.getById(givenId));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
         }
     }
 
@@ -96,6 +117,17 @@ public class UserServiceTest {
             assertEquals("newusername@host.com", actual.getEmail());
             assertTrue(actual.isEnabled());
         }
+
+        @Test
+        void givenNull_whenUpdate_thenReturnNullPointerException() {
+            final UserDto givenDto = null;
+            final Long givenId = null;
+
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.update(givenId, givenDto));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
     }
 
     @Nested
@@ -108,11 +140,22 @@ public class UserServiceTest {
                     .asOne()
                     .getId();
 
-            systemUnderTest.delete(givenId);
+            systemUnderTest.deleteById(givenId);
             var actual = testDatabaseAssistant.selectTestUser().dto().asOne();
 
             assertNull(actual);
         }
+
+        @Test
+        void givenNull_whenDeleteById_thenReturnNullPointerException() {
+            final Long givenId = null;
+
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(givenId));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
+
     }
 
     @Nested
@@ -142,5 +185,25 @@ public class UserServiceTest {
             assertFalse(actual.getPassword().isEmpty());
         }
 
+        @Test
+        void givenNull_whenChangePassword_thenReturnUser() {
+            String givenOldPassword = null;
+            String givenNewPassword = null;
+
+            var actual = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.changePassword(givenOldPassword, givenNewPassword));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isEmpty());
+        }
+
+        @Test
+        void givenUser_whenFindByUsername_thenReturnUser() {
+            String givenUserUsername = null;
+
+            var actual = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.findByUsername(givenUserUsername));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isEmpty());
+        }
     }
 }

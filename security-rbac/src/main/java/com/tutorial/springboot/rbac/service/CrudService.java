@@ -11,7 +11,7 @@ public interface CrudService<ID, DTO extends AbstractDto<ID, DTO>> {
 
     void update(ID id, DTO dto);
 
-    void delete(ID id);
+    void deleteById(ID id);
 
     boolean exists(ID id);
 }

@@ -1,8 +1,6 @@
 package com.tutorial.springboot.rbac.validation;
 
-import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;
-
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 public final class ObjectValidation {
@@ -10,9 +8,16 @@ public final class ObjectValidation {
     private ObjectValidation() {
     }
 
-    public static void requireNotNull(Object object, String errorMessage) {
-        if (Objects.isNull(object)) {
-            throw new ArrayOfValidationException(List.of(errorMessage));
+    public static void requireNonEmpty(Collection<?> collection, String errorMessage) {
+        if (collection.isEmpty()) {
+            throw new IllegalArgumentException(errorMessage);
         }
     }
+
+    public static void requireNonEmpty(String str, String errorMessage) {
+        if (Objects.isNull(str) || str.trim().isEmpty()) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
 }

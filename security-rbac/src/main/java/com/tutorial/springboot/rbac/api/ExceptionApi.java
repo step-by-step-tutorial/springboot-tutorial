@@ -1,4 +1,4 @@
-package com.tutorial.springboot.rbac.api.impl;
+package com.tutorial.springboot.rbac.api;
 
 import com.tutorial.springboot.rbac.dto.ErrorDto;
 import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;

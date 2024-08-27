@@ -64,7 +64,7 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable ID id) {
         logger.info("Received an inbound request to delete a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
-        service.delete(id);
+        service.deleteById(id);
         return noContent().build();
     }
 

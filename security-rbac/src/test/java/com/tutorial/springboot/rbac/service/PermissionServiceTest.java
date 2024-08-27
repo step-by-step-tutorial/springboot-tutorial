@@ -1,12 +1,10 @@
 package com.tutorial.springboot.rbac.service;
 
+import com.tutorial.springboot.rbac.dto.PermissionDto;
 import com.tutorial.springboot.rbac.service.impl.PermissionService;
 import com.tutorial.springboot.rbac.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.rbac.test_utils.stub.TestDatabaseAssistant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -44,6 +42,16 @@ public class PermissionServiceTest {
             assertTrue(actual.isPresent());
             assertTrue(actual.get() > 0);
         }
+
+        @Test
+        void givenNull_whenSaveOne_thenReturnNullPointerException() {
+            final PermissionDto givenDto = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.save(givenDto));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
     }
 
     @Nested
@@ -61,6 +69,16 @@ public class PermissionServiceTest {
             assertNotNull(actual);
             assertTrue(actual.isPresent());
             assertFalse(actual.get().getName().isEmpty());
+        }
+
+        @Test
+        void givenNull_whenFindById_thenReturnNullPointerException() {
+            final Long givenId = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.getById(givenId));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
         }
     }
 
@@ -81,10 +99,20 @@ public class PermissionServiceTest {
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());
         }
+
+        @Test
+        void givenNull_whenUpdate_thenReturnNullPointerException() {
+            final PermissionDto givenDto = null;
+            final Long givenId = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.update(givenId, givenDto));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
+        }
     }
 
     @Nested
-    @DisplayName("Delete Tests")
     class DeleteTests {
 
         @Test
@@ -94,10 +122,20 @@ public class PermissionServiceTest {
                     .asOne()
                     .getId();
 
-            systemUnderTest.delete(givenId);
+            systemUnderTest.deleteById(givenId);
             var actual = testDatabaseAssistant.selectTestPermission().dto().asOne();
 
             assertNull(actual);
+        }
+
+        @Test
+        void givenNull_whenDeleteById_thenReturnNullPointerException() {
+            final Long givenId = null;
+
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(givenId));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isBlank());
         }
     }
 }

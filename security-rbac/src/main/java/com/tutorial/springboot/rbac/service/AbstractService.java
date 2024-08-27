@@ -3,6 +3,7 @@ package com.tutorial.springboot.rbac.service;
 import com.tutorial.springboot.rbac.dto.AbstractDto;
 import com.tutorial.springboot.rbac.entity.AbstractEntity;
 import com.tutorial.springboot.rbac.transformer.AbstractTransformer;
+import com.tutorial.springboot.rbac.validation.ObjectValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -19,8 +20,7 @@ import static com.tutorial.springboot.rbac.util.CollectionUtils.calculateBatchNu
 import static com.tutorial.springboot.rbac.util.CollectionUtils.selectBatch;
 import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
 import static com.tutorial.springboot.rbac.util.SecurityUtils.getCurrentUsername;
-import static com.tutorial.springboot.rbac.validation.CollectionValidation.requireNotEmpty;
-import static com.tutorial.springboot.rbac.validation.ObjectValidation.requireNotNull;
+import static com.tutorial.springboot.rbac.validation.ObjectValidation.requireNonEmpty;
 import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
@@ -47,7 +47,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     public Optional<ID> save(DTO dto) {
-        requireNonNull(dto);
+        requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
         dto.setCreatedBy(getCurrentUsername())
                 .setCreatedAt(LocalDateTime.now())
@@ -61,7 +61,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     @Override
     @Transactional(readOnly = true)
     public Optional<DTO> getById(ID id) {
-        requireNonNull(id);
+        requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
 
         return repository.findById(id).map(transformer::toDto);
     }
@@ -84,7 +84,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
-    public void delete(ID id) {
+    public void deleteById(ID id) {
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
 
         repository.deleteById(id);
@@ -99,8 +99,8 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     public List<ID> saveBatch(List<DTO> dtoList) {
-        requireNotNull(dtoList, String.format("List of %s should not be null", entityClass.getSimpleName()));
-        requireNotEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
+        requireNonNull(dtoList, String.format("List of %s should not be null", entityClass.getSimpleName()));
+        requireNonEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
 
         int numberOfBatches = calculateBatchNumber(dtoList.size());
 
@@ -115,7 +115,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     public Page<DTO> getBatch(Pageable pageable) {
-        requireNotNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
+        requireNonNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
         return repository.findAll(pageable).map(transformer::toDto);
     }
 
@@ -136,8 +136,8 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     public void deleteBatch(List<ID> identities) {
-        requireNotNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
-        requireNotEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
+        requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
+        requireNonEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
 
         repository.deleteAllByIdInBatch(identities);
     }
