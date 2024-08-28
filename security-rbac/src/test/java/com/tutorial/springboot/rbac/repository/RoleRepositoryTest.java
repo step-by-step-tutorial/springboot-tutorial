@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles(value = {"test"})
+@ActiveProfiles(value = {"test", "h2"})
 public class RoleRepositoryTest {
 
     @Autowired

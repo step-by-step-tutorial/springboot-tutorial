@@ -1,6 +1,5 @@
 package com.tutorial.springboot.rbac.poc;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -12,11 +11,10 @@ import java.util.Base64;
 
 import static com.tutorial.springboot.rbac.test_utils.TestUtils.chooseRandom;
 
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 class TechnicalTest {
 
     @Test
-    @Disabled
     void generatePassword() {
         var encoder = new BCryptPasswordEncoder();
         System.out.println("encoder.encode(\"admin\") = " + encoder.encode("admin"));
@@ -24,7 +22,6 @@ class TechnicalTest {
     }
 
     @Test
-    @Disabled
     void generateBase64() throws NoSuchAlgorithmException {
         KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
         keyGen.init(256);
@@ -35,7 +32,6 @@ class TechnicalTest {
     }
 
     @Test
-    @Disabled
     void generateRandomNumber() {
         System.out.println("random = " + chooseRandom(1));
     }

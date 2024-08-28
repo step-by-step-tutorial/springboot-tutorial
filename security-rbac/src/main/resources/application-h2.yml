@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    username: sa
+    password: ''
+    url: jdbc:h2:mem:${DATABASE_NAME:test_db}
+    driver-class-name: org.h2.Driver
+  data:
+    jdbc:
+      repositories:
+        enabled:
+  jpa:
+    database: H2
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: false
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ""
+  h2:
+    console:
+      enabled: true
+      path: ${H2_CONSOLE:/h2-console}
+  sql:
+    init:
+      data-locations: classpath:data-h2.sql

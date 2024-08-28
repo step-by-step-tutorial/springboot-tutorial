@@ -257,10 +257,10 @@ ENTRYPOINT java -jar ${APPLICATION}
 version: "3.8"
 
 services:
-  postgresql:
+  postgres:
     image: postgres:13.9-alpine
-    container_name: postgresql
-    hostname: postgresql
+    container_name: postgres
+    hostname: postgres
     restart: always
     ports:
       - "5432:5432"
@@ -294,7 +294,7 @@ services:
       APP_PORT: "8080"
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
-      POSTGRESQL_HOST: postgresql
+      POSTGRESQL_HOST: postgres
       POSTGRESQL_PORT: 5432
       DATABASE_NAME: test_db
 ```

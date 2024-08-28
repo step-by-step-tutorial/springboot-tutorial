@@ -25,3 +25,17 @@ spec:
               value: "0.0.0.0"
             - name: APP_PORT
               value: "8080"
+            - name: APP_PROFILES
+              value: postgres
+            - name: DATABASE_USERNAME
+              value: user
+            - name: DATABASE_PASSWORD
+              value: password
+            - name: POSTGRESQL_HOST
+              value: postgres
+            - name: POSTGRESQL_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: test_db
+            - name: DATABASE_SCHEMA
+              value: user_management

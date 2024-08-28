@@ -20,14 +20,9 @@ import static com.tutorial.springboot.rbac.test_utils.SecurityTestUtils.getTestT
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Test database initialized by data.sql
- * Username: admin
- * Password: admin
- */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles("test")
+@ActiveProfiles({"test","h2"})
 public class RoleApiTest {
 
     @Autowired
