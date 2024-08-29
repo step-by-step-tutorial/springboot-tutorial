@@ -7,37 +7,18 @@ import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class SampleEntity implements Entity<Long> {
+public class SampleEntity extends Entity<Long, SampleEntity> {
 
-    private Long id;
+    @NotBlank(message = "text should not be null or empty")
+    private String text;
 
-    @NotBlank(message = "sample.text should not be null or empty")
-    String text;
+    @NotNull(message = "code should not be null")
+    private Integer code;
 
-    @NotNull(message = "sample.code should not be null")
-    Integer code;
-
-    @NotNull(message = "sample.datetime should not be null")
-    LocalDateTime datetime;
-
-    private Integer version = 1;
+    @NotNull(message = "datetime should not be null")
+    private LocalDateTime datetime;
 
     public SampleEntity() {
-    }
-
-    public SampleEntity(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public Long id() {
-        return id;
-    }
-
-    @Override
-    public SampleEntity id(Long id) {
-        this.id = id;
-        return this;
     }
 
     public String text() {
@@ -67,16 +48,6 @@ public class SampleEntity implements Entity<Long> {
         return this;
     }
 
-    @Override
-    public Integer version() {
-        return version;
-    }
-
-    @Override
-    public SampleEntity increaseVersion() {
-        this.version++;
-        return this;
-    }
 
     @Transient
     public void updateFrom(SampleEntity newOne) {
@@ -90,7 +61,7 @@ public class SampleEntity implements Entity<Long> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SampleEntity that = (SampleEntity) o;
+        var that = (SampleEntity) o;
         return Objects.equals(id, that.id) && Objects.equals(version, that.version);
     }
 
@@ -102,7 +73,7 @@ public class SampleEntity implements Entity<Long> {
     @Override
     public String toString() {
         return """
-                SampleEntity{
+                SampleEntity: {
                      id=%d,
                      text='%s',
                      code=%d,

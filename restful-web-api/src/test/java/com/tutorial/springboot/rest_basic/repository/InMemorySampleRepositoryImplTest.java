@@ -150,7 +150,8 @@ class InMemorySampleRepositoryImplTest {
         @Test
         void givenSampleAndId_whenUpdate_thenUpdatedSuccessfully() {
             var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
-            var givenSample = new SampleEntity(givenId)
+            var givenSample = new SampleEntity()
+                    .id(givenId)
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
                     .datetime(LocalDateTime.now());
@@ -187,7 +188,8 @@ class InMemorySampleRepositoryImplTest {
         @Test
         void givenSampleWithDifferentIdAndId_whenUpdate_thenIllegalStateException() {
             var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
-            var givenSample = new SampleEntity(givenId + 1)
+            var givenSample = new SampleEntity()
+                    .id(givenId + 1)
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
                     .datetime(LocalDateTime.now());

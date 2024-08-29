@@ -1,11 +1,34 @@
 package com.tutorial.springboot.rest_basic.entity;
 
-public interface Entity<T> {
-    T id();
+import java.beans.Transient;
 
-    Entity<T> id(T id);
+public abstract class Entity<ID, SELF extends Entity<ID, SELF>> {
 
-    Integer version();
+    protected ID id;
 
-    Entity<T> increaseVersion();
+    protected Integer version = 1;
+
+    public ID id() {
+        return id;
+    }
+
+    public SELF id(ID id) {
+        this.id = id;
+        return (SELF) this;
+    }
+
+    public Integer version() {
+        return version;
+    }
+
+    public SELF version(Integer version) {
+        this.version = version;
+        return (SELF) this;
+    }
+
+    @Transient
+    public SELF increaseVersion() {
+        version(version() + 1);
+        return (SELF) this;
+    }
 }

@@ -45,7 +45,7 @@ class SampleApiTest {
     TestRestTemplate systemUnderTest;
 
     @Autowired
-    SampleService sampleService;
+    SampleService<Long, SampleDto> sampleService;
 
     UriComponentsBuilder uriBuilder;
 
@@ -198,7 +198,7 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
+            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -264,7 +264,7 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            sampleService.insertBatch(TestFixture.multiSample());
+            sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -298,7 +298,7 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
+            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -447,7 +447,7 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
+            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -510,7 +510,7 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            sampleService.insertBatch(TestFixture.multiSample());
+            sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -531,7 +531,7 @@ class SampleApiTest {
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNothingOnNoContentStatus() {
-            var givenIdentities = sampleService.selectIdentities();
+            var givenIdentities = sampleService.getIdentities();
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), Void.class);
@@ -610,7 +610,7 @@ class SampleApiTest {
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.insertBatch(TestFixture.multiSample());
+            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach

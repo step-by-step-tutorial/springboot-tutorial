@@ -19,7 +19,8 @@ public final class SampleTransformer {
     }
 
     public static SampleEntity toEntity(SampleDto dto) {
-        return new SampleEntity(dto.id())
+        return new SampleEntity()
+                .id(dto.id())
                 .code(dto.code())
                 .text(dto.text())
                 .datetime(dto.datetime());

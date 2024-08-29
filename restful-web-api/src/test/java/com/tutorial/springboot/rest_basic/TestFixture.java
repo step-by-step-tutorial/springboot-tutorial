@@ -35,8 +35,8 @@ public class TestFixture {
                 .toArray(SampleDto[]::new);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T selectByRandom(Collection<T> numbers, Class<T> type) {
-        @SuppressWarnings("unchecked")
         T[] array = (T[]) Array.newInstance(type, numbers.size());
         return numbers.toArray(array)[new Random().nextInt(numbers.size())];
     }

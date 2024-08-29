@@ -13,9 +13,8 @@ public final class CleanUpUtils {
     private CleanUpUtils() {
     }
 
-    public static <T> Stream<T> clean(Stream<T> stream) {
-        return stream
-                .filter(Objects::nonNull)
+    public static <T> Stream<T> clean(T[] items) {
+        return Stream.of(items).filter(Objects::nonNull)
                 .filter((T object) -> validator.validate(object).isEmpty())
                 .distinct();
     }

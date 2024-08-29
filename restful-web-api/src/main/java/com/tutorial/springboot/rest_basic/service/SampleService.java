@@ -1,30 +1,32 @@
 package com.tutorial.springboot.rest_basic.service;
 
-import com.tutorial.springboot.rest_basic.dto.SampleDto;
+import com.tutorial.springboot.rest_basic.dto.Page;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface SampleService {
-    Optional<Long> insert(SampleDto dto);
+public interface SampleService<ID, DTO> {
+    Optional<ID> save(DTO dto);
 
-    Optional<SampleDto> selectById(Long id);
+    Optional<DTO> findById(ID id);
 
-    void update(Long id, SampleDto dto);
+    void update(ID id, DTO dto);
 
-    void deleteById(Long id);
+    void deleteById(ID id);
 
-    boolean exists(Long id);
+    boolean exists(ID id);
 
-    List<Long> insertBatch(SampleDto... dtos);
+    List<ID> batchSave(DTO... items);
 
-    List<SampleDto> selectBatch(Long... identities);
+    List<DTO> findByIdentities(ID... identities);
 
-    void deleteBatch(Long... identities);
+    Page<DTO> findBatch(int page, int size);
 
-    List<SampleDto> selectAll();
+    void batchDelete(ID... identities);
+
+    List<DTO> selectAll();
 
     void deleteAll();
 
-    List<Long> selectIdentities();
+    List<ID> getIdentities();
 }

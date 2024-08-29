@@ -6,15 +6,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.requireNotNull;
+import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.shouldNotBeNull;
 
 public final class HttpUtils {
 
     private HttpUtils() {
     }
 
-    public static URI createUriFromId(Long id) {
-        requireNotNull(id, "ID should not be null");
+    public static URI uriOf(Long id) {
+        shouldNotBeNull(id, "ID should not be null");
         if (id <= 0) {
             throw new ValidationException(List.of("ID should not be less than zero"));
         }

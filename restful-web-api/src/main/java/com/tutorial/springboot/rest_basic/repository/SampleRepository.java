@@ -5,7 +5,7 @@ import com.tutorial.springboot.rest_basic.entity.Entity;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public interface SampleRepository<T, E extends Entity<T>> {
+public interface SampleRepository<T, E extends Entity<T, E>> {
     Optional<T> insert(E entity);
 
     Optional<E> selectById(T id);
@@ -27,4 +27,8 @@ public interface SampleRepository<T, E extends Entity<T>> {
     void deleteAll();
 
     Stream<T> selectIdentities();
+
+    Stream<E> selectPage(int page, int size);
+
+    int count();
 }

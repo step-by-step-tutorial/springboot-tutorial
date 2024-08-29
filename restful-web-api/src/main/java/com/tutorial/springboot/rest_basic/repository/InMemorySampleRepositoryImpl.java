@@ -6,14 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.tutorial.springboot.rest_basic.repository.InMemoryDatabase.SAMPLE_ID_GENERATOR;
 import static com.tutorial.springboot.rest_basic.repository.InMemoryDatabase.SAMPLE_TABLE;
-import static com.tutorial.springboot.rest_basic.validation.CollectionValidation.requireNotEmpty;
-import static com.tutorial.springboot.rest_basic.validation.NumberValidation.requireEquality;
-import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.requireNotNull;
+import static com.tutorial.springboot.rest_basic.validation.ObjectValidation.*;
 import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 
@@ -24,9 +24,9 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public Optional<Long> insert(SampleEntity entity) {
-        requireNotNull(entity, "Sample should not be null");
+        shouldNotBeNull(entity, "Sample should not be null");
 
-        final var id = InMemoryDatabase.SAMPLE_ID_GENERATOR.incrementAndGet();
+        final var id = SAMPLE_ID_GENERATOR.incrementAndGet();
         entity.id(id);
         SAMPLE_TABLE.putIfAbsent(id, entity);
         return Optional.of(id);
@@ -34,7 +34,7 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public Optional<SampleEntity> selectById(Long id) {
-        requireNotNull(id, "ID of Sample should not be null");
+        shouldNotBeNull(id, "ID of Sample should not be null");
 
         final var sample = SAMPLE_TABLE.get(id);
         return Optional.ofNullable(sample);
@@ -42,10 +42,10 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public void update(SampleEntity entity, Long id, Integer version) {
-        requireNotNull(id, "ID of Sample should not be null");
-        requireNotNull(entity, "Sample should not be null");
+        shouldNotBeNull(id, "ID of Sample should not be null");
+        shouldNotBeNull(entity, "Sample should not be null");
         if (nonNull(entity.id())) {
-            requireEquality(id, entity.id(), "There are two different values for Sample ID");
+            shouldBeEqual(id, entity.id(), "There are two different values for Sample ID");
         }
         var persisted = selectById(id);
         if (persisted.isPresent()) {
@@ -62,7 +62,7 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public void deleteById(Long id) {
-        requireNotNull(id, "ID of Sample should not be null");
+        shouldNotBeNull(id, "ID of Sample should not be null");
         SAMPLE_TABLE.remove(id);
     }
 
@@ -73,8 +73,8 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public Stream<Long> insertBatch(SampleEntity... entities) {
-        requireNotNull(entities, "List of Sample should not be null");
-        requireNotEmpty(entities, "List of Sample should not be empty");
+        shouldNotBeNull(entities, "List of Sample should not be null");
+        shouldNotBeNullOrEmpty(entities, "List of Sample should not be empty");
 
         var identities = new ArrayList<Long>(entities.length);
         for (SampleEntity entity : entities) {
@@ -90,8 +90,8 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public Stream<SampleEntity> selectBatch(Long... identities) {
-        requireNotNull(identities, "List of identities should not be null");
-        requireNotEmpty(identities, "List of identifier should not be empty");
+        shouldNotBeNull(identities, "List of identities should not be null");
+        shouldNotBeNullOrEmpty(identities, "List of identifier should not be empty");
 
         final var validIdentifiers = asList(identities);
         return SAMPLE_TABLE.values()
@@ -101,8 +101,8 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public void deleteBatch(Long... identities) {
-        requireNotNull(identities, "List of identities should not be null");
-        requireNotEmpty(identities, "List of identifier should not be empty");
+        shouldNotBeNull(identities, "List of identities should not be null");
+        shouldNotBeNullOrEmpty(identities, "List of identifier should not be empty");
 
         Stream.of(identities)
                 .filter(Objects::nonNull)
@@ -124,5 +124,16 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
         return SAMPLE_TABLE.keySet().stream();
     }
 
+    @Override
+    public Stream<SampleEntity> selectPage(int page, int size) {
+        return SAMPLE_TABLE.values().stream()
+                .sorted(Comparator.comparing(SampleEntity::id))
+                .skip((long) page * size)
+                .limit(size);
+    }
 
+    @Override
+    public int count() {
+        return SAMPLE_TABLE.size();
+    }
 }

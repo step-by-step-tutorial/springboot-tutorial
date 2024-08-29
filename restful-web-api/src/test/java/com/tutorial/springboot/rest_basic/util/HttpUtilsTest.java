@@ -8,6 +8,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import static com.tutorial.springboot.rest_basic.util.HttpUtils.uriOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Http Utilities Unit Tests")
@@ -23,7 +24,9 @@ public class HttpUtilsTest {
     @Test
     public void givenValidId_thenCreatUri() {
         var givenId = 5L;
-        var actual = HttpUtils.createUriFromId(givenId);
+
+        var actual = uriOf(givenId);
+
         assertNotNull(actual);
         assertEquals("/5", actual.getPath());
     }
@@ -31,15 +34,19 @@ public class HttpUtilsTest {
     @Test
     public void givenNullId_thenThrowNullPointerException() {
         final Long givenId = null;
-        var actual = assertThrows(ValidationException.class, () -> HttpUtils.createUriFromId(givenId));
+
+        var actual = assertThrows(ValidationException.class, () -> uriOf(givenId));
+
         assertNotNull(actual);
         assertNotNull(actual.getDetails());
     }
 
     @Test
-    public void givenValidId_thenThrowNullPointerException() {
+    public void givenInValidId_thenThrowNullPointerException() {
         var givenId = -5L;
-        var actual = assertThrows(ValidationException.class, () -> HttpUtils.createUriFromId(givenId));
+
+        var actual = assertThrows(ValidationException.class, () -> uriOf(givenId));
+
         assertNotNull(actual);
         assertNotNull(actual.getDetails());
     }

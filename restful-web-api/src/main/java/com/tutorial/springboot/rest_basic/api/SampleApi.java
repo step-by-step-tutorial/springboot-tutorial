@@ -1,5 +1,6 @@
 package com.tutorial.springboot.rest_basic.api;
 
+import com.tutorial.springboot.rest_basic.dto.Page;
 import com.tutorial.springboot.rest_basic.dto.SampleDto;
 import com.tutorial.springboot.rest_basic.service.SampleService;
 import com.tutorial.springboot.rest_basic.validation.SaveValidation;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.tutorial.springboot.rest_basic.util.ApiErrorUtils.checkValidation;
+import static com.tutorial.springboot.rest_basic.validation.ApiValidation.checkValidation;
 import static com.tutorial.springboot.rest_basic.util.CleanUpUtils.clean;
-import static com.tutorial.springboot.rest_basic.util.HttpUtils.createUriFromId;
+import static com.tutorial.springboot.rest_basic.util.HttpUtils.uriOf;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.*;
 
@@ -28,27 +29,27 @@ public class SampleApi {
 
     private final Logger logger = LoggerFactory.getLogger(SampleApi.class.getSimpleName());
 
-    private final SampleService sampleService;
+    private final SampleService<Long, SampleDto> service;
 
-    public SampleApi(SampleService sampleService) {
-        this.sampleService = sampleService;
+    public SampleApi(SampleService<Long, SampleDto> service) {
+        this.service = service;
     }
 
     @PostMapping
     @Validated(SaveValidation.class)
     public ResponseEntity<Long> save(@RequestBody @Valid SampleDto dto, BindingResult bindingResult) {
-        logger.info("Received an inbound request to save a sample");
+        logger.info("Received an inbound request to save a {}", SampleDto.class.getSimpleName());
         checkValidation(bindingResult);
 
-        return sampleService.insert(dto)
-                .map(id -> created(createUriFromId(id)).body(id))
+        return service.save(dto)
+                .map(id -> created(uriOf(id)).body(id))
                 .orElseThrow();
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<SampleDto> findById(@PathVariable Long id) {
-        logger.info("Received an inbound request to retrieve a sample by its unique ID[{}]", id);
-        return sampleService.selectById(id)
+        logger.info("Received an inbound request to retrieve a {} by its unique ID[{}]", SampleDto.class.getSimpleName(), id);
+        return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> notFound().build());
     }
@@ -56,47 +57,54 @@ public class SampleApi {
     @PutMapping(path = "/{id}")
     @Validated(UpdateValidation.class)
     public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid SampleDto dto, BindingResult bindingResult) {
-        logger.info("Received an inbound request to update a sample by its unique ID[{}]", id);
+        logger.info("Received an inbound request to update a {} by its unique ID[{}]", SampleDto.class.getSimpleName(), id);
         checkValidation(bindingResult);
-        sampleService.update(id, dto);
+        service.update(id, dto);
 
         return noContent().build();
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        logger.info("Received an inbound request to delete a sample by its unique ID[{}]", id);
-        sampleService.deleteById(id);
+        logger.info("Received an inbound request to delete a {} by its unique ID[{}]", SampleDto.class.getSimpleName(), id);
+        service.deleteById(id);
 
         return noContent().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.HEAD)
     public ResponseEntity<Void> exists(@PathVariable Long id) {
-        logger.info("Received an inbound request to check existence of a sample by its unique ID[{}]", id);
-        return sampleService.exists(id) ? ok().build() : notFound().build();
+        logger.info("Received an inbound request to check existence of a {} by its unique ID[{}]", SampleDto.class.getSimpleName(), id);
+        return service.exists(id) ? ok().build() : notFound().build();
     }
 
     @PostMapping(value = "/batch")
-    public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] samples) {
-        logger.info("Received an inbound request to save a batch[{}] of samples", samples.length);
-        var identities = sampleService.insertBatch(clean(Stream.of(samples)).toArray(SampleDto[]::new));
+    public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] items) {
+        logger.info("Received an inbound request to save a batch[{}] of {}", items.length, SampleDto.class.getSimpleName());
+        var identities = service.batchSave(clean(items).toArray(SampleDto[]::new));
 
         return ResponseEntity.status(CREATED).body(identities);
     }
 
     @DeleteMapping(value = "/batch")
-    public ResponseEntity<Void> deleteBatch(@RequestBody Long[] identities) {
+    public ResponseEntity<Void> batchDelete(@RequestBody Long[] identities) {
         logger.info("Received an inbound request to delete a batch[{}] of samples", identities.length);
-        sampleService.deleteBatch(identities);
+        service.batchDelete(identities);
 
         return noContent().build();
+    }
+
+    @GetMapping(value = "/batch/{page}/{size}")
+    public ResponseEntity<Page<SampleDto>> findBatch(@PathVariable int page, @PathVariable int size) {
+        logger.info("Received an inbound request to find a page[{},{}] of {}", page, size, SampleDto.class.getSimpleName());
+        var pageOfDto = service.findBatch(page, size);
+        return ok(pageOfDto);
     }
 
     @GetMapping
     public ResponseEntity<List<SampleDto>> findAll() {
         logger.info("Received an inbound request to retrieve all samples");
-        final var samples = sampleService.selectAll();
+        final var samples = service.selectAll();
 
         return ok(samples);
     }
@@ -104,7 +112,7 @@ public class SampleApi {
     @DeleteMapping
     public ResponseEntity<Void> deleteAll() {
         logger.info("Received an inbound request to delete all samples");
-        sampleService.deleteAll();
+        service.deleteAll();
 
         return noContent().build();
     }
