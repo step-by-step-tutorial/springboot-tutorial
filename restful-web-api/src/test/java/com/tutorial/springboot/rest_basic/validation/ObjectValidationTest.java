@@ -22,7 +22,7 @@ public class ObjectValidationTest {
         public void givenNullObject_thenThrowValidationException() {
             final Object givenObject = null;
             var actual = assertThrows(ValidationException.class, () -> shouldNotBeNull(givenObject, "Object should not be empty"));
-            assertFalse(actual.getDetails().isEmpty());
+            assertFalse(actual.getMessage().isEmpty());
         }
     }
 
@@ -39,14 +39,14 @@ public class ObjectValidationTest {
         public void givenEmptyArray_thenThrowValidationException() {
             var givenArray = new Object[]{};
             var actual = assertThrows(ValidationException.class, () -> shouldNotBeNullOrEmpty(givenArray, "Array should not be empty"));
-            assertFalse(actual.getDetails().isEmpty());
+            assertFalse(actual.getMessage().isEmpty());
         }
 
         @Test
         public void givenNullArray_thenThrowValidationException() {
             final Object[] givenArray = null;
             var actual = assertThrows(ValidationException.class, () -> shouldNotBeNullOrEmpty(givenArray, "Array should not be empty"));
-            assertFalse(actual.getDetails().isEmpty());
+            assertFalse(actual.getMessage().isEmpty());
         }
 
     }

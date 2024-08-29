@@ -1,6 +1,6 @@
 package com.tutorial.springboot.rbac.util;
 
-import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;
+import com.tutorial.springboot.rbac.exception.ValidationException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -29,7 +29,7 @@ public final class CleanUpUtils {
                 .toList();
 
         if (!errorMessages.isEmpty()) {
-            throw new ArrayOfValidationException(errorMessages);
+            throw new ValidationException(errorMessages);
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.tutorial.springboot.rbac.api;
 
 import com.tutorial.springboot.rbac.dto.ErrorDto;
-import com.tutorial.springboot.rbac.exception.ArrayOfValidationException;
+import com.tutorial.springboot.rbac.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +21,8 @@ public class ExceptionApi {
 
     private final Logger logger = LoggerFactory.getLogger(ExceptionApi.class.getSimpleName());
 
-    @ExceptionHandler(ArrayOfValidationException.class)
-    public ResponseEntity<ErrorDto> catchArrayOfValidationException(ArrayOfValidationException ex) {
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorDto> catchValidationException(ValidationException ex) {
         var details = ex.getDetails().toArray(new String[0]);
         logger.error(Arrays.toString(details));
         return ResponseEntity.badRequest()
@@ -38,7 +38,13 @@ public class ExceptionApi {
                 .body(new ErrorDto(ex.getMessage()));
     }
 
-    @ExceptionHandler(value = {RuntimeException.class, NullPointerException.class, IllegalStateException.class, NoSuchElementException.class})
+    @ExceptionHandler(value = {
+            RuntimeException.class,
+            NullPointerException.class,
+            IllegalStateException.class,
+            NoSuchElementException.class,
+            IllegalArgumentException.class
+    })
     public ResponseEntity<ErrorDto> catchException(Exception ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.internalServerError()

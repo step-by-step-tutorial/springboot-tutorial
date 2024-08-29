@@ -20,7 +20,7 @@ import static com.tutorial.springboot.rbac.util.CollectionUtils.calculateBatchNu
 import static com.tutorial.springboot.rbac.util.CollectionUtils.selectBatch;
 import static com.tutorial.springboot.rbac.util.ReflectionUtils.identifyType;
 import static com.tutorial.springboot.rbac.util.SecurityUtils.getCurrentUsername;
-import static com.tutorial.springboot.rbac.validation.ObjectValidation.requireNonEmpty;
+import static com.tutorial.springboot.rbac.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
@@ -100,7 +100,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     @Override
     public List<ID> saveBatch(List<DTO> dtoList) {
         requireNonNull(dtoList, String.format("List of %s should not be null", entityClass.getSimpleName()));
-        requireNonEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
+        ObjectValidation.shouldBeNotNullOrEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
 
         int numberOfBatches = calculateBatchNumber(dtoList.size());
 
@@ -137,7 +137,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     @Override
     public void deleteBatch(List<ID> identities) {
         requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
-        requireNonEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
+        ObjectValidation.shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
 
         repository.deleteAllByIdInBatch(identities);
     }

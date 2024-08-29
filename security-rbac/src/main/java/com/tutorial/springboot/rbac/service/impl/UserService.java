@@ -10,7 +10,7 @@ import com.tutorial.springboot.rbac.transformer.UserTransformer;
 import org.springframework.stereotype.Service;
 
 import static com.tutorial.springboot.rbac.util.SecurityUtils.getCurrentUsername;
-import static com.tutorial.springboot.rbac.validation.ObjectValidation.requireNonEmpty;
+import static com.tutorial.springboot.rbac.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 
 @Service
 public class UserService extends AbstractService<Long, User, UserDto> implements CrudService<Long, UserDto>, BatchService<Long, UserDto> {
@@ -20,14 +20,14 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
     }
 
     public User findByUsername(String username) {
-        requireNonEmpty(username, "username is wrong");
+        shouldBeNotNullOrEmpty(username, "username is wrong");
         return ((UserRepository) repository).findByUsername(username)
                 .orElseThrow();
     }
 
     public void changePassword(String oldPassword, String newPassword) {
-        requireNonEmpty(oldPassword, "password is wrong");
-        requireNonEmpty(newPassword, "password is wrong");
+        shouldBeNotNullOrEmpty(oldPassword, "password is wrong");
+        shouldBeNotNullOrEmpty(newPassword, "password is wrong");
 
         var user = findByUsername(getCurrentUsername());
 

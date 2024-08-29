@@ -15,9 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Stream;
 
-import static com.tutorial.springboot.rest_basic.validation.ApiValidation.checkValidation;
+import static com.tutorial.springboot.rest_basic.validation.ApiValidation.shouldBeValid;
 import static com.tutorial.springboot.rest_basic.util.CleanUpUtils.clean;
 import static com.tutorial.springboot.rest_basic.util.HttpUtils.uriOf;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -39,7 +38,7 @@ public class SampleApi {
     @Validated(SaveValidation.class)
     public ResponseEntity<Long> save(@RequestBody @Valid SampleDto dto, BindingResult bindingResult) {
         logger.info("Received an inbound request to save a {}", SampleDto.class.getSimpleName());
-        checkValidation(bindingResult);
+        shouldBeValid(bindingResult);
 
         return service.save(dto)
                 .map(id -> created(uriOf(id)).body(id))
@@ -58,7 +57,7 @@ public class SampleApi {
     @Validated(UpdateValidation.class)
     public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid SampleDto dto, BindingResult bindingResult) {
         logger.info("Received an inbound request to update a {} by its unique ID[{}]", SampleDto.class.getSimpleName(), id);
-        checkValidation(bindingResult);
+        shouldBeValid(bindingResult);
         service.update(id, dto);
 
         return noContent().build();

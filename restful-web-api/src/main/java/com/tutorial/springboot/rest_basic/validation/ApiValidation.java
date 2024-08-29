@@ -11,7 +11,7 @@ public final class ApiValidation {
     private ApiValidation() {
     }
 
-    public static void checkValidation(BindingResult bindingResult) {
+    public static void shouldBeValid(BindingResult bindingResult) {
         requireNonNull(bindingResult, "BindingResult should not be null");
         if (bindingResult.hasErrors()) {
             var errorMessages = bindingResult.getAllErrors()

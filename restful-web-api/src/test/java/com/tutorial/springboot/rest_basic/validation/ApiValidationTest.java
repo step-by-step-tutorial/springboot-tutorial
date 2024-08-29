@@ -16,7 +16,7 @@ class ApiValidationTest {
     void givenNoErrors_thenValidationPasses() {
         var givenBindingResult = Mockito.mock(BindingResult.class);
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(false);
-        assertDoesNotThrow(() -> ApiValidation.checkValidation(givenBindingResult));
+        assertDoesNotThrow(() -> ApiValidation.shouldBeValid(givenBindingResult));
     }
 
     @Test
@@ -25,7 +25,7 @@ class ApiValidationTest {
         Mockito.when(givenBindingResult.hasErrors()).thenReturn(true);
         Mockito.when(givenBindingResult.getAllErrors()).thenReturn(List.of(new ObjectError("object name", "error message")));
 
-        var actual = assertThrows(ValidationException.class, () -> ApiValidation.checkValidation(givenBindingResult));
+        var actual = assertThrows(ValidationException.class, () -> ApiValidation.shouldBeValid(givenBindingResult));
 
         assertNotNull(actual);
         assertNotNull(actual.getMessage());
