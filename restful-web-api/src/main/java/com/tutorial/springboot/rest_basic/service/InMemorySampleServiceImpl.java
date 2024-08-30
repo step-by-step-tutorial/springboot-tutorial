@@ -32,7 +32,7 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     public Optional<Long> save(SampleDto dto) {
         shouldNotBeNull(dto, String.format("%s should not be null", SampleDto.class.getSimpleName()));
 
-        return repository.insert(toEntity(dto));
+        return repository.insert(toEntity(dto).withInitialVersion());
     }
 
     @Override
@@ -52,7 +52,7 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
 
         var exists = repository.exists(id);
         if (exists) {
-            repository.update(toEntity(dto), id, dto.version());
+            repository.update(id, toEntity(dto));
         } else {
             logger.warn("Sample Entity with id {} not found", id);
         }
@@ -70,7 +70,7 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     }
 
     @Override
-    public List<Long> batchSave(SampleDto... items) {
+    public List<Long> batchSave(SampleDto[] items) {
         shouldNotBeNull(items, String.format("List of %s should not be null", SampleDto.class.getSimpleName()));
         shouldNotBeNullOrEmpty(items, String.format("List of %s should not be empty", SampleDto.class.getSimpleName()));
 
@@ -81,32 +81,32 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     }
 
     @Override
-    public List<SampleDto> findByIdentities(Long... identities) {
-        shouldNotBeNull(identities, String.format("List of ID of %s should not be null", SampleDto.class.getSimpleName()));
-        shouldNotBeNullOrEmpty(identities, String.format("List of ID of %s should not be empty", SampleDto.class.getSimpleName()));
+    public List<SampleDto> findByIdentifiers(Long[] identifiers) {
+        shouldNotBeNull(identifiers, String.format("List of ID of %s should not be null", SampleDto.class.getSimpleName()));
+        shouldNotBeNullOrEmpty(identifiers, String.format("List of ID of %s should not be empty", SampleDto.class.getSimpleName()));
 
-        return repository.selectBatch(identities)
+        return repository.selectBatch(identifiers)
                 .map(SampleTransformer::toDto)
                 .toList();
     }
 
     @Override
-    public Page<SampleDto> findBatch(int page, int size) {
-        var items = repository.selectPage(page, size)
+    public Optional<Page<SampleDto>> findByPage(int page, int size) {
+        var items = repository.selectByPage(page, size)
                 .map(SampleTransformer::toDto)
                 .toList();
         var totalItems = repository.count();
         var totalPages = (int) Math.ceil((double) totalItems / size);
 
-        return new Page<>(items, page, totalItems, totalPages);
+        return Optional.of(new Page<>(items, page, totalItems, totalPages));
     }
 
     @Override
-    public void batchDelete(Long... identities) {
-        shouldNotBeNull(identities, String.format("List of ID of %s should not be null", SampleDto.class.getSimpleName()));
-        shouldNotBeNullOrEmpty(identities, String.format("List of ID of %s should not be empty", SampleDto.class.getSimpleName()));
+    public void batchDelete(Long[] identifiers) {
+        shouldNotBeNull(identifiers, String.format("List of ID of %s should not be null", SampleDto.class.getSimpleName()));
+        shouldNotBeNullOrEmpty(identifiers, String.format("List of ID of %s should not be empty", SampleDto.class.getSimpleName()));
 
-        repository.deleteBatch(identities);
+        repository.deleteBatch(identifiers);
     }
 
     @Override
@@ -122,8 +122,8 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     }
 
     @Override
-    public List<Long> getIdentities() {
-        return repository.selectIdentities().toList();
+    public List<Long> getIdentifiers() {
+        return repository.selectIdentifiers().toList();
     }
 
 }

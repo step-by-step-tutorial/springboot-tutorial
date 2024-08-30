@@ -194,11 +194,11 @@ class SampleApiTest {
     @DisplayName("Fetch data via REST API using GET method")
     class FindByIdTest {
 
-        private List<Long> listOfIdentities;
+        private List<Long> listOfIdentifiers;
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
+            listOfIdentifiers = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -208,7 +208,7 @@ class SampleApiTest {
 
         @Test
         void givenId_whenGet_thenReturnUniqueSampleDtoOnOkStatus() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, GET, new HttpEntity<>(null), SampleDto.class);
@@ -294,11 +294,11 @@ class SampleApiTest {
     @DisplayName("Update data via REST API using PUT method")
     class UpdateTest {
 
-        private List<Long> listOfIdentities;
+        private List<Long> listOfIdentifiers;
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
+            listOfIdentifiers = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -308,7 +308,7 @@ class SampleApiTest {
 
         @Test
         void givenDtoWithNullIdAndId_whenPut_thenReturnNothingOnNoContentStatus() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder()
                     .text("update")
@@ -326,7 +326,7 @@ class SampleApiTest {
 
         @Test
         void givenDtoWithTheSameIdAndId_whenPut_thenReturnNothingOnNoContentStatus() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder()
                     .id(givenId)
@@ -345,7 +345,7 @@ class SampleApiTest {
 
         @Test
         void givenNullAsBodyAndId_whenPut_thenReturnInternalServerError() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final SampleDto givenDto = null;
 
@@ -358,7 +358,7 @@ class SampleApiTest {
 
         @Test
         void givenEmptyDtoAndId_whenPut_thenReturnBadRequestError() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder().build();
 
@@ -377,7 +377,7 @@ class SampleApiTest {
 
         @Test
         void givenDtoWithDifferentIdAndId_whenPut_thenReturnBadRequestError() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
             final var givenDto = SampleDto.builder()
                     .id(0L)
@@ -443,11 +443,11 @@ class SampleApiTest {
     @DisplayName("Delete data via REST API using DELETE method")
     class DeleteTest {
 
-        private List<Long> listOfIdentities;
+        private List<Long> listOfIdentifiers;
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
+            listOfIdentifiers = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -457,7 +457,7 @@ class SampleApiTest {
 
         @Test
         void givenId_whenDelete_thenReturnNothingOnNoContentStatus() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(null), Void.class);
@@ -531,10 +531,10 @@ class SampleApiTest {
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNothingOnNoContentStatus() {
-            var givenIdentities = sampleService.getIdentities();
+            var givenIdentifiers = sampleService.getIdentifiers();
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), Void.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentifiers), Void.class);
 
             assertNotNull(actual);
             assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
@@ -543,10 +543,10 @@ class SampleApiTest {
 
         @Test
         void givenNullAsListOfId_whenDeleteBatch_thenReturnInternalServerError() {
-            final Long[] givenIdentities = null;
+            final Long[] givenIdentifiers = null;
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentifiers), String.class);
 
             assertNotNull(actual);
             assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
@@ -555,10 +555,10 @@ class SampleApiTest {
 
         @Test
         void givenEmptyList_whenDeleteBatch_thenReturnBadRequestError() {
-            final var givenIdentities = List.of();
+            final var givenIdentifiers = List.of();
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentifiers), String.class);
 
             assertNotNull(actual);
             assertEquals(BAD_REQUEST_STATUS_CODE, actual.getStatusCode().value());
@@ -567,10 +567,10 @@ class SampleApiTest {
 
         @Test
         void givenListOfIdWithNotNumberElement_whenDeleteBatch_thenReturnInternalServerError() {
-            final var givenIdentities = new Object[]{"not number"};
+            final var givenIdentifiers = new Object[]{"not number"};
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentifiers), String.class);
 
             assertNotNull(actual);
             assertEquals(INTERNAL_SERVER_ERROR_STATUS_CODE, actual.getStatusCode().value());
@@ -579,10 +579,10 @@ class SampleApiTest {
 
         @Test
         void givenListOfIdWithNullElement_whenDelete_thenReturnNothingOnNoContentStatus() {
-            final var givenIdentities = new Long[]{1L, null};
+            final var givenIdentifiers = new Long[]{1L, null};
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentifiers), String.class);
 
             assertNotNull(actual);
             assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
@@ -591,10 +591,10 @@ class SampleApiTest {
 
         @Test
         void givenListOfIdWithEmptyElement_whenDelete_thenReturnNothingOnNoContentStatus() {
-            final var givenIdentities = new Object[]{1, ""};
+            final var givenIdentifiers = new Object[]{1, ""};
             final var givenUri = uriBuilder.path("/batch").build().toUri();
 
-            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentities), String.class);
+            final var actual = systemUnderTest.exchange(givenUri, DELETE, new HttpEntity<>(givenIdentifiers), String.class);
 
             assertNotNull(actual);
             assertEquals(NO_CONTENT_STATUS_CODE, actual.getStatusCode().value());
@@ -606,11 +606,11 @@ class SampleApiTest {
     @DisplayName("Fetch metadata via REST API using HEAD,OPTION method")
     class GetMetadata {
 
-        private List<Long> listOfIdentities;
+        private List<Long> listOfIdentifiers;
 
         @BeforeEach
         void populate() {
-            listOfIdentities = sampleService.batchSave(TestFixture.multiSample());
+            listOfIdentifiers = sampleService.batchSave(TestFixture.multiSample());
         }
 
         @AfterEach
@@ -620,7 +620,7 @@ class SampleApiTest {
 
         @Test
         void givenId_whenHead_thenReturnOkStatus() {
-            final var givenId = TestFixture.selectByRandom(listOfIdentities, Long.class);
+            final var givenId = TestFixture.selectByRandom(listOfIdentifiers, Long.class);
             final var givenUri = uriBuilder.path("/{id}").build(givenId);
 
             final var actual = systemUnderTest.exchange(givenUri, HEAD, new HttpEntity<>(null), SampleDto.class);

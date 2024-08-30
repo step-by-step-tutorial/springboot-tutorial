@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.tutorial.springboot.rest_basic.validation.ApiValidation.shouldBeValid;
 import static com.tutorial.springboot.rest_basic.util.CleanUpUtils.clean;
 import static com.tutorial.springboot.rest_basic.util.HttpUtils.uriOf;
+import static com.tutorial.springboot.rest_basic.validation.ApiValidation.shouldBeValid;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.ResponseEntity.*;
 
@@ -77,45 +77,6 @@ public class SampleApi {
         return service.exists(id) ? ok().build() : notFound().build();
     }
 
-    @PostMapping(value = "/batch")
-    public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] items) {
-        logger.info("Received an inbound request to save a batch[{}] of {}", items.length, SampleDto.class.getSimpleName());
-        var identities = service.batchSave(clean(items).toArray(SampleDto[]::new));
-
-        return ResponseEntity.status(CREATED).body(identities);
-    }
-
-    @DeleteMapping(value = "/batch")
-    public ResponseEntity<Void> batchDelete(@RequestBody Long[] identities) {
-        logger.info("Received an inbound request to delete a batch[{}] of samples", identities.length);
-        service.batchDelete(identities);
-
-        return noContent().build();
-    }
-
-    @GetMapping(value = "/batch/{page}/{size}")
-    public ResponseEntity<Page<SampleDto>> findBatch(@PathVariable int page, @PathVariable int size) {
-        logger.info("Received an inbound request to find a page[{},{}] of {}", page, size, SampleDto.class.getSimpleName());
-        var pageOfDto = service.findBatch(page, size);
-        return ok(pageOfDto);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<SampleDto>> findAll() {
-        logger.info("Received an inbound request to retrieve all samples");
-        final var samples = service.selectAll();
-
-        return ok(samples);
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAll() {
-        logger.info("Received an inbound request to delete all samples");
-        service.deleteAll();
-
-        return noContent().build();
-    }
-
     @RequestMapping(value = "/options", method = RequestMethod.OPTIONS)
     public ResponseEntity<String> getHttpMethods() {
         logger.info("Received an inbound request to show supported HTTP verbs");
@@ -123,4 +84,45 @@ public class SampleApi {
                 .allow(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS)
                 .build();
     }
+
+    @PostMapping(value = "/batch")
+    public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] items) {
+        logger.info("Received an inbound request to save a batch[{}] of {}", items.length, SampleDto.class.getSimpleName());
+        var identifiers = service.batchSave(clean(items).toArray(SampleDto[]::new));
+
+        return ResponseEntity.status(CREATED).body(identifiers);
+    }
+
+    @DeleteMapping(value = "/batch")
+    public ResponseEntity<Void> batchDelete(@RequestBody Long[] identifiers) {
+        logger.info("Received an inbound request to delete a batch[{}] of samples", identifiers.length);
+        service.batchDelete(identifiers);
+
+        return noContent().build();
+    }
+
+    @GetMapping(value = "/batch/{page}/{size}")
+    public ResponseEntity<Page<SampleDto>> findBatch(@PathVariable int page, @PathVariable int size) {
+        logger.info("Received an inbound request to find a page[{},{}] of {}", page, size, SampleDto.class.getSimpleName());
+        return service.findByPage(page, size)
+                .map(ResponseEntity::ok)
+                .orElseThrow();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SampleDto>> findAll() {
+        logger.info("Received an inbound request to retrieve all {}", SampleDto.class.getSimpleName());
+        final var items = service.selectAll();
+
+        return ok(items);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAll() {
+        logger.info("Received an inbound request to delete all {}", SampleDto.class.getSimpleName());
+        service.deleteAll();
+
+        return noContent().build();
+    }
+
 }

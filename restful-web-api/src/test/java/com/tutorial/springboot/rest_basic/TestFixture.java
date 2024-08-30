@@ -21,6 +21,7 @@ public class TestFixture {
                 .text("fake")
                 .code(1)
                 .datetime(LocalDateTime.now())
+                .version(1)
                 .build();
     }
 
@@ -31,6 +32,7 @@ public class TestFixture {
                         .text(String.format("fake %s", integer))
                         .code(randomCodeGenerator.nextInt())
                         .datetime(LocalDateTime.now())
+                        .version(1)
                         .build())
                 .toArray(SampleDto[]::new);
     }

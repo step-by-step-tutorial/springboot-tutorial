@@ -116,10 +116,10 @@ class InMemorySampleRepositoryImplTest {
         }
 
         @Test
-        void givenNothing_whenGetIdentities_thenReturnListOfId() {
+        void givenNothing_whenGetIdentifiers_thenReturnListOfId() {
             var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
             systemUnderTest.insertBatch(givenEntities);
-            var actual = systemUnderTest.selectIdentities();
+            var actual = systemUnderTest.selectIdentifiers();
             assertNotNull(actual);
             assertFalse(actual.toList().isEmpty());
         }
@@ -150,14 +150,14 @@ class InMemorySampleRepositoryImplTest {
         @Test
         void givenSampleAndId_whenUpdate_thenUpdatedSuccessfully() {
             var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
-            var givenSample = new SampleEntity()
+            var givenSample = systemUnderTest.selectById(givenId).orElseThrow()
                     .id(givenId)
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
                     .datetime(LocalDateTime.now());
 
             var actual = assertDoesNotThrow(() -> {
-                systemUnderTest.update(givenSample, givenId, 1);
+                systemUnderTest.update(givenId, givenSample);
                 return systemUnderTest.selectById(givenId).orElseThrow();
             });
 
@@ -169,13 +169,13 @@ class InMemorySampleRepositoryImplTest {
         @Test
         void givenSampleWithoutIdAndId_whenUpdate_thenUpdatedSuccessfully() {
             var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
-            var givenSample = new SampleEntity()
+            var givenSample = systemUnderTest.selectById(givenId).orElseThrow()
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
                     .datetime(LocalDateTime.now());
 
             var actual = assertDoesNotThrow(() -> {
-                systemUnderTest.update(givenSample, givenId, 1);
+                systemUnderTest.update(givenId, givenSample);
                 return systemUnderTest.selectById(givenId).orElseThrow();
             });
 
@@ -194,7 +194,7 @@ class InMemorySampleRepositoryImplTest {
                     .text("updated text")
                     .datetime(LocalDateTime.now());
 
-            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.update(givenSample, givenId, 1));
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.update(givenId, givenSample));
 
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
@@ -215,26 +215,26 @@ class InMemorySampleRepositoryImplTest {
         }
 
         @Test
-        void givenIdentities_whenDeleteAllById_thenAllDeletedSuccessfully() {
+        void givenIdentifiers_whenDeleteAllById_thenAllDeletedSuccessfully() {
             var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
-            var givenIdentities = systemUnderTest.insertBatch(givenEntities).toArray(Long[]::new);
-            assertDoesNotThrow(() -> systemUnderTest.deleteBatch(givenIdentities));
-            Stream.of(givenIdentities)
+            var givenIdentifiers = systemUnderTest.insertBatch(givenEntities).toArray(Long[]::new);
+            assertDoesNotThrow(() -> systemUnderTest.deleteBatch(givenIdentifiers));
+            Stream.of(givenIdentifiers)
                     .forEach(id -> assertFalse(systemUnderTest.exists(id)));
         }
 
         @Test
-        void givenEmptyListOfId_whenDeleteAllByIdentities_thenThrowIllegalStateException() {
-            var givenIdentities = new Long[0];
-            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.deleteBatch(givenIdentities));
+        void givenEmptyListOfId_whenDeleteAllByIdentifiers_thenThrowIllegalStateException() {
+            var givenIdentifiers = new Long[0];
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.deleteBatch(givenIdentifiers));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
 
         @Test
-        void givenNullAsList_whenDeleteAllByIdentities_thenThrowNullPointerException() {
-            final Long[] givenIdentities = null;
-            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.deleteBatch(givenIdentities));
+        void givenNullAsList_whenDeleteAllByIdentifiers_thenThrowNullPointerException() {
+            final Long[] givenIdentifiers = null;
+            var actual = assertThrows(ValidationException.class, () -> systemUnderTest.deleteBatch(givenIdentifiers));
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }

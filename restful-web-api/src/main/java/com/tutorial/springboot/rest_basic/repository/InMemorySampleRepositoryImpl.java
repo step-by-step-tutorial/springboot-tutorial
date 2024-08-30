@@ -24,45 +24,38 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public Optional<Long> insert(SampleEntity entity) {
-        shouldNotBeNull(entity, "Sample should not be null");
+        shouldNotBeNull(entity, String.format("%s should not be null", SampleEntity.class.getSimpleName()));
 
         final var id = SAMPLE_ID_GENERATOR.incrementAndGet();
-        entity.id(id);
-        SAMPLE_TABLE.putIfAbsent(id, entity);
+        SAMPLE_TABLE.putIfAbsent(id, entity.id(id));
+
         return Optional.of(id);
     }
 
     @Override
     public Optional<SampleEntity> selectById(Long id) {
-        shouldNotBeNull(id, "ID of Sample should not be null");
+        shouldNotBeNull(id, String.format("ID of %s should not be null", SampleEntity.class.getSimpleName()));
 
         final var sample = SAMPLE_TABLE.get(id);
         return Optional.ofNullable(sample);
     }
 
     @Override
-    public void update(SampleEntity entity, Long id, Integer version) {
-        shouldNotBeNull(id, "ID of Sample should not be null");
-        shouldNotBeNull(entity, "Sample should not be null");
-        if (nonNull(entity.id())) {
-            shouldBeEqual(id, entity.id(), "There are two different values for Sample ID");
+    public void update(Long id, SampleEntity newOne) {
+        shouldNotBeNull(id, String.format("ID of %s should not be null", SampleEntity.class.getSimpleName()));
+        shouldNotBeNull(newOne, String.format("%s should not be null", SampleEntity.class.getSimpleName()));
+        if (nonNull(newOne.id())) {
+            shouldBeEqual(id, newOne.id(), String.format("There are two different values for %s ID", SampleEntity.class.getSimpleName()));
         }
-        var persisted = selectById(id);
-        if (persisted.isPresent()) {
-            var value = persisted.get();
-            if (!Objects.equals(value.version(), version)) {
-                throw new IllegalStateException(String.format("Sample entity [id %s and version %s] do not match with DTO [id %s and version %s] ", id, value.version(), id, version));
-            }
-            value.updateFrom(entity);
-            SAMPLE_TABLE.put(id, value);
-        } else {
-            logger.warn("Sample Entity with id {} not found", id);
-        }
+        selectById(id).ifPresentOrElse(
+                entity -> SAMPLE_TABLE.put(id, entity.updateFrom(newOne)),
+                () -> logger.warn("{} Entity with id {} not found", SampleEntity.class.getSimpleName(), id)
+        );
     }
 
     @Override
     public void deleteById(Long id) {
-        shouldNotBeNull(id, "ID of Sample should not be null");
+        shouldNotBeNull(id, String.format("ID of %s should not be null", SampleEntity.class.getSimpleName()));
         SAMPLE_TABLE.remove(id);
     }
 
@@ -72,39 +65,39 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
     }
 
     @Override
-    public Stream<Long> insertBatch(SampleEntity... entities) {
-        shouldNotBeNull(entities, "List of Sample should not be null");
-        shouldNotBeNullOrEmpty(entities, "List of Sample should not be empty");
+    public Stream<Long> insertBatch(SampleEntity[] entities) {
+        shouldNotBeNull(entities, String.format("List of %s should not be null", SampleEntity.class.getSimpleName()));
+        shouldNotBeNullOrEmpty(entities, String.format("List of %s should not be empty", SampleEntity.class.getSimpleName()));
 
-        var identities = new ArrayList<Long>(entities.length);
+        var identifiers = new ArrayList<Long>(entities.length);
         for (SampleEntity entity : entities) {
             var id = insert(entity);
             if (id.isPresent()) {
-                identities.add(id.get());
+                identifiers.add(id.get());
             } else {
                 throw new RuntimeException("Failed to insert entity: " + entity);
             }
         }
-        return identities.stream();
+        return identifiers.stream();
     }
 
     @Override
-    public Stream<SampleEntity> selectBatch(Long... identities) {
-        shouldNotBeNull(identities, "List of identities should not be null");
-        shouldNotBeNullOrEmpty(identities, "List of identifier should not be empty");
+    public Stream<SampleEntity> selectBatch(Long[] identifiers) {
+        shouldNotBeNull(identifiers, "List of ID should not be null");
+        shouldNotBeNullOrEmpty(identifiers, "List of ID should not be empty");
 
-        final var validIdentifiers = asList(identities);
+        final var validIdentifiers = asList(identifiers);
         return SAMPLE_TABLE.values()
                 .stream()
                 .filter(sample -> validIdentifiers.contains(sample.id()));
     }
 
     @Override
-    public void deleteBatch(Long... identities) {
-        shouldNotBeNull(identities, "List of identities should not be null");
-        shouldNotBeNullOrEmpty(identities, "List of identifier should not be empty");
+    public void deleteBatch(Long[] identifiers) {
+        shouldNotBeNull(identifiers, "List of ID should not be null");
+        shouldNotBeNullOrEmpty(identifiers, "List of ID should not be empty");
 
-        Stream.of(identities)
+        Stream.of(identifiers)
                 .filter(Objects::nonNull)
                 .forEach(SAMPLE_TABLE::remove);
     }
@@ -120,13 +113,14 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
     }
 
     @Override
-    public Stream<Long> selectIdentities() {
+    public Stream<Long> selectIdentifiers() {
         return SAMPLE_TABLE.keySet().stream();
     }
 
     @Override
-    public Stream<SampleEntity> selectPage(int page, int size) {
-        return SAMPLE_TABLE.values().stream()
+    public Stream<SampleEntity> selectByPage(int page, int size) {
+        return SAMPLE_TABLE.values()
+                .stream()
                 .sorted(Comparator.comparing(SampleEntity::id))
                 .skip((long) page * size)
                 .limit(size);

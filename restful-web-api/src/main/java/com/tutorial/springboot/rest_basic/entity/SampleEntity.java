@@ -3,7 +3,6 @@ package com.tutorial.springboot.rest_basic.entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -48,13 +47,12 @@ public class SampleEntity extends Entity<Long, SampleEntity> {
         return this;
     }
 
-
-    @Transient
-    public void updateFrom(SampleEntity newOne) {
+    public SampleEntity updateFrom(SampleEntity newOne) {
+        super.updateFrom(newOne);
         code(newOne.code());
         text(newOne.text());
         datetime(newOne.datetime());
-        increaseVersion();
+        return this;
     }
 
     @Override

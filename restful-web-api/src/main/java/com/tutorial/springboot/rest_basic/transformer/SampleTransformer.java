@@ -23,7 +23,8 @@ public final class SampleTransformer {
                 .id(dto.id())
                 .code(dto.code())
                 .text(dto.text())
-                .datetime(dto.datetime());
+                .datetime(dto.datetime())
+                .version(dto.version());
     }
 
 }

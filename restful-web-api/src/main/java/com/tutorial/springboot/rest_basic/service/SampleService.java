@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SampleService<ID, DTO> {
+
     Optional<ID> save(DTO dto);
 
     Optional<DTO> findById(ID id);
@@ -16,17 +17,17 @@ public interface SampleService<ID, DTO> {
 
     boolean exists(ID id);
 
-    List<ID> batchSave(DTO... items);
+    List<ID> batchSave(DTO[] items);
 
-    List<DTO> findByIdentities(ID... identities);
+    List<DTO> findByIdentifiers(ID[] identifiers);
 
-    Page<DTO> findBatch(int page, int size);
+    Optional<Page<DTO>> findByPage(int page, int size);
 
-    void batchDelete(ID... identities);
+    void batchDelete(ID[] identifiers);
 
     List<DTO> selectAll();
 
     void deleteAll();
 
-    List<ID> getIdentities();
+    List<ID> getIdentifiers();
 }
