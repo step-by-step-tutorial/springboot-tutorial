@@ -3,6 +3,7 @@ package com.tutorial.springboot.rest_basic.entity;
 import java.beans.Transient;
 import java.util.Objects;
 
+@SuppressWarnings(value = {"unchecked"})
 public abstract class Entity<ID, SELF extends Entity<ID, SELF>> {
 
     protected ID id;
