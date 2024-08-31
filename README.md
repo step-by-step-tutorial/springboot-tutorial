@@ -39,11 +39,14 @@ This tutorial provides many best practises and examples include documentation.
 * step: Jaeger
 * [step: security-authentication-inmemory](security-authentication-inmemory)
 * [step: security-rbac-jwt](security-rbac-jwt)
-  * step: security-authentication-cors
+  * RBAC
+  * JWT
+  * CORS
+* step: security-rbac-web
+  * remember-me
+  * CSRF
+  * XSS
 * step: security-authentication-ldap
-* step: security-authentication-remember-me
-* step: security-authentication-csrf
-* step: security-authentication-xss
 * step: security-authentication-mfa
 * step: security-authentication-open-id
 * step: security-authorization-acl
