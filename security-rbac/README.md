@@ -46,10 +46,6 @@ mvn test
 mvn  spring-boot:run
 ```
 
-```yaml
-URL: http://localhost:8080
-```
-
 ## RBAC
 
 Role-Based Access Control (RBAC) is a security model that restricts system access to authorized users based on their
@@ -242,11 +238,13 @@ ARG JAR_NAME=security-rbac
 ARG JAR_VERSION=0.0.1-SNAPSHOT
 ARG TARGET_PATH=/app
 ENV APPLICATION=${TARGET_PATH}/application.jar
-ENV PORT=8080
+ENV APP_HOST=0.0.0.0
+ENV APP_PORT=8080
+ENV APP_PROFILES=h2
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 
-EXPOSE ${PORT}
+EXPOSE ${APP_PORT}
 ENTRYPOINT java -jar ${APPLICATION}
 ```
 
@@ -292,11 +290,14 @@ services:
     environment:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
+      APP_PROFILES: postgres
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
       POSTGRESQL_HOST: postgres
       POSTGRESQL_PORT: 5432
       DATABASE_NAME: test_db
+      DATABASE_SCHEMA: user_management
+
 ```
 
 ### Apply Docker Compose
@@ -317,12 +318,257 @@ Create the following files for installing Application.
 
 ```yaml
 #deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: securityrbac
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: securityrbac
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: securityrbac
+    spec:
+      containers:
+        - name: securityrbac
+          image: samanalishiri/securityrbac:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_HOST
+              value: "0.0.0.0"
+            - name: APP_PORT
+              value: "8080"
+            - name: APP_PROFILES
+              value: postgres
+            - name: DATABASE_USERNAME
+              value: user
+            - name: DATABASE_PASSWORD
+              value: password
+            - name: POSTGRESQL_HOST
+              value: postgres
+            - name: POSTGRESQL_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: test_db
+            - name: DATABASE_SCHEMA
+              value: user_management
 ```
 
 [app-service.yml](/kube/app-service.yml)
 
 ```yaml
 #service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: securityrbac
+spec:
+  selector:
+    app: securityrbac
+  ports:
+    - port: 8080
+      targetPort: 8080
+```
+
+[postgres-secrets.yml](/kube/postgres-secrets.yml)
+
+```yaml
+#postgres-secrets.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secrets
+type: Opaque
+data:
+  # value: user
+  postgres-user: dXNlcg==
+  # value: password
+  postgres-password: cGFzc3dvcmQ=
+```
+
+[postgres-configmap.yml](/kube/postgres-configmap.yml)
+
+```yaml
+#postgres-configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configmap
+data:
+  postgres-database: "test_db"
+```
+
+[postgres-pvc.yml](/kube/postgres-pvc.yml)
+
+```yaml
+#postgres-pvc.yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  labels:
+    app: postgres
+    tier: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+[postgres-deployment.yml](/kube/postgres-deployment.yml)
+
+```yaml
+#postgres-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+        tier: database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: postgres-password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-configmap
+                  key: postgres-database
+            - name: PGDATA
+              value: /data/postgres
+          ports:
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+```
+
+[postgres-service.yml](/kube/postgres-service.yml)
+
+```yaml
+#postgres-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+    tier: database
+spec:
+  selector:
+    app: postgres
+    tier: database
+
+  ports:
+    - port: 5432
+      targetPort: 5432
+```
+
+[pgadmin-secrets.yml](/kube/pgadmin-secrets.yml)
+
+```yaml
+#pgadmin-secrets.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pgadmin-secrets
+type: Opaque
+data:
+  # value: password
+  pgadmin_default_password: cGFzc3dvcmQ=
+```
+
+[pgadmin-deployment.yml](/kube/pgadmin-deployment.yml)
+
+```yaml
+#pgadmin-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4
+          ports:
+            - containerPort: 80
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: pgadmin4@pgadmin.org
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgadmin-secrets
+                  key: pgadmin_default_password
+            - name: PGADMIN_CONFIG_SERVER_MODE
+              value: "False"
+```
+
+[pgadmin-service.yml](/kube/pgadmin-service.yml)
+
+```yaml
+#pgadmin-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin
+spec:
+  selector:
+    app: pgadmin
+  ports:
+    - port: 80
+      targetPort: 80
 ```
 
 ### Apply Kube Files
@@ -330,6 +576,14 @@ Create the following files for installing Application.
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
+kubectl apply -f ./kube/postgres-pvc.yml
+kubectl apply -f ./kube/postgres-configmap.yml
+kubectl apply -f ./kube/postgres-secrets.yml
+kubectl apply -f ./kube/postgres-deployment.yml
+kubectl apply -f ./kube/postgres-service.yml
+kubectl apply -f ./kube/pgadmin-secrets.yml
+kubectl apply -f ./kube/pgadmin-deployment.yml
+kubectl apply -f ./kube/pgadmin-service.yml
 kubectl apply -f ./kube/app-deployment.yml
 kubectl apply -f ./kube/app-service.yml
 ```
@@ -344,13 +598,34 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to Application from localhost through the web browser use the following command and dashboard of
-Application is available on [http://localhost:port](http://localhost:port) URL.
+In order to connect to Application from localhost through the web browser use the following
+URL [http://localhost:8080](http://localhost:8080).
 
 </p>
 
 ```shell
-kubectl port-forward service/securityrbac port:port
+kubectl port-forward service/securityrbac 8080:8080
+```
+
+<p align="justify">
+
+In order to connect to PostgreSQL from localhost use the following command.
+
+</p>
+
+```shell
+kubectl port-forward service/postgres 5432:5432
+```
+
+<p align="justify">
+
+In order to connect to PGAdmin from localhost through the web browser use the following command and dashboard of
+PGAdmin is available on [http://localhost:8081](http://localhost:8081) URL.
+
+</p>
+
+```shell
+kubectl port-forward service/pgadmin 8081:80
 ```
 
 ## How To Set up Spring Boot
@@ -358,6 +633,7 @@ kubectl port-forward service/securityrbac port:port
 ### Dependencies
 
 ```xml
+
 <dependencies>
     <!--spring-->
     <dependency>
@@ -443,6 +719,53 @@ server:
 spring:
   main:
     banner-mode: OFF
+  profiles:
+    active: ${APP_PROFILES:h2}
+```
+
+```yaml
+# application-h2.yml
+spring:
+  datasource:
+    username: sa
+    password: ''
+    url: jdbc:h2:mem:${DATABASE_NAME:test_db}
+    driver-class-name: org.h2.Driver
+  data:
+    jdbc:
+      repositories:
+        enabled:
+  jpa:
+    database: H2
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: false
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ""
+  h2:
+    console:
+      enabled: true
+      path: ${H2_CONSOLE:/h2-console}
+  sql:
+    init:
+      data-locations: classpath:data-h2.sql
+
+```
+
+```yaml
+# application-postgres.yml
+spring:
+  main:
+    banner-mode: OFF
   datasource:
     username: ${DATABASE_USERNAME:user}
     password: ${DATABASE_PASSWORD:password}
@@ -478,6 +801,7 @@ spring:
 ### Dependencies
 
 ```xml
+
 <dependencies>
     <!--test-->
     <dependency>
@@ -502,36 +826,6 @@ spring:
 </dependencies>
 ```
 
-### Application Properties
-
-```yaml
-# application-test.yml
-spring:
-  datasource:
-    username: sa
-    password: ''
-    url: jdbc:h2:mem:${DATABASE_NAME:test_db}
-    driver-class-name: org.h2.Driver
-  jpa:
-    database: H2
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      javax:
-        persistence:
-          create-database-schemas: false
-      hibernate:
-        default_schema: ""
-  h2:
-    console:
-      enabled: true
-      path: ${H2_CONSOLE:/h2-console}
-  sql:
-    init:
-      data-locations: classpath:data-h2.sql
-```
-
 ## Appendix
 
 ### Makefile
@@ -545,25 +839,62 @@ test:
 
 run:
 	mvn spring-boot:run
-	
+
+docker-build:
+	docker build -t samanalishiri/securityrbac:latest .
+
+docker-deploy:
+	docker run \
+	--name securityrbac \
+	-p 8080:8080 \
+	-h securityrbac \
+	-e APP_HOST=0.0.0.0 \
+	-e APP_PORT=8080 \
+	-e APP_PROFILES=h2 \
+	-itd samanalishiri/securityrbac:latest
+
 docker-compose-deploy:
-	docker compose --file docker-compose.yml --project-name tools-name up --build -d
+	docker compose --file ./docker-compose.yml --project-name securityrbac up --build -d
 
 docker-remove-container:
-	docker rm tools-name --force
+	docker rm securityrbac --force
+	docker rm pgadmin --force
+	docker rm postgres --force
 
 docker-remove-image:
-	docker image rm image-name
+	docker image rm samanalishiri/securityrbac:latest
+	docker image rm dpage/pgadmin4
+	docker image rm postgres:13.9-alpine
 
 kube-deploy:
-	kubectl apply -f ./kube/tools-name-deployment.yml
-	kubectl apply -f ./kube/tools-name-service.yml
+	kubectl apply -f ./kube/postgres-pvc.yml
+	kubectl apply -f ./kube/postgres-configmap.yml
+	kubectl apply -f ./kube/postgres-secrets.yml
+	kubectl apply -f ./kube/postgres-deployment.yml
+	kubectl apply -f ./kube/postgres-service.yml
+	kubectl apply -f ./kube/pgadmin-secrets.yml
+	kubectl apply -f ./kube/pgadmin-deployment.yml
+	kubectl apply -f ./kube/pgadmin-service.yml
+	kubectl apply -f ./kube/app-deployment.yml
+	kubectl apply -f ./kube/app-service.yml
 
 kube-delete:
 	kubectl delete all --all
+	kubectl delete secrets postgres-secrets
+	kubectl delete configMap postgres-configmap
+	kubectl delete persistentvolumeclaim postgres-pvc
+	kubectl delete secrets pgadmin-secrets
+	kubectl delete ingress pgadmin
 
-kube-port-forward-db:
-	kubectl port-forward service/tools-name port:port
+kube-port-forward-app:
+	kubectl port-forward service/securityrbac 8080:8080
+
+kube-port-forward-postgres:
+	kubectl port-forward service/postgres 5432:5432
+
+kube-port-forward-pgadmin:
+	kubectl port-forward service/pgadmin 8081:80
+
 ```
 
 ##

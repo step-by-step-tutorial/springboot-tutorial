@@ -8,6 +8,7 @@ This tutorial is about develop a RESTful web services includes API documentation
 * [API Design](#api-design)
 * [Http Verbs](#http-verbs)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [Appendix](#appendix )
 
 ## Getting Started
@@ -59,10 +60,10 @@ postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.
 mvn  spring-boot:run
 ```
 
-* To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator)
-* To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+* To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator).
+* To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health).
 * To access **swagger** ui,
-  brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+  brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html).
 
 ## API Design
 
@@ -202,63 +203,202 @@ public ResponseEntity<String> options() {
 }
 ```
 
+## Install Application on Docker
+
+Create a file named `docker-compose.yml` with the following configuration.
+
+### Docker Compose
+
+[Dockerfile](Dockerfile)
+
+```dockerfile
+FROM eclipse-temurin:21-jdk-alpine
+
+ARG JAR_PATH=./target
+ARG JAR_NAME=restful-web-api
+ARG JAR_VERSION=0.0.1-SNAPSHOT
+ARG TARGET_PATH=/app
+ENV APPLICATION=${TARGET_PATH}/application.jar
+ENV PORT=8080
+
+ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
+
+EXPOSE ${PORT}
+ENTRYPOINT java -jar ${APPLICATION}
+```
+
+[docker-compose.yml](docker-compose.yml)
+
+```yaml
+#docker-compose.yml
+version: "3.8"
+
+services:
+  restfulwebapi:
+    image: samanalishiri/restfulwebapi:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: restfulwebapi
+    hostname: restfulwebapi
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+
+```
+
+### Apply Docker Compose
+
+Execute the following command to install Application.
+
+```shell
+docker compose --file ./docker-compose.yml --project-name restfulwebapi up --build -d
+```
+
+## Install Application on Kubernetes
+
+Create the following files for installing Application.
+
+### Kube Files
+
+[app-deployment.yml](/kube/app-deployment.yml)
+
+```yaml
+#deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restfulwebapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restfulwebapi
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: restfulwebapi
+    spec:
+      containers:
+        - name: restfulwebapi
+          image: samanalishiri/restfulwebapi:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_HOST
+              value: "0.0.0.0"
+            - name: APP_PORT
+              value: "8080"
+
+```
+
+[app-service.yml](/kube/app-service.yml)
+
+```yaml
+#service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: restfulwebapi
+spec:
+  selector:
+    app: restfulwebapi
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+```
+
+### Apply Kube Files
+
+Execute the following commands to install the tools on Kubernetes.
+
+```shell
+kubectl apply -f ./kube/app-deployment.yml
+kubectl apply -f ./kube/app-service.yml
+```
+
+### Check Status
+
+```shell
+kubectl get all
+```
+
+### Port Forwarding
+
+<p align="justify">
+
+In order to connect to Application from localhost through the web browser use the following
+URL [http://localhost:8080](http://localhost:8080).
+
+</p>
+
+```shell
+kubectl port-forward service/securityrbac 8080:8080
+```
+
 ## How To Set up Spring Boot
 
 ### Dependencies
 
 ```xml
-
 <dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-
-```
-
-#### JSON Dependencies
-
-In order to support JSON, the following dependencies must be added.
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-    </dependency>
-</dependencies>
-```
-
-#### Swagger Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        <version>2.3.0</version>
-    </dependency>
-</dependencies>
+        <!--spring-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <!--utils-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <!--rest documentation-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <!--developer-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 ```
 
 ### Application Properties
@@ -285,6 +425,25 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 }
 ```
+
+## How To Set up Spring Boot Test
+
+### Dependencies
+
+```xml
+<dependencies>
+   <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+   </dependency>
+   <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+   </dependency>
+</dependencies>
+```  
 
 ## Appendix
 
