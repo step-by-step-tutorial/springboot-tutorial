@@ -38,12 +38,11 @@ This tutorial provides many best practises and examples include documentation.
 * step: ELK
 * step: Jaeger
 * [step: security-authentication-inmemory](security-authentication-inmemory)
-* [step: security-rbac](security-rbac)
-* [step: security-abac](security-abac)
+* [step: security-rbac-jwt](security-rbac-jwt)
+  * step: security-authentication-cors
 * step: security-authentication-ldap
 * step: security-authentication-remember-me
 * step: security-authentication-csrf
-* step: security-authentication-cors
 * step: security-authentication-xss
 * step: security-authentication-mfa
 * step: security-authentication-open-id
