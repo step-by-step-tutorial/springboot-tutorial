@@ -1,6 +1,5 @@
-package com.tutorial.springboot.security_rbac_jwt.service;
+package com.tutorial.springboot.securityoauth2server.service.impl;
 
-import com.tutorial.springboot.security_rbac_jwt.service.impl.UserService;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;

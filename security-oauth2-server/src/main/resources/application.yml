@@ -1,0 +1,11 @@
+rsa:
+  private-key: classpath:private-key.pem
+  public-key: classpath:public-key.pem
+
+spring:
+  profiles:
+    active: h2
+
+logging:
+  level:
+    web: debug

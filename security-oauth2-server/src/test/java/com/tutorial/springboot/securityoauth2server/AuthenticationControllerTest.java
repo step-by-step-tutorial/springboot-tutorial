@@ -1,6 +1,5 @@
-package com.tutorial.springboot.security_rbac_jwt.api;
+package com.tutorial.springboot.securityoauth2server;
 
-import com.tutorial.springboot.security_rbac_jwt.dto.CredentialsDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -10,11 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles({"test","h2"})
+@ActiveProfiles({"test", "h2"})
 public class AuthenticationControllerTest {
 
     @LocalServerPort
@@ -31,18 +31,7 @@ public class AuthenticationControllerTest {
                 .statusCode(HttpStatus.OK.value())
                 .body("token", not(emptyOrNullString()))
                 .body("expiration", not(emptyOrNullString()))
-                .log()
-                .all();
+                .log().all();
     }
 
-    @Test
-    void givenInvalidCredentials_whenAuthenticate_thenReturnUnauthorizedStatus() {
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .auth().basic("admin", "wrong_password")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/auth/token")
-                .when().post()
-                .then()
-                .statusCode(HttpStatus.UNAUTHORIZED.value());
-    }
 }

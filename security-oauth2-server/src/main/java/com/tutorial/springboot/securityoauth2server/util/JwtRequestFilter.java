@@ -1,6 +1,6 @@
-package com.tutorial.springboot.security_rbac_jwt.util;
+package com.tutorial.springboot.securityoauth2server.util;
 
-import com.tutorial.springboot.security_rbac_jwt.service.impl.TokenService;
+import com.tutorial.springboot.securityoauth2server.service.impl.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,12 +33,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         var authorizationHeader = request.getHeader("Authorization");
         String username = null;
-        String token = null;
+        String jwt = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
+            jwt = authorizationHeader.substring(7);
             try {
-                username = tokenService.extractUsername(token);
+                username = tokenService.extractUsername(jwt);
             } catch (ExpiredJwtException e) {
                 logger.warn("JWT token is expired");
             } catch (Exception e) {
@@ -49,10 +49,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             var user = this.userDetailsService.loadUserByUsername(username);
 
-            if (tokenService.isValid(token, user.getUsername())) {
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (tokenService.isValid(jwt, user.getUsername())) {
+                var token = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(token);
             }
         }
         chain.doFilter(request, response);

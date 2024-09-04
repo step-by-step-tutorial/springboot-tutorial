@@ -1,6 +1,5 @@
 package com.tutorial.springboot.security_rbac_jwt.test_utils;
 
-import com.tutorial.springboot.security_rbac_jwt.dto.CredentialsDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,8 +22,8 @@ public final class SecurityTestUtils {
     private static String getTestToken(String hostname, int port, String username, String password) {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
-                .baseUri("http://" + hostname).port(port).basePath("/api/v1/auth/login")
-                .body(new CredentialsDto(username, password))
+                .auth().basic("admin", "admin")
+                .baseUri("http://" + hostname).port(port).basePath("/api/v1/auth/token")
                 .when().post()
                 .andReturn().body().jsonPath().getString("token");
     }

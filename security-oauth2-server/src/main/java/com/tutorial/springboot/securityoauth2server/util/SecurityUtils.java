@@ -1,4 +1,4 @@
-package com.tutorial.springboot.security_rbac_jwt.util;
+package com.tutorial.springboot.securityoauth2server.util;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
