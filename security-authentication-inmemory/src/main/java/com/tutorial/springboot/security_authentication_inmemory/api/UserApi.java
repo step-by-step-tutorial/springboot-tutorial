@@ -5,8 +5,6 @@ import com.tutorial.springboot.security_authentication_inmemory.service.UserServ
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
@@ -20,22 +18,27 @@ public class UserApi {
         this.userService = userService;
     }
 
-    @GetMapping
-    public ResponseEntity<String> welcome() {
-        return ResponseEntity.ok(String.format("Hello, %s!", userService.currentUsername()));
+    @GetMapping("whoami")
+    public ResponseEntity<String> whoami() {
+        return ResponseEntity.ok(String.format("Current user is %s", userService.currentUsername()));
+    }
+
+
+    @GetMapping("{username}")
+    public ResponseEntity<UserDto> findByUsername(@PathVariable String username) {
+        return userService.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElseThrow();
     }
 
     @PostMapping
     public ResponseEntity<String> save(@RequestBody UserDto newUser) {
-        return userService.save(newUser)
-                .map(user -> created(createUriFor(newUser.username())).body("User created"))
-                .orElseThrow();
+        userService.save(newUser);
+        var uri = fromCurrentRequest()
+                .path("/{username}")
+                .buildAndExpand(newUser.username())
+                .toUri();
+        return created(uri).body("User created");
     }
 
-    private static URI createUriFor(String username) {
-        return fromCurrentRequest()
-                .path("/{username}")
-                .buildAndExpand(username)
-                .toUri();
-    }
 }

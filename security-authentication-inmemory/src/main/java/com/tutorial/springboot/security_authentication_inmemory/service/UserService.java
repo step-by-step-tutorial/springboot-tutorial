@@ -3,12 +3,12 @@ package com.tutorial.springboot.security_authentication_inmemory.service;
 import com.tutorial.springboot.security_authentication_inmemory.dto.UserDto;
 import com.tutorial.springboot.security_authentication_inmemory.repository.UserRepository;
 import org.slf4j.Logger;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -25,26 +25,27 @@ public class UserService {
     public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        initialWithStaticUsers();
     }
 
-    private void initialWithStaticUsers() {
-        logger.info("Initializing static users");
-        save(new UserDto().username("user").password("password").roles(List.of("USER")));
-        save(new UserDto().username("admin").password("password").roles(List.of("USER", "ADMIN")));
-    }
-
-    public Optional<Boolean> save(UserDto newUser) {
-        var user = User.builder()
+    public void save(UserDto newUser) {
+        var entity = User.builder()
                 .username(newUser.username())
                 .passwordEncoder(passwordEncoder::encode)
                 .password(newUser.password())
                 .roles(newUser.roles().toArray(String[]::new))
                 .build();
 
-        userRepository.createUser(user);
-        logger.info("Create newUser: {}", user.getUsername());
-        return Optional.of(true);
+        userRepository.createUser(entity);
+        logger.info("Create newUser: {}", entity.getUsername());
+    }
+
+    public Optional<UserDto> findByUsername(String username) {
+        var entity = userRepository.loadUserByUsername(username);
+        var dto = new UserDto()
+                .username(entity.getUsername())
+                .roles(entity.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+
+        return Optional.of(dto);
     }
 
     public String currentUsername() {

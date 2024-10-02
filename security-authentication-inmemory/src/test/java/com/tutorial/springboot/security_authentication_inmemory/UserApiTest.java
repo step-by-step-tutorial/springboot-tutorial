@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserApiTest {
@@ -21,7 +21,7 @@ public class UserApiTest {
     @Test
     public void givenNoUser_whenAuthentication_thenReturnUnauthorized() {
         given()
-                .baseUri("http://localhost").port(port).basePath("/api/v1/users")
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users/whoami")
                 .when().get()
                 .then()
                 .statusCode(401);
@@ -29,30 +29,36 @@ public class UserApiTest {
 
     @Test
     public void givenUserCredentials_whenAuthentication_thenReturnOk() {
+        var givenUsername = "user";
+        var givenPassword = "password";
         given()
-                .auth().basic("user", "password")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/users")
+                .auth().basic(givenUsername, givenPassword)
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users/whoami")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body(equalTo("Hello, user!"));
+                .body(equalTo("Current user is user"));
     }
 
     @Test
     public void givenAdminCredentials_whenAuthentication_thenReturnOk() {
+        var givenUsername = "admin";
+        var givenPassword = "password";
         given()
-                .auth().basic("admin", "password")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/users")
+                .auth().basic(givenUsername, givenPassword)
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users/whoami")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body(equalTo("Hello, admin!"));
+                .body(equalTo("Current user is admin"));
     }
 
     @Test
     public void givenUser_whenSave_thenReturnCreateStatus() {
+        var givenUsername = "admin";
+        var givenPassword = "password";
         given()
-                .auth().basic("admin", "password")
+                .auth().basic(givenUsername, givenPassword)
                 .contentType(ContentType.JSON)
                 .baseUri("http://localhost").port(port).basePath("/api/v1/users")
                 .body(new UserDto().username("Saman").password("password").roles(List.of("USER", "admin")))
@@ -60,5 +66,21 @@ public class UserApiTest {
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .body(equalTo("User created"));
+    }
+
+    @Test
+    public void givenUsername_whenFindByUsername_thenReturnUserDto() {
+        var givenUsername = "user";
+        var givenPassword = "password";
+        given()
+                .auth().basic(givenUsername, givenPassword)
+                .baseUri("http://localhost").port(port)
+                .basePath("/api/v1/users/{username}").pathParam("username", givenUsername)
+                .when().get()
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("username", equalTo(givenUsername))
+                .body("roles.size()", is(1))
+                .body("roles", hasItems("ROLE_USER"));
     }
 }
