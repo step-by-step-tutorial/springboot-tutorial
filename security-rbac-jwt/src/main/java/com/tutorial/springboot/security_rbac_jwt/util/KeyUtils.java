@@ -6,10 +6,6 @@ import javax.crypto.SecretKey;
 
 public final class KeyUtils {
 
-    public static final SecretKey SIGN_IN_KEY = generateSecretKey();
-
-    private static SecretKey generateSecretKey() {
-        return Jwts.SIG.HS256.key().build();
-    }
+    public static final SecretKey SIGN_IN_KEY = Jwts.SIG.HS256.key().build();
 
 }

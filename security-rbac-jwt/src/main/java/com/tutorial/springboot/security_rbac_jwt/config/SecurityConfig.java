@@ -1,7 +1,7 @@
 package com.tutorial.springboot.security_rbac_jwt.config;
 
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionEvaluatorService;
-import com.tutorial.springboot.security_rbac_jwt.util.JwtRequestFilter;
+import com.tutorial.springboot.security_rbac_jwt.filter.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;

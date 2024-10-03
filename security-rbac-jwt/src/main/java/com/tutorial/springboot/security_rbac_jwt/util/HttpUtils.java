@@ -1,5 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -18,5 +19,13 @@ public final class HttpUtils {
                 .path("/{id}")
                 .buildAndExpand(id)
                 .toUri();
+    }
+
+    public static String extractBearerToken(HttpServletRequest request) {
+        var token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return null;
     }
 }
