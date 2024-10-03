@@ -15,13 +15,13 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test","h2"})
-public class AuthenticationControllerTest {
+public class TokenApiTest {
 
     @LocalServerPort
     int port;
 
     @Test
-    void givenValidCredentials_whenAuthenticate_thenReturnJwtTokenWithOKStatus() {
+    void givenValidCredentials_whenGenerateToken_thenReturnJwtTokenWithOKStatus() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "admin")
@@ -36,7 +36,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    void givenInvalidCredentials_whenAuthenticate_thenReturnUnauthorizedStatus() {
+    void givenInvalidCredentials_whenGenerateToken_thenReturnUnauthorizedStatus() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "wrong_password")
