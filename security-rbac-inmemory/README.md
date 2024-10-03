@@ -43,7 +43,7 @@ Username: admin
 Password: password
 ```
 
-<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-authentication-inmemory/doc/spring-security-inmemory.png"  height="30%" width="30%">
+<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-rbac-inmemory/doc/spring-security-inmemory.png"  height="30%" width="30%">
 
 #### Check Status
 
@@ -69,7 +69,7 @@ Create a file named `docker-compose.yml` with the following configuration.
 FROM eclipse-temurin:21-jdk-alpine
 
 ARG JAR_PATH=./target
-ARG JAR_NAME=security-authentication-inmemory
+ARG JAR_NAME=security-rbac-inmemory
 ARG JAR_VERSION=0.0.1-SNAPSHOT
 ARG TARGET_PATH=/app
 ENV APPLICATION=${TARGET_PATH}/application.jar

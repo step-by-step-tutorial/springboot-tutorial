@@ -18,5 +18,5 @@ call mvn -f messaging-rabbit-mq/pom.xml clean
 call mvn -f messaging-apache-kafka/pom.xml clean
 call mvn -f restful-web-api/pom.xml clean
 call mvn -f streaming-apache-kafka/pom.xml clean
-call mvn -f security-authentication-inmemory/pom.xml clean
-call mvn -f security-rbac/pom.xml clean
+call mvn -f security-rbac-inmemory/pom.xml clean
+call mvn -f security-rbac-jwt/pom.xml clean

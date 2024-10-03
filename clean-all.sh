@@ -16,5 +16,5 @@ mvn -f nosql-mongodb-reactive/pom.xml clean
 mvn -f messaging-apache-artemis-mq/pom.xml clean
 mvn -f messaging-rabbit-mq/pom.xml clean
 mvn -f messaging-apache-kafka/pom.xml clean
-mvn -f security-authentication-inmemory/pom.xml clean
-mvn -f security-rbac/pom.xml clean
+mvn -f security-rbac-inmemory/pom.xml clean
+mvn -f security-rbac-jwt/pom.xml clean

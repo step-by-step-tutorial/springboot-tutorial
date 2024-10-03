@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.tutorial.springboot</groupId>
-    <artifactId>security-authentication-inmemory</artifactId>
+    <artifactId>security-rbac-inmemory</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Security Authentication In-memory</name>
     <properties>
