@@ -25,8 +25,8 @@ public class TokenApiTest {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "admin")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/auth/token")
-                .when().post()
+                .baseUri("http://localhost").port(port).basePath("/api/v1/token/new")
+                .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body("token", not(emptyOrNullString()))
@@ -40,8 +40,8 @@ public class TokenApiTest {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "wrong_password")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/auth/token")
-                .when().post()
+                .baseUri("http://localhost").port(port).basePath("/api/v1/token/new")
+                .when().get()
                 .then()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());
     }

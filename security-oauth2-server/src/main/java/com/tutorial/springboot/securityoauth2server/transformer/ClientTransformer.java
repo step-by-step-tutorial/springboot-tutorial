@@ -1,6 +1,7 @@
 package com.tutorial.springboot.securityoauth2server.transformer;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
+import com.tutorial.springboot.securityoauth2server.dto.TokenDto;
 import com.tutorial.springboot.securityoauth2server.entity.Client;
 import com.tutorial.springboot.securityoauth2server.entity.Scope;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ public class ClientTransformer extends AbstractTransformer<Long, Client, ClientD
 
     @Override
     protected void copyEntityToDto(Client entity, ClientDto dto) {
+        var token = entity.getAccessTokens().getFirst();
         dto.setClientId(entity.getClientId())
                 .setClientSecret(entity.getClientSecret())
                 .setRedirectUri(entity.getRedirectUri())
@@ -19,7 +21,8 @@ public class ClientTransformer extends AbstractTransformer<Long, Client, ClientD
                         .map(Scope::getName)
                         .toList())
                 .setAccessTokenValiditySeconds(entity.getAccessTokenValiditySeconds())
-                .setRefreshTokenValiditySeconds(entity.getRefreshTokenValiditySeconds());
+                .setRefreshTokenValiditySeconds(entity.getRefreshTokenValiditySeconds())
+                .setToken(new TokenDto(new String(token.getToken()), token.getExpiration()));
     }
 
     @Override

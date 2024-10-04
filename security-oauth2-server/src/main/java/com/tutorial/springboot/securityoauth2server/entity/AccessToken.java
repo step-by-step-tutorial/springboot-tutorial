@@ -7,14 +7,15 @@ import java.time.LocalDateTime;
 @Entity
 public class AccessToken extends AbstractEntity<Long, AccessToken> {
 
-    @Column(unique = true, nullable = false)
-    private String token;
+    @Column(nullable = false)
+    @Lob
+    private byte[] token;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -23,43 +24,48 @@ public class AccessToken extends AbstractEntity<Long, AccessToken> {
     @OneToOne(mappedBy = "accessToken")
     private RefreshToken refreshToken;
 
-    public String getToken() {
+    public byte[] getToken() {
         return token;
     }
 
-    public void setToken(String token) {
+    public AccessToken setToken(byte[] token) {
         this.token = token;
+        return this;
     }
 
     public Client getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    public AccessToken setClient(Client client) {
         this.client = client;
+        return this;
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public AccessToken setUser(User user) {
         this.user = user;
+        return this;
     }
 
     public LocalDateTime getExpiration() {
         return expiration;
     }
 
-    public void setExpiration(LocalDateTime expiration) {
+    public AccessToken setExpiration(LocalDateTime expiration) {
         this.expiration = expiration;
+        return this;
     }
 
     public RefreshToken getRefreshToken() {
         return refreshToken;
     }
 
-    public void setRefreshToken(RefreshToken refreshToken) {
+    public AccessToken setRefreshToken(RefreshToken refreshToken) {
         this.refreshToken = refreshToken;
+        return this;
     }
 }

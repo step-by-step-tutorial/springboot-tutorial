@@ -1,34 +1,51 @@
 package com.tutorial.springboot.securityoauth2server.service.impl;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
+import com.tutorial.springboot.securityoauth2server.entity.AccessToken;
 import com.tutorial.springboot.securityoauth2server.entity.Client;
+import com.tutorial.springboot.securityoauth2server.repository.AccessTokenRepository;
 import com.tutorial.springboot.securityoauth2server.repository.ClientRepository;
+import com.tutorial.springboot.securityoauth2server.repository.UserRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.transformer.ClientTransformer;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.Optional;
 
-import static com.tutorial.springboot.securityoauth2server.validation.ObjectValidation.isNotNullOrEmpty;
+import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentUsername;
 
 @Service
 public class ClientService extends AbstractService<Long, Client, ClientDto> {
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private AccessTokenRepository accessTokenRepository;
 
-    public ClientService(ClientRepository repository, ClientTransformer transformer, PasswordEncoder passwordEncoder) {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
+    public ClientService(ClientRepository repository, ClientTransformer transformer) {
         super(repository, transformer);
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    protected void beforeSave(ClientDto dto, Client entity) {
-        if (isNotNullOrEmpty(dto.getClientId())) {
-            dto.setClientId(UUID.randomUUID().toString());
-        }
-        if (isNotNullOrEmpty(dto.getClientSecret())) {
-            dto.setClientSecret(passwordEncoder.encode(UUID.randomUUID().toString()));
-        }
+    protected void afterSave(ClientDto dto, Client entity) {
+        var jwtToken = tokenService.generateToken(getCurrentUsername(), dto).orElseThrow();
+        var user = userRepository.findByUsername(getCurrentUsername()).orElseThrow();
+
+        var accessToken = new AccessToken()
+                .setToken(jwtToken.token().getBytes())
+                .setExpiration(jwtToken.expiration())
+                .setClient(entity)
+                .setUser(user);
+
+        accessTokenRepository.save(accessToken);
+    }
+
+    public Optional<ClientDto> getByClientId(String clientId) {
+        return (ClientRepository.class.cast(repository)).findByClientId(clientId).map(transformer::toDto);
     }
 }

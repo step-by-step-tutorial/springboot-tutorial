@@ -67,7 +67,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated())
-                .formLogin(login -> login.successForwardUrl("/api/v1/auth/token"))
+                .formLogin(login -> login.successForwardUrl("/api/v1/token/new"))
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authenticationProvider(authenticationProvider())

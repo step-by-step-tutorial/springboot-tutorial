@@ -23,8 +23,8 @@ public final class SecurityTestUtils {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "admin")
-                .baseUri("http://" + hostname).port(port).basePath("/api/v1/auth/token")
-                .when().post()
+                .baseUri("http://" + hostname).port(port).basePath("/api/v1/token/new")
+                .when().get()
                 .andReturn().body().jsonPath().getString("token");
     }
 

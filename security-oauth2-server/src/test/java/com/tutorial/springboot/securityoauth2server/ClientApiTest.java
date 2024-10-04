@@ -4,6 +4,7 @@ import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.enums.GrantType;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.mapper.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -28,15 +29,16 @@ public class ClientApiTest {
     void givenClient_whenSaveOne_thenReturnIdWithCreatedStatus() {
         var givenUsername = "admin";
         var givenPassword = "admin";
-        var givenBody = new ClientDto() .setClientId("my-client-id")
-                .setClientSecret("my-client-secret")
+        var givenBody = new ClientDto()
+                .setClientId("test-client-id")
+                .setClientSecret("test-client-secret")
                 .setRedirectUri("http://localhost:8080/callback")
                 .setGrantTypes(GrantType.toList())
-                .setScopes(Arrays.asList("read", "write", "profile"))
+                .setScopes(Arrays.asList("read", "write"))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600);
 
-        RestAssured.given()
+        var uri = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(givenUsername, givenPassword)
                 .baseUri("http://localhost").port(port).basePath("/api/v1/clients")
@@ -45,7 +47,23 @@ public class ClientApiTest {
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .header("Location", containsString("/api/v1/clients"))
-                .body("", notNullValue());
+                .body("", notNullValue())
+                .extract()
+                .header("Location");
+
+
+        var client = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .auth().basic(givenUsername, givenPassword)
+                .baseUri(uri).port(port)
+                .when().get()
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .body()
+                .asPrettyString();
+
+        System.out.println("client = " + client);
     }
 
 }

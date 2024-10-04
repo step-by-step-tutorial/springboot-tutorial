@@ -34,6 +34,9 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     )
     private List<Role> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<AccessToken> accessTokens = new ArrayList<>();
+
     @Override
     public String getUsername() {
         return username;
@@ -85,6 +88,14 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
+    }
+
+    public List<AccessToken> getAccessTokens() {
+        return accessTokens;
+    }
+
+    public void setAccessTokens(List<AccessToken> accessTokens) {
+        this.accessTokens = accessTokens;
     }
 
     @Override

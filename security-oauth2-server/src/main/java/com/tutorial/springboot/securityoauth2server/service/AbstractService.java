@@ -52,14 +52,19 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
                 .setCreatedAt(LocalDateTime.now())
                 .setVersion(INIT_VERSION);
 
-        var entity = transformer.toEntity(dto);
-        beforeSave(dto, entity);
-        var savedEntity = repository.save(entity);
+        var newEntity = transformer.toEntity(dto);
+        beforeSave(dto, newEntity);
+        var savedEntity = repository.save(newEntity);
+        afterSave(dto, savedEntity);
         logger.info("{} entity saved with ID: {}", entityClass.getSimpleName(), savedEntity.getId());
         return Optional.of(savedEntity.getId());
     }
 
     protected void beforeSave(DTO dto, ENTITY entity) {
+
+    }
+
+    protected void afterSave(DTO dto, ENTITY entity) {
 
     }
 

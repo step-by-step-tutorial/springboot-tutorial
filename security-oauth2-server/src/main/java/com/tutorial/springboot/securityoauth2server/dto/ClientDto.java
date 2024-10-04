@@ -10,6 +10,7 @@ public class ClientDto extends AbstractDto<Long, ClientDto> {
     private List<String> scopes;
     private Integer accessTokenValiditySeconds;
     private Integer refreshTokenValiditySeconds;
+    private TokenDto token;
 
     public String getClientId() {
         return clientId;
@@ -72,5 +73,13 @@ public class ClientDto extends AbstractDto<Long, ClientDto> {
     public ClientDto setRefreshTokenValiditySeconds(Integer refreshTokenValiditySeconds) {
         this.refreshTokenValiditySeconds = refreshTokenValiditySeconds;
         return this;
+    }
+
+    public TokenDto getToken() {
+        return token;
+    }
+
+    public void setToken(TokenDto token) {
+        this.token = token;
     }
 }
