@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.not;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "h2"})
-public class AuthenticationControllerTest {
+public class TokenApiTest {
 
     @LocalServerPort
     int port;
@@ -25,8 +25,8 @@ public class AuthenticationControllerTest {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "admin")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/auth/token")
-                .when().post()
+                .baseUri("http://localhost").port(port).basePath("/api/v1/token/new")
+                .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body("token", not(emptyOrNullString()))

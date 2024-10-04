@@ -21,7 +21,7 @@ public class UserApiTest {
     @Test
     public void givenNoUser_whenAuthentication_thenReturnUnauthorized() {
         given()
-                .baseUri("http://localhost").port(port).basePath("/api/v1/users/whoami")
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users/me")
                 .when().get()
                 .then()
                 .statusCode(401);
@@ -33,7 +33,7 @@ public class UserApiTest {
         var givenPassword = "password";
         given()
                 .auth().basic(givenUsername, givenPassword)
-                .baseUri("http://localhost").port(port).basePath("/api/v1/users/whoami")
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users/me")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
@@ -46,7 +46,7 @@ public class UserApiTest {
         var givenPassword = "password";
         given()
                 .auth().basic(givenUsername, givenPassword)
-                .baseUri("http://localhost").port(port).basePath("/api/v1/users/whoami")
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users/me")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())

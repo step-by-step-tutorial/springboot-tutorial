@@ -15,7 +15,7 @@ public class AuthorizationCode extends AbstractEntity<Long, AuthorizationCode> {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private OAuthClient client;
+    private Client client;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,11 +31,11 @@ public class AuthorizationCode extends AbstractEntity<Long, AuthorizationCode> {
         this.code = code;
     }
 
-    public OAuthClient getClient() {
+    public Client getClient() {
         return client;
     }
 
-    public void setClient(OAuthClient client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 

@@ -1,12 +1,26 @@
-package com.tutorial.springboot.securityoauth2server.dto;
+package com.tutorial.springboot.securityoauth2server.entity;
+
+import jakarta.persistence.*;
 
 import java.util.List;
 
-public class OAuthResourceDto extends AbstractDto<Long, OAuthResourceDto> {
+@Entity
+public class Resource extends AbstractEntity<Long, Resource> {
+
+    @Column(unique = true, nullable = false)
     private String resourceId;
+
     private String resourceName;
+
     private String resourceDescription;
-    private List<String> scopes;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "resource_scopes",
+            joinColumns = @JoinColumn(name = "resource_id"),
+            inverseJoinColumns = @JoinColumn(name = "scope_id")
+    )
+    private List<Scope> scopes;
 
     public String getResourceId() {
         return resourceId;
@@ -32,11 +46,11 @@ public class OAuthResourceDto extends AbstractDto<Long, OAuthResourceDto> {
         this.resourceDescription = resourceDescription;
     }
 
-    public List<String> getScopes() {
+    public List<Scope> getScopes() {
         return scopes;
     }
 
-    public void setScopes(List<String> scopes) {
+    public void setScopes(List<Scope> scopes) {
         this.scopes = scopes;
     }
 }

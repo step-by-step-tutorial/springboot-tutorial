@@ -1,15 +1,15 @@
 package com.tutorial.springboot.securityoauth2server.transformer;
 
-import com.tutorial.springboot.securityoauth2server.dto.OAuthResourceDto;
-import com.tutorial.springboot.securityoauth2server.entity.OAuthResource;
+import com.tutorial.springboot.securityoauth2server.dto.ResourceDto;
+import com.tutorial.springboot.securityoauth2server.entity.Resource;
 import com.tutorial.springboot.securityoauth2server.entity.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OAuthResourceTransformer extends AbstractTransformer<Long, OAuthResource, OAuthResourceDto> {
+public class ResourceTransformer extends AbstractTransformer<Long, Resource, ResourceDto> {
 
     @Override
-    protected void copyEntityToDto(OAuthResource entity, OAuthResourceDto dto) {
+    protected void copyEntityToDto(Resource entity, ResourceDto dto) {
         dto.setResourceId(entity.getResourceId());
         dto.setResourceName(entity.getResourceName());
         dto.setResourceDescription(entity.getResourceDescription());
@@ -17,7 +17,7 @@ public class OAuthResourceTransformer extends AbstractTransformer<Long, OAuthRes
     }
 
     @Override
-    protected void copyDtoToEntity(OAuthResourceDto dto, OAuthResource entity) {
+    protected void copyDtoToEntity(ResourceDto dto, Resource entity) {
         entity.setResourceId(dto.getResourceId());
         entity.setResourceName(dto.getResourceName());
         entity.setResourceDescription(dto.getResourceDescription());

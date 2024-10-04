@@ -18,8 +18,8 @@ public class UserApi {
         this.userService = userService;
     }
 
-    @GetMapping("whoami")
-    public ResponseEntity<String> whoami() {
+    @GetMapping("me")
+    public ResponseEntity<String> me() {
         return ResponseEntity.ok(String.format("Current user is %s", userService.currentUsername()));
     }
 
@@ -32,11 +32,11 @@ public class UserApi {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody UserDto newUser) {
-        userService.save(newUser);
+    public ResponseEntity<String> save(@RequestBody UserDto dto) {
+        userService.save(dto);
         var uri = fromCurrentRequest()
                 .path("/{username}")
-                .buildAndExpand(newUser.username())
+                .buildAndExpand(dto.username())
                 .toUri();
         return created(uri).body("User created");
     }

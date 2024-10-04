@@ -12,7 +12,7 @@ public class AccessToken extends AbstractEntity<Long, AccessToken> {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private OAuthClient client;
+    private Client client;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,11 +31,11 @@ public class AccessToken extends AbstractEntity<Long, AccessToken> {
         this.token = token;
     }
 
-    public OAuthClient getClient() {
+    public Client getClient() {
         return client;
     }
 
-    public void setClient(OAuthClient client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 

@@ -27,12 +27,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void save(UserDto newUser) {
+    public void save(UserDto dto) {
         var entity = User.builder()
-                .username(newUser.username())
+                .username(dto.username())
                 .passwordEncoder(passwordEncoder::encode)
-                .password(newUser.password())
-                .roles(newUser.roles().toArray(String[]::new))
+                .password(dto.password())
+                .roles(dto.roles().toArray(String[]::new))
                 .build();
 
         userRepository.createUser(entity);
