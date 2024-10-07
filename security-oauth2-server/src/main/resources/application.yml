@@ -1,11 +1,20 @@
-rsa:
-  private-key: classpath:private-key.pem
-  public-key: classpath:public-key.pem
-
+server:
+  port: 8080
+  address: localhost
 spring:
   profiles:
     active: h2
-
+  security:
+    oauth2:
+      authorizationserver:
+        issuer: http://localhost:8080
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/oauth2/jwks
 logging:
   level:
     web: debug
+
+rsa:
+  private-key: classpath:private-key.pem
+  public-key: classpath:public-key.pem

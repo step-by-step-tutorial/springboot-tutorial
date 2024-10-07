@@ -32,7 +32,11 @@ This tutorial is about integration of Spring Boot and TOOLS_NAME.
 #### Build
 
 ```bash
-mvn clean package -DskipTests=true 
+mvn clean package -DskipTests=true
+http://localhost:8080/oauth2/authorize?response_type=code&client_id=test-client&redirect_uri=http://localhost:8080/login/oauth2/code/test-client&scope=read
+openssl genpkey -algorithm RSA -out private-key.pem
+openssl rsa -pubout -in private-key.pem -out public-key.pem
+openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-key.pem -nocrypt
 ```
 
 #### Test

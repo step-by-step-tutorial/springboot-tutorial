@@ -2,9 +2,13 @@ package com.tutorial.springboot.securityoauth2server;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.enums.GrantType;
+import com.tutorial.springboot.securityoauth2server.service.impl.TokenService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -21,11 +25,16 @@ import static org.hamcrest.Matchers.notNullValue;
 @ActiveProfiles({"test", "h2"})
 public class TokenApiTest {
 
+    final Logger logger = LoggerFactory.getLogger(TokenApiTest.class.getSimpleName());
+
     @LocalServerPort
     int port;
 
+    @Autowired
+    TokenService tokenService;
+
     @Test
-    void givenValidCredentials_whenAuthenticate_thenReturnJwtTokenWithOKStatus() {
+    void givenCredentials_whenRequestTokenForUser_thenReturnJwtTokenWithOKStatus() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "admin")
@@ -38,14 +47,43 @@ public class TokenApiTest {
                 .log().all();
     }
 
+   @Test
+    void givenToken_whenRequestToResource_thenReturnResourceWithOKStatus() {
+       var givenToken = RestAssured.given()
+               .contentType(ContentType.JSON)
+               .auth().basic("admin", "admin")
+               .baseUri("http://localhost").port(port).basePath("/api/v1/token/me/new")
+               .when().get()
+               .then()
+               .statusCode(HttpStatus.OK.value())
+               .body("token", not(emptyOrNullString()))
+               .body("expiration", not(emptyOrNullString()))
+               .log().all()
+               .extract()
+               .jsonPath().getString("token");
+
+       logger.info("username = {}", tokenService.extractUsername(givenToken));
+       logger.info("roles = {}", tokenService.extractRoles(givenToken));
+
+       RestAssured.given()
+               .contentType(ContentType.JSON)
+               .header("Authorization", "Bearer " + givenToken)
+               .baseUri("http://localhost").port(port).basePath("/api/v1/users")
+               .when().get()
+               .then()
+               .statusCode(HttpStatus.OK.value())
+               .body("size()", is(2))
+               .log().all(true);
+    }
+
     @Test
-    void givenClientId_whenAuthenticate_thenReturnJwtTokenWithOKStatus() {
+    void givenClientId_whenRequestTokenForClient_thenReturnJwtTokenWithOKStatus() {
         var givenUsername = "admin";
         var givenPassword = "admin";
         var givenBody = new ClientDto()
-                .setClientId("test-client-id")
-                .setClientSecret("test-client-secret")
-                .setRedirectUri("http://localhost:8080/callback")
+                .setClientId("test-client")
+                .setClientSecret("test-secret")
+                .setRedirectUri("http://localhost:8080/login/oauth2/code/test-client")
                 .setGrantTypes(GrantType.toList())
                 .setScopes(Arrays.asList("read", "write"))
                 .setAccessTokenValiditySeconds(3600)
@@ -66,7 +104,7 @@ public class TokenApiTest {
                 .contentType(ContentType.JSON)
                 .auth().basic("admin", "admin")
                 .baseUri("http://localhost").port(port)
-                .basePath("/api/v1/token/me/{clientId}").pathParam("clientId", "test-client-id")
+                .basePath("/api/v1/token/me/{clientId}").pathParam("clientId", "test-client")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())

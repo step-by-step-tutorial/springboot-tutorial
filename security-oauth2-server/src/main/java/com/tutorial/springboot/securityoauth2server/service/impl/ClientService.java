@@ -9,6 +9,7 @@ import com.tutorial.springboot.securityoauth2server.repository.UserRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.transformer.ClientTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,8 +28,16 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public ClientService(ClientRepository repository, ClientTransformer transformer) {
         super(repository, transformer);
+    }
+
+    @Override
+    protected void beforeSave(ClientDto dto, Client entity) {
+        entity.setClientSecret(passwordEncoder.encode(dto.getClientSecret()));
     }
 
     @Override
@@ -48,4 +57,5 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
     public Optional<ClientDto> getByClientId(String clientId) {
         return (ClientRepository.class.cast(repository)).findByClientId(clientId).map(transformer::toDto);
     }
+
 }
