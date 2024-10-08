@@ -4,20 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum GrantType {
-    AUTHORIZATION_CODE("code"),
-    IMPLICIT("token"),
-    PASSWORD("none"),
-    CLIENT_CREDENTIALS("none"),
-    REFRESH_TOKEN("none"),
+    AUTHORIZATION_CODE,
+    IMPLICIT,
+    PASSWORD,
+    CLIENT_CREDENTIALS,
+    REFRESH_TOKEN,
+    JWT_BEARER,
     ;
 
-    private final String responseType;
-
-    GrantType(String responseType) {
-        this.responseType = responseType;
-    }
-
-    public static List<String> toList() {
+    public static List<String> allType() {
         return Arrays.stream(GrantType.values()).map(Enum::name).toList();
     }
 }

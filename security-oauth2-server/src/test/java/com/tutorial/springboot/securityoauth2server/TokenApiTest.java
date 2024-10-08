@@ -18,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.notNullValue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -47,33 +46,33 @@ public class TokenApiTest {
                 .log().all();
     }
 
-   @Test
+    @Test
     void givenToken_whenRequestToResource_thenReturnResourceWithOKStatus() {
-       var givenToken = RestAssured.given()
-               .contentType(ContentType.JSON)
-               .auth().basic("admin", "admin")
-               .baseUri("http://localhost").port(port).basePath("/api/v1/token/me/new")
-               .when().get()
-               .then()
-               .statusCode(HttpStatus.OK.value())
-               .body("token", not(emptyOrNullString()))
-               .body("expiration", not(emptyOrNullString()))
-               .log().all()
-               .extract()
-               .jsonPath().getString("token");
+        var givenToken = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .auth().basic("admin", "admin")
+                .baseUri("http://localhost").port(port).basePath("/api/v1/token/me/new")
+                .when().get()
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("token", not(emptyOrNullString()))
+                .body("expiration", not(emptyOrNullString()))
+                .log().all()
+                .extract()
+                .jsonPath().getString("token");
 
-       logger.info("username = {}", tokenService.extractUsername(givenToken));
-       logger.info("roles = {}", tokenService.extractRoles(givenToken));
+        logger.info("username = {}", tokenService.extractUsername(givenToken));
+        logger.info("roles = {}", tokenService.extractRoles(givenToken));
 
-       RestAssured.given()
-               .contentType(ContentType.JSON)
-               .header("Authorization", "Bearer " + givenToken)
-               .baseUri("http://localhost").port(port).basePath("/api/v1/users")
-               .when().get()
-               .then()
-               .statusCode(HttpStatus.OK.value())
-               .body("size()", is(2))
-               .log().all(true);
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + givenToken)
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users")
+                .when().get()
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("size()", is(2))
+                .log().all(true);
     }
 
     @Test
@@ -84,7 +83,7 @@ public class TokenApiTest {
                 .setClientId("test-client")
                 .setClientSecret("test-secret")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/test-client")
-                .setGrantTypes(GrantType.toList())
+                .setGrantTypes(GrantType.allType())
                 .setScopes(Arrays.asList("read", "write"))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600);

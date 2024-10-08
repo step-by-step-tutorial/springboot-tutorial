@@ -1,6 +1,5 @@
 package com.tutorial.springboot.securityoauth2server.api;
 
-import com.tutorial.springboot.securityoauth2server.api.BatchApi;
 import com.tutorial.springboot.securityoauth2server.dto.AbstractDto;
 import com.tutorial.springboot.securityoauth2server.entity.AbstractEntity;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;

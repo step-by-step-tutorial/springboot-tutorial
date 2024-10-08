@@ -1,4 +1,3 @@
-
 -- username: admin, password: admin
 INSERT INTO user_management.users (id, username, password, email, enabled)
 VALUES (1000, 'admin', '$2a$10$r5p.DEUMgBCpDasy86n/Ue4aNYvDYAt8EkYt4EziQHWrTPKoqFWZO', 'admin@email.com', true);

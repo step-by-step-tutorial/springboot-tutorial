@@ -2,7 +2,6 @@ package com.tutorial.springboot.securityoauth2server.service.impl;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.dto.TokenDto;
-import com.tutorial.springboot.securityoauth2server.entity.Scope;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -15,7 +14,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentRoles;
 
@@ -43,6 +41,10 @@ public class TokenService {
         return jwtDecoder.decode(token).getClaim("roles");
     }
 
+    public String extractClientId(String token) {
+        return jwtDecoder.decode(token).getClaim("client-id");
+    }
+
     public Optional<TokenDto> generateToken(String username) {
         var now = Instant.now();
         var expiration = now.plus(10, ChronoUnit.HOURS);
@@ -57,7 +59,7 @@ public class TokenService {
 
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return Optional.of(new TokenDto(token,  LocalDateTime.ofInstant(expiration, ZoneId.systemDefault())));
+        return Optional.of(new TokenDto(token, LocalDateTime.ofInstant(expiration, ZoneId.systemDefault())));
     }
 
     public Optional<TokenDto> generateToken(String username, ClientDto client) {

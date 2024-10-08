@@ -1,7 +1,6 @@
 package com.tutorial.springboot.securityoauth2server;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
-import com.tutorial.springboot.securityoauth2server.dto.UserDto;
 import com.tutorial.springboot.securityoauth2server.enums.GrantType;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -33,7 +32,7 @@ public class ClientApiTest {
                 .setClientId("test-client")
                 .setClientSecret("test-secret")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/test-client")
-                .setGrantTypes(GrantType.toList())
+                .setGrantTypes(GrantType.allType())
                 .setScopes(Arrays.asList("read", "write"))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600);
