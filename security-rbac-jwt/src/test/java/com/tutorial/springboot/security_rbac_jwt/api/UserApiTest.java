@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.getTestToken;
+import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.requestToGetToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +37,7 @@ public class UserApiTest {
 
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = DtoStubFactory.createUser(1, 1, 1).asOne();
 
             RestAssured.given()
@@ -54,7 +54,7 @@ public class UserApiTest {
 
         @Test
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var numberOfUsers = 2;
             var givenBody = DtoStubFactory.createUser(numberOfUsers, 1, 1).asList();
 
@@ -71,7 +71,7 @@ public class UserApiTest {
 
         @Test
         void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = new UserDto();
 
             RestAssured.given()
@@ -88,7 +88,7 @@ public class UserApiTest {
 
         @Test
         void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = List.of(new UserDto(), new UserDto());
 
             RestAssured.given()
@@ -109,7 +109,7 @@ public class UserApiTest {
 
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenUser = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne();
             var givenId = givenUser.getId();
 
@@ -128,7 +128,7 @@ public class UserApiTest {
 
         @Test
         void givenNothing_whenFindAll_thenReturnListOfDtoWithOKStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var expectedUserNumber = 2;
 
             RestAssured.given()
@@ -143,7 +143,7 @@ public class UserApiTest {
 
         @Test
         void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -164,7 +164,7 @@ public class UserApiTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = testDatabaseAssistant.insertTestUser(1, 1, 1)
                     .dto()
                     .asOne()
@@ -198,7 +198,7 @@ public class UserApiTest {
 
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenId = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne().getId();
 
             RestAssured.given()
@@ -217,7 +217,7 @@ public class UserApiTest {
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = testDatabaseAssistant.insertTestUser(2, 1, 1)
                     .dto()
                     .asList()
@@ -241,7 +241,7 @@ public class UserApiTest {
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             testDatabaseAssistant.insertTestUser(2, 1, 1);
 
             RestAssured.given()
@@ -263,7 +263,7 @@ public class UserApiTest {
 
         @Test
         void givenId_whenExists_ThenReturnOKStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenId = testDatabaseAssistant.insertTestUser(1, 1, 1).dto().asOne().getId();
 
             RestAssured.given()
@@ -279,7 +279,7 @@ public class UserApiTest {
 
         @Test
         void givenId_whenNotExist_ThenReturnNotFoundStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenId = -1;
 
             RestAssured.given()

@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.getTestToken;
+import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.requestToGetToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +36,7 @@ public class RoleApiTest {
 
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = DtoStubFactory.createRole(1, 1).asOne();
 
             RestAssured.given()
@@ -53,7 +53,7 @@ public class RoleApiTest {
 
         @Test
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var numberOfRoles = 2;
             var givenBody = DtoStubFactory.createRole(numberOfRoles, 1).asList();
 
@@ -71,7 +71,7 @@ public class RoleApiTest {
 
         @Test
         void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = new RoleDto();
 
             RestAssured.given()
@@ -88,7 +88,7 @@ public class RoleApiTest {
 
         @Test
         void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = List.of(new RoleDto(), new RoleDto());
 
             RestAssured.given()
@@ -110,7 +110,7 @@ public class RoleApiTest {
 
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenRole = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne();
             var givenId = givenRole.getId();
 
@@ -128,7 +128,7 @@ public class RoleApiTest {
 
         @Test
         void givenNothing_whenFindAll_thenReturnListOfDtoWithOKStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var expectedRoleNumber = 2;
 
             RestAssured.given()
@@ -143,7 +143,7 @@ public class RoleApiTest {
 
         @Test
         void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -164,7 +164,7 @@ public class RoleApiTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = testDatabaseAssistant.insertTestRole(1, 1)
                     .dto()
                     .asOne()
@@ -193,7 +193,7 @@ public class RoleApiTest {
 
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
 
             RestAssured.given()
@@ -212,7 +212,7 @@ public class RoleApiTest {
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenBody = testDatabaseAssistant.insertTestRole(2, 1)
                     .dto()
                     .asList()
@@ -236,7 +236,7 @@ public class RoleApiTest {
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             testDatabaseAssistant.insertTestRole(2, 1);
 
             RestAssured.given()
@@ -258,7 +258,7 @@ public class RoleApiTest {
 
         @Test
         void givenId_whenExists_ThenReturnOKStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
 
             RestAssured.given()
@@ -274,7 +274,7 @@ public class RoleApiTest {
 
         @Test
         void givenId_whenNotExist_ThenReturnNotFoundStatus() {
-            var givenToken = getTestToken();
+            var givenToken = requestToGetToken();
             var givenId = -1;
 
             RestAssured.given()

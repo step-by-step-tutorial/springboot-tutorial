@@ -43,6 +43,16 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-k
 
 ```bash
 mvn test
+http://localhost:9000/oauth2/authorization/test-client
+
+  curl -X POST "http://localhost:8080/oauth2/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -u "test-client:test-secret" \
+  -d "grant_type=authorization_code" \
+  -d "code=apT7bwZzFxCX4-ESMEFOt2Jn6E2tduEc512Hungfgtcar_7w2sGnNb0mVIo--U3AhOMyMy1X1p2tYahWrFHvPn9IeOswd56nTRd0ajdesSozacZbNXktHH0jFVO9HReT" \
+  -d "redirect_uri=http://localhost:9000/login/oauth2/code/test-client"
+
+
 ```
 
 #### Run

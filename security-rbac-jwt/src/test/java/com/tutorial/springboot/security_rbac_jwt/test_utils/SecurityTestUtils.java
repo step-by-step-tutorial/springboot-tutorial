@@ -11,18 +11,18 @@ public final class SecurityTestUtils {
     private SecurityTestUtils() {
     }
 
-    public static String getTestToken() {
+    public static String requestToGetToken() {
         var hostname = "localhost";
         var port = 8080;
         var username = "admin";
         var password = "admin";
-        return getTestToken(hostname, port, username, password);
+        return requestToGetToken(hostname, port, username, password);
     }
 
-    private static String getTestToken(String hostname, int port, String username, String password) {
+    private static String requestToGetToken(String hostname, int port, String username, String password) {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic("admin", "admin")
+                .auth().basic(username, password)
                 .baseUri("http://" + hostname).port(port).basePath("/api/v1/token/new")
                 .when().get()
                 .andReturn().body().jsonPath().getString("token");

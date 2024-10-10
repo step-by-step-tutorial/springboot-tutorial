@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles({"test", "h2"})
+@ActiveProfiles({"server","test", "h2"})
 public class ClientApiTest {
 
     @LocalServerPort
@@ -26,8 +26,8 @@ public class ClientApiTest {
 
     @Test
     void givenClient_whenSaveOne_thenReturnIdWithCreatedStatus() {
-        var givenUsername = "admin";
-        var givenPassword = "admin";
+        var givenUsername = "test";
+        var givenPassword = "test";
         var givenBody = new ClientDto()
                 .setClientId("test-client")
                 .setClientSecret("test-secret")
@@ -65,8 +65,8 @@ public class ClientApiTest {
 
     @Test
     void givenClient_whenGetAll_thenReturnIdWithCreatedStatus() {
-        var givenUsername = "admin";
-        var givenPassword = "admin";
+        var givenUsername = "test";
+        var givenPassword = "test";
 
         RestAssured.given()
                 .contentType(ContentType.JSON)

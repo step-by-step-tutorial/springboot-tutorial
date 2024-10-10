@@ -10,7 +10,7 @@ public final class SecurityTestUtils {
     }
 
     public static void authenticateToTestEnv() {
-        authenticateToTestEnv("admin", "admin");
+        authenticateToTestEnv("test", "test");
     }
 
     public static void authenticateToTestEnv(String username, String password) {

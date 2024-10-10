@@ -9,12 +9,17 @@ spring:
         issuer: http://localhost:8080
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/oauth2/jwks
+          jwk-set-uri: http://localhost:8080/oauth2/token
           issuer-uri: http://localhost:8080
+
 logging:
   level:
     web: debug
+    org:
+      springframework:
+        security: debug
 
 rsa:
   private-key: classpath:private-key.pem
   public-key: classpath:public-key.pem
+

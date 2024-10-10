@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles({"test", "h2"})
+@ActiveProfiles({"server","test", "h2"})
 public class TokenApiTest {
 
     final Logger logger = LoggerFactory.getLogger(TokenApiTest.class.getSimpleName());
@@ -36,7 +36,7 @@ public class TokenApiTest {
     void givenCredentials_whenRequestTokenForUser_thenReturnJwtTokenWithOKStatus() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic("admin", "admin")
+                .auth().basic("test", "test")
                 .baseUri("http://localhost").port(port).basePath("/api/v1/token/me/new")
                 .when().get()
                 .then()
@@ -50,7 +50,7 @@ public class TokenApiTest {
     void givenToken_whenRequestToResource_thenReturnResourceWithOKStatus() {
         var givenToken = RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic("admin", "admin")
+                .auth().basic("test", "test")
                 .baseUri("http://localhost").port(port).basePath("/api/v1/token/me/new")
                 .when().get()
                 .then()
@@ -71,14 +71,14 @@ public class TokenApiTest {
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body("size()", is(2))
+                .body("size()", is(3))
                 .log().all(true);
     }
 
     @Test
     void givenClientId_whenRequestTokenForClient_thenReturnJwtTokenWithOKStatus() {
-        var givenUsername = "admin";
-        var givenPassword = "admin";
+        var givenUsername = "test";
+        var givenPassword = "test";
         var givenBody = new ClientDto()
                 .setClientId("test-client")
                 .setClientSecret("test-secret")
@@ -101,7 +101,7 @@ public class TokenApiTest {
 
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic("admin", "admin")
+                .auth().basic("test", "test")
                 .baseUri("http://localhost").port(port)
                 .basePath("/api/v1/token/me/{clientId}").pathParam("clientId", "test-client")
                 .when().get()
