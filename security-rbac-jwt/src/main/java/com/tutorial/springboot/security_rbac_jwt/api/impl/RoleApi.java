@@ -14,4 +14,9 @@ public class RoleApi extends AllApi<Long, Role, RoleDto> {
     public RoleApi(RoleService service) {
         super(service);
     }
+
+    @Override
+    protected RoleService getService() {
+        return (RoleService) service;
+    }
 }

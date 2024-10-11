@@ -6,7 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 @Component
 public class PermissionEvaluatorService implements PermissionEvaluator {
@@ -19,11 +20,12 @@ public class PermissionEvaluatorService implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        if (Objects.isNull(authentication) || !(authentication.getPrincipal() instanceof UserDetails)) {
+        if (isNull(authentication) || !(authentication.getPrincipal() instanceof UserDetails)) {
             return false;
         }
 
-        return userService.findByUsername(String.valueOf(authentication.getPrincipal()))
+        var username = String.valueOf(authentication.getPrincipal());
+        return userService.findByUsername(username)
                 .getPermissions()
                 .contains(String.valueOf(permission));
     }

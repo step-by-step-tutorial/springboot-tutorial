@@ -32,7 +32,7 @@ public class TokenApiTest {
                 .body("token", not(emptyOrNullString()))
                 .body("expiration", not(emptyOrNullString()))
                 .log()
-                .all();
+                .all(true);
     }
 
     @Test

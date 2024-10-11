@@ -14,5 +14,10 @@ public class PermissionApi extends AllApi<Long, Permission, PermissionDto> {
     public PermissionApi(PermissionService service) {
         super(service);
     }
+
+    @Override
+    protected PermissionService getService() {
+        return (PermissionService) service;
+    }
 }
 

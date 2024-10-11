@@ -100,13 +100,11 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     @Override
     public List<ID> saveBatch(List<DTO> dtoList) {
         requireNonNull(dtoList, String.format("List of %s should not be null", entityClass.getSimpleName()));
-        ObjectValidation.shouldBeNotNullOrEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
+        shouldBeNotNullOrEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
 
-        int numberOfBatches = calculateBatchNumber(dtoList.size());
-
-        return IntStream.range(0, numberOfBatches)
+        return IntStream.range(0, calculateBatchNumber(dtoList.size()))
                 .mapToObj(i -> selectBatch(dtoList, i))
-                .map(stream -> stream.map(transformer::toEntity))
+                .map(batch -> batch.map(transformer::toEntity))
                 .map(batch -> repository.saveAll(batch.toList()))
                 .flatMap(List::stream)
                 .map(AbstractEntity::getId)
@@ -117,6 +115,14 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     public Page<DTO> getBatch(Pageable pageable) {
         requireNonNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
         return repository.findAll(pageable).map(transformer::toDto);
+    }
+
+    @Override
+    public void deleteBatch(List<ID> identities) {
+        requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
+        shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
+
+        repository.deleteAllByIdInBatch(identities);
     }
 
     @Override
@@ -132,14 +138,6 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     public void deleteAll() {
         logger.info("Delete all {} entities", entityClass.getSimpleName());
         repository.deleteAll();
-    }
-
-    @Override
-    public void deleteBatch(List<ID> identities) {
-        requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
-        ObjectValidation.shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
-
-        repository.deleteAllByIdInBatch(identities);
     }
 
 }

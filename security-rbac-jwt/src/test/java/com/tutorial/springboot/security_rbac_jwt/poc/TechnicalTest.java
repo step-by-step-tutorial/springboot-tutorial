@@ -24,10 +24,10 @@ class TechnicalTest {
 
     @Test
     void generateBase64() throws NoSuchAlgorithmException {
-        KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+        var keyGen = KeyGenerator.getInstance("HmacSHA256");
         keyGen.init(256);
-        SecretKey secretKey = keyGen.generateKey();
-        String encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        var secretKey = keyGen.generateKey();
+        var encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
 
         System.out.println("Secret Key: " + encodedKey);
     }

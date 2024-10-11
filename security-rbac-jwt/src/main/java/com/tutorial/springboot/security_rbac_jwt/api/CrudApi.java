@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.ApiErrorUtils.checkValidation;
-import static com.tutorial.springboot.security_rbac_jwt.util.HttpUtils.createUriFromId;
+import static com.tutorial.springboot.security_rbac_jwt.util.HttpUtils.uriOf;
 import static com.tutorial.springboot.security_rbac_jwt.util.ReflectionUtils.identifyType;
 import static org.springframework.http.ResponseEntity.*;
 
@@ -39,7 +39,7 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
         logger.info("Received an inbound request to save a {}", dtoClass.getSimpleName());
         checkValidation(bindingResult);
         return service.save(dto)
-                .map(id -> created(createUriFromId(id)).body(id))
+                .map(id -> created(uriOf(id)).body(id))
                 .orElseThrow();
     }
 
@@ -81,5 +81,7 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
                 .allow(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS)
                 .build();
     }
+
+    protected abstract AbstractService<ID, ENTITY, DTO> getService();
 }
 

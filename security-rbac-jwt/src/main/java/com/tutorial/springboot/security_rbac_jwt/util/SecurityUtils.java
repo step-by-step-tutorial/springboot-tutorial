@@ -29,7 +29,7 @@ public final class SecurityUtils {
                 .toList();
     }
 
-    public static void setAuthenticationIfItIsNull(HttpServletRequest request, UserDetails user) {
+    public static void setAuthenticationIfAbsent(HttpServletRequest request, UserDetails user) {
         if (isNull(SecurityContextHolder.getContext().getAuthentication())) {
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

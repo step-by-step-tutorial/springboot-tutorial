@@ -14,4 +14,9 @@ public class UserApi extends AllApi<Long, User, UserDto> {
     protected UserApi(UserService service) {
         super(service);
     }
+
+    @Override
+    protected UserService getService() {
+        return (UserService) service;
+    }
 }

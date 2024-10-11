@@ -11,15 +11,15 @@ public final class SecurityTestUtils {
     private SecurityTestUtils() {
     }
 
-    public static String requestToGetToken() {
+    public static String requestToGetTestToken() {
         var hostname = "localhost";
         var port = 8080;
         var username = "admin";
         var password = "admin";
-        return requestToGetToken(hostname, port, username, password);
+        return requestToGetTestToken(hostname, port, username, password);
     }
 
-    private static String requestToGetToken(String hostname, int port, String username, String password) {
+    private static String requestToGetTestToken(String hostname, int port, String username, String password) {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(username, password)
@@ -28,11 +28,13 @@ public final class SecurityTestUtils {
                 .andReturn().body().jsonPath().getString("token");
     }
 
-    public static void authenticateToTestEnv() {
-        authenticateToTestEnv("admin", "admin");
+    public static void loginToTestEnv() {
+        var username = "admin";
+        var password = "admin";
+        loginToTestEnv(username, password);
     }
 
-    public static void authenticateToTestEnv(String username, String password) {
+    public static void loginToTestEnv(String username, String password) {
         var auth = new UsernamePasswordAuthenticationToken(username, password);
         SecurityContextHolder.setContext(new SecurityContextImpl(auth));
     }

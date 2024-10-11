@@ -2,6 +2,7 @@ package com.tutorial.springboot.security_rbac_jwt.service;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.UserService;
+import com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils;
 import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.authenticateToTestEnv;
+import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.loginToTestEnv;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -28,7 +29,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void setup() {
-        authenticateToTestEnv();
+        SecurityTestUtils.loginToTestEnv();
     }
 
     @Nested
@@ -163,7 +164,7 @@ public class UserServiceTest {
 
         @Test
         void givenUsername_whenFindByUsername_thenReturnUser() {
-            var givenUser = testDatabaseAssistant.insertTestUserAndLogin().entity().asOne();
+            var givenUser = testDatabaseAssistant.signupAndLoginToTestEnv().entity().asOne();
             var givenUserUsername = givenUser.getUsername();
 
             var actual = systemUnderTest.findByUsername(givenUserUsername);
@@ -175,7 +176,7 @@ public class UserServiceTest {
 
         @Test
         void givenOldPasswordAndNewPassword_whenChangePassword_thenUpdatePassword() {
-            var givenUser = testDatabaseAssistant.insertTestUserAndLogin().entity().asOne();
+            var givenUser = testDatabaseAssistant.signupAndLoginToTestEnv().entity().asOne();
             var givenUserPassword = givenUser.getPassword();
 
             systemUnderTest.changePassword(givenUserPassword, "updated_password");

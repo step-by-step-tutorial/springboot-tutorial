@@ -12,7 +12,7 @@ public final class HttpUtils {
     private HttpUtils() {
     }
 
-    public static <ID> URI createUriFromId(ID id) {
+    public static <ID> URI uriOf(ID id) {
         requireNonNull(id, "URI: ID should not be null");
 
         return ServletUriComponentsBuilder.fromCurrentRequest()
@@ -21,7 +21,7 @@ public final class HttpUtils {
                 .toUri();
     }
 
-    public static String extractBearerToken(HttpServletRequest request) {
+    public static String extractToken(HttpServletRequest request) {
         var token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7);

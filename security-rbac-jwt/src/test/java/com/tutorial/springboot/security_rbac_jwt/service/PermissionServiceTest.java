@@ -2,6 +2,7 @@ package com.tutorial.springboot.security_rbac_jwt.service;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionService;
+import com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils;
 import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
 import org.junit.jupiter.api.*;
@@ -10,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.authenticateToTestEnv;
+import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.loginToTestEnv;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -26,7 +27,7 @@ public class PermissionServiceTest {
 
     @BeforeEach
     void setup() {
-        authenticateToTestEnv();
+        SecurityTestUtils.loginToTestEnv();
     }
 
     @Nested

@@ -12,8 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.tutorial.springboot.security_rbac_jwt.util.HttpUtils.extractBearerToken;
-import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.setAuthenticationIfItIsNull;
+import static com.tutorial.springboot.security_rbac_jwt.util.HttpUtils.extractToken;
+import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.setAuthenticationIfAbsent;
 import static java.util.Objects.requireNonNull;
 
 @Component
@@ -33,14 +33,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            var token = extractBearerToken(request);
+            var token = extractToken(request);
             requireNonNull(token);
             var username = tokenService.extractUsername(token);
             requireNonNull(username);
 
             if (tokenService.isValid(token, username)) {
                 var user = userDetailsService.loadUserByUsername(username);
-                setAuthenticationIfItIsNull(request, user);
+                setAuthenticationIfAbsent(request, user);
             }
 
         } catch (NullPointerException e) {

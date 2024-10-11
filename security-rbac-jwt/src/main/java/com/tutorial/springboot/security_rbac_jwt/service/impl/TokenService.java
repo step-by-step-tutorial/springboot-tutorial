@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.DateUtils.currentDate;
-import static com.tutorial.springboot.security_rbac_jwt.util.DateUtils.getFutureDateIn;
+import static com.tutorial.springboot.security_rbac_jwt.util.DateUtils.getDateIn;
 import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentRoles;
 
 @Component
@@ -43,7 +43,7 @@ public class TokenService {
     }
 
     public Optional<TokenDto> generateToken(String username) {
-        var expirationDate = getFutureDateIn(10);
+        var expirationDate = getDateIn(10);
         var token = Jwts.builder()
                 .claim("roles", getCurrentRoles())
                 .subject(username)

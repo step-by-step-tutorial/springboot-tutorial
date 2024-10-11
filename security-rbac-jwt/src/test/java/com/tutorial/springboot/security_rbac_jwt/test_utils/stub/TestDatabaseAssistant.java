@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.authenticateToTestEnv;
+import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.loginToTestEnv;
 
 @Component
 @Transactional
@@ -36,60 +36,60 @@ public class TestDatabaseAssistant {
     @Autowired
     UserTransformer userTransformer;
 
-    public ResultHelper<Permission, PermissionDto> insertTestPermission(int number) {
+    public JdbcResultHelper<Permission, PermissionDto> insertTestPermission(int number) {
         var entity = EntityStubFactory.createPermission(number).asOne();
         entityManager.persist(entity);
         var dto = permissionTransformer.toDto(entity);
-        return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
+        return new JdbcResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
 
-    public ResultHelper<Permission, PermissionDto> selectTestPermission() {
+    public JdbcResultHelper<Permission, PermissionDto> selectTestPermission() {
         var query = entityManager.createQuery("SELECT p FROM Permission p WHERE p.id < 1000", Permission.class);
 
         var entities = query.getResultList().toArray(Permission[]::new);
         var dtoArray = Stream.of(entities).map(permissionTransformer::toDto).toArray(PermissionDto[]::new);
 
-        return new ResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoArray));
+        return new JdbcResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoArray));
     }
 
-    public ResultHelper<Role, RoleDto> insertTestRole(int number, int randomPermissionNumber) {
+    public JdbcResultHelper<Role, RoleDto> insertTestRole(int number, int randomPermissionNumber) {
         var entity = EntityStubFactory.createRole(number, randomPermissionNumber).asOne();
         entityManager.persist(entity);
         var dto = roleTransformer.toDto(entity);
 
-        return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
+        return new JdbcResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
 
-    public ResultHelper<Role, RoleDto> selectTestRole() {
+    public JdbcResultHelper<Role, RoleDto> selectTestRole() {
         var query = entityManager.createQuery("SELECT p FROM Role p WHERE p.id < 1000", Role.class);
 
         var entities = query.getResultList().toArray(Role[]::new);
         var dtoList = Stream.of(entities).map(roleTransformer::toDto).toArray(RoleDto[]::new);
 
-        return new ResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoList));
+        return new JdbcResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoList));
     }
 
-    public ResultHelper<User, UserDto> insertTestUser(int number, int randomRoleNumber, int randomPermissionNumber) {
+    public JdbcResultHelper<User, UserDto> insertTestUser(int number, int randomRoleNumber, int randomPermissionNumber) {
         var entity = EntityStubFactory.createUser(number, randomRoleNumber, randomPermissionNumber).asOne();
         entityManager.persist(entity);
         var dto = userTransformer.toDto(entity);
-        return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
+        return new JdbcResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
 
-    public ResultHelper<User, UserDto> selectTestUser() {
+    public JdbcResultHelper<User, UserDto> selectTestUser() {
         var query = entityManager.createQuery("SELECT p FROM User p WHERE p.id < 1000", User.class);
 
         var entities = query.getResultList().toArray(User[]::new);
         var dtoList = Stream.of(entities).map(userTransformer::toDto).toArray(UserDto[]::new);
 
-        return new ResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoList));
+        return new JdbcResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoList));
     }
 
-    public ResultHelper<User, UserDto> insertTestUserAndLogin() {
+    public JdbcResultHelper<User, UserDto> signupAndLoginToTestEnv() {
         var entity = insertTestUser(1, 1, 1).entity().asOne();
-        authenticateToTestEnv(entity.getUsername(), entity.getPassword());
+        loginToTestEnv(entity.getUsername(), entity.getPassword());
         var dto = userTransformer.toDto(entity);
-        return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
+        return new JdbcResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
 
 }
