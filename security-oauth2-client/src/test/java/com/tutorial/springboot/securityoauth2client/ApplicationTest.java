@@ -8,6 +8,6 @@ public class ApplicationTest {
 
     @Test
     void loadContext() {
-        assert(true);
+        assert (true);
     }
 }

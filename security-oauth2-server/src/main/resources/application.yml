@@ -1,6 +1,6 @@
 server:
   port: 8080
-  address: localhost
+  address: auth-server.local
 
 spring:
   profiles:
@@ -8,11 +8,11 @@ spring:
   security:
     oauth2:
       authorizationserver:
-        issuer: http://localhost:8080
+        issuer: http://auth-server.local:8080
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/oauth2/jwks
-          issuer-uri: http://localhost:8080
+          jwk-set-uri: http://auth-server.local:8080/oauth2/jwks
+          issuer-uri: http://auth-server.local:8080
 
 logging:
   level:

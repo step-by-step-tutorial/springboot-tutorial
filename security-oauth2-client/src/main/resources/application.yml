@@ -1,6 +1,6 @@
 server:
   port: 9000
-  address: localhost
+  address: client-app.local
 
 logging:
   level:

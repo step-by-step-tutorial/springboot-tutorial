@@ -55,7 +55,7 @@ public class RegisteredClientService implements RegisteredClientRepository {
                                 .scope("read")
                                 .scope("write")
                                 .build()
-                ).orElseThrow();
+                ).orElseThrow(() -> new IllegalArgumentException("Client with clientId " + clientId + " not found"));
     }
 
     public static List<AuthorizationGrantType> convertStringListToAuthorizationGrantTypes(List<String> grantTypeStrings) {
