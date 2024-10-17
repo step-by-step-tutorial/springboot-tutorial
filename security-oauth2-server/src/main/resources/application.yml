@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  address: localhost
+
+spring:
+  profiles:
+    active: h2
+  security:
+    oauth2:
+      authorizationserver:
+        issuer: http://localhost:8080
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/oauth2/jwks
+          issuer-uri: http://localhost:8080
+
+logging:
+  level:
+    web: debug
+    org:
+      springframework:
+        security: debug
+
+rsa:
+  private-key: classpath:private-key.pem
+  public-key: classpath:public-key.pem
+
+

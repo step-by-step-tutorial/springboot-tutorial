@@ -1,0 +1,12 @@
+server:
+  port: 9000
+  address: localhost
+
+logging:
+  level:
+    org:
+      springframework:
+        security:
+          oauth2:
+            client: debug
+            core: debug
