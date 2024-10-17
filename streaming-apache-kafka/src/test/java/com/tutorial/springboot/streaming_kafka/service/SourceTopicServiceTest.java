@@ -1,6 +1,5 @@
-package com.tutorial.springboot.streaming_kafka;
+package com.tutorial.springboot.streaming_kafka.service;
 
-import com.tutorial.springboot.streaming_kafka.topic.SourceTopicProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,10 +23,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
 @DisplayName("unit tests of kafka main topic service")
-class SourceTopicProducerTest {
+class SourceTopicServiceTest {
 
     @InjectMocks
-    SourceTopicProducer systemUnderTest;
+    SourceTopicService systemUnderTest;
 
     @Mock
     KafkaTemplate<String, String> kafkaTemplate;

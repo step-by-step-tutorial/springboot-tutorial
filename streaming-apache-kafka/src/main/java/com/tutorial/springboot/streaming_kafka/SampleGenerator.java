@@ -1,11 +1,12 @@
 package com.tutorial.springboot.streaming_kafka;
 
-import com.tutorial.springboot.streaming_kafka.topic.SourceTopicProducer;
+import com.tutorial.springboot.streaming_kafka.service.SourceTopicService;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.joining;
 
 @Component
 public class SampleGenerator {
@@ -16,14 +17,14 @@ public class SampleGenerator {
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    public SampleGenerator(SourceTopicProducer sourceTopicProducer) {
+    public SampleGenerator(SourceTopicService sourceTopicService) {
         for (int i = 0; i < MESSAGE_NUMBER; i++) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            sourceTopicProducer.push(generateString(MESSAGE_LENGTH));
+            sourceTopicService.push(generateString(MESSAGE_LENGTH));
         }
     }
 
@@ -31,6 +32,6 @@ public class SampleGenerator {
         var random = new Random();
         return IntStream.range(0, length)
                 .mapToObj(i -> String.valueOf(CHARACTERS.charAt(random.nextInt(CHARACTERS.length()))))
-                .collect(Collectors.joining());
+                .collect(joining());
     }
 }

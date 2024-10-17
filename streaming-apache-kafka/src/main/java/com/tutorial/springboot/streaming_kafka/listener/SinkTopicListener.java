@@ -1,7 +1,8 @@
-package com.tutorial.springboot.streaming_kafka.topic;
+package com.tutorial.springboot.streaming_kafka.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -15,7 +16,10 @@ public class SinkTopicListener {
 
     private final Logger logger = LoggerFactory.getLogger(SinkTopicListener.class);
 
-    @KafkaListener(topics = "sinkTopic")
+    @Value("${topic.sink}")
+    private String topic;
+
+    @KafkaListener(topics = "${topic.sink}")
     public void onMessage(
             @Payload String message,
             @Header(KafkaHeaders.CORRELATION_ID) String correlationId
@@ -23,6 +27,6 @@ public class SinkTopicListener {
         requireNonNull(message, "Message should not be null");
         requireNonNull(correlationId, "Correlation Id should not be null");
 
-        logger.info("Message received from: {}", message);
+        logger.info("Message received from {}: {}", topic, message);
     }
 }

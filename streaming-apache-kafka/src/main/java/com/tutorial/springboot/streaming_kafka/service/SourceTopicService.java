@@ -1,4 +1,4 @@
-package com.tutorial.springboot.streaming_kafka.topic;
+package com.tutorial.springboot.streaming_kafka.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,16 +14,16 @@ import java.util.UUID;
 import static java.util.Objects.requireNonNull;
 
 @Service
-public class SourceTopicProducer {
+public class SourceTopicService {
 
-    private final Logger logger = LoggerFactory.getLogger(SourceTopicProducer.class);
+    private final Logger logger = LoggerFactory.getLogger(SourceTopicService.class);
 
     private final KafkaTemplate<String, String> template;
 
     @Value("${topic.source}")
     private String topic;
 
-    public SourceTopicProducer(final KafkaTemplate<String, String> template) {
+    public SourceTopicService(final KafkaTemplate<String, String> template) {
         this.template = template;
     }
 
@@ -37,6 +37,6 @@ public class SourceTopicProducer {
                 .build();
 
         template.send(kafkaMessage);
-        logger.info("Message sent to: {}", message);
+        logger.info("Message sent to {}: {}",topic, message);
     }
 }

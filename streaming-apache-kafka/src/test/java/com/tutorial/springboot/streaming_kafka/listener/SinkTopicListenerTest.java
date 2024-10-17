@@ -1,6 +1,5 @@
-package com.tutorial.springboot.streaming_kafka;
+package com.tutorial.springboot.streaming_kafka.listener;
 
-import com.tutorial.springboot.streaming_kafka.topic.SinkTopicListener;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

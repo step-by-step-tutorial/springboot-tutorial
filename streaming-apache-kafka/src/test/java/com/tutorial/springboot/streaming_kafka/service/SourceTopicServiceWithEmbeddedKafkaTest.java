@@ -1,6 +1,5 @@
-package com.tutorial.springboot.streaming_kafka;
+package com.tutorial.springboot.streaming_kafka.service;
 
-import com.tutorial.springboot.streaming_kafka.topic.SourceTopicProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
 @DisplayName("unit tests of kafka[embedded] main topic service")
-class SourceTopicProducerWithEmbeddedKafkaTest {
+class SourceTopicServiceWithEmbeddedKafkaTest {
 
     @Autowired
-    SourceTopicProducer systemUnderTest;
+    SourceTopicService systemUnderTest;
 
     @BeforeEach
     void setUp() {
