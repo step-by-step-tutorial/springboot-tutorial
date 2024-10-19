@@ -6,11 +6,6 @@ spring:
   profiles:
     active: h2
 
-logging:
-  level:
-    org:
-      springframework:
-        security:
-          oauth2:
-            client: debug
-            core: debug
+oauth-props:
+  server-url: http://auth-server.local:8080
+  client-url: http://${server.address}:${server.port}

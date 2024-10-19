@@ -25,7 +25,7 @@ public final class DtoStubFactory {
                 .map(name -> new ClientDto()
                         .setClientId(name)
                         .setClientSecret(faker.internet().password())
-                        .setRedirectUri("http://localhost:8080/login/oauth2/code/" + name)
+                        .setRedirectUri("http://localhost:9000/login/oauth2/code/" + name)
                         .setGrantTypes(GrantType.allType())
                         .setScopes(Arrays.asList("read", "write"))
                         .setAccessTokenValiditySeconds(3600)

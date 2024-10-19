@@ -1,10 +1,10 @@
 package com.tutorial.springboot.securityoauth2client.dto;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-public class ClientDto extends AbstractDto<Long, ClientDto>{
+public class ClientDto extends AbstractDto<Long, ClientDto> {
+
     private String registrationId;
 
     private String clientId;
@@ -30,6 +30,7 @@ public class ClientDto extends AbstractDto<Long, ClientDto>{
     private String issuerUri;
 
     private Map<String, Object> configurationMetadata = Collections.emptyMap();
+
     private String uri;
 
     private String authenticationMethod = "header";

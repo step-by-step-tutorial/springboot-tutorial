@@ -1,9 +1,9 @@
 package com.tutorial.springboot.securityoauth2client.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -159,6 +159,7 @@ public class Client extends AbstractEntity<Long, Client> {
         this.configurationMetadata = configurationMetadata;
         return this;
     }
+
     public String getUri() {
         return uri;
     }

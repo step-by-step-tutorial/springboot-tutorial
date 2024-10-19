@@ -38,7 +38,6 @@ public final class RegisteredClientTransformer {
     }
 
 
-
     public static List<AuthorizationGrantType> convertStringListToAuthorizationGrantTypes(List<String> grantTypeStrings) {
         var grantTypes = new ArrayList<AuthorizationGrantType>();
 

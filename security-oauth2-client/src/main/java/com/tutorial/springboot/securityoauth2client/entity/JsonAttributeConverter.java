@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,8 @@ public class JsonAttributeConverter<T> implements AttributeConverter<Map<String,
             return null;
         }
         try {
-            return objectMapper.readValue(column, new TypeReference<HashMap<String,Object>>() {});
+            return objectMapper.readValue(column, new TypeReference<HashMap<String, Object>>() {
+            });
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not convert JSON to attribute", e);
         }

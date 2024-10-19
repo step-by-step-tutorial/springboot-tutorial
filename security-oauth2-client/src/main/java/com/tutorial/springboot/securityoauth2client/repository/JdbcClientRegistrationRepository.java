@@ -3,12 +3,10 @@ package com.tutorial.springboot.securityoauth2client.repository;
 import com.tutorial.springboot.securityoauth2client.transformer.ClientRegistrationTransformer;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Iterator;
-import java.util.List;
 
 @Repository
 public class JdbcClientRegistrationRepository implements ClientRegistrationRepository, Iterable<ClientRegistration> {

@@ -182,7 +182,6 @@ public class OauthScenarioTest {
                 .queryParam("client_id", client.getClientId())
                 .queryParam("redirect_uri", client.getRedirectUri())
                 .queryParam("scope", "read")
-                .redirects().follow(false)
                 .when().get()
                 .then()
                 .log().all(true)
