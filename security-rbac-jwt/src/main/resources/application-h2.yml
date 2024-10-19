@@ -7,7 +7,7 @@ spring:
   data:
     jdbc:
       repositories:
-        enabled:
+        enabled: true
   jpa:
     database: H2
     database-platform: org.hibernate.dialect.H2Dialect

@@ -2,6 +2,10 @@ server:
   port: 9000
   address: client-app.local
 
+spring:
+  profiles:
+    active: h2
+
 logging:
   level:
     org:
