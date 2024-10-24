@@ -1,6 +1,8 @@
 package com.tutorial.springboot.securityoauth2client.dto;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class ClientDto extends AbstractDto<Long, ClientDto> {
@@ -17,8 +19,6 @@ public class ClientDto extends AbstractDto<Long, ClientDto> {
 
     private String redirectUri;
 
-    private String scope;
-
     private String clientName;
 
     private String authorizationUri;
@@ -31,11 +31,14 @@ public class ClientDto extends AbstractDto<Long, ClientDto> {
 
     private Map<String, Object> configurationMetadata = Collections.emptyMap();
 
-    private String uri;
+    private String userInfoUri;
 
     private String authenticationMethod = "header";
 
     private String userNameAttributeName;
+
+    private List<String> scopes = new ArrayList<>();
+
 
     public String getRegistrationId() {
         return registrationId;
@@ -91,12 +94,12 @@ public class ClientDto extends AbstractDto<Long, ClientDto> {
         return this;
     }
 
-    public String getScope() {
-        return scope;
+    public List<String> getScopes() {
+        return scopes;
     }
 
-    public ClientDto setScope(String scope) {
-        this.scope = scope;
+    public ClientDto setScopes(List<String> scopes) {
+        this.scopes = scopes;
         return this;
     }
 
@@ -155,12 +158,12 @@ public class ClientDto extends AbstractDto<Long, ClientDto> {
         return this;
     }
 
-    public String getUri() {
-        return uri;
+    public String getUserInfoUri() {
+        return userInfoUri;
     }
 
-    public ClientDto setUri(String uri) {
-        this.uri = uri;
+    public ClientDto setUserInfoUri(String userInfoUri) {
+        this.userInfoUri = userInfoUri;
         return this;
     }
 

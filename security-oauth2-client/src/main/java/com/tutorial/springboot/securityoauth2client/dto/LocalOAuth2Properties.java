@@ -3,7 +3,7 @@ package com.tutorial.springboot.securityoauth2client.dto;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@ConfigurationProperties(prefix = "oauth-props")
+@ConfigurationProperties(prefix = "local.oauth2")
 @EnableConfigurationProperties
-public record OauthProperties(String serverUrl, String clientUrl) {
+public record LocalOAuth2Properties(String serverUrl, String appUrl) {
 }

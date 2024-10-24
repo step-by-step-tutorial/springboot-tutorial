@@ -1,6 +1,9 @@
 package com.tutorial.springboot.securityoauth2client.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,7 @@ public class Scope extends AbstractEntity<Long, Scope> {
 
     private String description;
 
-    @ManyToMany(mappedBy = "scopes")
+    @ManyToMany(mappedBy = "scopes", fetch = FetchType.EAGER)
     private List<Client> clients = new ArrayList<>();
 
     public String getName() {

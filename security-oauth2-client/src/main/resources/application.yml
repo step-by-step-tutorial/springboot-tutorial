@@ -6,6 +6,7 @@ spring:
   profiles:
     active: h2
 
-oauth-props:
-  server-url: http://auth-server.local:8080
-  client-url: http://${server.address}:${server.port}
+local:
+  oauth2:
+    server-url: http://auth-server.local:8080
+    app-url: http://${server.address}:${server.port}

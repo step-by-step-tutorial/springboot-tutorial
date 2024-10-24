@@ -1,9 +1,10 @@
 package com.tutorial.springboot.securityoauth2client.entity;
 
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -11,6 +12,7 @@ public class Client extends AbstractEntity<Long, Client> {
 
     private String registrationId;
 
+    @Column(unique = true, nullable = false)
     private String clientId;
 
     private String clientSecret;
@@ -21,8 +23,7 @@ public class Client extends AbstractEntity<Long, Client> {
 
     private String redirectUri;
 
-    private String scope;
-
+    @Column(unique = true, nullable = false)
     private String clientName;
 
     private String authorizationUri;
@@ -36,11 +37,19 @@ public class Client extends AbstractEntity<Long, Client> {
     @Convert(converter = JsonAttributeConverter.class)
     private Map<String, Object> configurationMetadata = new HashMap<>();
 
-    private String uri;
+    private String userInfoUri;
 
     private String authenticationMethod = "header";
 
     private String userNameAttributeName;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "client_scopes",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "scope_id")
+    )
+    private List<Scope> scopes = new ArrayList<>();
 
     public String getRegistrationId() {
         return registrationId;
@@ -93,15 +102,6 @@ public class Client extends AbstractEntity<Long, Client> {
 
     public Client setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
-        return this;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public Client setScope(String scope) {
-        this.scope = scope;
         return this;
     }
 
@@ -160,12 +160,12 @@ public class Client extends AbstractEntity<Long, Client> {
         return this;
     }
 
-    public String getUri() {
-        return uri;
+    public String getUserInfoUri() {
+        return userInfoUri;
     }
 
-    public Client setUri(String uri) {
-        this.uri = uri;
+    public Client setUserInfoUri(String uri) {
+        this.userInfoUri = uri;
         return this;
     }
 
@@ -184,6 +184,15 @@ public class Client extends AbstractEntity<Long, Client> {
 
     public Client setUserNameAttributeName(String userNameAttributeName) {
         this.userNameAttributeName = userNameAttributeName;
+        return this;
+    }
+
+    public List<Scope> getScopes() {
+        return scopes;
+    }
+
+    public Client setScopes(List<Scope> scopes) {
+        this.scopes = scopes;
         return this;
     }
 }
