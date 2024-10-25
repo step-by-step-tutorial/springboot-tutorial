@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: securityoauth2client
+spec:
+  selector:
+    app: securityoauth2client
+  ports:
+    - port: 8080
+      targetPort: 8080

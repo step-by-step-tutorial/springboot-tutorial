@@ -1,0 +1,24 @@
+server:
+  address: ${APP_HOST:0.0.0.0}
+  port: ${APP_PORT:8080}
+  servlet:
+    context-path: /securityoauth2server
+spring:
+  main:
+    banner-mode: OFF
+  profiles:
+    active: ${APP_PROFILES:h2}
+  security:
+    oauth2:
+      authorizationserver:
+        issuer: http://securityoauth2server:8080/securityoauth2server
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://securityoauth2server:8080/securityoauth2server/oauth2/jwks
+          issuer-uri: http://securityoauth2server:8080/securityoauth2server
+
+rsa:
+  private-key: classpath:private-key.pem
+  public-key: classpath:public-key.pem
+
+
