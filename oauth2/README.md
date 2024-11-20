@@ -33,7 +33,7 @@ This tutorial is about integration of Spring Boot and TOOLS_NAME.
 
 ```bash
 mvn clean package -DskipTests=true
-http://localhost:8080/oauth2/authorize?response_type=code&client_id=test-client&redirect_uri=http://localhost:8080/login/oauth2/code/test-client&scope=read
+http://securityoauth2server.local/oauth2/authorize?response_type=code&client_id=test-client&redirect_uri=http://securityoauth2client.localhost/login/oauth2/code/test-client&scope=read
 openssl genpkey -algorithm RSA -out private-key.pem
 openssl rsa -pubout -in private-key.pem -out public-key.pem
 openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-key.pem -nocrypt
@@ -42,15 +42,19 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-k
 #### Test
 
 ```bash
-mvn test
-http://localhost:9000/oauth2/authorization/test-client
 
-  curl -X POST "http://localhost:8080/oauth2/token" \
+```
+```bash
+mvn test
+http://securityoauth2server.localhost/oauth2/authorize?response_type=code&client_id=testClient&redirect_uri=http://securityoauth2client.localhost/login/oauth2/code/testClient&scope=read
+http://securityoauth2client.localhost/login/oauth2/code/testClient
+
+  curl -X POST "http://securityoauth2server.localhost/oauth2/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -u "test-client:test-secret" \
+  -u "testClient:password" \
   -d "grant_type=authorization_code" \
-  -d "code=apT7bwZzFxCX4-ESMEFOt2Jn6E2tduEc512Hungfgtcar_7w2sGnNb0mVIo--U3AhOMyMy1X1p2tYahWrFHvPn9IeOswd56nTRd0ajdesSozacZbNXktHH0jFVO9HReT" \
-  -d "redirect_uri=http://localhost:9000/login/oauth2/code/test-client"
+  -d "code=" \
+  -d "redirect_uri=http://securityoauth2client.localhost/login/oauth2/code/testClient"
 
 
 ```

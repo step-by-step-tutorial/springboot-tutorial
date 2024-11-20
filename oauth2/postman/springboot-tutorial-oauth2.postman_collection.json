@@ -1,0 +1,566 @@
+{
+	"info": {
+		"_postman_id": "8f683b96-04ad-4877-a581-5134d60d6137",
+		"name": "springboot-tutorial-oauth2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4321287"
+	},
+	"item": [
+		{
+			"name": "add admin client to server",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"clientId\": \"adminClient\",\r\n  \"clientSecret\": \"password\",\r\n  \"redirectUri\": \"http://securityoauth2client.localhost/login/oauth2/code/adminClient\",\r\n  \"grantTypes\": [\"authorization_code\"],\r\n  \"scopes\": [\"read\"],\r\n  \"accessTokenValiditySeconds\": 3600,\r\n  \"refreshTokenValiditySeconds\": 1209600\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://securityoauth2server.localhost/api/v1/clients",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add user client to server",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"clientId\": \"userClient\",\r\n  \"clientSecret\": \"password\",\r\n  \"redirectUri\": \"http://securityoauth2client.localhost/login/oauth2/code/userClient\",\r\n  \"grantTypes\": [\"authorization_code\"],\r\n  \"scopes\": [\"read\"],\r\n  \"accessTokenValiditySeconds\": 3600,\r\n  \"refreshTokenValiditySeconds\": 1209600\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://securityoauth2server.localhost/api/v1/clients",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add test client to server",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "test",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"clientId\": \"testClient\",\r\n  \"clientSecret\": \"password\",\r\n  \"redirectUri\": \"http://securityoauth2client.localhost/login/oauth2/code/testClient\",\r\n  \"grantTypes\": [\"authorization_code\"],\r\n  \"scopes\": [\"read\"],\r\n  \"accessTokenValiditySeconds\": 3600,\r\n  \"refreshTokenValiditySeconds\": 1209600\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://securityoauth2server.localhost/api/v1/clients",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add user client to client",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n{\r\n  \"registrationId\": \"userClient\",\r\n  \"clientId\": \"userClient\",\r\n  \"clientName\": \"User Client\",\r\n  \"clientSecret\": \"password\",\r\n  \"scope\": [\"read\"],\r\n  \"authorizationUri\": \"http://securityoauth2server.localhost/oauth2/authorize\",\r\n  \"tokenUri\": \"http://securityoauth2server:8080/oauth2/token\",\r\n  \"userInfoUri\": \"http://securityoauth2server:8080/api/v1/users/userinfo\",\r\n  \"redirectUri\": \"http://securityoauth2client.localhost/login/oauth2/code/userClient\",\r\n  \"userNameAttributeName\": \"sub\",\r\n  \"authorizationGrantType\": \"authorization_code\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://securityoauth2client.localhost/api/v1/clients",
+					"protocol": "http",
+					"host": [
+						"securityoauth2client",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "authorization code",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessTokenUrl",
+							"value": "http://securityoauth2server.localhost/oauth2/token",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "http://securityoauth2server.localhost/oauth2/authorize",
+							"type": "string"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http://securityoauth2client.localhost/login/oauth2/code/testClient",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "testClient",
+							"type": "string"
+						},
+						{
+							"key": "clientSecret",
+							"value": "password",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "read",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "token for test client",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "testClient",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http://securityoauth2client.localhost/login/oauth2/code/testClient",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://securityoauth2server.localhost/oauth2/token",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "jwks",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://securityoauth2server.localhost/oauth2/jwks",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"oauth2",
+						"jwks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clients by client Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "test",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://securityoauth2server.localhost/api/v1/clients/findByClientId/testClient",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"clients",
+						"findByClientId",
+						"testClient"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "test",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://securityoauth2server.localhost/api/v1/users",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users post",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "test",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"saman\",\r\n  \"password\": \"saman\",\r\n  \"email\": \"saman@example.com\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://securityoauth2server.localhost/api/v1/users",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user info",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "test",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "test",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://securityoauth2server.localhost/api/v1/users/userinfo",
+					"protocol": "http",
+					"host": [
+						"securityoauth2server",
+						"localhost"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"userinfo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://securityoauth2client.localhost/logout",
+					"protocol": "http",
+					"host": [
+						"securityoauth2client",
+						"localhost"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

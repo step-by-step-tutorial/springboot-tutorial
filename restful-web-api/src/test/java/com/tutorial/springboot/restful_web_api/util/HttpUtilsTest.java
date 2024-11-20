@@ -12,7 +12,6 @@ import static com.tutorial.springboot.restful_web_api.util.HttpUtils.uriOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Http Utilities Unit Tests")
-
 public class HttpUtilsTest {
 
     @BeforeEach

@@ -5,5 +5,5 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @ConfigurationProperties(prefix = "local.oauth2")
 @EnableConfigurationProperties
-public record LocalOAuth2Properties(String serverUrl, String appUrl) {
+public record LocalOAuth2Properties(String authorizationserver, String resourceserver, String clientapp) {
 }

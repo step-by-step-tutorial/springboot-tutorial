@@ -8,24 +8,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientRegistrationFactory {
 
-    @Value( "${local.oauth2.server-url}")
-    private String serverUrl;
+    @Value("${local.oauth2.authorizationserver}")
+    private String authorizationserver;
 
-    @Value( "${local.oauth2.app-url}")
-    private String clientUrl;
+    @Value("${local.oauth2.resourceserver}")
+    private String resourceserver;
+
+    @Value("${local.oauth2.clientapp}")
+    private String clientapp;
 
     public ClientRegistration createTestClient() {
         return ClientRegistration.withRegistrationId("testClient")
                 .clientName("Test Client")
                 .clientId("testClient")
                 .clientSecret("password")
-                .authorizationUri(String.format("%s/oauth2/authorize", serverUrl))
+                .authorizationUri(String.format("%s/oauth2/authorize", authorizationserver))
                 .scope("read")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .tokenUri(String.format("%s/oauth2/token", serverUrl))
+                .tokenUri(String.format("%s/oauth2/token", resourceserver))
                 .userNameAttributeName("sub")
-                .userInfoUri(String.format("%s/api/v1/users/userinfo", serverUrl))
-                .redirectUri(String.format("%s/login/oauth2/code/testClient", clientUrl))
+                .userInfoUri(String.format("%s/api/v1/users/userinfo", resourceserver))
+                .redirectUri(String.format("%s/login/oauth2/code/testClient", clientapp))
                 .build();
     }
 
@@ -34,13 +37,13 @@ public class ClientRegistrationFactory {
                 .clientName("Admin Client")
                 .clientId("adminClient")
                 .clientSecret("password")
-                .authorizationUri(String.format("%s/oauth2/authorize", serverUrl))
+                .authorizationUri(String.format("%s/oauth2/authorize", authorizationserver))
                 .scope("read")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .tokenUri(String.format("%s/oauth2/token", serverUrl))
+                .tokenUri(String.format("%s/oauth2/token", resourceserver))
                 .userNameAttributeName("sub")
-                .userInfoUri(String.format("%s/api/v1/users/userinfo", serverUrl))
-                .redirectUri(String.format("%s/login/oauth2/code/adminClient", clientUrl))
+                .userInfoUri(String.format("%s/api/v1/users/userinfo", resourceserver))
+                .redirectUri(String.format("%s/login/oauth2/code/adminClient", clientapp))
                 .build();
     }
 }

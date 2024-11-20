@@ -1,8 +1,6 @@
 server:
   address: ${APP_HOST:0.0.0.0}
   port: ${APP_PORT:8080}
-  servlet:
-    context-path: /securityoauth2server
 spring:
   main:
     banner-mode: OFF
@@ -11,11 +9,17 @@ spring:
   security:
     oauth2:
       authorizationserver:
-        issuer: http://securityoauth2server:8080/securityoauth2server
+        issuer: ${AUTHORIZATION_SERVER:http://securityoauth2server.localhost}
       resourceserver:
         jwt:
-          jwk-set-uri: http://securityoauth2server:8080/securityoauth2server/oauth2/jwks
-          issuer-uri: http://securityoauth2server:8080/securityoauth2server
+          jwk-set-uri: ${RESOURCE_SERVER:http://securityoauth2server:8080}/oauth2/jwks
+          issuer-uri: ${RESOURCE_SERVER:http://securityoauth2server:8080}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
 
 rsa:
   private-key: classpath:private-key.pem
