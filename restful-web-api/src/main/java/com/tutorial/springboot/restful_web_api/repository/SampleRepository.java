@@ -2,6 +2,7 @@ package com.tutorial.springboot.restful_web_api.repository;
 
 import com.tutorial.springboot.restful_web_api.entity.Entity;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -17,7 +18,7 @@ public interface SampleRepository<T, E extends Entity<T, E>> {
 
     boolean exists(T id);
 
-    Stream<T> insertBatch(E[] entities);
+    List<T> insertBatch(E[] entities);
 
     Stream<E> selectBatch(T[] identifiers);
 

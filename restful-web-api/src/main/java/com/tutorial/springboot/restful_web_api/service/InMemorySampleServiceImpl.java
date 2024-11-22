@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
+import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntities;
 import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntity;
 import static com.tutorial.springboot.restful_web_api.validation.ObjectValidation.*;
 import static java.util.Objects.nonNull;
@@ -32,7 +32,7 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     public Optional<Long> save(SampleDto dto) {
         shouldNotBeNull(dto, String.format("%s should not be null", SampleDto.class.getSimpleName()));
 
-        return repository.insert(toEntity(dto).withInitialVersion());
+        return repository.insert(toEntity(dto));
     }
 
     @Override
@@ -66,18 +66,16 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
 
     @Override
     public boolean exists(Long id) {
+        shouldNotBeNull(id, String.format("ID of %s should not be null", SampleDto.class.getSimpleName()));
         return repository.exists(id);
     }
 
     @Override
-    public List<Long> batchSave(SampleDto[] items) {
+    public List<Long> saveBatch(SampleDto[] items) {
         shouldNotBeNull(items, String.format("List of %s should not be null", SampleDto.class.getSimpleName()));
         shouldNotBeNullOrEmpty(items, String.format("List of %s should not be empty", SampleDto.class.getSimpleName()));
 
-        return Stream.of(items)
-                .map(this::save)
-                .map(Optional::orElseThrow)
-                .toList();
+        return repository.insertBatch(toEntities(items));
     }
 
     @Override
@@ -102,7 +100,7 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     }
 
     @Override
-    public void batchDelete(Long[] identifiers) {
+    public void deleteBatch(Long[] identifiers) {
         shouldNotBeNull(identifiers, String.format("List of ID of %s should not be null", SampleDto.class.getSimpleName()));
         shouldNotBeNullOrEmpty(identifiers, String.format("List of ID of %s should not be empty", SampleDto.class.getSimpleName()));
 

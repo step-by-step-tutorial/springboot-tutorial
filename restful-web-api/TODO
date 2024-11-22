@@ -1,0 +1,30 @@
+API Test:
+    findBatch
+    deleteBatch
+    deleteAll
+    findAll
+
+Entity Test:
+    toString
+    hashCode
+    equals
+    updateFrom
+
+Repository Test:
+    selectByPage
+    count
+    update --- else
+
+Service Test:
+    findByPage
+    update --- else
+
+JsonUtils Test:
+    toJsonString
+
+SampleDto Test:
+    builder
+
+
+
+

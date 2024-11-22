@@ -17,13 +17,13 @@ public interface SampleService<ID, DTO> {
 
     boolean exists(ID id);
 
-    List<ID> batchSave(DTO[] items);
+    List<ID> saveBatch(DTO[] items);
 
     List<DTO> findByIdentifiers(ID[] identifiers);
 
     Optional<Page<DTO>> findByPage(int page, int size);
 
-    void batchDelete(ID[] identifiers);
+    void deleteBatch(ID[] identifiers);
 
     List<DTO> selectAll();
 

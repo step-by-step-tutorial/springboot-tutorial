@@ -1,11 +1,13 @@
 package com.tutorial.springboot.restful_web_api.api;
 
-import com.tutorial.springboot.restful_web_api.TestFixture;
 import com.tutorial.springboot.restful_web_api.dto.SampleDto;
 import com.tutorial.springboot.restful_web_api.service.SampleService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -13,7 +15,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-import static com.tutorial.springboot.restful_web_api.TestFixture.selectByRandom;
+import static com.tutorial.springboot.restful_web_api.TestFixture.*;
 import static java.time.LocalDateTime.now;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
@@ -22,20 +24,21 @@ import static org.springframework.http.HttpStatus.*;
 class SampleApiRestAssuredTest {
 
     static final String HOST = "http://localhost";
+
+    @LocalServerPort
+    int port;
+
     static final String ROOT_URI = "/api/v1/samples";
 
     @Autowired
     SampleService<Long, SampleDto> testAssistant;
-
-    @LocalServerPort
-    int port;
 
     @Nested
     class SaveTest {
 
         @Test
         void givenDto_whenPost_thenReturnIdOnCreatedStatus() {
-            var givenDto = TestFixture.oneSample();
+            var givenDto = oneSample();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -79,7 +82,7 @@ class SampleApiRestAssuredTest {
 
         @Test
         void givenListOfDto_whenPost_thenReturnListOfIdOnCreatedStatus() {
-            var givenListOfDto = TestFixture.multiSample();
+            var givenListOfDto = multiSample();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -93,7 +96,7 @@ class SampleApiRestAssuredTest {
 
         @Test
         void givenListOfDtoIncludeInvalidDto_whenPost_thenReturnListOfIdForValidDtoOnCreatedStatus() {
-            var givenListOfDto = new SampleDto[]{SampleDto.builder().build(), TestFixture.oneSample()};
+            var givenListOfDto = new SampleDto[]{SampleDto.builder().build(), oneSample()};
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -136,7 +139,7 @@ class SampleApiRestAssuredTest {
 
         @BeforeEach
         void populate() {
-            identifiers = testAssistant.batchSave(TestFixture.multiSample());
+            identifiers = testAssistant.saveBatch(multiSample());
         }
 
         @AfterEach
@@ -190,7 +193,7 @@ class SampleApiRestAssuredTest {
 
         @BeforeEach
         void populate() {
-            identifiers = testAssistant.batchSave(TestFixture.multiSample());
+            identifiers = testAssistant.saveBatch(multiSample());
         }
 
         @AfterEach
@@ -242,7 +245,7 @@ class SampleApiRestAssuredTest {
 
         @BeforeEach
         void populate() {
-            identifiers = testAssistant.batchSave(TestFixture.multiSample());
+            identifiers = testAssistant.saveBatch(multiSample());
         }
 
         @AfterEach
@@ -282,7 +285,7 @@ class SampleApiRestAssuredTest {
 
         @BeforeEach
         void populate() {
-            identifiers = testAssistant.batchSave(TestFixture.multiSample());
+            identifiers = testAssistant.saveBatch(multiSample());
         }
 
         @AfterEach

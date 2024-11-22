@@ -25,7 +25,7 @@ public class ExceptionApi {
             IllegalArgumentException.class,
     })
     public ResponseEntity<ErrorDto> catchException(Exception ex) {
-        logger.error(ex.getMessage());
+        logger.error("ExceptionApi catch a general exception: {}", ex.getMessage());
         return ResponseEntity.internalServerError()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(new ErrorDto(ex.getMessage()));
@@ -33,7 +33,7 @@ public class ExceptionApi {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorDto> catchValidationException(ValidationException ex) {
-        logger.error(ex.getMessage());
+        logger.error("ExceptionApi catch a validation exception: {}", ex.getMessage());
         return ResponseEntity.badRequest()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(new ErrorDto(ex.getDetails().toArray(String[]::new)));

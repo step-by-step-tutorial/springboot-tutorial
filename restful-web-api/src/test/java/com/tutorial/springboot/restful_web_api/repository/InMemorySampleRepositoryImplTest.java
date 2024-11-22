@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntities;
 import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +49,7 @@ class InMemorySampleRepositoryImplTest {
                     .toArray(SampleEntity[]::new);
             var actual = assertDoesNotThrow(() -> systemUnderTest.insertBatch(givenSamples));
             assertNotNull(actual);
-            assertFalse(actual.toList().isEmpty());
+            assertFalse(actual.isEmpty());
         }
 
         @Test
@@ -117,7 +118,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenNothing_whenGetIdentifiers_thenReturnListOfId() {
-            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            var givenEntities = toEntities(TestFixture.multiSample());
             systemUnderTest.insertBatch(givenEntities);
             var actual = systemUnderTest.selectIdentifiers();
             assertNotNull(actual);

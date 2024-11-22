@@ -3,6 +3,8 @@ package com.tutorial.springboot.restful_web_api.transformer;
 import com.tutorial.springboot.restful_web_api.dto.SampleDto;
 import com.tutorial.springboot.restful_web_api.entity.SampleEntity;
 
+import java.util.stream.Stream;
+
 public final class SampleTransformer {
 
     private SampleTransformer() {
@@ -25,6 +27,10 @@ public final class SampleTransformer {
                 .text(dto.text())
                 .datetime(dto.datetime())
                 .version(dto.version());
+    }
+
+    public static SampleEntity[] toEntities(SampleDto[] items) {
+        return Stream.of(items).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
     }
 
 }

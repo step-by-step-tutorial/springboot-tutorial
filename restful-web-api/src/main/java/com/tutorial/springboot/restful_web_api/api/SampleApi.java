@@ -88,17 +88,9 @@ public class SampleApi {
     @PostMapping(value = "/batch")
     public ResponseEntity<List<Long>> saveBatch(@RequestBody SampleDto[] items) {
         logger.info("Received an inbound request to save a batch[{}] of {}", items.length, SampleDto.class.getSimpleName());
-        var identifiers = service.batchSave(clean(items).toArray(SampleDto[]::new));
+        var identifiers = service.saveBatch(clean(items).toArray(SampleDto[]::new));
 
         return ResponseEntity.status(CREATED).body(identifiers);
-    }
-
-    @DeleteMapping(value = "/batch")
-    public ResponseEntity<Void> batchDelete(@RequestBody Long[] identifiers) {
-        logger.info("Received an inbound request to delete a batch[{}] of samples", identifiers.length);
-        service.batchDelete(identifiers);
-
-        return noContent().build();
     }
 
     @GetMapping(value = "/batch/{page}/{size}")
@@ -107,6 +99,14 @@ public class SampleApi {
         return service.findByPage(page, size)
                 .map(ResponseEntity::ok)
                 .orElseThrow();
+    }
+
+    @DeleteMapping(value = "/batch")
+    public ResponseEntity<Void> deleteBatch(@RequestBody Long[] identifiers) {
+        logger.info("Received an inbound request to delete a batch[{}] of samples", identifiers.length);
+        service.deleteBatch(identifiers);
+
+        return noContent().build();
     }
 
     @GetMapping

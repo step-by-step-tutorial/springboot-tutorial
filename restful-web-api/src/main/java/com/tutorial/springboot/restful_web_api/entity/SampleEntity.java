@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class SampleEntity extends Entity<Long, SampleEntity> {
 
@@ -47,6 +46,7 @@ public class SampleEntity extends Entity<Long, SampleEntity> {
         return this;
     }
 
+    @Override
     public SampleEntity updateFrom(SampleEntity newOne) {
         super.updateFrom(newOne);
         code(newOne.code());
@@ -55,30 +55,5 @@ public class SampleEntity extends Entity<Long, SampleEntity> {
         return this;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        var that = (SampleEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(version, that.version);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, version);
-    }
-
-    @Override
-    public String toString() {
-        return """
-                SampleEntity: {
-                     id=%d,
-                     text='%s',
-                     code=%d,
-                     datetime='%s',
-                     version='%s'
-                }
-                """.formatted(id, text, code, datetime, version);
-    }
 }
 

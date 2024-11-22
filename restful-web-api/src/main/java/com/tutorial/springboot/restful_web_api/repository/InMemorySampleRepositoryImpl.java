@@ -5,10 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.tutorial.springboot.restful_web_api.repository.InMemoryDatabase.SAMPLE_ID_GENERATOR;
@@ -27,7 +24,7 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
         shouldNotBeNull(entity, String.format("%s should not be null", SampleEntity.class.getSimpleName()));
 
         final var id = SAMPLE_ID_GENERATOR.incrementAndGet();
-        SAMPLE_TABLE.putIfAbsent(id, entity.id(id));
+        SAMPLE_TABLE.putIfAbsent(id, entity.id(id).withInitialVersion());
 
         return Optional.of(id);
     }
@@ -61,24 +58,18 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
 
     @Override
     public boolean exists(Long id) {
+        shouldNotBeNull(id, String.format("ID of %s should not be null", SampleEntity.class.getSimpleName()));
         return SAMPLE_TABLE.containsKey(id);
     }
 
     @Override
-    public Stream<Long> insertBatch(SampleEntity[] entities) {
+    public List<Long> insertBatch(SampleEntity[] entities) {
         shouldNotBeNull(entities, String.format("List of %s should not be null", SampleEntity.class.getSimpleName()));
         shouldNotBeNullOrEmpty(entities, String.format("List of %s should not be empty", SampleEntity.class.getSimpleName()));
 
-        var identifiers = new ArrayList<Long>(entities.length);
-        for (SampleEntity entity : entities) {
-            var id = insert(entity);
-            if (id.isPresent()) {
-                identifiers.add(id.get());
-            } else {
-                throw new RuntimeException("Failed to insert entity: " + entity);
-            }
-        }
-        return identifiers.stream();
+        return Arrays.stream(entities)
+                .map(entity -> insert(entity).orElseThrow(() -> new RuntimeException(String.format("Failed to insert entity %s", entity))))
+                .toList();
     }
 
     @Override

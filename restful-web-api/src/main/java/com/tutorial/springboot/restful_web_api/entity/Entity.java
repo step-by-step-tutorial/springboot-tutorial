@@ -3,6 +3,8 @@ package com.tutorial.springboot.restful_web_api.entity;
 import java.beans.Transient;
 import java.util.Objects;
 
+import static com.tutorial.springboot.restful_web_api.util.JsonUtils.toJsonString;
+
 @SuppressWarnings(value = {"unchecked"})
 public abstract class Entity<ID, SELF extends Entity<ID, SELF>> {
 
@@ -47,5 +49,23 @@ public abstract class Entity<ID, SELF extends Entity<ID, SELF>> {
         }
         increaseVersion();
         return (SELF) this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        var that = (SampleEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(version, that.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, version);
+    }
+
+    @Override
+    public String toString() {
+        return toJsonString(this);
     }
 }
