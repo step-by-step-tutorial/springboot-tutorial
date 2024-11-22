@@ -44,6 +44,7 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-k
 ```bash
 
 ```
+
 ```bash
 mvn test
 http://securityoauth2server.localhost/oauth2/authorize?response_type=code&client_id=testClient&redirect_uri=http://securityoauth2client.localhost/login/oauth2/code/testClient&scope=read

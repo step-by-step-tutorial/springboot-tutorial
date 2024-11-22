@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface ScopeRepository extends JpaRepository<Scope, Long> {
     Optional<Scope> findByName(String name);
+
     Boolean existsByName(String name);
 }
 

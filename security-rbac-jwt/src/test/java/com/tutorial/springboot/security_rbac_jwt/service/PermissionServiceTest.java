@@ -5,18 +5,20 @@ import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionService;
 import com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils;
 import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.DtoStubFactory;
 import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.loginToTestEnv;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@ActiveProfiles({"test","h2"})
+@ActiveProfiles({"test", "h2"})
 public class PermissionServiceTest {
 
     @Autowired

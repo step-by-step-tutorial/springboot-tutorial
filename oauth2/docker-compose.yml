@@ -1,28 +1,28 @@
 version: "3.8"
 
 services:
-#  postgres:
-#    image: postgres:13.9-alpine
-#    container_name: postgres
-#    hostname: postgres
-#    restart: always
-#    ports:
-#      - "5432:5432"
-#    environment:
-#      POSTGRES_USER: user
-#      POSTGRES_PASSWORD: password
-#      POSTGRES_DB: test_db
-#  pgadmin:
-#    image: dpage/pgadmin4
-#    container_name: pgadmin
-#    hostname: pgadmin
-#    restart: always
-#    ports:
-#      - "8000:80"
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-#      PGADMIN_DEFAULT_PASSWORD: "password"
-#      PGADMIN_CONFIG_SERVER_MODE: "False"
+  #  postgres:
+  #    image: postgres:13.9-alpine
+  #    container_name: postgres
+  #    hostname: postgres
+  #    restart: always
+  #    ports:
+  #      - "5432:5432"
+  #    environment:
+  #      POSTGRES_USER: user
+  #      POSTGRES_PASSWORD: password
+  #      POSTGRES_DB: test_db
+  #  pgadmin:
+  #    image: dpage/pgadmin4
+  #    container_name: pgadmin
+  #    hostname: pgadmin
+  #    restart: always
+  #    ports:
+  #      - "8000:80"
+  #    environment:
+  #      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+  #      PGADMIN_DEFAULT_PASSWORD: "password"
+  #      PGADMIN_CONFIG_SERVER_MODE: "False"
   nginx:
     container_name: nginx
     image: nginx
@@ -49,12 +49,12 @@ services:
       RESOURCE_SERVER: "http://securityoauth2server:8080"
       CLIENT_APP: "http://securityoauth2client.localhost"
       APP_PROFILES: h2
-#      DATABASE_USERNAME: user
-#      DATABASE_PASSWORD: password
-#      POSTGRESQL_HOST: postgres
-#      POSTGRESQL_PORT: 5432
-#      DATABASE_NAME: test_db
-#      DATABASE_SCHEMA: user_management
+  #      DATABASE_USERNAME: user
+  #      DATABASE_PASSWORD: password
+  #      POSTGRESQL_HOST: postgres
+  #      POSTGRESQL_PORT: 5432
+  #      DATABASE_NAME: test_db
+  #      DATABASE_SCHEMA: user_management
   securityoauth2server:
     image: samanalishiri/securityoauth2server:latest
     build:

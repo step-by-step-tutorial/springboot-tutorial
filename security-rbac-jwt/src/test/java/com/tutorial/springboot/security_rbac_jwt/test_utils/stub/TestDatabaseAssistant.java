@@ -21,7 +21,7 @@ import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestU
 
 @Component
 @Transactional
-@ActiveProfiles({"test","h2"})
+@ActiveProfiles({"test", "h2"})
 public class TestDatabaseAssistant {
 
     @Autowired

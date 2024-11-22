@@ -14,6 +14,7 @@
             background-color: #f8f9fa;
             font-family: 'Arial', sans-serif;
         }
+
         .details-container {
             max-width: 800px;
             background: #ffffff;
@@ -21,43 +22,52 @@
             border-radius: 10px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
+
         .details-header {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 20px;
             text-align: center;
         }
+
         .details-section {
             margin-bottom: 20px;
         }
+
         .details-section h5 {
             font-size: 1.5rem;
             font-weight: 600;
             color: #007bff;
             margin-bottom: 10px;
         }
+
         .details-section p, .details-section li {
             font-size: 1.2rem;
         }
+
         .table {
             width: 100%;
             margin-bottom: 20px;
             border-collapse: collapse;
         }
+
         .table th, .table td {
             font-size: 1.2rem;
             text-align: left;
             padding: 10px;
             border: 1px solid #dee2e6;
         }
+
         .logout-btn {
             display: flex;
             justify-content: center;
             margin-top: 30px;
         }
+
         .logout-btn form {
             display: inline;
         }
+
         .btn-stylish {
             background-color: #dc3545;
             color: white;
@@ -67,6 +77,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: background-color 0.3s, box-shadow 0.3s;
         }
+
         .btn-stylish:hover {
             background-color: #c82333;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
@@ -114,7 +125,7 @@
 
     <div class="logout-btn">
         <form action="/logout" method="POST">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit" class="btn btn-stylish">Logout</button>
         </form>
     </div>

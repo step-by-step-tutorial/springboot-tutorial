@@ -37,6 +37,6 @@ public class SourceTopicService {
                 .build();
 
         template.send(kafkaMessage);
-        logger.info("Message sent to {}: {}",topic, message);
+        logger.info("Message sent to {}: {}", topic, message);
     }
 }

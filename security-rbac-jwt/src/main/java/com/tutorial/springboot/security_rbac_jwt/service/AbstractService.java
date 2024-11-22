@@ -3,7 +3,6 @@ package com.tutorial.springboot.security_rbac_jwt.service;
 import com.tutorial.springboot.security_rbac_jwt.dto.AbstractDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.AbstractEntity;
 import com.tutorial.springboot.security_rbac_jwt.transformer.AbstractTransformer;
-import com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
