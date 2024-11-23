@@ -40,18 +40,21 @@ mvn  test
 
 ```shell
 # Unix/Linux
+mvn  spring-boot:run
 ./e2eTest/shell/e2etest.sh
 ```
 
 ```shell
 # Windows
+mvn  spring-boot:run
 ./e2eTest/shell/e2etest.bat
 ```
 
 ##### Postman CLI
 
 ```shell
-postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/Spring Boot Tutorial.postman_environment.json'
+mvn  spring-boot:run
+postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_environment.json'
 ```
 
 ### Run
