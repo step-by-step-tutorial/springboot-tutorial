@@ -112,7 +112,7 @@ public class SampleApi {
     @GetMapping
     public ResponseEntity<List<SampleDto>> findAll() {
         logger.info("Received an inbound request to retrieve all {}", SampleDto.class.getSimpleName());
-        final var items = service.selectAll();
+        final var items = service.findAll();
 
         return ok(items);
     }

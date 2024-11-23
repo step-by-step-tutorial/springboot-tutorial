@@ -108,7 +108,7 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     }
 
     @Override
-    public List<SampleDto> selectAll() {
+    public List<SampleDto> findAll() {
         return repository.selectAll()
                 .map(SampleTransformer::toDto)
                 .toList();

@@ -77,7 +77,7 @@ class InMemorySampleServiceImplTest {
         void givenNothing_whenFindAll_thenReturnListOfSample() {
             systemUnderTest.saveBatch(TestFixture.multiSample());
 
-            var actual = systemUnderTest.selectAll();
+            var actual = systemUnderTest.findAll();
 
             assertNotNull(actual);
             assertFalse(actual.isEmpty());
@@ -244,7 +244,7 @@ class InMemorySampleServiceImplTest {
             systemUnderTest.saveBatch(TestFixture.multiSample());
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteAll();
-                return systemUnderTest.selectAll();
+                return systemUnderTest.findAll();
             });
             assertEquals(0, actual.size());
         }

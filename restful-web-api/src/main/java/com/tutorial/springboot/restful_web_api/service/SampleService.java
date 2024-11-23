@@ -25,7 +25,7 @@ public interface SampleService<ID, DTO> {
 
     void deleteBatch(ID[] identifiers);
 
-    List<DTO> selectAll();
+    List<DTO> findAll();
 
     void deleteAll();
 
