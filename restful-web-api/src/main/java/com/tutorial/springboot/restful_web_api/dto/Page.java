@@ -5,10 +5,10 @@ import java.util.List;
 public record Page<T>(
         List<T> content,
 
-        int page,
+        int index,
 
         int totalItems,
 
-        int totalPages
+        int size
 ) {
 }

@@ -13,8 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
+import static com.tutorial.springboot.restful_web_api.TestFixture.multiSample;
+import static com.tutorial.springboot.restful_web_api.TestFixture.oneSample;
 import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntities;
 import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,14 +40,14 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenSample_whenInsert_thenReturnId() {
-            var givenSample = toEntity(TestFixture.oneSample());
+            var givenSample = toEntity(oneSample());
             var actual = assertDoesNotThrow(() -> systemUnderTest.insert(givenSample));
             assertNotNull(actual);
         }
 
         @Test
         void givenListOfSample_whenInsertAll_thenReturnListOfId() {
-            var givenSamples = Arrays.stream(TestFixture.multiSample())
+            var givenSamples = Arrays.stream(multiSample())
                     .map(SampleTransformer::toEntity)
                     .toArray(SampleEntity[]::new);
             var actual = assertDoesNotThrow(() -> systemUnderTest.insertBatch(givenSamples));
@@ -76,7 +79,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenId_whenSelectById_thenReturnSample() {
-            var preparedEntity = toEntity(TestFixture.oneSample());
+            var preparedEntity = toEntity(oneSample());
             var givenId = systemUnderTest.insert(preparedEntity).orElseThrow();
             var actual = systemUnderTest.selectById(givenId).orElseThrow();
             assertNotNull(actual);
@@ -84,7 +87,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenNothing_whenSelectAll_thenReturnListOfSample() {
-            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            var givenEntities = toEntities(multiSample());
             systemUnderTest.insertBatch(givenEntities);
             var actual = systemUnderTest.selectAll();
             assertNotNull(actual);
@@ -93,7 +96,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenListOfId_whenSelectAll_thenReturnListOfSample() {
-            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            var givenEntities = toEntities(multiSample());
             var givenListOfId = systemUnderTest.insertBatch(givenEntities);
             var actual = systemUnderTest.selectBatch(givenListOfId.toArray(Long[]::new));
             assertNotNull(actual);
@@ -118,11 +121,39 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenNothing_whenGetIdentifiers_thenReturnListOfId() {
-            var givenEntities = toEntities(TestFixture.multiSample());
+            var givenEntities = toEntities(multiSample());
             systemUnderTest.insertBatch(givenEntities);
             var actual = systemUnderTest.selectIdentifiers();
             assertNotNull(actual);
             assertFalse(actual.toList().isEmpty());
+        }
+
+        @Test
+        void givenPageWhenSelectByPageThenReturnPagedSamples() {
+            systemUnderTest.insertBatch(toEntities(multiSample()));
+
+            var givenPage = 0;
+            var givenSize = 2;
+
+            var actual = systemUnderTest.selectByPage(givenPage, givenSize);
+
+            assertNotNull(actual);
+            assertTrue(actual.findAny().isPresent());
+        }
+
+        @Test
+        void givenEmptyTableWhenCountThenReturnZero() {
+            var actual = systemUnderTest.count();
+            assertEquals(0, actual);
+        }
+
+        @Test
+        void givenNonEmptyTableWhenCountThenReturnCorrectCount() {
+            var expectedCount = systemUnderTest.insertBatch(toEntities(multiSample())).size();
+
+            var actual = systemUnderTest.count();
+
+            assertEquals(expectedCount, actual);
         }
 
     }
@@ -132,7 +163,7 @@ class InMemorySampleRepositoryImplTest {
     class ExistsSampleTests {
         @Test
         void givenValidId_whenCheckExistence_thenReturnTrue() {
-            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+            var givenId = systemUnderTest.insert(toEntity(oneSample())).orElseThrow();
             var actual = systemUnderTest.exists(givenId);
             assertTrue(actual);
         }
@@ -150,7 +181,7 @@ class InMemorySampleRepositoryImplTest {
     class UpdateSampleTests {
         @Test
         void givenSampleAndId_whenUpdate_thenUpdatedSuccessfully() {
-            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+            var givenId = systemUnderTest.insert(toEntity(oneSample())).orElseThrow();
             var givenSample = systemUnderTest.selectById(givenId).orElseThrow()
                     .id(givenId)
                     .code(TestFixture.randomCodeGenerator.nextInt())
@@ -169,7 +200,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenSampleWithoutIdAndId_whenUpdate_thenUpdatedSuccessfully() {
-            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+            var givenId = systemUnderTest.insert(toEntity(oneSample())).orElseThrow();
             var givenSample = systemUnderTest.selectById(givenId).orElseThrow()
                     .code(TestFixture.randomCodeGenerator.nextInt())
                     .text("updated text")
@@ -187,8 +218,8 @@ class InMemorySampleRepositoryImplTest {
         }
 
         @Test
-        void givenSampleWithDifferentIdAndId_whenUpdate_thenIllegalStateException() {
-            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+        void givenSampleWithDifferentIdAndId_whenUpdate_thenValidationException() {
+            var givenId = systemUnderTest.insert(toEntity(oneSample())).orElseThrow();
             var givenSample = new SampleEntity()
                     .id(givenId + 1)
                     .code(TestFixture.randomCodeGenerator.nextInt())
@@ -200,6 +231,18 @@ class InMemorySampleRepositoryImplTest {
             assertNotNull(actual);
             assertNotNull(actual.getMessage());
         }
+
+        @Test
+        void givenInvalidId_whenUpdate_thenNoSuchElementException() {
+            var givenId = -1L;
+            var givenSample = toEntity(oneSample()).id(givenId);
+
+            var actual = assertThrows(NoSuchElementException.class, () -> systemUnderTest.update(givenId, givenSample));
+
+            assertNotNull(actual);
+            assertNotNull(actual.getMessage());
+        }
+
     }
 
     @Nested
@@ -207,7 +250,7 @@ class InMemorySampleRepositoryImplTest {
     class DeleteSampleTests {
         @Test
         void givenId_whenDeleteById_thenDeletedSuccessfully() {
-            var givenId = systemUnderTest.insert(toEntity(TestFixture.oneSample())).orElseThrow();
+            var givenId = systemUnderTest.insert(toEntity(oneSample())).orElseThrow();
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteById(givenId);
                 return systemUnderTest.exists(givenId);
@@ -217,7 +260,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenIdentifiers_whenDeleteAllById_thenAllDeletedSuccessfully() {
-            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            var givenEntities = toEntities(multiSample());
             var givenIdentifiers = systemUnderTest.insertBatch(givenEntities).toArray(Long[]::new);
             assertDoesNotThrow(() -> systemUnderTest.deleteBatch(givenIdentifiers));
             Stream.of(givenIdentifiers)
@@ -242,7 +285,7 @@ class InMemorySampleRepositoryImplTest {
 
         @Test
         void givenSample_whenTruncate_thenAllDeletedSuccessfully() {
-            var givenEntities = Arrays.stream(TestFixture.multiSample()).map(SampleTransformer::toEntity).toArray(SampleEntity[]::new);
+            var givenEntities = toEntities(multiSample());
             systemUnderTest.insertBatch(givenEntities);
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteAll();

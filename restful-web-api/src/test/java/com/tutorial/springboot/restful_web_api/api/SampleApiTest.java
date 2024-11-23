@@ -489,6 +489,19 @@ class SampleApiTest {
         }
 
         @Test
+        void givenInvalidId_whenHead_thenReturnOkStatus() {
+            var givenId = -1L;
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .baseUri(HOST).port(port)
+                    .basePath(ROOT_URI + "/{id}").pathParam("id", givenId)
+                    .when().head()
+                    .then()
+                    .statusCode(NOT_FOUND.value());
+        }
+
+        @Test
         void givenNothing_whenOption_thenReturnAllowedHttpVerbsOnOkStatus() {
             RestAssured.given()
                     .contentType(ContentType.JSON)

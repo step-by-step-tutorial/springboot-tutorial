@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
+import static com.tutorial.springboot.restful_web_api.TestFixture.oneSample;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -121,6 +123,24 @@ class InMemorySampleServiceImplTest {
             assertFalse(actual.isEmpty());
         }
 
+        @Test
+        void givenPage_whenSelectBatch_thenReturnPagedSamples() {
+            systemUnderTest.saveBatch(TestFixture.multiSample());
+
+            var givenPage = 0;
+            var givenSize = 2;
+
+            var actual = systemUnderTest.findBatch(givenPage, givenSize);
+
+            assertNotNull(actual);
+            assertTrue(actual.isPresent());
+            actual.ifPresent(page -> {
+                assertEquals(0, page.index());
+                assertTrue(page.totalItems() > 0);
+                assertTrue(page.size() > 0);
+                assertFalse(page.content().isEmpty());
+            });
+        }
     }
 
     @Nested
@@ -196,6 +216,17 @@ class InMemorySampleServiceImplTest {
                     .build();
 
             var actual = assertThrows(ValidationException.class, () -> systemUnderTest.update(givenId, givenSample));
+
+            assertNotNull(actual);
+            assertNotNull(actual.getMessage());
+        }
+
+        @Test
+        void givenInvalidId_whenUpdate_thenNoSuchElementException() {
+            var givenId = -1L;
+            var givenSample = SampleDto.builder().from(oneSample()).id(givenId).build();
+
+            var actual = assertThrows(NoSuchElementException.class, () -> systemUnderTest.update(givenId, givenSample));
 
             assertNotNull(actual);
             assertNotNull(actual.getMessage());

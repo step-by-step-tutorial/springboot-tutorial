@@ -1,5 +1,6 @@
 package com.tutorial.springboot.restful_web_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -47,6 +48,7 @@ public class SampleEntity extends Entity<Long, SampleEntity> {
     }
 
     @Override
+    @JsonIgnore
     public SampleEntity updateFrom(SampleEntity newOne) {
         super.updateFrom(newOne);
         code(newOne.code());

@@ -21,7 +21,7 @@ public interface SampleService<ID, DTO> {
 
     List<DTO> findByIdentifiers(ID[] identifiers);
 
-    Optional<Page<DTO>> findByPage(int page, int size);
+    Optional<Page<DTO>> findBatch(int page, int size);
 
     void deleteBatch(ID[] identifiers);
 

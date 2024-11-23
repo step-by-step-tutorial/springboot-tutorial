@@ -46,7 +46,10 @@ public class InMemorySampleRepositoryImpl implements SampleRepository<Long, Samp
         }
         selectById(id).ifPresentOrElse(
                 entity -> SAMPLE_TABLE.put(id, entity.updateFrom(newOne)),
-                () -> logger.warn("{} Entity with id {} not found", SampleEntity.class.getSimpleName(), id)
+                () -> {
+                    logger.warn("{} Entity with id {} not found", SampleEntity.class.getSimpleName(), id);
+                    throw new NoSuchElementException(String.format("%s Entity with id %s not found", SampleEntity.class.getSimpleName(), id));
+                }
         );
     }
 

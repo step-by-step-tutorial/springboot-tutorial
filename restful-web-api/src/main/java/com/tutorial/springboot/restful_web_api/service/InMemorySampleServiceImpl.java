@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntities;
@@ -54,7 +55,8 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
         if (exists) {
             repository.update(id, toEntity(dto));
         } else {
-            logger.warn("Sample Entity with id {} not found", id);
+            logger.warn("{} Entity with id {} not found", SampleDto.class.getSimpleName(), id);
+            throw new NoSuchElementException(String.format("%s Entity with id %s not found", SampleDto.class.getSimpleName(), id));
         }
     }
 
@@ -89,7 +91,7 @@ public class InMemorySampleServiceImpl implements SampleService<Long, SampleDto>
     }
 
     @Override
-    public Optional<Page<SampleDto>> findByPage(int page, int size) {
+    public Optional<Page<SampleDto>> findBatch(int page, int size) {
         var items = repository.selectByPage(page, size)
                 .map(SampleTransformer::toDto)
                 .toList();

@@ -96,7 +96,7 @@ public class SampleApi {
     @GetMapping(value = "/batch/{page}/{size}")
     public ResponseEntity<Page<SampleDto>> findBatch(@PathVariable int page, @PathVariable int size) {
         logger.info("Received an inbound request to find a page[{},{}] of {}", page, size, SampleDto.class.getSimpleName());
-        return service.findByPage(page, size)
+        return service.findBatch(page, size)
                 .map(ResponseEntity::ok)
                 .orElseThrow();
     }
