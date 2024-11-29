@@ -1,14 +1,12 @@
 package com.tutorial.springboot.restful_web_api.util;
 
 import com.tutorial.springboot.restful_web_api.entity.SampleEntity;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Json Utilities Unit Tests")
 public class JsonUtilsTest {
 
     static SampleEntity createObject() {

@@ -11,6 +11,7 @@ import java.util.stream.IntStream;
 public class TestFixture {
 
     public static final Random randomCodeGenerator = new Random();
+
     public static final Random randomSizeGenerator = new Random();
 
     private TestFixture() {

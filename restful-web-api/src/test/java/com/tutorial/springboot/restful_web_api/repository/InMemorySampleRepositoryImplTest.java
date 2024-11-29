@@ -5,7 +5,6 @@ import com.tutorial.springboot.restful_web_api.entity.SampleEntity;
 import com.tutorial.springboot.restful_web_api.exception.ValidationException;
 import com.tutorial.springboot.restful_web_api.transformer.SampleTransformer;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import static com.tutorial.springboot.restful_web_api.transformer.SampleTransfor
 import static com.tutorial.springboot.restful_web_api.transformer.SampleTransformer.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Sample Repository Unit tests")
 @SpringBootTest
 class InMemorySampleRepositoryImplTest {
 
@@ -35,7 +33,6 @@ class InMemorySampleRepositoryImplTest {
     }
 
     @Nested
-    @DisplayName("insert on/all")
     class InsertSampleTests {
 
         @Test
@@ -74,7 +71,6 @@ class InMemorySampleRepositoryImplTest {
     }
 
     @Nested
-    @DisplayName("select one/all")
     class SelectSampleTests {
 
         @Test
@@ -159,7 +155,6 @@ class InMemorySampleRepositoryImplTest {
     }
 
     @Nested
-    @DisplayName("check existence")
     class ExistsSampleTests {
         @Test
         void givenValidId_whenCheckExistence_thenReturnTrue() {
@@ -177,7 +172,6 @@ class InMemorySampleRepositoryImplTest {
     }
 
     @Nested
-    @DisplayName("update one")
     class UpdateSampleTests {
         @Test
         void givenSampleAndId_whenUpdate_thenUpdatedSuccessfully() {
@@ -246,7 +240,6 @@ class InMemorySampleRepositoryImplTest {
     }
 
     @Nested
-    @DisplayName("delete one/all")
     class DeleteSampleTests {
         @Test
         void givenId_whenDeleteById_thenDeletedSuccessfully() {

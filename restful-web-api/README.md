@@ -28,39 +28,34 @@ mvn clean package -DskipTests=true
 
 ### Test
 
-#### Unit Test
-
 ```bash
 mvn  test
-```
-
-#### E2E Test
-
-##### Command Line
-
-```shell
-# Unix/Linux
-mvn  spring-boot:run
-./e2eTest/shell/e2etest.sh
-```
-
-```shell
-# Windows
-mvn  spring-boot:run
-./e2eTest/shell/e2etest.bat
-```
-
-##### Postman CLI
-
-```shell
-mvn  spring-boot:run
-postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_environment.json'
 ```
 
 ### Run
 
 ```shell
 mvn  spring-boot:run
+```
+
+### E2E Test
+
+#### Command Line
+
+```shell
+# Unix/Linux
+./e2eTest/shell/e2etest.sh
+```
+
+```shell
+# Windows
+./e2eTest/shell/e2etest.bat
+```
+
+#### Postman CLI
+
+```shell
+postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_environment.json'
 ```
 
 * To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator).

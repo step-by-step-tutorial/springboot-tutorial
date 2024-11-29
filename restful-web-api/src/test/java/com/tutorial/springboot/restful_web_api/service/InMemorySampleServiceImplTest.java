@@ -5,7 +5,6 @@ import com.tutorial.springboot.restful_web_api.dto.SampleDto;
 import com.tutorial.springboot.restful_web_api.exception.ValidationException;
 import com.tutorial.springboot.restful_web_api.repository.InMemoryDatabase;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,7 +143,6 @@ class InMemorySampleServiceImplTest {
     }
 
     @Nested
-    @DisplayName("check existence")
     class ExistsSampleTests {
         @Test
         void givenValidId_whenCheckExistence_thenReturnTrue() {
@@ -162,7 +160,6 @@ class InMemorySampleServiceImplTest {
     }
 
     @Nested
-    @DisplayName("update one")
     class UpdateSampleTests {
         @Test
         void givenSampleAndId_whenUpdate_thenUpdatedSuccessfully() {
@@ -234,7 +231,6 @@ class InMemorySampleServiceImplTest {
     }
 
     @Nested
-    @DisplayName("delete one/all")
     class DeleteSampleTests {
         @Test
         void givenId_whenDeleteById_thenDeletedSuccessfully() {

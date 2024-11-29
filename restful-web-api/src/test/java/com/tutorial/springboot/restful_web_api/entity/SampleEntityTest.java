@@ -54,7 +54,9 @@ class SampleEntityTest {
         var givenEntity = createEntity();
         var givenOtherEntity = createEntity();
 
-        assertTrue(givenEntity.equals(givenOtherEntity));
+        var actual = givenEntity.equals(givenOtherEntity);
+
+        assertTrue(actual);
     }
 
     @Test
@@ -62,36 +64,41 @@ class SampleEntityTest {
         var givenEntity = createEntity();
         var givenOtherEntity = createOtherEntity();
 
-        assertFalse(givenEntity.equals(givenOtherEntity));
+        var actual = givenEntity.equals(givenOtherEntity);
+
+        assertFalse(actual);
     }
 
     @Test
     void givenNullAndEntity_whenEquals_thenNotEqual() {
         var givenEntity = createEntity();
-        SampleEntity givenOtherEntity = null;
 
-        assertFalse(givenEntity.equals(givenOtherEntity));
+        var actual = givenEntity.equals(null);
+
+        assertFalse(actual);
     }
 
     @Test
     void givenTwoDifferentType_whenEquals_thenNotEqual() {
         var givenEntity = createEntity();
-        var givenOther = SampleDto.builder().build();
+        var givenOtherType = SampleDto.builder().build();
 
-        assertFalse(givenEntity.equals(givenOther));
+        var actual = givenEntity.equals(givenOtherType);
+
+        assertFalse(actual);
     }
 
     @Test
     void givenEntityAndOtherEntity_whenUpdateFrom_thenUpdated() {
         var givenEntity = createEntity();
-        var givenOtherEntity = createOtherEntity();
+        var givenNewOneEntity = createOtherEntity();
 
-        givenEntity.updateFrom(givenOtherEntity);
+        givenEntity.updateFrom(givenNewOneEntity);
 
         assertEquals(2, givenEntity.version());
-        assertEquals(givenOtherEntity.text(), givenEntity.text());
-        assertEquals(givenOtherEntity.code(), givenEntity.code());
-        assertEquals(givenOtherEntity.datetime(), givenEntity.datetime());
+        assertEquals(givenNewOneEntity.text(), givenEntity.text());
+        assertEquals(givenNewOneEntity.code(), givenEntity.code());
+        assertEquals(givenNewOneEntity.datetime(), givenEntity.datetime());
     }
 
     @Test
