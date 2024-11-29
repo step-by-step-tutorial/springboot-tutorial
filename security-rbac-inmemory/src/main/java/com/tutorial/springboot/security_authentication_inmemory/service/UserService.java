@@ -1,6 +1,7 @@
 package com.tutorial.springboot.security_authentication_inmemory.service;
 
 import com.tutorial.springboot.security_authentication_inmemory.dto.UserDto;
+import com.tutorial.springboot.security_authentication_inmemory.exception.UserExistsException;
 import com.tutorial.springboot.security_authentication_inmemory.repository.UserRepository;
 import org.slf4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +29,12 @@ public class UserService {
     }
 
     public void save(UserDto dto) {
+        boolean userExists = userRepository.userExists(dto.username());
+        if (userExists) {
+            logger.error("User with username [{}] already exists", dto.username());
+            throw new UserExistsException(dto.username());
+        }
+
         var entity = User.builder()
                 .username(dto.username())
                 .passwordEncoder(passwordEncoder::encode)

@@ -18,19 +18,6 @@ public class UserApi {
         this.userService = userService;
     }
 
-    @GetMapping("me")
-    public ResponseEntity<String> me() {
-        return ResponseEntity.ok(String.format("Current user is %s", userService.currentUsername()));
-    }
-
-
-    @GetMapping("{username}")
-    public ResponseEntity<UserDto> findByUsername(@PathVariable String username) {
-        return userService.findByUsername(username)
-                .map(ResponseEntity::ok)
-                .orElseThrow();
-    }
-
     @PostMapping
     public ResponseEntity<String> save(@RequestBody UserDto dto) {
         userService.save(dto);
@@ -38,7 +25,19 @@ public class UserApi {
                 .path("/{username}")
                 .buildAndExpand(dto.username())
                 .toUri();
-        return created(uri).body("User created");
+        return created(uri).body(String.format("User [%s] created", dto.username()));
+    }
+
+    @GetMapping("me")
+    public ResponseEntity<String> me() {
+        return ResponseEntity.ok(String.format("Current user is [%s]", userService.currentUsername()));
+    }
+
+    @GetMapping("{username}")
+    public ResponseEntity<UserDto> findByUsername(@PathVariable String username) {
+        return userService.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElseThrow();
     }
 
 }

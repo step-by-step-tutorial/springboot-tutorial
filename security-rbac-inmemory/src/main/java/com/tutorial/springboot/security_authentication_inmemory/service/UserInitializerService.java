@@ -23,7 +23,7 @@ public class UserInitializerService implements CommandLineRunner {
     @Override
     public void run(String... args) {
         logger.info("Initializing static users");
-        userService.save(new UserDto().username("user").password("password").roles(List.of("USER")));
         userService.save(new UserDto().username("admin").password("password").roles(List.of("USER", "ADMIN")));
+        userService.save(new UserDto().username("user").password("password").roles(List.of("USER")));
     }
 }

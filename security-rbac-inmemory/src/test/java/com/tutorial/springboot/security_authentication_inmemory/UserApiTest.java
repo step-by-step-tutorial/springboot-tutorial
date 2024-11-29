@@ -24,56 +24,80 @@ public class UserApiTest {
                 .baseUri("http://localhost").port(port).basePath("/api/v1/users/me")
                 .when().get()
                 .then()
-                .statusCode(401);
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test
     public void givenUserCredentials_whenAuthentication_thenReturnOk() {
-        var givenUsername = "user";
-        var givenPassword = "password";
+        var givenAuthUsername = "user";
+        var givenAuthPassword = "password";
+
         given()
-                .auth().basic(givenUsername, givenPassword)
+                .auth().basic(givenAuthUsername, givenAuthPassword)
                 .baseUri("http://localhost").port(port).basePath("/api/v1/users/me")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body(equalTo("Current user is user"));
+                .body(equalTo("Current user is [user]"));
     }
 
     @Test
     public void givenAdminCredentials_whenAuthentication_thenReturnOk() {
-        var givenUsername = "admin";
-        var givenPassword = "password";
+        var givenAuthUsername = "admin";
+        var givenAuthPassword = "password";
+
         given()
-                .auth().basic(givenUsername, givenPassword)
+                .auth().basic(givenAuthUsername, givenAuthPassword)
                 .baseUri("http://localhost").port(port).basePath("/api/v1/users/me")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body(equalTo("Current user is admin"));
+                .body(equalTo("Current user is [admin]"));
     }
 
     @Test
     public void givenUser_whenSave_thenReturnCreateStatus() {
-        var givenUsername = "admin";
-        var givenPassword = "password";
+        var givenAuthUsername = "admin";
+        var givenAuthPassword = "password";
+        var givenNewUser = new UserDto().username("test").password("password").roles(List.of("USER", "admin"));
+
         given()
-                .auth().basic(givenUsername, givenPassword)
+                .auth().basic(givenAuthUsername, givenAuthPassword)
                 .contentType(ContentType.JSON)
                 .baseUri("http://localhost").port(port).basePath("/api/v1/users")
-                .body(new UserDto().username("Saman").password("password").roles(List.of("USER", "admin")))
+                .body(givenNewUser)
                 .when().post()
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
-                .body(equalTo("User created"));
+                .body(equalTo("User [test] created"));
+    }
+
+
+    @Test
+    public void givenExistsUser_whenSave_thenReturnBadRequestError() {
+        var givenAuthUsername = "admin";
+        var givenAuthPassword = "password";
+        var givenNewUser = new UserDto().username("user").password("password").roles(List.of("USER", "admin"));
+
+        given()
+                .auth().basic(givenAuthUsername, givenAuthPassword)
+                .contentType(ContentType.JSON)
+                .baseUri("http://localhost").port(port).basePath("/api/v1/users")
+                .body(givenNewUser)
+                .when().post()
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", equalTo("User with username [user] already exists"));
     }
 
     @Test
     public void givenUsername_whenFindByUsername_thenReturnUserDto() {
+        var givenAuthUsername = "admin";
+        var givenAuthPassword = "password";
         var givenUsername = "user";
-        var givenPassword = "password";
+
         given()
-                .auth().basic(givenUsername, givenPassword)
+                .auth().basic(givenAuthUsername, givenAuthPassword)
                 .baseUri("http://localhost").port(port)
                 .basePath("/api/v1/users/{username}").pathParam("username", givenUsername)
                 .when().get()
@@ -82,5 +106,21 @@ public class UserApiTest {
                 .body("username", equalTo(givenUsername))
                 .body("roles.size()", is(1))
                 .body("roles", hasItems("ROLE_USER"));
+    }
+
+    @Test
+    public void givenInvalidUsername_whenFindByUsername_thenReturnNotFoundError() {
+        var givenAuthUsername = "admin";
+        var givenAuthPassword = "password";
+        var givenUsername = "invalid";
+
+        given()
+                .auth().basic(givenAuthUsername, givenAuthPassword)
+                .baseUri("http://localhost").port(port)
+                .basePath("/api/v1/users/{username}").pathParam("username", givenUsername)
+                .when().get()
+                .then()
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", equalTo("User with username [invalid] not found"));
     }
 }
