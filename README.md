@@ -50,7 +50,8 @@ This tutorial provides many best practises and examples include documentation.
 * step: security-authentication-mfa
 * step: security-authentication-open-id
 * step: security-authorization-acl
-* step: oauth-authorization-code
+* [step: security-oauth](security-oauth2)
+    * authorization-code 
 * step: oauth-password
 * step: oauth-client-credentials
 * step: oauth-Implicit
