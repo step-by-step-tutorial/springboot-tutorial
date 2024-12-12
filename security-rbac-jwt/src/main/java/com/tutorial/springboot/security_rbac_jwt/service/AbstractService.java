@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
         implements CrudService<ID, DTO>, BatchService<ID, DTO>, AllService<ID, DTO> {
 
-    public static final int INIT_VERSION = 1;
+    public static final int INIT_VERSION = 0;
 
     protected final Logger logger = LoggerFactory.getLogger(AbstractService.class);
 
@@ -52,9 +52,20 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
                 .setCreatedAt(LocalDateTime.now())
                 .setVersion(INIT_VERSION);
 
-        var entity = repository.save(transformer.toEntity(dto));
-        logger.info("{} entity saved with ID: {}", entityClass.getSimpleName(), entity.getId());
-        return Optional.of(entity.getId());
+        var newEntity = transformer.toEntity(dto);
+        beforeSave(dto, newEntity);
+        var savedEntity = repository.save(newEntity);
+        afterSave(dto, savedEntity);
+        logger.info("{} entity saved with ID: {}", entityClass.getSimpleName(), savedEntity.getId());
+        return Optional.of(savedEntity.getId());
+    }
+
+    protected void beforeSave(DTO dto, ENTITY entity) {
+
+    }
+
+    protected void afterSave(DTO dto, ENTITY entity) {
+
     }
 
     @Override
@@ -103,10 +114,8 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
         return IntStream.range(0, calculateBatchNumber(dtoList.size()))
                 .mapToObj(i -> selectBatch(dtoList, i))
-                .map(batch -> batch.map(transformer::toEntity))
-                .map(batch -> repository.saveAll(batch.toList()))
-                .flatMap(List::stream)
-                .map(AbstractEntity::getId)
+                .flatMap(stream -> stream.map(this::save))
+                .map(Optional::orElseThrow)
                 .toList();
     }
 

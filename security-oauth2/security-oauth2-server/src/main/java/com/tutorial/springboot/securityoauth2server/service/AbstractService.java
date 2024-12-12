@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
         implements CrudService<ID, DTO>, BatchService<ID, DTO>, AllService<ID, DTO> {
 
-    public static final int INIT_VERSION = 1;
+    public static final int INIT_VERSION = 0;
 
     protected final Logger logger = LoggerFactory.getLogger(AbstractService.class);
 
@@ -45,6 +45,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @Transactional
     public Optional<ID> save(DTO dto) {
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
@@ -116,10 +117,8 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
         return IntStream.range(0, numberOfBatches)
                 .mapToObj(i -> selectBatch(dtoList, i))
-                .map(stream -> stream.map(transformer::toEntity))
-                .map(batch -> repository.saveAll(batch.toList()))
-                .flatMap(List::stream)
-                .map(AbstractEntity::getId)
+                .flatMap(stream -> stream.map(this::save))
+                .map(Optional::orElseThrow)
                 .toList();
     }
 

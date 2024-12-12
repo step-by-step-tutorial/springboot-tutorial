@@ -12,7 +12,9 @@ import com.tutorial.springboot.securityoauth2server.transformer.ClientTransforme
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentUsername;
@@ -65,11 +67,15 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
                 .setToken(jwtToken.token().getBytes())
                 .setExpiration(jwtToken.expiration())
                 .setClient(entity)
-                .setUser(user);
+                .setUser(user)
+                .setCreatedBy(getCurrentUsername())
+                .setCreatedAt(LocalDateTime.now())
+                .setVersion(INIT_VERSION);
 
         accessTokenRepository.save(accessToken);
     }
 
+    @Transactional(readOnly = true)
     public Optional<ClientDto> getByClientId(String clientId) {
         return (ClientRepository.class.cast(repository)).findByClientId(clientId).map(transformer::toDto);
     }

@@ -29,7 +29,7 @@ public final class DtoStubFactory {
         var array = IntStream.range(0, number)
                 .boxed()
                 .map(i -> new RoleDto()
-                        .setName(faker.job().title())
+                        .setName("faker.job().title()")
                         .setPermissions(createPermission(chooseRandom(randomPermissionNumber)).asList()))
                 .toArray(RoleDto[]::new);
 

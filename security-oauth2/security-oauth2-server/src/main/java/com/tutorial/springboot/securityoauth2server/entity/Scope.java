@@ -7,6 +7,8 @@ import jakarta.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.*;
+
 @Entity
 public class Scope extends AbstractEntity<Long, Scope> {
 
@@ -15,7 +17,7 @@ public class Scope extends AbstractEntity<Long, Scope> {
 
     private String description;
 
-    @ManyToMany(mappedBy = "scopes")
+    @ManyToMany(mappedBy = "scopes", fetch = LAZY)
     private List<Client> clients = new ArrayList<>();
 
     public String getName() {

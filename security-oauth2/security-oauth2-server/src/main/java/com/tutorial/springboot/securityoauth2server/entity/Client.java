@@ -21,7 +21,7 @@ public class Client extends AbstractEntity<Long, Client> {
     @Column(name = "grant_type")
     private List<String> grantTypes = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "client_scopes",
             joinColumns = @JoinColumn(name = "client_id"),

@@ -13,7 +13,6 @@ public class ClientTransformer extends AbstractTransformer<Long, Client, ClientD
     protected void copyEntityToDto(Client entity, ClientDto dto) {
         var token = entity.getAccessTokens().getFirst();
         dto.setClientId(entity.getClientId())
-                .setClientSecret(entity.getClientSecret())
                 .setRedirectUri(entity.getRedirectUri())
                 .setGrantTypes(entity.getGrantTypes().stream().toList())
                 .setScopes(entity.getScopes()

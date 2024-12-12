@@ -1,5 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
@@ -14,6 +15,7 @@ public class Permission extends AbstractEntity<Long, Permission> {
 
     @NotBlank(message = "Name is mandatory")
     @Size(max = 50, message = "Name cannot be longer than 50 characters")
+    @Column(unique = true, nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)

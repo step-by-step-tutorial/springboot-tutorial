@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
 
-import static com.tutorial.springboot.securityoauth2server.test_utils.SecurityTestUtils.authenticateToTestEnv;
+import static com.tutorial.springboot.securityoauth2server.test_utils.SecurityTestUtils.loginToTestEnv;
 
 @Component
 @Transactional
@@ -87,7 +87,7 @@ public class TestDatabaseAssistant {
 
     public ResultHelper<User, UserDto> insertTestUserAndLogin() {
         var entity = insertTestUser(1, 1, 1).entity().asOne();
-        authenticateToTestEnv(entity.getUsername(), entity.getPassword());
+        loginToTestEnv(entity.getUsername(), entity.getPassword());
         var dto = userTransformer.toDto(entity);
         return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
