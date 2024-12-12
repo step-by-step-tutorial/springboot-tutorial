@@ -7,6 +7,7 @@ import com.tutorial.springboot.security_rbac_jwt.service.AbstractService;
 import com.tutorial.springboot.security_rbac_jwt.service.BatchService;
 import com.tutorial.springboot.security_rbac_jwt.service.CrudService;
 import com.tutorial.springboot.security_rbac_jwt.transformer.UserTransformer;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;

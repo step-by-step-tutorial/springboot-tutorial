@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  jaeger:
+    container_name: jaeger
+    hostname: jaeger
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+  observabilityjaeger:
+    image: samanalishiri/observabilityjaeger:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: observabilityjaeger
+    hostname: observabilityjaeger
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      TRACING_HOST: http://jaeger:4318/v1/traces

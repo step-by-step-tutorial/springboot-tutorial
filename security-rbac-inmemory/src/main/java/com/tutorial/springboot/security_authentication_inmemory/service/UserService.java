@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
@@ -29,7 +30,7 @@ public class UserService {
     }
 
     public void save(UserDto dto) {
-        boolean userExists = userRepository.userExists(dto.username());
+        var userExists = userRepository.userExists(dto.username());
         if (userExists) {
             logger.error("User with username [{}] already exists", dto.username());
             throw new UserExistsException(dto.username());
@@ -39,7 +40,7 @@ public class UserService {
                 .username(dto.username())
                 .passwordEncoder(passwordEncoder::encode)
                 .password(dto.password())
-                .roles(dto.roles().toArray(String[]::new))
+                .authorities(dto.roles().toArray(String[]::new))
                 .build();
 
         userRepository.createUser(entity);
@@ -57,5 +58,23 @@ public class UserService {
 
     public String currentUsername() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    public void changePassword(String currentPassword, String newPassword) {
+        requireNonNull(currentPassword, "passwords should not be null");
+        requireNonNull(newPassword, "newPassword should not be null");
+
+        var currentUser = userRepository.loadUserByUsername(currentUsername());
+
+        if (currentUser.getPassword().equals(currentPassword)) {
+            var updatedUser = User.withUserDetails(currentUser)
+                    .passwordEncoder(passwordEncoder::encode)
+                    .password(newPassword)
+                    .build();
+            userRepository.updateUser(updatedUser);
+            logger.info("Password of [{}] changed", currentUser.getUsername());
+        } else {
+            throw new RuntimeException("Password could not be changed, due to incorrect password");
+        }
     }
 }

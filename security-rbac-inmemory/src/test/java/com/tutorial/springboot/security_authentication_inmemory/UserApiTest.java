@@ -105,7 +105,7 @@ public class UserApiTest {
                 .statusCode(HttpStatus.OK.value())
                 .body("username", equalTo(givenUsername))
                 .body("roles.size()", is(1))
-                .body("roles", hasItems("ROLE_USER"));
+                .body("roles", hasItems("USER"));
     }
 
     @Test

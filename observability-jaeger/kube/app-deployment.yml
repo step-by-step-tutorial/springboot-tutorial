@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: observabilityjaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: observabilityjaeger
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: observabilityjaeger
+    spec:
+      containers:
+        - name: observabilityjaeger
+          image: samanalishiri/observabilityjaeger:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_HOST
+              value: "0.0.0.0"
+            - name: APP_PORT
+              value: "8080"
+            - name: TRACING_HOST
+              value: "http://jaeger:4318/v1/traces"
