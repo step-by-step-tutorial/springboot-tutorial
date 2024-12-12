@@ -153,7 +153,7 @@ kubectl port-forward service/tools_name port:port
 
 ### Makefile
 
-```shell
+```makefile
 build:
 	mvn clean package -DskipTests=true
 

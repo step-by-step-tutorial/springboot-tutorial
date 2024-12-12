@@ -38,3 +38,9 @@ kube-delete:
 
 kube-port-forward-app:
 	kubectl port-forward service/observabilityjaeger 8080:8080
+
+kube-port-forward-jaeger-ui:
+	kubectl port-forward service/jaeger 16686:16686
+
+kube-port-forward-jaeger:
+	kubectl port-forward service/jaeger 4318:4318

@@ -195,7 +195,7 @@ Password: password
 
 <p align="justify">
 
-In order to connect to PostgreSQL via Adminer open [http://localhost:8080](http://localhost:8080/) through web browser
+In order to connect to PostgreSQL via Adminer open [http://localhost:8080](http://localhost:8080) through web browser
 use the following properties in the login page.
 
 </p>

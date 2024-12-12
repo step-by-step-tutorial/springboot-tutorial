@@ -17,4 +17,5 @@ docker rm -f \
   artemis \
   zookeeper \
   kafka \
-  kafdrop
+  kafdrop \
+  jaeger

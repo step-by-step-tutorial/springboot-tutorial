@@ -17,4 +17,5 @@ rabbitmq ^
 artemis ^
 zookeeper ^
 kafka ^
-kafdrop
+kafdrop ^
+jaeger

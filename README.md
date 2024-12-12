@@ -36,7 +36,7 @@ This tutorial provides many best practises and examples include documentation.
 * step: rest-hateoas
 * step: webflux
 * step: ELK
-* step: Jaeger
+* [step: observability-Jaeger](observability-jaeger)
 * [step: security-rbac-inmemory](security-rbac-inmemory)
 * [step: security-rbac-jwt](security-rbac-jwt)
     * RBAC
@@ -91,6 +91,10 @@ mvn -f messaging-apache-artemis-mq/pom.xml clean
 mvn -f messaging-rabbit-mq/pom.xml clean
 mvn -f messaging-apache-kafka/pom.xml clean
 mvn -f streaming-apache-kafka/pom.xml clean
+mvn -f observability-jaeger/pom.xml clean
+mvn -f security-rbac-inmemory/pom.xml clean
+mvn -f security-rbac-jwt/pom.xml clean
+
 ```
 
 #### Clean Docker
@@ -117,7 +121,7 @@ mvn -f profile/pom.xml clean package
 mvn -f properties/pom.xml clean package
 mvn -f logger-log4j2-console/pom.xml clean package
 mvn -f logger-log4j2-file/pom.xml clean package
-mvn -f logger-log4j2-database/pom.xml clean package
+mvn -f logger-log4j2-database/pom.xml clean package -DskipTests=true
 mvn -f event-handling/pom.xml clean package
 mvn -f rdbms-h2/pom.xml clean package
 mvn -f rdbms-mysql/pom.xml clean package
@@ -130,7 +134,11 @@ mvn -f nosql-mongodb-reactive/pom.xml clean package
 mvn -f messaging-apache-artemis-mq/pom.xml clean package
 mvn -f messaging-rabbit-mq/pom.xml clean package
 mvn -f messaging-apache-kafka/pom.xml clean package
+mvn -f streaming-apache-kafka/pom.xml clean package
+mvn -f observability-jaeger/pom.xml clean package
 mvn -f restful-web-api/pom.xml clean package
+mvn -f security-rbac-inmemory/pom.xml clean package
+mvn -f security-rbac-jwt/pom.xml clean package
 ```
 
 ## Install Tools on Docker
@@ -176,7 +184,8 @@ docker rm -f \
   artemis \
   zookeeper \
   kafka \
-  kafdrop
+  kafdrop \
+  jaeger
 ```
 
 #### Remove Docker Images
@@ -203,7 +212,8 @@ docker rmi \
   apache/activemq-artemis:latest \
   docker.io/bitnami/zookeeper \
   docker.io/bitnami/kafka \
-  obsidiandynamics/kafdrop:latest
+  obsidiandynamics/kafdrop:latest \
+  jaegertracing/all-in-one:latest
 ```
 
 #### Remove Docker Volumes

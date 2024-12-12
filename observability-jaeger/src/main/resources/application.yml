@@ -12,3 +12,12 @@ management:
   otlp:
     tracing:
       endpoint: ${TRACING_HOST:http://localhost:4318/v1/traces}
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+management:
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces

@@ -17,4 +17,5 @@ docker rmi \
   apache/activemq-artemis:latest \
   docker.io/bitnami/zookeeper \
   docker.io/bitnami/kafka \
-  obsidiandynamics/kafdrop:latest
+  obsidiandynamics/kafdrop:latest \
+  jaegertracing/all-in-one:latest

@@ -16,7 +16,8 @@ call mvn -f nosql-mongodb-reactive/pom.xml clean
 call mvn -f messaging-apache-artemis-mq/pom.xml clean
 call mvn -f messaging-rabbit-mq/pom.xml clean
 call mvn -f messaging-apache-kafka/pom.xml clean
-call mvn -f restful-web-api/pom.xml clean
 call mvn -f streaming-apache-kafka/pom.xml clean
+call mvn -f observability-jaeger/pom.xml clean
+call mvn -f restful-web-api/pom.xml clean
 call mvn -f security-rbac-inmemory/pom.xml clean
 call mvn -f security-rbac-jwt/pom.xml clean
