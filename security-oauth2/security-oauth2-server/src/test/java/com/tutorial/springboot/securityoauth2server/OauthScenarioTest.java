@@ -88,7 +88,7 @@ public class OauthScenarioTest {
     private ClientDto registerClient() {
         var username = "test";
         var password = "test";
-        var client = DtoStubFactory.createClientOfJwtBearer(1).asOne();
+        var client = DtoStubFactory.createClient(1).asOne();
 
         RestAssured.given()
                 .contentType(ContentType.JSON)

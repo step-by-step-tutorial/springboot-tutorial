@@ -1,11 +1,14 @@
 package com.tutorial.springboot.securityoauth2server.test_utils.stub;
 
+import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.dto.PermissionDto;
 import com.tutorial.springboot.securityoauth2server.dto.RoleDto;
 import com.tutorial.springboot.securityoauth2server.dto.UserDto;
+import com.tutorial.springboot.securityoauth2server.entity.Client;
 import com.tutorial.springboot.securityoauth2server.entity.Permission;
 import com.tutorial.springboot.securityoauth2server.entity.Role;
 import com.tutorial.springboot.securityoauth2server.entity.User;
+import com.tutorial.springboot.securityoauth2server.transformer.ClientTransformer;
 import com.tutorial.springboot.securityoauth2server.transformer.PermissionTransformer;
 import com.tutorial.springboot.securityoauth2server.transformer.RoleTransformer;
 import com.tutorial.springboot.securityoauth2server.transformer.UserTransformer;
@@ -35,6 +38,9 @@ public class TestDatabaseAssistant {
 
     @Autowired
     UserTransformer userTransformer;
+
+    @Autowired
+    ClientTransformer clientTransformer;
 
     public ResultHelper<Permission, PermissionDto> insertTestPermission(int number) {
         var entity = EntityStubFactory.createPermission(number).asOne();
@@ -92,4 +98,20 @@ public class TestDatabaseAssistant {
         return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
     }
 
+
+    public ResultHelper<Client, ClientDto> insertTestClient(int number) {
+        var entity = EntityStubFactory.createClient(number).asOne();
+        entityManager.persist(entity);
+        var dto = clientTransformer.toDto(entity);
+        return new ResultHelper<>(new StubHelper<>(entity), new StubHelper<>(dto));
+    }
+
+    public ResultHelper<Client, ClientDto> selectTestClient() {
+        var query = entityManager.createQuery("SELECT p FROM Client p", Client.class);
+
+        var entities = query.getResultList().toArray(Client[]::new);
+        var dtoArray = Stream.of(entities).map(clientTransformer::toDto).toArray(ClientDto[]::new);
+
+        return new ResultHelper<>(new StubHelper<>(entities), new StubHelper<>(dtoArray));
+    }
 }

@@ -17,15 +17,15 @@ public final class DtoStubFactory {
     private DtoStubFactory() {
     }
 
-    public static StubHelper<ClientDto> createClientOfJwtBearer(int number) {
+    public static StubHelper<ClientDto> createClient(int number) {
         var faker = new Faker();
         var array = IntStream.range(0, number)
                 .boxed()
-                .map(i -> faker.app().name().replace(" ", "-").toLowerCase() + "-client")
+                .map(i -> faker.app().name())
                 .map(name -> new ClientDto()
                         .setClientId(name)
                         .setClientSecret(faker.internet().password())
-                        .setRedirectUri("http://localhost:9000/login/oauth2/code/" + name)
+                        .setRedirectUri("http://" + faker.internet().webdomain() + "/login/oauth2/code/" + name)
                         .setGrantTypes(GrantType.allType())
                         .setScopes(Arrays.asList("read", "write"))
                         .setAccessTokenValiditySeconds(3600)

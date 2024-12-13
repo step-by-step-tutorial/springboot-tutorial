@@ -1,5 +1,6 @@
 package com.tutorial.springboot.securityoauth2server.api.impl;
 
+import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.dto.TokenDto;
 import com.tutorial.springboot.securityoauth2server.service.impl.ClientService;
 import com.tutorial.springboot.securityoauth2server.service.impl.TokenService;
@@ -38,8 +39,8 @@ public class TokenApi {
     @GetMapping("/me/{clientId}")
     public ResponseEntity<TokenDto> getTokenByClientId(@PathVariable String clientId) {
         logger.info("Received an inbound request to generate a token for user:{}, client:{}", getCurrentUsername(), clientId);
-        var client = clientService.getByClientId(clientId).orElseThrow();
-        return tokenService.generateToken(getCurrentUsername(), client)
+        return clientService.getByClientId(clientId)
+                .map(ClientDto::getToken)
                 .map(ResponseEntity::ok)
                 .orElseThrow();
     }

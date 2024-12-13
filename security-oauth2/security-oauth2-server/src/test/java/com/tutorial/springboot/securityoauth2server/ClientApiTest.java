@@ -68,32 +68,35 @@ public class ClientApiTest {
         }
     }
 
-    @Test
-    void givenClient_whenSaveOne_thenReturnIdWithCreatedStatus() {
-        var givenBody = createTestClient();
+    @Nested
+    class SaveOneTests {
+        @Test
+        void givenClient_whenSaveOne_thenReturnIdWithCreatedStatus() {
+            var givenBody = createTestClient();
 
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                .baseUri(APP_HOST).port(port).basePath(BASE_PATH)
-                .body(givenBody)
-                .when().post()
-                .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .header("Location", containsString(BASE_PATH))
-                .body("", not(emptyOrNullString()))
-                .body("", greaterThan(0));
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                    .baseUri(APP_HOST).port(port).basePath(BASE_PATH)
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.CREATED.value())
+                    .header("Location", containsString(BASE_PATH))
+                    .body("", not(emptyOrNullString()))
+                    .body("", greaterThan(0));
 
-        var actual = testAssistant.getByClientId(TEST_CLIENT_ID);
+            var actual = testAssistant.getByClientId(TEST_CLIENT_ID);
 
-        assertNotNull(actual);
-        assertTrue(actual.isPresent());
-        actual.ifPresent(client -> {
-            assertNotNull(client.getId());
-            assertNotNull(client.getCreatedBy());
-            assertNotNull(client.getCreatedAt());
-            assertNotNull(client.getVersion());
-        });
+            assertNotNull(actual);
+            assertTrue(actual.isPresent());
+            actual.ifPresent(client -> {
+                assertNotNull(client.getId());
+                assertNotNull(client.getCreatedBy());
+                assertNotNull(client.getCreatedAt());
+                assertNotNull(client.getVersion());
+            });
+        }
     }
 
     @Nested

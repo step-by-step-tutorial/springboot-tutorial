@@ -16,14 +16,15 @@ public final class EntityStubFactory {
     private EntityStubFactory() {
     }
 
-    public static StubHelper<Client> createClientOfJwtBearer(int number) {
+    public static StubHelper<Client> createClient(int number) {
         var faker = new Faker();
         var array = IntStream.range(0, number)
                 .boxed()
-                .map(i -> new Client()
-                        .setClientId(faker.app().name())
+                .map(i -> faker.app().name())
+                .map(name -> new Client()
+                        .setClientId(name)
                         .setClientSecret(faker.internet().password())
-                        .setRedirectUri(faker.internet().url())
+                        .setRedirectUri("http://" + faker.internet().webdomain() + "/login/oauth2/code/" + name)
                         .setGrantTypes(List.of(GrantType.JWT_BEARER.name()))
                         .setScopes(Arrays.asList("read", "write")
                                 .stream()
