@@ -1,14 +1,14 @@
-package com.tutorial.springboot.securityoauth2server.test_utils.stub;
+package com.tutorial.springboot.securityoauth2server.testutils.stub;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-public class StubHelper<ELEMENT> {
+public class VarcharHelper<ELEMENT> {
 
     private final ELEMENT[] elements;
 
     @SafeVarargs
-    public StubHelper(ELEMENT... elements) {
+    public VarcharHelper(ELEMENT... elements) {
         this.elements = elements;
     }
 

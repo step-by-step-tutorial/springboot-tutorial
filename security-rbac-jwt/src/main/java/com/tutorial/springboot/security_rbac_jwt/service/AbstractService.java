@@ -54,7 +54,13 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
         var newEntity = transformer.toEntity(dto);
         beforeSave(dto, newEntity);
-        var savedEntity = repository.save(newEntity);
+        ENTITY savedEntity = null;
+        try {
+            savedEntity = repository.save(newEntity);
+        } catch (Exception e) {
+            logger.error("Failed to save {} entity", entityClass.getSimpleName(), e.getMessage());
+            return Optional.empty();
+        }
         afterSave(dto, savedEntity);
         logger.info("{} entity saved with ID: {}", entityClass.getSimpleName(), savedEntity.getId());
         return Optional.of(savedEntity.getId());
@@ -114,8 +120,9 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
         return IntStream.range(0, calculateBatchNumber(dtoList.size()))
                 .mapToObj(i -> selectBatch(dtoList, i))
-                .flatMap(stream -> stream.map(this::save))
-                .map(Optional::orElseThrow)
+                .flatMap(stream -> stream
+                        .map(this::save)
+                        .map(id -> id.orElse(null)))
                 .toList();
     }
 
@@ -123,6 +130,17 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     public Page<DTO> getBatch(Pageable pageable) {
         requireNonNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
         return repository.findAll(pageable).map(transformer::toDto);
+    }
+
+    @Override
+    public List<DTO> getBatch(List<ID> identities) {
+        requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
+        shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
+
+        return repository.findAllById(identities)
+                .stream()
+                .map(transformer::toDto)
+                .toList();
     }
 
     @Override

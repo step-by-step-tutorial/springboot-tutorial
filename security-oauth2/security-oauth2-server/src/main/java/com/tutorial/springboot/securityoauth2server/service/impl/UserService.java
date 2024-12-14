@@ -2,6 +2,7 @@ package com.tutorial.springboot.securityoauth2server.service.impl;
 
 import com.tutorial.springboot.securityoauth2server.dto.UserDto;
 import com.tutorial.springboot.securityoauth2server.entity.User;
+import com.tutorial.springboot.securityoauth2server.repository.RoleRepository;
 import com.tutorial.springboot.securityoauth2server.repository.UserRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.service.BatchService;
@@ -20,13 +21,11 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     public UserService(UserRepository repository, UserTransformer transformer) {
         super(repository, transformer);
-    }
-
-    @Override
-    protected void beforeSave(UserDto dto, User entity) {
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
     }
 
     public User findByUsername(String username) {
@@ -47,5 +46,22 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
         } else {
             throw new RuntimeException("Password could not be changed, due to incorrect password");
         }
+    }
+
+    @Override
+    protected void beforeSave(UserDto dto, User entity) {
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        var roles = entity.getRoles()
+                .stream()
+                .map(role -> {
+                    if (roleRepository.existsByName(role.getName())) {
+                        return roleRepository.findByName(role.getName()).get();
+                    } else {
+                        return role;
+                    }
+                })
+                .toList();
+        entity.setRoles(roles);
     }
 }

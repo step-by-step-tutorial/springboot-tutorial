@@ -11,5 +11,7 @@ public interface BatchService<ID, DTO extends AbstractDto<ID, DTO>> {
 
     Page<DTO> getBatch(Pageable pageable);
 
+    List<DTO> getBatch(List<ID> identities);
+
     void deleteBatch(List<ID> identities);
 }

@@ -9,11 +9,11 @@ spring:
   security:
     oauth2:
       authorizationserver:
-        issuer: ${AUTHORIZATION_SERVER:http://securityoauth2server.localhost}
+        issuer: ${AUTHORIZATION_SERVER:http://localhost:8080}
       resourceserver:
         jwt:
-          jwk-set-uri: ${RESOURCE_SERVER:http://securityoauth2server:8080}/oauth2/jwks
-          issuer-uri: ${RESOURCE_SERVER:http://securityoauth2server:8080}
+          jwk-set-uri: ${RESOURCE_SERVER:http://localhost:8080}/oauth2/jwks
+          issuer-uri: ${RESOURCE_SERVER:http://localhost:8080}
 
 logging:
   level:

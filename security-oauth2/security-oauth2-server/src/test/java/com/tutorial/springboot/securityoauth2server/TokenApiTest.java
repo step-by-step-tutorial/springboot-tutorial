@@ -1,9 +1,6 @@
 package com.tutorial.springboot.securityoauth2server;
 
-import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
-import com.tutorial.springboot.securityoauth2server.entity.Client;
-import com.tutorial.springboot.securityoauth2server.test_utils.stub.ResultHelper;
-import com.tutorial.springboot.securityoauth2server.test_utils.stub.TestClientAssistant;
+import com.tutorial.springboot.securityoauth2server.testutils.stub.assistant.ClientTestAssistant;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,73 +13,67 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.securityoauth2server.test_utils.SecurityTestUtils.*;
-import static org.hamcrest.Matchers.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.*;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "h2"})
 public class TokenApiTest {
 
-    static final String BASE_PATH = "/api/v1/token/me";
+    private static final String BASE_PATH = "/api/v1/token/me";
 
     @LocalServerPort
-    int port;
+    private int port;
 
     @Autowired
-    TestClientAssistant testAssistant;
+    private ClientTestAssistant assistant;
 
-    @Test
-    void givenCredentials_whenRequestTokenForUser_thenReturnJwtTokenWithOKStatus() {
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/new")
-                .when().get()
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("token", not(emptyOrNullString()))
-                .body("expiration", not(emptyOrNullString()));
+    @Nested
+    class UserTokenTests {
+
+        private static final String RELATIVE_PATH = "/new";
+
+        @Test
+        void givenCredentials_whenRequestGenerateNewToken_thenReturnJwtTokenWithOKStatus() {
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + RELATIVE_PATH)
+                    .when().get()
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("token", not(emptyOrNullString()))
+                    .body("expiration", not(emptyOrNullString()));
+        }
     }
 
-    @Test
-    void givenToken_whenRequestToResource_thenReturnResourceWithOKStatus() {
-       var givenToken = requestToGetTestToken();
-
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + givenToken)
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/api/v1/users")
-                .when().get()
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("size()", is(3));
-    }
-
-   @Nested
+    @Nested
     class ClientTokenTests {
 
-       @BeforeEach
-       void populate() {
-           loginToTestEnv();
-           testAssistant.insertTestClient(1);
-       }
+        private static final String RELATIVE_PATH = "/{clientId}";
 
-       @Test
-       void givenClientId_whenRequestTokenForClient_thenReturnJwtTokenWithOKStatus() {
-           var givenClientId = testAssistant.selectTestClient().dto().asOne().getClientId();
+        @BeforeEach
+        void populate() {
+            assistant.populate(1);
+        }
 
-           RestAssured.given()
-                   .contentType(ContentType.JSON)
-                   .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                   .baseUri("http://" + TEST_HOSTNAME).port(port)
-                   .basePath(BASE_PATH + "/{clientId}").pathParam("clientId", givenClientId)
-                   .when().get()
-                   .then()
-                   .statusCode(HttpStatus.OK.value())
-                   .body("token", not(emptyOrNullString()))
-                   .body("expiration", not(emptyOrNullString()));
-       }
-   }
+        @Test
+        void givenClientId_whenRequestGetTokenBelongingToClient_thenReturnJwtTokenWithOKStatus() {
+            var givenClientId = assistant.selectAllTest().dto().asOne().getClientId();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port)
+                    .basePath(BASE_PATH + RELATIVE_PATH).pathParam("clientId", givenClientId)
+                    .when().get()
+                    .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("token", not(emptyOrNullString()))
+                    .body("expiration", not(emptyOrNullString()));
+        }
+    }
 
 }

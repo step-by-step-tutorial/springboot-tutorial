@@ -10,6 +10,7 @@ import com.tutorial.springboot.security_rbac_jwt.service.CrudService;
 import com.tutorial.springboot.security_rbac_jwt.transformer.UserTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;
@@ -17,6 +18,9 @@ import static com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidat
 
 @Service
 public class UserService extends AbstractService<Long, User, UserDto> implements CrudService<Long, UserDto>, BatchService<Long, UserDto> {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -47,6 +51,8 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
 
     @Override
     protected void beforeSave(UserDto dto, User entity) {
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+
         var roles = entity.getRoles()
                 .stream()
                 .map(role -> {

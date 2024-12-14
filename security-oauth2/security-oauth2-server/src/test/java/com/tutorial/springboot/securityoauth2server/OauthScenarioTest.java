@@ -1,9 +1,8 @@
 package com.tutorial.springboot.securityoauth2server;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
-import com.tutorial.springboot.securityoauth2server.enums.GrantType;
-import com.tutorial.springboot.securityoauth2server.service.impl.TokenService;
-import com.tutorial.springboot.securityoauth2server.test_utils.stub.DtoStubFactory;
+import com.tutorial.springboot.securityoauth2server.testutils.stub.assistant.ClientTestAssistant;
+import com.tutorial.springboot.securityoauth2server.testutils.stub.factory.ClientTestFactory;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -16,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Arrays;
+import java.util.Base64;
 
+import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -27,234 +28,186 @@ public class OauthScenarioTest {
 
     final Logger logger = LoggerFactory.getLogger(TokenApiTest.class.getSimpleName());
 
-    final String serverUrl = "http://localhost";
-
     @LocalServerPort
     int port;
 
     @Autowired
-    TokenService tokenService;
+    ClientTestFactory clientFactory;
 
-    private String requestToGetToken() {
-        var userName = "test";
-        var password = "test";
-        var token = RestAssured.given()
+    private String requestToGetNewTestUserToken() {
+        return RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic(userName, password)
-                .baseUri(serverUrl).port(port).basePath("/api/v1/token/me/new")
+                .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                .baseUri("http://" + TEST_HOSTNAME).port(port)
+                .basePath("/api/v1/token/me/new")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body("token", not(emptyOrNullString()))
                 .body("expiration", not(emptyOrNullString()))
-                .log().all(true)
                 .extract()
                 .jsonPath().getString("token");
-
-        logger.info("New JWT token generated, username:{}, roles:{}",
-                tokenService.extractUsername(token),
-                tokenService.extractRoles(token)
-        );
-
-        return token;
     }
 
     private String requestToGetTokenOfClient(String clientId) {
-        var userName = "test";
-        var password = "test";
-        var token = RestAssured.given()
+        return RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic(userName, password)
-                .baseUri(serverUrl).port(port)
+                .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                .baseUri("http://" + TEST_HOSTNAME).port(port)
                 .basePath("/api/v1/token/me/{clientId}").pathParam("clientId", clientId)
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body("token", not(emptyOrNullString()))
                 .body("expiration", not(emptyOrNullString()))
-                .log().all(true)
                 .extract()
                 .jsonPath().getString("token");
-
-        logger.info("New JWT token generated, username:{}, roles:{}, clientId:{}",
-                tokenService.extractUsername(token),
-                tokenService.extractRoles(token),
-                tokenService.extractClientId(token)
-        );
-
-        return token;
     }
 
-    private ClientDto registerClient() {
-        var username = "test";
-        var password = "test";
-        var client = DtoStubFactory.createClient(1).asOne();
-
+    private void requestToRegisterClient(ClientDto client) {
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic(username, password)
-                .baseUri(serverUrl).port(port).basePath("/api/v1/clients")
+                .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/api/v1/clients")
                 .body(client)
                 .when().post()
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .header("Location", containsString("/api/v1/clients"))
-                .body("", notNullValue())
-                .log().all(true);
-
-        logger.info("New client registered: {}", client.getClientId());
-        return client;
+                .body("", not(emptyOrNullString()))
+                .body("", greaterThan(0));
     }
 
-    /**
-     * 1. ==    Send token request      ==>
-     * 2. <==   Get access token        ==
-     * 3. ==    Send resource request   ==>
-     * 4. <==   Get resource            ==
-     */
-    @Test
-    void getToken_getRequest() {
-        // round 1: send request to get JWT Bearer token
-        var givenToken = requestToGetToken();
-
-        // round 2: send request to get protected resource
-        RestAssured.given()
+    private String requestToGetProtectedResource(String givenToken) {
+        return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", String.format("Bearer %s", givenToken))
-                .baseUri(serverUrl).port(port).basePath("/api/v1/health")
+                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/api/v1/health")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body(equalTo("UP"))
-                .log().all(true);
+                .extract().body().asString();
+    }
+
+    private String createLoginSession() {
+        return RestAssured.given()
+                .contentType(ContentType.URLENC)
+                .formParam("username", TEST_USERNAME)
+                .formParam("password", TEST_PASSWORD)
+                .baseUri("http://" + TEST_HOSTNAME).port(TEST_PORT).basePath("/login")
+                .redirects().follow(false)
+                .post()
+                .then()
+                .header("Location", not(emptyOrNullString()))
+                .extract()
+                .response()
+                .getCookie("JSESSIONID");
+    }
+
+    private String requestAuthorizationCode(ClientDto client, String jsessionid) {
+        var redirectUrl = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .cookie("JSESSIONID", jsessionid)
+                .baseUri("http://" + TEST_HOSTNAME).port(TEST_PORT).basePath("/oauth2/authorize")
+                .queryParam("response_type", "code")
+                .queryParam("client_id", client.getClientId())
+                .queryParam("scope", "read")
+                .queryParam("redirect_uri", client.getRedirectUri())
+                .redirects().follow(false)
+                .when().get()
+                .then()
+                .header("Location", not(emptyOrNullString()))
+                .extract()
+                .response()
+                .getHeader("Location");
+
+        return extractAuthorizationCodeFromUrl(redirectUrl);
+    }
+
+    private String requestToGetTokenByAuthorizationCode(ClientDto client, String authorizationCode) {
+        return RestAssured.given()
+                .contentType(ContentType.URLENC)
+                .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((client.getClientId() + ":" + client.getClientSecret()).getBytes()))
+                .baseUri("http://" + TEST_HOSTNAME).port(TEST_PORT).basePath("/oauth2/token")
+                .formParam("grant_type", "authorization_code")
+                .formParam("code", authorizationCode)
+                .formParam("redirect_uri", client.getRedirectUri())
+                .when().post()
+                .then()
+                .body("access_token", not(emptyOrNullString()))
+                .body("refresh_token", not(emptyOrNullString()))
+                .body("scope", equalTo("read"))
+                .body("token_type", equalTo("Bearer"))
+                .body("expires_in", greaterThan(0))
+                .extract()
+                .jsonPath().getString("access_token");
     }
 
     /**
-     * 1. ==    Send register request   ==>
-     * 2. <==   Get client info            ==
-     * 3. ==    Send token request        ==>
-     * 4. <==   Get access token          ==
-     * 5. ==    Send resource request     ==>
-     * 6. <==   Get resource              ==
+     * 1. ===   Send token request      ==>
+     * 2. <==   Get access token        ===
+     * 3. ===   Send resource request   ==>
+     * 4. <==   Get resource            ===
+     */
+    @Test
+    void getToken_getRequest() {
+        // round 1: send request to get JWT Bearer token
+        var givenToken = requestToGetNewTestUserToken();
+
+        // round 2: send request to get protected resource
+        var actual = requestToGetProtectedResource(givenToken);
+        assertNotNull(actual);
+    }
+
+    /**
+     * 1. ===   Send register request     ==>
+     * 2. <==   Get client info           ===
+     * 3. ===   Send token request        ==>
+     * 4. <==   Get access token          ===
+     * 5. ===   Send resource request     ==>
+     * 6. <==   Get resource              ===
      */
     @Test
     void registerClient_getToken_getRequest() {
+        // Preparation
+        var client = clientFactory.newOne();
+
         // round 1: send request to register client.
-        var client = registerClient();
+        requestToRegisterClient(client);
 
         // round 2: send request to get JWT Bearer token
         var givenToken = requestToGetTokenOfClient(client.getClientId());
 
         // round 3: send request to get protected resource
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .header("Authorization", String.format("Bearer %s", givenToken))
-                .baseUri(serverUrl).port(port).basePath("/api/v1/health")
-                .when().get()
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body(equalTo("UP"))
-                .log().all(true);
+        var actual = requestToGetProtectedResource(givenToken);
+        assertNotNull(actual);
     }
 
-
     /**
-     * 1. ==    Send grant type request   ==>
-     * 2. <==   Get grant type            ==
-     * 3. ==    Send token request        ==>
-     * 4. <==   Get access token          ==
-     * 5. ==    Send resource request     ==>
-     * 6. <==   Get resource              ==
+     * 1. ===   Send grant type request   ==>
+     * 2. <==   Get grant type            ===
+     * 3. ===   Send token request        ==>
+     * 4. <==   Get access token          ===
+     * 5. ===   Send resource request     ==>
+     * 6. <==   Get resource              ===
      */
     @Test
     void getGrantType_getToken_getRequest() {
         // Preparation
-        var client = registerClient();
+        var givenClient = clientFactory.newOne();
 
         // round 1: send request to get grant type.
-        var userName = "test";
-        var password = "test";
-        var response = RestAssured.given()
-                .contentType(ContentType.JSON)
-                .auth().basic(userName, password)
-                .baseUri(serverUrl).port(port).basePath("/oauth2/authorize")
-                .queryParam("response_type", "code")
-                .queryParam("client_id", client.getClientId())
-                .queryParam("redirect_uri", client.getRedirectUri())
-                .queryParam("scope", "read")
-                .when().get()
-                .then()
-                .log().all(true)
-                .extract()
-                .response();
+        requestToRegisterClient(givenClient);
+        var jsessionid = createLoginSession();
+        var authorizationCode = requestAuthorizationCode(givenClient, jsessionid);
 
-        // Step 1: Extract the redirect URL from the "Location" header
-        String redirectUrl = response.getHeader("Location");
-        System.out.println("Redirect URL = " + redirectUrl);
+        // round 2: send request to get JWT Bearer token
+        var token = requestToGetTokenByAuthorizationCode(givenClient, authorizationCode);
 
-        // Step 2: Extract the authorization code from the redirect URL
-        String authorizationCode = extractAuthorizationCodeFromUrl(redirectUrl);
-        System.out.println("Authorization Code = " + authorizationCode);
-
-//        // round 2: send request to get JWT Bearer token
-//        var givenToken = requestToGetTokenOfClient(clientId);
-//
-//        // round 3: send request to get protected resource
-//        RestAssured.given()
-//                .contentType(ContentType.JSON)
-//                .header("Authorization", String.format("Bearer %s", givenToken))
-//                .baseUri(serverUrl).port(port).basePath("/api/v1/health")
-//                .when().get()
-//                .then()
-//                .statusCode(HttpStatus.OK.value())
-//                .body(equalTo("UP"))
-//                .log().all(true);
+        // round 3: send request to get protected resource
+        var actual = requestToGetProtectedResource(token);
+        assertNotNull(actual);
     }
 
-    private String extractAuthorizationCodeFromUrl(String redirectUrl) {
-        if (redirectUrl != null && redirectUrl.contains("code=")) {
-            return redirectUrl.split("code=")[1].split("&")[0];  // Extract the code parameter
-        }
-        return null;
-    }
-
-    @Test
-    void givenClient_whenSaveOne_thenReturnIdWithCreatedStatus() {
-        var givenUsername = "test";
-        var givenPassword = "test";
-
-        var givenBody = new ClientDto()
-                .setClientId("test-client")
-                .setClientSecret("test-secret")
-                .setRedirectUri("http://localhost:8080/login/oauth2/code/test-client")
-                .setGrantTypes(GrantType.allType())
-                .setScopes(Arrays.asList("read", "write"))
-                .setAccessTokenValiditySeconds(3600)
-                .setRefreshTokenValiditySeconds(1209600);
-
-        var uri = RestAssured.given()
-                .contentType(ContentType.JSON)
-                .auth().basic(givenUsername, givenPassword)
-                .baseUri(serverUrl).port(port).basePath("/api/v1/clients")
-                .body(givenBody)
-                .when().post()
-                .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .header("Location", containsString("/api/v1/clients"))
-                .body("", notNullValue())
-                .log().all()
-                .extract()
-                .header("Location");
-
-        RestAssured.given()
-                .contentType(ContentType.JSON)
-                .auth().basic(givenUsername, givenPassword)
-                .baseUri(uri).port(port)
-                .when().get()
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("", notNullValue())
-                .log().all(true);
-
-    }
 }

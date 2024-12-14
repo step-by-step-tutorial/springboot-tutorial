@@ -20,6 +20,7 @@ import static com.tutorial.springboot.securityoauth2server.util.CollectionUtils.
 import static com.tutorial.springboot.securityoauth2server.util.CollectionUtils.selectBatch;
 import static com.tutorial.springboot.securityoauth2server.util.ReflectionUtils.identifyType;
 import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentUsername;
+import static com.tutorial.springboot.securityoauth2server.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
@@ -55,7 +56,13 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
         var newEntity = transformer.toEntity(dto);
         beforeSave(dto, newEntity);
-        var savedEntity = repository.save(newEntity);
+        ENTITY savedEntity = null;
+        try {
+            savedEntity = repository.save(newEntity);
+        } catch (Exception e) {
+            logger.error("Failed to save {} entity", entityClass.getSimpleName(), e.getMessage());
+            return Optional.empty();
+        }
         afterSave(dto, savedEntity);
         logger.info("{} entity saved with ID: {}", entityClass.getSimpleName(), savedEntity.getId());
         return Optional.of(savedEntity.getId());
@@ -111,14 +118,13 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     @Override
     public List<ID> saveBatch(List<DTO> dtoList) {
         requireNonNull(dtoList, String.format("List of %s should not be null", entityClass.getSimpleName()));
-        ObjectValidation.shouldBeNotNullOrEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
+        shouldBeNotNullOrEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
 
-        int numberOfBatches = calculateBatchNumber(dtoList.size());
-
-        return IntStream.range(0, numberOfBatches)
+        return IntStream.range(0, calculateBatchNumber(dtoList.size()))
                 .mapToObj(i -> selectBatch(dtoList, i))
-                .flatMap(stream -> stream.map(this::save))
-                .map(Optional::orElseThrow)
+                .flatMap(stream -> stream
+                        .map(this::save)
+                        .map(id -> id.orElse(null)))
                 .toList();
     }
 
@@ -126,6 +132,25 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     public Page<DTO> getBatch(Pageable pageable) {
         requireNonNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
         return repository.findAll(pageable).map(transformer::toDto);
+    }
+
+    @Override
+    public List<DTO> getBatch(List<ID> identities) {
+        requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
+        shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
+
+        return repository.findAllById(identities)
+                .stream()
+                .map(transformer::toDto)
+                .toList();
+    }
+
+    @Override
+    public void deleteBatch(List<ID> identities) {
+        requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
+        shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
+
+        repository.deleteAllByIdInBatch(identities);
     }
 
     @Override
@@ -143,12 +168,6 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
         repository.deleteAll();
     }
 
-    @Override
-    public void deleteBatch(List<ID> identities) {
-        requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
-        ObjectValidation.shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
 
-        repository.deleteAllByIdInBatch(identities);
-    }
 
 }
