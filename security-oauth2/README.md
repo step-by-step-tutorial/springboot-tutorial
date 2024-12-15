@@ -164,9 +164,9 @@ In order to send an access token to the client by authorization server, there ar
 
 ```text
 Example:	
-   GET /resource HTTP/1.1
-   Host: server.example.com
-   Authorization: Bearer mF_9.B5f-4.1JqM
+GET /resource HTTP/1.1
+Host: server.example.com
+Authorization: Bearer mF_9.B5f-4.1JqM
 ```
 
 2- Use HTTP request body, To achieve that it must set the “Content-Type” header field with
@@ -174,13 +174,13 @@ Example:
 
 ```text
 Example:					
-   header
-   POST /resource HTTP/1.1
-   Host: server.example.com
-   Content-Type: application/x-www-form-urlencoded
-   
-   body
-   access_token=mF_9.B5f-4.1JqM
+header
+POST /resource HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+
+body
+access_token=mF_9.B5f-4.1JqM
 ```
 
 3- URI query parameter, so to get the access token, the authorization server sends the token as part of URI via a
@@ -188,10 +188,10 @@ parameter named access_token.
 
 ```text
 Example:
-    GET /resource?access_token=mF_9.B5f-4.1JqM HTTP/1.1
-    Host: server.example.com
-    
-    https://server.example.com/resource?access_token=mF_9.B5f-4.1JqM&p=q
+GET /resource?access_token=mF_9.B5f-4.1JqM HTTP/1.1
+Host: server.example.com
+
+https://server.example.com/resource?access_token=mF_9.B5f-4.1JqM&p=q
 ```
 
 Tip
@@ -212,9 +212,7 @@ If the client use the expired access token then the resource server send a respo
 
 ```text
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer realm="example",					
-                      error="invalid_token",
-                       error_description="The access token expired"
+WWW-Authenticate: Bearer realm="example", error="invalid_token", error_description="The access token expired"
 ```
 
 **Example of Access Token**
