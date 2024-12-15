@@ -1,3 +1,18 @@
+build:
+	mvn -f security-oauth2-server/pom.xml clean package -DskipTests=true
+	mvn -f security-oauth2-client/pom.xml clean package -DskipTests=true
+
+test:
+	mvn -f security-oauth2-server/pom.xml test
+	mvn -f security-oauth2-client/pom.xml test
+
+run:
+	mvn -f security-oauth2-server/pom.xml spring-boot:run
+
+docker-build:
+	docker build -t samanalishiri/securityoauth2client:latest -f security-oauth2-server/Dockerfile .
+	docker build -t samanalishiri/securityoauth2client:latest -f security-oauth2-client/Dockerfile .
+
 docker-compose-deploy:
 	mvn -f security-oauth2-server/pom.xml clean package -DskipTests=true
 	mvn -f security-oauth2-client/pom.xml clean package -DskipTests=true
