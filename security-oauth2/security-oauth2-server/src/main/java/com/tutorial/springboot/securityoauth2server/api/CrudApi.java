@@ -1,6 +1,7 @@
 package com.tutorial.springboot.securityoauth2server.api;
 
 import com.tutorial.springboot.securityoauth2server.dto.AbstractDto;
+import com.tutorial.springboot.securityoauth2server.dto.StatusDto;
 import com.tutorial.springboot.securityoauth2server.entity.AbstractEntity;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.validation.SaveValidation;
@@ -72,6 +73,12 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
     public ResponseEntity<Void> exists(@PathVariable ID id) {
         logger.info("Received an inbound request to check existence of a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
         return service.exists(id) ? ok().build() : notFound().build();
+    }
+
+    @GetMapping(value = "/health")
+    public ResponseEntity<StatusDto> getHealthCheck() {
+        logger.info("Received an inbound request to check health status of {} API", dtoClass.getSimpleName());
+        return ResponseEntity.ok(new StatusDto("UP"));
     }
 
     @RequestMapping(value = "/options", method = RequestMethod.OPTIONS)

@@ -85,7 +85,7 @@ public class OauthScenarioTest {
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body(equalTo("UP"))
+                .body("status", equalTo("UP"))
                 .extract().body().asString();
     }
 

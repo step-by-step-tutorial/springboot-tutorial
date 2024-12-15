@@ -24,7 +24,7 @@ public class UserApi extends AllApi<Long, User, UserDto> {
 
     @GetMapping("/userinfo")
     public ResponseEntity<Map<String, Object>> userInfo(@AuthenticationPrincipal Jwt jwt) {
-        Map<String, Object> userInfo = new HashMap<>();
+        var userInfo = new HashMap<String, Object>();
         userInfo.put("sub", jwt.getClaimAsString("sub"));
         userInfo.put("aud", jwt.getClaimAsString("aud"));
         userInfo.put("iss", jwt.getClaimAsString("iss"));
