@@ -133,198 +133,252 @@ curl -v -X GET "http://localhost:8080/api/v1/health" \
 
 ### What is OAuth?
 
-OAuth is a **delegation protocol**, a method allowing a resource owner to authorize a software application to access
-their resource without impersonation. The application requests authorization, and the resource owner grants access by
-issuing tokens. This ensures the application operates on delegated rights, not impersonation.
+OAuth is a delegation protocol, a means of letting someone who controls a resource allow a software application to
+access that resource on their behalf without impersonating them. The application requests authorization from the owner
+of the resource and receives tokens that it can use to access the resource. This all happens without the application
+needing to impersonate the person who controls the resource, since the token explicitly represents a delegated right of
+access.
 
 ### What is OAuth 2.0?
 
-OAuth 2.0 is an authorization framework that allows third-party applications to gain limited access to HTTP services.
-This can be achieved:
+The OAuth 2.0 authorization framework enables a third-party application to obtain limited access to an HTTP service,
+either on behalf of a resource owner by orchestrating an approval interaction between the resource owner and the HTTP
+service, or by allowing the third-party application to obtain access on its own behalf.
 
-- On behalf of a resource owner through an approval interaction.
-- Directly by the application itself.
+### Token
 
-#### **Token**
+#### Bearer Token
 
-##### **Bearer Token**
+A security token with the property that any party in possession of the token (a "bearer") can use the token in any way
+that any other party in possession of it can. Using a bearer token does not require a bearer to prove possession of
+cryptographic key material.
 
-A bearer token is a security token with the property that any party possessing the token (a "bearer") can use it to
-access the resource without needing to prove possession of cryptographic key material.
+#### Access Token
 
-##### **Access Token**
+An access token is issued by the authorization server and the client can access the protected resources. Type of access
+tokens used with OAuth2 are Bearer.
+In order to send an access token to the client by authorization server, there are three method as follows:
 
-An access token is issued by the authorization server to enable the client to access protected resources. OAuth 2.0
-typically uses Bearer tokens.
+1- Use the “Authorization” header field in the HTTP request.
 
-###### **Methods of Sending an Access Token**
-
-1. **Authorization Header**  
-   Include the access token in the `Authorization` header of the HTTP request.  
-   **Example**:
-   ```http
+```text
+Example:	
    GET /resource HTTP/1.1
    Host: server.example.com
    Authorization: Bearer mF_9.B5f-4.1JqM
-   ```
+```
 
-2. **HTTP Request Body**  
-   Include the token in the request body and set the `Content-Type` header to `application/x-www-form-urlencoded`.  
-   **Example**:  
-   **Header**:
-   ```http
+2- Use HTTP request body, To achieve that it must set the “Content-Type” header field with
+“application/x-www-form-urlencoded” and assign the token value to the access-token parameter in the request body.
+
+```text
+Example:					
+   header
    POST /resource HTTP/1.1
    Host: server.example.com
    Content-Type: application/x-www-form-urlencoded
-   ```  
-   **Body**:
-   ```
+   
+   body
    access_token=mF_9.B5f-4.1JqM
-   ```
+```
 
-3. **URI Query Parameter**  
-   Pass the token as a query parameter in the URI.  
-   **Example**:
-   ```http
-   GET /resource?access_token=mF_9.B5f-4.1JqM HTTP/1.1
-   Host: server.example.com
-   ```
-    - **Tip**: When using URI query parameters, use the `Cache-Control: no-store` header to prevent caching.
+3- URI query parameter, so to get the access token, the authorization server sends the token as part of URI via a
+parameter named access_token.
 
-###### **Error Responses**
+```text
+Example:
+    GET /resource?access_token=mF_9.B5f-4.1JqM HTTP/1.1
+    Host: server.example.com
+    
+    https://server.example.com/resource?access_token=mF_9.B5f-4.1JqM&p=q
+```
 
-- **Missing or Invalid Token**:
-   ```http
-   HTTP/1.1 401 Unauthorized
-   WWW-Authenticate: Bearer realm="example"
-   ```
-- **Expired Token**:
-   ```http
-   HTTP/1.1 401 Unauthorized
-   WWW-Authenticate: Bearer realm="example", error="invalid_token", error_description="The access token expired"
-   ```
+Tip
+When the client uses the URI query parameter, it should use the “Cache-Control” header field containing “no-store”.
 
-###### **Example Access Token Response**
+Error
+If the client send a request to the resource server without “Authorization” header field or access_token parameter, the
+resource server must send a response with “WWW-Authenticate” header field
 
-```json
+```text
+Example:
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer realm="example"
+```
+
+It means the client was not authenticated by the authorization server.
+If the client use the expired access token then the resource server send a response as follows:
+
+```text
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer realm="example",					
+                      error="invalid_token",
+                       error_description="The access token expired"
+```
+
+**Example of Access Token**
+
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Cache-Control: no-store
+Pragma: no-cache
+
 {
-  "access_token": "mF_9.B5f-4.1JqM",
-  "token_type": "Bearer",
-  "expires_in": 3600,
-  "refresh_token": "tGzv3JOkF0XG5Qx2TlKWIA"
+"access_token":"mF_9.B5f-4.1JqM",
+"token_type":"Bearer",
+"expires_in":3600,
+"refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA"				
 }
 ```
 
-###### **Security Considerations**
+**Security Consideration**
 
-- Validate the TLS certificate chain when making requests.
-- Always use HTTPS (TLS) for secure communication.
-- Avoid storing tokens in cookies that can be transmitted in plaintext.
-- Use short-lived tokens (e.g., one hour or less).
-- Avoid passing tokens in URLs.
-- Issue scoped tokens.
+* The client must validate the TLS certificate chain when making requests to protected resources.
+* The client must always use the TLS (HTTPS) or the other transport security.
+* Token never stores cookies that can be sent in the clear.
+* Token servers should issue short-lived (one hour or less) bearer tokens.
+* Bearer tokens should not be passed in page URLs.
+* Issue scoped bearer tokens
 
-##### **Refresh Token**
+#### Refresh Token
 
-A refresh token is used to obtain new access tokens when the current ones expire or become invalid. Refresh tokens are
-only sent to the authorization server and are never shared with the resource server.
+A refresh token is a credential used to obtain access token when current access token becomes expired or invalid, also
+it is used to obtain additional access token with identical or narrow scope.
+Refresh tokens are intended for use only with authorization servers and are never sent to the resource server.
 
-#### **Roles**
+### Roles
 
-##### **Resource Owner (User)**
+The protected resource is the component that the resource owner has access to. This can take many different forms, but
+for the most part it’s a web API of some kind, these APIs can allow read, write, and other operations just as well.
 
-An entity capable of granting access to a protected resource. When the resource owner is a person, they are referred to
-as an end-user.
+OAuth 2.0 defines four roles:
 
-##### **Resource Server (API Server)**
+#### Resource owner (the User)
 
-The server hosting the protected resources and capable of responding to requests made with access tokens.
+An entity capable of granting access to a protected resource, when the resource owner is a person, it is referred to as
+an end-user.
 
-##### **Authorization Server**
+#### Resource server (the API server)
 
-The server responsible for authenticating the resource owner and issuing access tokens to the client.
+The server hosting the protected resources, capable of accepting and responding to protected resource requests using
+access tokens.
 
-##### **Client**
+#### Authorization server
 
-An application that makes requests to access protected resources on behalf of the resource owner.
+The server issues access tokens to the client after successfully authenticating the resource owner and obtaining
+authorization.
 
-##### **Authorization-Code Flow**
+#### Client
+
+An application making protected resource requests on behalf of the resource owner and with its authorization.
+
+#### Authorization-Code Flow
+
+<p align="justify">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-oauth2/doc/authorization-code-flow.png" alt="OAuth 2.0 Authorization-Code Flow" width="50%" height="50%">
 
-#### **Authorization Grant**
+</p>
 
-##### **Authorization Code Grant**
+### Authorization Grant
 
-The client directs the resource owner to the authorization server to obtain an access token. The authorization server
-authenticates the resource owner and issues the token directly to the client.
+An authorization grant type is a credential that represents an access method to get a token from the authorization
+server. In [RFC 6749] defined four grant types, there is also a mechanism in order to define additional types and every
+grant type supports the protocol flow.
 
-##### **Implicit Grant**
+#### Authorization Code Grant
 
-The implicit grant type is a simplified flow optimized for browser-based applications. It does not require client
-authentication and may use a redirect URI for validation.
+The client directs the resource owner to the authorization server to get the access token, authorization server
+authenticates the resource owner and obtains the authorization then shares the token with the client.
 
-##### **Resource Owner Password Credentials Grant**
+**Tip**
 
-The client directly uses the resource owner's credentials to obtain access tokens. This flow is suitable when there is a
-high level of trust between the client and the resource owner.
+* Only the resource owner can authenticate to the authorization server.
+* The authorization server transmits access token directly to the client without passing it to the resource owner.
+* The authorization server has a potential to expose the access token to others such as the resource owner.
 
-##### **Client Credentials Grant**
+#### Implicit Grant
 
-This grant type is used by clients to obtain access tokens for resources under their control. It is not recommended for
-accessing user-specific resources.
+The Implicit grant type is a simplified authorization code flow optimized for a client implemented as an in-browser
+application.
+In the Implicit grant type mechanism it does not need to authenticate the client by authorization server. In some cases
+use the redirect URI in order to validate the client.
 
-##### **Which OAuth 2.0 grant should be used?**
-A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the end user will be using, and the experience you want for your users.
+#### Resource Owner Password Credentials Grant
 
-<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-oauth2/doc/oauth2-usage.png" alt="OAuth 2.0 Usage" width="50%" height="50%">
+The client uses resource owner password credentials directly to obtain access tokens from the authorization server. Use
+this grant type when there is a high degree of trust between resource owner and client.
 
-### **Client**
+#### Client Credentials Grant
 
-#### **Client Types**
+The Client credentials grant type is used by clients to obtain an access token typically the protected resources are
+under the control of the client.
 
-* **Confidential Clients**: Capable of securely storing credentials.
-* **Public Clients**: Cannot securely store credentials.
+It is not recommended to use this grant type to access a user's resources.
+As well as exist an extensibility mechanism for defining additional types.
 
-### **Data Model**
+#### **Which OAuth 2.0 grant should be used?**
 
-#### **Authorization Server**
+A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the
+end user will be using, and the experience you want for your users.
 
-Stores or accesses:
+<p align="justify">
 
-* Usernames and passwords.
-* Client IDs, secrets, refresh tokens, and access tokens.
-* HTTPS certificates and keys.
-* Authorization-specific details (e.g., `redirect_uri`, `client_id`, authorization `code`).
+<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-oauth2/doc/oauth2-usage.png" alt="OAuth 2.0 Usage" width="75%" height="75%">
 
-#### **Resource Server**
+</p>
 
-Stores or accesses:
+### Client
 
-* User data.
-* HTTPS certificates and keys.
-* Access tokens for each request.
-* Shared credentials or secrets with the authorization server.
+The clients must have client type and redirection URI.
 
-**Note**: Resource servers do not store refresh tokens or client secrets.
+#### Client Types
 
-#### **Client**
+* Confidential
+* Public
 
-Stores:
+### Data Model
 
-* Client ID and secrets.
-* Refresh tokens (persistent) and access tokens (transient).
-* Trusted HTTPS certificates.
-* Authorization-specific details (`redirect_uri`, authorization `code`).
+#### Authorization Server
 
-### **References**
+The following data elements are stored or accessible on the authorization server:
 
+* usernames
+* passwords
+* client ids
+* secrets
+* client-specific refresh tokens
+* client-specific access tokens
+* HTTPS certificate/key
+* per-authorization process: "redirect_uri", "client_id", "authorization code"
+
+#### Resource Server
+
+The following data elements are stored or accessible on the resource server:
+
+* user data
+* HTTPS certificate/key
+* either authorization server credentials or authorization server shared secret/public key
+* access tokens (per request)
+
+It is assumed that a resource server has no knowledge of refresh tokens, user passwords, or client secrets.
+
+#### Client
+
+* client id (and client secret or corresponding client credential)
+* one or more refresh tokens (persistent) and access tokens (transient) per end user or other security-context or
+  delegation context
+* trusted certification authority (CA) certificates (HTTPS)
+* per-authorization process: "redirect_uri", authorization "code"
+
+### References
+
+* [OAuth.Net](https://oauth.net/2)
 * [The OAuth 2.0 Authorization Framework (RFC 6749)](https://tools.ietf.org/html/rfc6749)
 * [Bearer Token Usage (RFC 6750)](https://tools.ietf.org/html/rfc6750)
 * [OAuth Security Topics](https://tools.ietf.org/html/draft-ietf-oauth-security-topics-11)
 * [YANG Data Models](https://tools.ietf.org/html/draft-ietf-teas-yang-te-18)
-
-## OAuth 2.0 Use Cases
 
 ## Install Applications on Docker
 
