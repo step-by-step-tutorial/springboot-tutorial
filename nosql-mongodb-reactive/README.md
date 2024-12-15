@@ -31,19 +31,19 @@ This tutorial is about integration of Spring Boot and MongoDB.
 
 #### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true 
 ```
 
 #### Test
 
-```bash
+```shell
 mvn test
 ```
 
 #### Run
 
-```bash
+```shell
 mvn  spring-boot:run
 ```
 

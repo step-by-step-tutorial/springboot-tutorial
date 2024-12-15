@@ -27,19 +27,19 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 
 #### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true 
 ```
 
 #### Test
 
-```bash
+```shell
 mvn test
 ```
 
 #### Run
 
-```bash
+```shell
 mvn  spring-boot:run
 ```
 

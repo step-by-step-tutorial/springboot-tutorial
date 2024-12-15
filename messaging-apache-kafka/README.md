@@ -30,19 +30,19 @@ This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 
 #### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true 
 ```
 
 #### Test
 
-```bash
+```shell
 mvn test
 ```
 
 #### Run
 
-```bash
+```shell
 mvn  spring-boot:run
 ```
 

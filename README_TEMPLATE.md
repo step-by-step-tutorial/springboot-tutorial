@@ -31,19 +31,19 @@ This tutorial is about integration of Spring Boot and TOOLS_NAME.
 
 #### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true 
 ```
 
 #### Test
 
-```bash
+```shell
 mvn test
 ```
 
 #### Run
 
-```bash
+```shell
 mvn  spring-boot:run
 ```
 

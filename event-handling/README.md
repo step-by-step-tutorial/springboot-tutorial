@@ -29,19 +29,19 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 
 #### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true
 ```
 
 #### Test
 
-```bash
+```shell
 mvn test
 ```
 
 #### Run
 
-```bash
+```shell
 mvn spring-boot:run
 ```
 

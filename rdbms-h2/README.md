@@ -28,19 +28,19 @@ For more information about H2 go to the [website of H2](https://www.h2database.c
 
 #### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true 
 ```
 
 #### Test
 
-```bash
+```shell
 mvn test
 ```
 
 #### Run
 
-```bash
+```shell
 mvn  spring-boot:run
 ```
 

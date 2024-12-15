@@ -1,8 +1,8 @@
-```bash
+```shell
 mvn clean package -DskipTests=true 
 ```
 
-```bash
+```shell
 mvn test
 ```
 

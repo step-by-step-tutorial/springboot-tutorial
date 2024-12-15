@@ -22,13 +22,13 @@ This tutorial is about develop a RESTful web services includes API documentation
 
 ### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true
 ```
 
 ### Test
 
-```bash
+```shell
 mvn  test
 ```
 

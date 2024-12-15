@@ -9,10 +9,9 @@ This tutorial is about implementing OAuth 2.0 Server and Client with Springboot 
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [OAuth 2.0](#tools_name)
-* [OAuth 2.0 Use Cases](#tools_name-use-cases)
-* [Install OAuth 2.0 on Docker](#install-tools_name-on-docker)
-* [Install OAuth 2.0 on Kubernetes](#install-tools_name-on-kubernetes)
+* [OAuth 2.0](#oauth-20)
+* [Install Applications on Docker](#install-appllications-on-docker)
+* [Install Applications on Kubernetes](#install-appllications-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [License](#license)
@@ -31,7 +30,7 @@ This tutorial is about implementing OAuth 2.0 Server and Client with Springboot 
 
 #### Generate Certificate
 
-```bash
+```shell
 openssl genpkey -algorithm RSA -out private-key.pem
 openssl rsa -pubout -in private-key.pem -out public-key.pem
 openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-key.pem -nocrypt
@@ -39,19 +38,19 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-k
 
 #### Build
 
-```bash
+```shell
 # server
 mvn -f security-oauth2-server/pom.xml clean package -DskipTests=true
 ```
 
-```bash
+```shell
 # client
 mvn -f security-oauth2-client/pom.xml clean package -DskipTests=true
 ```
 
 #### Test
 
-```bash
+```shell
 # server
 mvn -f security-oauth2-server/pom.xml test
 ```
@@ -63,12 +62,14 @@ mvn -f security-oauth2-client/pom.xml test
 
 #### Run
 
-```bash
+```shell
 # server
 mvn -f security-oauth2-server/pom.xml spring-boot:run
 ```
 
-#### Register a Client
+### Test Client
+
+#### Register the Client
 
 ```shell
 curl -v -X POST "http://localhost:8080/api/v1/clients" \
@@ -96,7 +97,7 @@ curl -v -X POST "http://localhost:8080/login" \
 
 #### Request an Authorization Code
 
-Copy authorization code from console.
+Copy the authorization code displayed in the console after executing the command.
 
 ```shell
 curl -v -X GET "http://localhost:8080/oauth2/authorize?response_type=code&client_id=testClient&scope=read&redirect_uri=http://localhost:8080/login/oauth2/code/testClient" \
@@ -107,8 +108,8 @@ curl -v -X GET "http://localhost:8080/oauth2/authorize?response_type=code&client
 
 #### Get a JWT Bearer Token
 
-Use authorization code from last step.
-Copy token from console.
+Assign the authorization code from the last step to the parameter named code.
+Copy the access token displayed in the console after executing the command.
 
 ```shell
  curl -X POST "http://localhost:8080/oauth2/token" \
@@ -121,7 +122,7 @@ Copy token from console.
 
 #### Request a Protected Resource
 
-Use token from last step.
+Assign the access token from the last step in front of Bearer.
 
 ```shell
 # Check health status
@@ -390,6 +391,51 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ```yaml
 #docker-compose.yml
+version: "3.8"
+
+services:
+  nginx:
+    container_name: nginx
+    image: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./nginx.conf:/etc/nginx/conf.d/default.conf"
+  securityoauth2client:
+    image: samanalishiri/securityoauth2client:latest
+    build:
+      context: security-oauth2-client
+      dockerfile: /Dockerfile
+    container_name: securityoauth2client
+    hostname: securityoauth2client
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8081"
+      AUTHORIZATION_SERVER: "http://securityoauth2server.localhost"
+      RESOURCE_SERVER: "http://securityoauth2server:8080"
+      CLIENT_APP: "http://securityoauth2client.localhost"
+      APP_PROFILES: h2
+  securityoauth2server:
+    image: samanalishiri/securityoauth2server:latest
+    build:
+      context: security-oauth2-server
+      dockerfile: /Dockerfile
+    container_name: securityoauth2server
+    hostname: securityoauth2server
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      AUTHORIZATION_SERVER: "http://securityoauth2server.localhost"
+      RESOURCE_SERVER: "http://securityoauth2server:8080"
+      APP_PROFILES: h2
 ```
 
 ### Apply Docker Compose
@@ -397,7 +443,7 @@ Create a file named `docker-compose.yml` with the following configuration.
 Execute the following command to install Applications.
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name tools_name up --build -d
+docker compose --file ./docker-compose.yml --project-name oauth-20 up --build -d
 ```
 
 ## Install Applications on Kubernetes
@@ -406,13 +452,73 @@ Create the following files for installing Applications.
 
 ### Kube Files
 
-[tools_name-deployment.yml](/kube/tools_name-deployment.yml)
+[postgres-pvc.yml       ](/kube/postgres-pvc.yml       )
+
+```yaml
+#pvc.yml
+``` 
+
+[postgres-configmap.yml ](/kube/postgres-configmap.yml )
+
+```yaml
+#configmap.yml
+``` 
+
+[postgres-secrets.yml   ](/kube/postgres-secrets.yml   )
+
+```yaml
+#secrets.yml
+``` 
+
+[postgres-deployment.yml](/kube/postgres-deployment.yml)
+
+```yaml
+#deployment.yml
+``` 
+
+[postgres-service.yml   ](/kube/postgres-service.yml   )
+
+```yaml
+#service.yml
+```
+
+[pgadmin-secrets.yml    ](/kube/pgadmin-secrets.yml    )
+
+```yaml
+#secrets.yml
+``` 
+
+[pgadmin-deployment.yml ](/kube/pgadmin-deployment.yml )
+
+```yaml
+#deployment.yml
+``` 
+
+[pgadmin-service.yml    ](/kube/pgadmin-service.yml    )
+
+```yaml
+#service.yml
+```
+
+[server-deployment.yml  ](/kube/server-deployment.yml  )
 
 ```yaml
 #deployment.yml
 ```
 
-[tools_name-service.yml](/kube/tools_name-service.yml)
+[server-service.yml     ](/kube/server-service.yml     )
+
+```yaml
+#service.yml
+```
+
+[client-deployment.yml  ](/kube/client-deployment.yml  )
+
+```yaml
+#deployment.yml
+```
+
+[client-service.yml     ](/kube/client-service.yml     )
 
 ```yaml
 #service.yml
@@ -423,8 +529,18 @@ Create the following files for installing Applications.
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-kubectl apply -f ./kube/tools_name-deployment.yml
-kubectl apply -f ./kube/tools_name-service.yml
+kubectl apply -f ./kube/postgres-pvc.yml
+kubectl apply -f ./kube/postgres-configmap.yml
+kubectl apply -f ./kube/postgres-secrets.yml
+kubectl apply -f ./kube/postgres-deployment.yml
+kubectl apply -f ./kube/postgres-service.yml
+kubectl apply -f ./kube/pgadmin-secrets.yml
+kubectl apply -f ./kube/pgadmin-deployment.yml
+kubectl apply -f ./kube/pgadmin-service.yml
+kubectl apply -f ./kube/server-deployment.yml
+kubectl apply -f ./kube/server-service.yml
+kubectl apply -f ./kube/client-deployment.yml
+kubectl apply -f ./kube/client-service.yml
 ```
 
 ### Check Status
@@ -477,42 +593,79 @@ kubectl port-forward service/securityoauth2client 8081:8081
 ```yaml
 ```
 
-## License
-
 ## Appendix
 
 ### Makefile
 
 ```shell
 build:
-	mvn clean package -DskipTests=true
+	mvn -f security-oauth2-server/pom.xml clean package -DskipTests=true
+	mvn -f security-oauth2-client/pom.xml clean package -DskipTests=true
 
 test:
-	mvn test
+	mvn -f security-oauth2-server/pom.xml test
+	mvn -f security-oauth2-client/pom.xml test
 
 run:
-	mvn spring-boot:run
-	
+	mvn -f security-oauth2-server/pom.xml spring-boot:run
+
+docker-build:
+	docker build -t samanalishiri/securityoauth2client:latest -f security-oauth2-server/Dockerfile .
+	docker build -t samanalishiri/securityoauth2client:latest -f security-oauth2-client/Dockerfile .
+
 docker-compose-deploy:
-	docker compose --file docker-compose.yml --project-name tools-name up --build -d
+	mvn -f security-oauth2-server/pom.xml clean package -DskipTests=true
+	mvn -f security-oauth2-client/pom.xml clean package -DskipTests=true
+	mvn -f security-oauth2-server/pom.xml test
+	mvn -f security-oauth2-client/pom.xml test
+	docker compose --file ./docker-compose.yml --project-name securityoauth2 up --build -d
 
 docker-remove-container:
-	docker rm tools-name --force
+	docker rm securityoauth2server --force
+	docker rm securityoauth2client --force
+	docker rm nginx --force
+	docker rm pgadmin --force
+	docker rm postgres --force
 
 docker-remove-image:
-	docker image rm image-name
+	docker image rm samanalishiri/securityoauth2server:latest
+	docker image rm samanalishiri/securityoauth2client:latest
 
 kube-deploy:
-	kubectl apply -f ./kube/tools-name-deployment.yml
-	kubectl apply -f ./kube/tools-name-service.yml
+	kubectl apply -f ./kube/postgres-pvc.yml
+	kubectl apply -f ./kube/postgres-configmap.yml
+	kubectl apply -f ./kube/postgres-secrets.yml
+	kubectl apply -f ./kube/postgres-deployment.yml
+	kubectl apply -f ./kube/postgres-service.yml
+	kubectl apply -f ./kube/pgadmin-secrets.yml
+	kubectl apply -f ./kube/pgadmin-deployment.yml
+	kubectl apply -f ./kube/pgadmin-service.yml
+	kubectl apply -f ./kube/server-deployment.yml
+	kubectl apply -f ./kube/server-service.yml
+	kubectl apply -f ./kube/client-deployment.yml
+	kubectl apply -f ./kube/client-service.yml
 
 kube-delete:
 	kubectl delete all --all
+	kubectl delete secrets postgres-secrets
+	kubectl delete configMap postgres-configmap
+	kubectl delete persistentvolumeclaim postgres-pvc
+	kubectl delete secrets pgadmin-secrets
+	kubectl delete ingress pgadmin
 
-kube-port-forward-db:
-	kubectl port-forward service/tools-name port:port
+kube-port-forward-server:
+	kubectl port-forward service/securityoauth2server 8080:8080
+kube-port-forward-client:
+	kubectl port-forward service/securityoauth2client 8081:8081
+
+kube-port-forward-postgres:
+	kubectl port-forward service/postgres 5432:5432
+
+kube-port-forward-pgadmin:
+	kubectl port-forward service/pgadmin 9090:80
+
 ```
 
 ##
 
-**<p align="center"> [Top](#title) </p>**
+**<p align="center"> [Top](#implement-oauth-20-server-and-client) </p>**

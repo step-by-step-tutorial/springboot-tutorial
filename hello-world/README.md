@@ -19,13 +19,13 @@ mvn clean package -DskipTests=true
 
 #### Test
 
-```bash
+```shell
 mvn  test
 ```
 
 #### Run
 
-```bash
+```shell
 mvn  spring-boot:run
 ```
 

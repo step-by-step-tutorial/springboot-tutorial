@@ -19,13 +19,13 @@ This tutorial is a quick setup for spring Security based on RBAC.
 
 ### Build
 
-```bash
+```shell
 mvn clean package -DskipTests=true
 ```
 
 ### Test
 
-```bash
+```shell
 mvn  test
 ```
 
