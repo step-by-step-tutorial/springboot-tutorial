@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: securityoauth2client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: securityoauth2client
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: securityoauth2client
+    spec:
+      containers:
+        - name: securityoauth2client
+          image: samanalishiri/securityoauth2client:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_HOST
+              value: "0.0.0.0"
+            - name: APP_PORT
+              value: "8081"
+            - name: APP_PROFILES
+              value: h2
+            - name: AUTHORIZATION_SERVER
+              value: "http://securityoauth2server.localhost"
+            - name: RESOURCE_SERVER
+              value: "http://securityoauth2server:8080"
+            - name: CLIENT_APP
+              value: "http://securityoauth2client.localhost"
+#            - name: DATABASE_USERNAME
+#              value: user
+#            - name: DATABASE_PASSWORD
+#              value: password
+#            - name: POSTGRESQL_HOST
+#              value: postgres
+#            - name: POSTGRESQL_PORT
+#              value: "5432"
+#            - name: DATABASE_NAME
+#              value: test_db
+#            - name: DATABASE_SCHEMA
+#              value: user_management

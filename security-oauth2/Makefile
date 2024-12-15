@@ -25,8 +25,10 @@ kube-deploy:
 	kubectl apply -f ./kube/pgadmin-secrets.yml
 	kubectl apply -f ./kube/pgadmin-deployment.yml
 	kubectl apply -f ./kube/pgadmin-service.yml
-	kubectl apply -f ./kube/app-deployment.yml
-	kubectl apply -f ./kube/app-service.yml
+	kubectl apply -f ./kube/server-deployment.yml
+	kubectl apply -f ./kube/server-service.yml
+	kubectl apply -f ./kube/client-deployment.yml
+	kubectl apply -f ./kube/client-service.yml
 
 kube-delete:
 	kubectl delete all --all

@@ -1,18 +1,18 @@
-# <p align="center">Title</p>
+# <p align="center">Implement OAuth 2.0 Server and Client</p>
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and TOOLS_NAME.
+This tutorial is about implementing OAuth 2.0 Server and Client with Springboot framework.
 
 </p>
 
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [TOOLS_NAME](#tools_name)
-* [TOOLS_NAME Use Cases](#tools_name-use-cases)
-* [Install TOOLS_NAME on Docker](#install-tools_name-on-docker)
-* [Install TOOLS_NAME on Kubernetes](#install-tools_name-on-kubernetes)
+* [OAuth 2.0](#tools_name)
+* [OAuth 2.0 Use Cases](#tools_name-use-cases)
+* [Install OAuth 2.0 on Docker](#install-tools_name-on-docker)
+* [Install OAuth 2.0 on Kubernetes](#install-tools_name-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [License](#license)
@@ -29,54 +29,117 @@ This tutorial is about integration of Spring Boot and TOOLS_NAME.
 
 ### Pipeline
 
-#### Build
+#### Generate Certificate
 
 ```bash
-mvn clean package -DskipTests=true
-http://securityoauth2server.local/oauth2/authorize?response_type=code&client_id=test-client&redirect_uri=http://securityoauth2client.localhost/login/oauth2/code/test-client&scope=read
 openssl genpkey -algorithm RSA -out private-key.pem
 openssl rsa -pubout -in private-key.pem -out public-key.pem
 openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-key.pem -nocrypt
 ```
 
-#### Test
+#### Build
 
 ```bash
-
+# server
+mvn -f security-oauth2-server/pom.xml clean package -DskipTests=true
 ```
 
 ```bash
-mvn test
-http://securityoauth2server.localhost/oauth2/authorize?response_type=code&client_id=testClient&redirect_uri=http://securityoauth2client.localhost/login/oauth2/code/testClient&scope=read
-http://securityoauth2client.localhost/login/oauth2/code/testClient
+# client
+mvn -f security-oauth2-client/pom.xml clean package -DskipTests=true
+```
 
-  curl -X POST "http://securityoauth2server.localhost/oauth2/token" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -u "testClient:password" \
-  -d "grant_type=authorization_code" \
-  -d "code=" \
-  -d "redirect_uri=http://securityoauth2client.localhost/login/oauth2/code/testClient"
+#### Test
 
+```bash
+# server
+mvn -f security-oauth2-server/pom.xml test
+```
 
+```shell
+# client
+mvn -f security-oauth2-client/pom.xml test
 ```
 
 #### Run
 
 ```bash
-mvn  spring-boot:run
+# server
+mvn -f security-oauth2-server/pom.xml spring-boot:run
 ```
 
-## TOOLS_NAME
+#### Register a Client
+
+```shell
+curl -v -X POST "http://localhost:8080/api/v1/clients" \
+  -u "test:test" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "clientId": "testClient",
+        "clientSecret": "password",
+        "redirectUri": "http://localhost:8080/login/oauth2/code/testClient",
+        "grantTypes": ["authorization_code", "password", "client_credentials", "refresh_token"],
+        "scopes": ["read", "write"],
+        "accessToken_validity_seconds": 3600,
+        "refreshToken_validity_seconds": 1209600
+      }'
+```
+
+#### Create a Login Session
+
+```shell
+curl -v -X POST "http://localhost:8080/login" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=test&password=test" \
+  -c cookies.txt
+```
+
+#### Request an Authorization Code
+
+Copy authorization code from console.
+
+```shell
+curl -v -X GET "http://localhost:8080/oauth2/authorize?response_type=code&client_id=testClient&scope=read&redirect_uri=http://localhost:8080/login/oauth2/code/testClient" \
+  -b cookies.txt \
+  -H "Content-Type: application/x-www-form-urlencoded"
+
+```
+
+#### Get a JWT Bearer Token
+
+Use authorization code from last step.
+Copy token from console.
+
+```shell
+ curl -X POST "http://localhost:8080/oauth2/token" \
+  -u "testClient:password" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=authorization_code" \
+  -d "code=???" \
+  -d "redirect_uri=http://localhost:8080/login/oauth2/code/testClient"
+```
+
+#### Request a Protected Resource
+
+Use token from last step.
+
+```shell
+# Check health status
+curl -v -X GET "http://localhost:8080/api/v1/health" \
+  -H "Authorization: Bearer ???"
+```
+
+## OAuth 2.0
 
 <p align="justify">
 
-For more information about TOOLS_NAME see the []().
+For more information about OAuth 2.0 see the []().
 
 </p>
 
-## TOOLS_NAME Use Cases
+## OAuth 2.0 Use Cases
 
-## Install TOOLS_NAME on Docker
+## Install Applications on Docker
 
 Create a file named `docker-compose.yml` with the following configuration.
 
@@ -90,15 +153,15 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ### Apply Docker Compose
 
-Execute the following command to install TOOLS_NAME.
+Execute the following command to install Applications.
 
 ```shell
 docker compose --file ./docker-compose.yml --project-name tools_name up --build -d
 ```
 
-## Install TOOLS_NAME on Kubernetes
+## Install Applications on Kubernetes
 
-Create the following files for installing TOOLS_NAME.
+Create the following files for installing Applications.
 
 ### Kube Files
 
@@ -133,13 +196,20 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to TOOLS_NAME from localhost through the web browser use the following command and dashboard of
-TOOLS_NAME is available on [http://localhost:port](http://localhost:port) URL.
+In order to connect to Applications from localhost through the web browser use the following command and dashboard of
+Applications is available on:
+
+* Server: [http://securityoauth2server.localhost](http://securityoauth2server.localhost)
+* Client: [http://securityoauth2client.localhost](http://securityoauth2client.localhost)
 
 </p>
 
 ```shell
-kubectl port-forward service/tools_name port:port
+kubectl port-forward service/securityoauth2server 8080:8080
+```
+
+```shell
+kubectl port-forward service/securityoauth2client 8081:8081
 ```
 
 ## How To Set up Spring Boot

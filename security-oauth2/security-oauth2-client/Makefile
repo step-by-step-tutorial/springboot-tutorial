@@ -16,7 +16,7 @@ docker-deploy:
 	-p 8080:8080 \
 	-h securityoauth2client \
 	-e APP_HOST=0.0.0.0 \
-	-e APP_PORT=8080 \
+	-e APP_PORT=8081 \
 	-e APP_PROFILES=h2 \
 	-itd samanalishiri/securityoauth2client:latest
 

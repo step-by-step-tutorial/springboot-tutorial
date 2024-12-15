@@ -26,16 +26,20 @@ spec:
             - name: APP_PORT
               value: "8080"
             - name: APP_PROFILES
-              value: postgres
-            - name: DATABASE_USERNAME
-              value: user
-            - name: DATABASE_PASSWORD
-              value: password
-            - name: POSTGRESQL_HOST
-              value: postgres
-            - name: POSTGRESQL_PORT
-              value: "5432"
-            - name: DATABASE_NAME
-              value: test_db
-            - name: DATABASE_SCHEMA
-              value: user_management
+              value: h2
+            - name: AUTHORIZATION_SERVER
+              value: "http://securityoauth2server.localhost"
+            - name: RESOURCE_SERVER
+              value: "http://securityoauth2server:8080"
+#            - name: DATABASE_USERNAME
+#              value: user
+#            - name: DATABASE_PASSWORD
+#              value: password
+#            - name: POSTGRESQL_HOST
+#              value: postgres
+#            - name: POSTGRESQL_PORT
+#              value: "5432"
+#            - name: DATABASE_NAME
+#              value: test_db
+#            - name: DATABASE_SCHEMA
+#              value: user_management
