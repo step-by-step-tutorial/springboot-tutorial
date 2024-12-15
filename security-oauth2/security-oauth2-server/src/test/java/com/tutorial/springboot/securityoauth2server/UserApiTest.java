@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.TEST_HOSTNAME;
+import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_HOSTNAME;
 import static com.tutorial.springboot.securityoauth2server.testutils.TokenTestUtils.requestToGetNewTestUserToken;
 import static org.hamcrest.Matchers.is;
 

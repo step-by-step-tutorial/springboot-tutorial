@@ -15,8 +15,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import static com.tutorial.springboot.securityoauth2server.testutils.SecurityTestUtils.loginToTestEnv;
-import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.TEST_PASSWORD;
-import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.TEST_USERNAME;
+import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_PASSWORD;
+import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_USERNAME;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

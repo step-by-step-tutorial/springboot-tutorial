@@ -1,7 +1,6 @@
 package com.tutorial.springboot.securityoauth2server;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
-import com.tutorial.springboot.securityoauth2server.testutils.stub.assistant.ClientTestAssistant;
 import com.tutorial.springboot.securityoauth2server.testutils.stub.factory.ClientTestFactory;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -17,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Base64;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -26,13 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ActiveProfiles({"test", "h2"})
 public class OauthScenarioTest {
 
-    final Logger logger = LoggerFactory.getLogger(TokenApiTest.class.getSimpleName());
+    private final Logger logger = LoggerFactory.getLogger(TokenApiTest.class.getSimpleName());
 
     @LocalServerPort
-    int port;
+    private int port;
 
     @Autowired
-    ClientTestFactory clientFactory;
+    private ClientTestFactory clientFactory;
 
     private String requestToGetNewTestUserToken() {
         return RestAssured.given()
@@ -54,7 +53,7 @@ public class OauthScenarioTest {
                 .contentType(ContentType.JSON)
                 .auth().basic(TEST_USERNAME, TEST_PASSWORD)
                 .baseUri("http://" + TEST_HOSTNAME).port(port)
-                .basePath("/api/v1/token/me/{clientId}").pathParam("clientId", clientId)
+                .basePath("/api/v1/token/me/client/{clientId}").pathParam("clientId", clientId)
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())

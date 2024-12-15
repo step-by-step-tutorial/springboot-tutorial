@@ -7,10 +7,7 @@ import com.tutorial.springboot.securityoauth2server.service.impl.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentUsername;
 
@@ -29,19 +26,27 @@ public class TokenApi {
     }
 
     @GetMapping("/me/new")
-    public ResponseEntity<TokenDto> generateToken() {
+    public ResponseEntity<TokenDto> generateTokenByUsername() {
         logger.info("Received an inbound request to generate a token for user:{}", getCurrentUsername());
         return tokenService.generateToken(getCurrentUsername())
                 .map(ResponseEntity::ok)
                 .orElseThrow();
     }
 
-    @GetMapping("/me/{clientId}")
+    @GetMapping("/me/client/{clientId}")
     public ResponseEntity<TokenDto> getTokenByClientId(@PathVariable String clientId) {
-        logger.info("Received an inbound request to generate a token for user:{}, client:{}", getCurrentUsername(), clientId);
+        logger.info("Received an inbound request to get a token of user:{}, client:{}", getCurrentUsername(), clientId);
         return clientService.getByClientId(clientId)
                 .map(ClientDto::getToken)
                 .map(ResponseEntity::ok)
                 .orElseThrow();
+    }
+
+    @PatchMapping("/me/client/{clientId}")
+    public ResponseEntity<Void> generateTokenByClientId(@PathVariable String clientId) {
+        logger.info("Received an inbound request to generate a new token for user:{}, client:{}", getCurrentUsername(), clientId);
+        clientService.updateToken(clientId);
+
+        return ResponseEntity.noContent().build();
     }
 }

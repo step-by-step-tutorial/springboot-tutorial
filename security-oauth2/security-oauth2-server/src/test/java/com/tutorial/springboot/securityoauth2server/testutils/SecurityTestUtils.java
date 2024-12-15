@@ -4,8 +4,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.TEST_PASSWORD;
-import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.TEST_USERNAME;
+import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_PASSWORD;
+import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_USERNAME;
 
 public final class SecurityTestUtils {
 

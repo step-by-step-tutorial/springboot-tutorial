@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
@@ -52,7 +52,7 @@ public class TokenApiTest {
     @Nested
     class ClientTokenTests {
 
-        private static final String RELATIVE_PATH = "/{clientId}";
+        private static final String RELATIVE_PATH = "/client/{clientId}";
 
         @BeforeEach
         void populate() {

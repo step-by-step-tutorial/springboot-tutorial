@@ -1,6 +1,6 @@
 package com.tutorial.springboot.securityoauth2server.testutils;
 
-public final class TestUtils {
+public final class HttpTestUtils {
 
     public static final String TEST_HOSTNAME = "localhost";
 
@@ -10,7 +10,7 @@ public final class TestUtils {
 
     public static final String TEST_PASSWORD = "test";
 
-    private TestUtils() {
+    private HttpTestUtils() {
     }
 
     public static String extractAuthorizationCodeFromUrl(String url) {

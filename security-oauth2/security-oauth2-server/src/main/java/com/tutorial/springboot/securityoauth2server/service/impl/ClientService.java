@@ -60,6 +60,29 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
 
     @Override
     protected void afterSave(ClientDto dto, Client entity) {
+        updateToken(dto, entity);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ClientDto> getByClientId(String clientId) {
+        return (ClientRepository.class.cast(repository)).findByClientId(clientId).map(transformer::toDto);
+    }
+
+    @Transactional
+    public void updateToken(String clientId) {
+        var clientEntity = (ClientRepository.class.cast(repository)).findByClientId(clientId);
+        if (clientEntity.isEmpty()) {
+            throw new RuntimeException("Client with clientId " + clientId + " not found");
+        }
+        var clientDto = clientEntity.map(transformer::toDto);
+        if (clientDto.isEmpty()) {
+            throw new RuntimeException("Client with clientId " + clientId + " not found");
+        }
+
+        updateToken(clientDto.get(), clientEntity.get());
+    }
+
+    private void updateToken(ClientDto dto, Client entity) {
         var jwtToken = tokenService.generateToken(getCurrentUsername(), dto).orElseThrow();
         var user = userRepository.findByUsername(getCurrentUsername()).orElseThrow();
 
@@ -73,11 +96,6 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
                 .setVersion(INIT_VERSION);
 
         accessTokenRepository.save(accessToken);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<ClientDto> getByClientId(String clientId) {
-        return (ClientRepository.class.cast(repository)).findByClientId(clientId).map(transformer::toDto);
     }
 
 }
