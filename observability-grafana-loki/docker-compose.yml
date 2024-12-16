@@ -1,21 +1,33 @@
 version: "4"
 services:
-  tempo:
-    image: grafana/tempo:2.2.2
-    command: [ "-config.file=/etc/tempo.yaml" ]
-    volumes:
-      - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
-      - ./docker/tempo/tempo-data:/tmp/tempo
-    ports:
-      - "3110:3100"  # Tempo
-      - "9411:9411" # zipkin
   loki:
-    image: grafana/loki:main
+    image: grafana/loki
+    container_name: loki
+    hostname: loki
     command: [ "-config.file=/etc/loki/local-config.yaml" ]
     ports:
       - "3100:3100"
+  tempo:
+    image: grafana/tempo
+    container_name: tempo
+    hostname: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
+    ports:
+      - "3200:3200" # Tempo
+      - "4318:4318" # http
+      - "9411:9411" # zipkin
+  pyroscope:
+    image: grafana/pyroscope
+    container_name: pyroscope
+    hostname: pyroscope
+    ports:
+      - '4040:4040'
   prometheus:
     image: prom/prometheus:v2.46.0
+    container_name: prometheus
+    hostname: prometheus
     command:
       - --enable-feature=exemplar-storage
       - --config.file=/etc/prometheus/prometheus.yml
@@ -23,9 +35,10 @@ services:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
       - "9090:9090"
-
   grafana:
-    image: grafana/grafana:10.1.0
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
     volumes:
       - ./docker/grafana:/etc/grafana/provisioning/datasources:ro
     environment:
@@ -34,5 +47,3 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "3000:3000"
-volumes:
-  mysql-data:

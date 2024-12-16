@@ -5,8 +5,14 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['prometheus:9090']
+      - targets: ['host.docker.internal:9090']
   - job_name: 'observability-grafana-loki'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['host.docker.internal:8080']
+  - job_name: 'tempo'
+    static_configs:
+      - targets: ['host.docker.internal:3200']
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['host.docker.internal:3100']

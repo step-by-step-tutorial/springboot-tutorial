@@ -3,6 +3,10 @@ server:
 
 distributor:
   receivers:
+    otlp:
+      protocols:
+        grpc:
+        http:
     zipkin:
 
 storage:

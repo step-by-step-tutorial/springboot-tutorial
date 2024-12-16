@@ -16,6 +16,8 @@ management:
     distribution:
       percentiles-histogram:
         all: true
+    tags:
+      application: ${spring.application.name}
   prometheus:
     metrics:
       export:
@@ -27,3 +29,6 @@ management:
   otlp:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics
