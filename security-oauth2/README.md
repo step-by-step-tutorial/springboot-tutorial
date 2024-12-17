@@ -71,6 +71,7 @@ mvn -f security-oauth2-server/pom.xml spring-boot:run
 
 #### Register the Client
 
+For single server version.
 ```shell
 curl -v -X POST "http://localhost:8080/api/v1/clients" \
   -u "test:test" \
@@ -79,6 +80,22 @@ curl -v -X POST "http://localhost:8080/api/v1/clients" \
         "clientId": "testClient",
         "clientSecret": "password",
         "redirectUri": "http://localhost:8080/login/oauth2/code/testClient",
+        "grantTypes": ["authorization_code", "password", "client_credentials", "refresh_token"],
+        "scopes": ["read", "write"],
+        "accessToken_validity_seconds": 3600,
+        "refreshToken_validity_seconds": 1209600
+      }'
+```
+
+For server and client version.
+```shell
+curl -v -X POST "http://localhost:8080/api/v1/clients" \
+  -u "test:test" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "clientId": "testClient",
+        "clientSecret": "password",
+        "redirectUri": "http://securityoauth2client.localhost/login/oauth2/code/testClient",
         "grantTypes": ["authorization_code", "password", "client_credentials", "refresh_token"],
         "scopes": ["read", "write"],
         "accessToken_validity_seconds": 3600,
@@ -450,19 +467,19 @@ Create the following files for installing Applications.
 
 ### Kube Files
 
-[postgres-pvc.yml       ](/kube/postgres-pvc.yml       )
+[postgres-pvc.yml](/kube/postgres-pvc.yml       )
 
 ```yaml
 #pvc.yml
 ``` 
 
-[postgres-configmap.yml ](/kube/postgres-configmap.yml )
+[postgres-configmap.yml](/kube/postgres-configmap.yml )
 
 ```yaml
 #configmap.yml
 ``` 
 
-[postgres-secrets.yml   ](/kube/postgres-secrets.yml   )
+[postgres-secrets.yml](/kube/postgres-secrets.yml   )
 
 ```yaml
 #secrets.yml
@@ -474,49 +491,49 @@ Create the following files for installing Applications.
 #deployment.yml
 ``` 
 
-[postgres-service.yml   ](/kube/postgres-service.yml   )
+[postgres-service.yml](/kube/postgres-service.yml   )
 
 ```yaml
 #service.yml
 ```
 
-[pgadmin-secrets.yml    ](/kube/pgadmin-secrets.yml    )
+[pgadmin-secrets.yml](/kube/pgadmin-secrets.yml    )
 
 ```yaml
 #secrets.yml
 ``` 
 
-[pgadmin-deployment.yml ](/kube/pgadmin-deployment.yml )
+[pgadmin-deployment.yml](/kube/pgadmin-deployment.yml )
 
 ```yaml
 #deployment.yml
 ``` 
 
-[pgadmin-service.yml    ](/kube/pgadmin-service.yml    )
+[pgadmin-service.yml](/kube/pgadmin-service.yml    )
 
 ```yaml
 #service.yml
 ```
 
-[server-deployment.yml  ](/kube/server-deployment.yml  )
+[server-deployment.yml](/kube/server-deployment.yml  )
 
 ```yaml
 #deployment.yml
 ```
 
-[server-service.yml     ](/kube/server-service.yml     )
+[server-service.yml](/kube/server-service.yml     )
 
 ```yaml
 #service.yml
 ```
 
-[client-deployment.yml  ](/kube/client-deployment.yml  )
+[client-deployment.yml](/kube/client-deployment.yml  )
 
 ```yaml
 #deployment.yml
 ```
 
-[client-service.yml     ](/kube/client-service.yml     )
+[client-service.yml](/kube/client-service.yml     )
 
 ```yaml
 #service.yml
