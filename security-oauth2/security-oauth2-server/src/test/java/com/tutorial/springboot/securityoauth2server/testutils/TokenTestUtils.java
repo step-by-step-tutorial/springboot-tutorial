@@ -40,7 +40,7 @@ public final class TokenTestUtils {
                 .contentType(ContentType.JSON)
                 .auth().basic(TEST_USERNAME, TEST_PASSWORD)
                 .baseUri("http://" + TEST_HOSTNAME).port(TEST_PORT)
-                .basePath("/api/v1/token/me/{clientId}").pathParam("clientId", clientId)
+                .basePath("/api/v1/token/me/client/{clientId}").pathParam("clientId", clientId)
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
