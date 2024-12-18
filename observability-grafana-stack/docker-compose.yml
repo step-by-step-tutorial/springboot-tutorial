@@ -16,14 +16,9 @@ services:
       - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
     ports:
       - "3200:3200" # Tempo
+      - "4317:4317" # grpc
       - "4318:4318" # http
       - "9411:9411" # zipkin
-  pyroscope:
-    image: grafana/pyroscope
-    container_name: pyroscope
-    hostname: pyroscope
-    ports:
-      - '4040:4040'
   prometheus:
     image: prom/prometheus:v2.46.0
     container_name: prometheus
@@ -35,6 +30,12 @@ services:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
       - "9090:9090"
+  pyroscope:
+    image: grafana/pyroscope
+    container_name: pyroscope
+    hostname: pyroscope
+    ports:
+      - '4040:4040'
   grafana:
     image: grafana/grafana
     container_name: grafana

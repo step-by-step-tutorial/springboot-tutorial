@@ -6,7 +6,7 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['host.docker.internal:9090']
-  - job_name: 'observability-grafana-loki'
+  - job_name: 'observability-grafana-stack'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['host.docker.internal:8080']

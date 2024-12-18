@@ -13,12 +13,12 @@ docker compose --file ./docker-compose.yml --project-name grafana up --build -d
 ```shell
 curl http://localhost:8080/api/v1/application/status
 ```
-Actuator: http://localhost:8080/actuator
-Grafana: http://localhost:3000
-Prometheus: http://localhost:9090
-            http://localhost:9090/targets
-Tempo: http://localhost:3110
-Loki: http://localhost:3100
+* Actuator: [http://localhost:8080/actuator](http://localhost:8080/actuator)
+* Grafana: [http://localhost:3000](http://localhost:3000)
+* Prometheus: [http://localhost:9090](http://localhost:9090)
+* Tempo: [http://localhost:3200](http://localhost:3200)
+* Loki: [http://localhost:3100](http://localhost:3100)
+* Pyroscope: [http://localhost:4040](http://localhost:4040)
 
 
 ### Grafana Stack

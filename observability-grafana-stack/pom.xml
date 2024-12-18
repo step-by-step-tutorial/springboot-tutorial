@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
     <groupId>com.tutorial.springboot</groupId>
-    <artifactId>observability-grafana-loki</artifactId>
+    <artifactId>observability-grafana-stack</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Observability Grafana Loki</name>
+    <name>Observability Grafana Stack</name>
     <properties>
         <java.version>21</java.version>
     </properties>
