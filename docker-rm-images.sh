@@ -18,4 +18,9 @@ docker rmi \
   docker.io/bitnami/zookeeper \
   docker.io/bitnami/kafka \
   obsidiandynamics/kafdrop:latest \
-  jaegertracing/all-in-one:latest
+  jaegertracing/all-in-one:latest \
+  grafana/loki \
+  grafana/tempo \
+  prom/prometheus:v2.46.0 \
+  grafana/pyroscope \
+  grafana/grafana

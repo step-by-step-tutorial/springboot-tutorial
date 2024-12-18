@@ -17,6 +17,7 @@ call mvn -f messaging-apache-artemis-mq/pom.xml clean package
 call mvn -f messaging-rabbit-mq/pom.xml clean package
 call mvn -f messaging-apache-kafka/pom.xml clean package
 call mvn -f streaming-apache-kafka/pom.xml clean package
+call mvn -f observability-grafana-stack/pom.xml clean package
 call mvn -f observability-jaeger/pom.xml clean package
 call mvn -f restful-web-api/pom.xml clean package
 call mvn -f security-rbac-inmemory/pom.xml clean package

@@ -36,6 +36,7 @@ This tutorial provides many best practises and examples include documentation.
 * step: rest-hateoas
 * step: webflux
 * step: ELK
+* [step: observability-grafana-stack](observability-grafana-stack)
 * [step: observability-Jaeger](observability-jaeger)
 * [step: security-rbac-inmemory](security-rbac-inmemory)
 * [step: security-rbac-jwt](security-rbac-jwt)

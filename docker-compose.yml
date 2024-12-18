@@ -197,6 +197,48 @@ services:
     ports:
       - "16686:16686"
       - "4318:4318"
+  loki:
+    image: grafana/loki
+    container_name: loki
+    hostname: loki
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"
+  tempo:
+    image: grafana/tempo
+    container_name: tempo
+    hostname: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    ports:
+      - "3200:3200" # Tempo
+      - "4317:4317" # grpc
+      - "4318:4318" # http
+      - "9411:9411" # zipkin
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    container_name: prometheus
+    hostname: prometheus
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+  pyroscope:
+    image: grafana/pyroscope
+    container_name: pyroscope
+    hostname: pyroscope
+    ports:
+      - '4040:4040'
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
 
 volumes:
   ords_config:

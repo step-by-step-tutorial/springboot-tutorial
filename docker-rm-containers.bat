@@ -18,4 +18,9 @@ artemis ^
 zookeeper ^
 kafka ^
 kafdrop ^
-jaeger
+jaeger ^
+loki ^
+tempo ^
+prometheus ^
+pyroscope ^
+grafana
