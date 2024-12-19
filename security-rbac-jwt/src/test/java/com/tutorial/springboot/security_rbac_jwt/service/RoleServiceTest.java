@@ -2,9 +2,8 @@ package com.tutorial.springboot.security_rbac_jwt.service;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.RoleService;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.DtoStubFactory;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.RoleTestAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.RoleTestFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -14,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -22,14 +22,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoleServiceTest {
 
     @Autowired
-    RoleService systemUnderTest;
+    private RoleService systemUnderTest;
+
 
     @Autowired
-    TestDatabaseAssistant testDatabaseAssistant;
+    private RoleTestAssistant assistant;
+
+    @Autowired
+    private RoleTestFactory factory;
 
     @BeforeEach
     void setup() {
-        SecurityTestUtils.loginToTestEnv();
+        login();
     }
 
     @Nested
@@ -37,7 +41,7 @@ public class RoleServiceTest {
 
         @Test
         void givenDto_whenSaveOne_thenReturnId() {
-            var givenDto = DtoStubFactory.createRole(1, 0).asOne();
+            var givenDto = factory.newInstances(1).dto().asOne();;
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -48,7 +52,7 @@ public class RoleServiceTest {
 
         @Test
         void givenRoleWithPermission_whenSaveOne_thenReturnId() {
-            var givenDto = DtoStubFactory.createRole(1, 1).asOne();
+            var givenDto = factory.newInstances(1).dto().asOne();
 
             var actual = systemUnderTest.save(givenDto);
 
@@ -73,7 +77,7 @@ public class RoleServiceTest {
 
         @Test
         void givenId_whenFindById_thenReturnDto() {
-            var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
+            var givenId = assistant.populate(1).dto().asOne().getId();
 
             var actual = systemUnderTest.getById(givenId);
 
@@ -98,11 +102,11 @@ public class RoleServiceTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
-            var givenDto = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().setName("updated_value");
+            var givenDto = assistant.populate(1).dto().asOne().setName("updated_value");
             var givenId = givenDto.getId();
 
             systemUnderTest.update(givenId, givenDto);
-            var actual = testDatabaseAssistant.selectTestRole().dto().asOne();
+            var actual = assistant.select().dto().asOne();
 
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());
@@ -125,10 +129,10 @@ public class RoleServiceTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestRole(1, 1).dto().asOne().getId();
+            var givenId = assistant.populate(1).dto().asOne().getId();
 
             systemUnderTest.deleteById(givenId);
-            var actual = testDatabaseAssistant.selectTestRole().dto().asOne();
+            var actual = assistant.select().dto().asOne();
 
             assertNull(actual);
         }

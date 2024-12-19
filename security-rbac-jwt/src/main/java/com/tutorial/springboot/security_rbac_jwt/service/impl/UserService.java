@@ -1,7 +1,10 @@
 package com.tutorial.springboot.security_rbac_jwt.service.impl;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
+import com.tutorial.springboot.security_rbac_jwt.repository.PermissionRepository;
 import com.tutorial.springboot.security_rbac_jwt.repository.RoleRepository;
 import com.tutorial.springboot.security_rbac_jwt.repository.UserRepository;
 import com.tutorial.springboot.security_rbac_jwt.service.AbstractService;
@@ -9,12 +12,16 @@ import com.tutorial.springboot.security_rbac_jwt.service.BatchService;
 import com.tutorial.springboot.security_rbac_jwt.service.CrudService;
 import com.tutorial.springboot.security_rbac_jwt.transformer.UserTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
 import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;
 import static com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidation.shouldBeNotNullOrEmpty;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 public class UserService extends AbstractService<Long, User, UserDto> implements CrudService<Long, UserDto>, BatchService<Long, UserDto> {
@@ -52,17 +59,8 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
     @Override
     protected void beforeSave(UserDto dto, User entity) {
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-        var roles = entity.getRoles()
-                .stream()
-                .map(role -> {
-                    if (roleRepository.existsByName(role.getName())) {
-                        return roleRepository.findByName(role.getName()).get();
-                    } else {
-                        return role;
-                    }
-                })
-                .toList();
-        entity.setRoles(roles);
+        var roles = roleRepository.findOrBatchSave(entity.getRoles());
+        entity.getRoles().clear();
+        entity.getRoles().addAll(roles);
     }
 }

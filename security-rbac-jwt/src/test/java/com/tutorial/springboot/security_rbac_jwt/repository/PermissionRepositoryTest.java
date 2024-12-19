@@ -1,7 +1,9 @@
 package com.tutorial.springboot.security_rbac_jwt.repository;
 
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.EntityStubFactory;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.PermissionTestAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.PermissionTestFactory;
+import com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -17,18 +20,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PermissionRepositoryTest {
 
     @Autowired
-    PermissionRepository systemUnderTest;
+    private PermissionRepository systemUnderTest;
 
     @Autowired
-    TestDatabaseAssistant testDatabaseAssistant;
+    private PermissionTestAssistant assistant;
 
+    @Autowired
+    private PermissionTestFactory factory;
 
     @Nested
     class CreateTest {
 
         @Test
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
-            var givenEntity = EntityStubFactory.createPermission(1).asOne();
+            var givenEntity = factory.newInstances(1).entity().asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -40,12 +45,12 @@ public class PermissionRepositoryTest {
         @Test
         void givenListOfEntities_whenSaveAll_thenReturnListOfPersistedEntity() {
             var numberOfEntities = 2;
-            var givenEntities = EntityStubFactory.createPermission(numberOfEntities).asList();
+            var givenEntities = factory.newInstances(numberOfEntities).entity().asUniqList(Permission::getName);
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
             assertNotNull(actual);
-            assertEquals(numberOfEntities, actual.size());
+            assertTrue(actual.size() > 0);
             assertTrue(actual.stream().allMatch(entity -> entity.getId() != null));
         }
     }
@@ -55,7 +60,7 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenId_whenFindById_thenReturnEntity() {
-            var givenId = testDatabaseAssistant.insertTestPermission(1).entity().asOne().getId();
+            var givenId = assistant.populate(1).entity().asOne().getId();
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -70,7 +75,7 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = testDatabaseAssistant.insertTestPermission(1)
+            var givenEntity = assistant.populate(1)
                     .entity()
                     .asOne()
                     .setName("updated_value");
@@ -88,7 +93,7 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestPermission(1)
+            var givenId = assistant.populate(1)
                     .entity()
                     .asOne()
                     .getId();

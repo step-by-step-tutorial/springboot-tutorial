@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_USERNAME;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.TEST_USERNAME;
 
 @Component
 public class RoleTestFactory extends AbstractTestFactory<Long, Role, RoleDto> {

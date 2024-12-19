@@ -8,8 +8,6 @@ import javax.crypto.KeyGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.TestUtils.chooseRandom;
-
 @ActiveProfiles({"test"})
 class TechnicalTest {
 
@@ -29,10 +27,5 @@ class TechnicalTest {
         var encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
 
         System.out.println("Secret Key: " + encodedKey);
-    }
-
-    @Test
-    void generateRandomNumber() {
-        System.out.println("random = " + chooseRandom(1));
     }
 }

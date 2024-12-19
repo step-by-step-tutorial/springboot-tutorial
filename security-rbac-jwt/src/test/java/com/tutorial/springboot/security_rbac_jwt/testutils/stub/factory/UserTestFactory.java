@@ -1,21 +1,24 @@
-package com.tutorial.springboot.securityoauth2server.testutils.stub.factory;
+package com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory;
 
-import com.tutorial.springboot.securityoauth2server.dto.UserDto;
-import com.tutorial.springboot.securityoauth2server.entity.User;
-import com.tutorial.springboot.securityoauth2server.transformer.UserTransformer;
+import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
+import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
+import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
+import com.tutorial.springboot.security_rbac_jwt.entity.User;
+import com.tutorial.springboot.security_rbac_jwt.transformer.UserTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.TEST_USERNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_USERNAME;
 
 @Component
 public class UserTestFactory extends AbstractTestFactory<Long, User, UserDto> {
 
-    private int maxRoles = 3;
+    private int maxRoles = DEFAULT_MAX_RELATION;
 
-    private int maxPermissions = 3;
+    private int maxPermissions = DEFAULT_MAX_RELATION;
 
     @Autowired
     private RoleTestFactory roleFactory;
@@ -25,13 +28,22 @@ public class UserTestFactory extends AbstractTestFactory<Long, User, UserDto> {
     }
 
     @Override
-    public UserDto newOne() {
+    protected UserDto newOne() {
+        List<RoleDto> roles;
+        var roleHelper = roleFactory.setUniqueRelations(uniqueRelations).newInstances(chooseRandom(maxPermissions)).dto();
+
+        if (uniqueRelations) {
+            roles = roleHelper.asUniqList(RoleDto::getName);
+        } else {
+            roles = roleHelper.asList();
+        }
+
         return new UserDto()
                 .setUsername(faker.name().fullName())
                 .setPassword(faker.internet().password())
                 .setEmail(faker.internet().emailAddress())
                 .setEnabled(true)
-                .setRoles(roleFactory.newInstances(chooseRandom(maxRoles)).dto().asList())
+                .setRoles(roles)
                 .setCreatedBy(TEST_USERNAME)
                 .setCreatedAt(LocalDateTime.now())
                 .setVersion(0);

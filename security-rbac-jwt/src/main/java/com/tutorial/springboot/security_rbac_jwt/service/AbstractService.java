@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @Transactional
     public Optional<ID> save(DTO dto) {
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
@@ -54,11 +56,11 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
         var newEntity = transformer.toEntity(dto);
         beforeSave(dto, newEntity);
-        ENTITY savedEntity = null;
+        ENTITY savedEntity;
         try {
             savedEntity = repository.save(newEntity);
         } catch (Exception e) {
-            logger.error("Failed to save {} entity", entityClass.getSimpleName(), e.getMessage());
+            logger.error("Failed to save {} entity due to {}", entityClass.getSimpleName(), e.getMessage());
             return Optional.empty();
         }
         afterSave(dto, savedEntity);
@@ -66,10 +68,12 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
         return Optional.of(savedEntity.getId());
     }
 
+    @Transactional(propagation = Propagation.NESTED, rollbackFor = Exception.class)
     protected void beforeSave(DTO dto, ENTITY entity) {
 
     }
 
+    @Transactional(propagation = Propagation.NESTED, rollbackFor = Exception.class)
     protected void afterSave(DTO dto, ENTITY entity) {
 
     }

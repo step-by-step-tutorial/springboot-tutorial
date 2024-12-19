@@ -31,8 +31,8 @@ public class RoleTestAssistant {
     public ConversionHelper<Role, RoleDto> populate(int number) {
         factory.setMaxPermissions(maxPermission);
         var newRoles = factory.newInstances(number).entity().asList();
-        for (var permission : newRoles) {
-            entityManager.persist(permission);
+        for (var role : newRoles) {
+            entityManager.persist(role);
         }
         entityManager.flush();
         entityManager.clear();

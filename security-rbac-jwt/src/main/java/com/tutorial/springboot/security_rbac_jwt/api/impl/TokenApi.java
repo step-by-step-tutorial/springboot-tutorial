@@ -23,7 +23,7 @@ public class TokenApi {
         this.tokenService = tokenService;
     }
 
-    @GetMapping("/new")
+    @GetMapping("/me/new")
     public ResponseEntity<TokenDto> generateToken() {
         logger.info("Received an inbound request to generate a token for user:{}", getCurrentUsername());
         return tokenService.generateToken(getCurrentUsername())

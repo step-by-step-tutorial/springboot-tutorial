@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 

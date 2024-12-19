@@ -3,14 +3,25 @@ package com.tutorial.springboot.security_rbac_jwt.transformer;
 import com.tutorial.springboot.security_rbac_jwt.dto.AbstractDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.AbstractEntity;
 
+import java.lang.reflect.Array;
+import java.util.List;
+import java.util.stream.Stream;
+
 import static com.tutorial.springboot.security_rbac_jwt.util.ReflectionUtils.identifyType;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {
+
+    private static final int ALLOWANCE_EXPOSE_SECURE_INFORMATION = 1;
+
+    private static final int DISALLOWANCE_EXPOSE_SECURE_INFORMATION = 0;
 
     private final Class<ENTITY> entityClass;
 
     private final Class<DTO> dtoClass;
+
+    private int exposeSecureInformation = DISALLOWANCE_EXPOSE_SECURE_INFORMATION;
 
     public AbstractTransformer() {
         entityClass = identifyType(1, getClass());
@@ -32,6 +43,11 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
                 .setVersion(entity.getVersion());
 
         copyEntityToDto(entity, dto);
+
+        if (exposeSecureInformation == ALLOWANCE_EXPOSE_SECURE_INFORMATION) {
+            exposeSecureInformation(entity, dto);
+        }
+
         return dto;
     }
 
@@ -53,6 +69,22 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
         return entity;
     }
 
+    public List<DTO> toDtoList(List<ENTITY> entities) {
+        return entities.stream().map(this::toDto).collect(toList());
+    }
+
+    public DTO[] toDtoArray(ENTITY[] entities) {
+        return Stream.of(entities).map(this::toDto).toArray(size -> (DTO[]) Array.newInstance(dtoClass, size));
+    }
+
+    public List<ENTITY> toEntityList(List<DTO> entities) {
+        return entities.stream().map(this::toEntity).collect(toList());
+    }
+
+    public ENTITY[] toEntityArray(DTO[] entities) {
+        return Stream.of(entities).map(this::toEntity).toArray(size -> (ENTITY[]) Array.newInstance(entityClass, size));
+    }
+
     protected DTO createDto() {
         try {
             return dtoClass.getDeclaredConstructor().newInstance();
@@ -67,6 +99,17 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public void allowToExposeSecureInformation() {
+        this.exposeSecureInformation = ALLOWANCE_EXPOSE_SECURE_INFORMATION;
+    }
+
+    public void disAllowToExposeSecureInformation() {
+        this.exposeSecureInformation = DISALLOWANCE_EXPOSE_SECURE_INFORMATION;
+    }
+
+    protected void exposeSecureInformation(ENTITY entity, DTO dto) {
     }
 
     protected abstract void copyEntityToDto(ENTITY entity, DTO dto);

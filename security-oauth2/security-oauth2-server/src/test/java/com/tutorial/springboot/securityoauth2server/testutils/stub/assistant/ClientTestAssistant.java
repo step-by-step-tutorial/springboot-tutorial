@@ -10,9 +10,8 @@ import com.tutorial.springboot.securityoauth2server.transformer.ClientTransforme
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.SecurityTestUtils.loginToTestEnv;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestSecurityUtils.loginToTestEnv;
 
 @Component
 @ActiveProfiles({"test", "h2"})

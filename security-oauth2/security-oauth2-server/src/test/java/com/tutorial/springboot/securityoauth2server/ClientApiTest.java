@@ -14,9 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.SecurityTestUtils.loginToTestEnv;
-import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_PASSWORD;
-import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_USERNAME;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestSecurityUtils.loginToTestEnv;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "h2"})
 public class ClientApiTest {
-
-    private static final String APP_HOST = "http://localhost";
 
     private static final String BASE_PATH = "/api/v1/clients";
 
@@ -49,7 +46,7 @@ public class ClientApiTest {
                 RestAssured.given()
                         .contentType(ContentType.JSON)
                         .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                        .baseUri(APP_HOST).port(port).basePath(BASE_PATH)
+                        .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                         .body(givenBody)
                         .when().post()
                         .then()
@@ -87,7 +84,7 @@ public class ClientApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                    .baseUri(APP_HOST).port(port)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port)
                     .basePath(BASE_PATH + RELATIVE_PATH).pathParam("clientId", givenClientId)
                     .when().get()
                     .then()
@@ -116,7 +113,7 @@ public class ClientApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                    .baseUri(APP_HOST).port(port).basePath(BASE_PATH)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())

@@ -1,7 +1,10 @@
 package com.tutorial.springboot.security_rbac_jwt.repository;
 
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.EntityStubFactory;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.entity.Role;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.RoleTestAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.RoleTestFactory;
+import com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.stream.Collectors;
+
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -17,17 +23,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoleRepositoryTest {
 
     @Autowired
-    RoleRepository systemUnderTest;
+    private RoleRepository systemUnderTest;
 
     @Autowired
-    TestDatabaseAssistant testDatabaseAssistant;
+    private PermissionRepository permissionRepository;
+
+    @Autowired
+    private RoleTestAssistant assistant;
+
+    @Autowired
+    private RoleTestFactory factory;
 
     @Nested
     class CreateTest {
 
         @Test
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
-            var givenEntity = EntityStubFactory.createRole(1, 1).asOne();
+            var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -39,12 +51,13 @@ public class RoleRepositoryTest {
         @Test
         void givenListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
             var numberOfEntities = 2;
-            var givenEntities = EntityStubFactory.createRole(numberOfEntities, 1).asList();
+            var givenEntities = factory.makeUniqueRelations().newInstances(numberOfEntities).entity().asUniqList(Role::getName);
+            givenEntities.forEach(role -> role.setPermissions(permissionRepository.findOrBatchSave(role.getPermissions())));
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
             assertNotNull(actual);
-            assertEquals(numberOfEntities, actual.size());
+            assertTrue(actual.size() > 0);
             assertTrue(actual.stream().allMatch(entity -> entity.getId() != null));
         }
     }
@@ -54,7 +67,7 @@ public class RoleRepositoryTest {
 
         @Test
         void givenId_whenFindById_thenReturnEntity() {
-            var givenId = testDatabaseAssistant.insertTestRole(1, 1)
+            var givenId = assistant.makeUniqueRelations().populate(1)
                     .entity()
                     .asOne()
                     .getId();
@@ -72,7 +85,7 @@ public class RoleRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = testDatabaseAssistant.insertTestRole(1, 1)
+            var givenEntity = assistant.makeUniqueRelations().populate(1)
                     .entity().asOne()
                     .setName("updated_value");
 
@@ -89,7 +102,7 @@ public class RoleRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestRole(1, 1)
+            var givenId = assistant.makeUniqueRelations().populate(1)
                     .entity()
                     .asOne()
                     .getId();

@@ -4,13 +4,13 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.springframework.http.HttpStatus;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
-public final class TokenTestUtils {
+public final class TestTokenUtils {
 
-    private TokenTestUtils() {
+    private TestTokenUtils() {
     }
 
     public static String requestToGetNewTestUserToken() {

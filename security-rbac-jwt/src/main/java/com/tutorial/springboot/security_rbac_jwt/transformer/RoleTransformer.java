@@ -17,17 +17,12 @@ public class RoleTransformer extends AbstractTransformer<Long, Role, RoleDto> {
     @Override
     protected void copyEntityToDto(Role entity, RoleDto dto) {
         dto.setName(entity.getName());
-        dto.setPermissions(
-                entity.getPermissions()
-                        .stream()
-                        .map(permissionTransformer::toDto)
-                        .toList()
-        );
+        dto.setPermissions(permissionTransformer.toDtoList(entity.getPermissions()));
     }
 
     @Override
     protected void copyDtoToEntity(RoleDto dto, Role entity) {
         entity.setName(dto.getName());
-        entity.setPermissions(dto.getPermissions().stream().map(permissionTransformer::toEntity).toList());
+        entity.setPermissions(permissionTransformer.toEntityList(dto.getPermissions()));
     }
 }

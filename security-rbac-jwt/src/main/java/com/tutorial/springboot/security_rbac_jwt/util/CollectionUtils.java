@@ -1,7 +1,12 @@
 package com.tutorial.springboot.security_rbac_jwt.util;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toMap;
 
 public final class CollectionUtils {
 
@@ -20,4 +25,9 @@ public final class CollectionUtils {
                 .limit(BATCH_SIZE);
     }
 
+    public static <T, COMPARATOR_TYPE> Stream<T> removeDuplication(Collection<T> collection, Function<T, COMPARATOR_TYPE> comparator) {
+        return collection
+                .stream()
+                .collect(collectingAndThen(toMap(comparator, e -> e, (existing, replacement) -> existing), map -> map.values().stream()));
+    }
 }

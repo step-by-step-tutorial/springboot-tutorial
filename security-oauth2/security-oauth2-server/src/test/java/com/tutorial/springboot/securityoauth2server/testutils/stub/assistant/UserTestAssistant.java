@@ -34,8 +34,8 @@ public class UserTestAssistant {
         factory.setMaxRoles(maxRoles);
         factory.setMaxPermissions(maxPermission);
         var newUsers = factory.newInstances(number).entity().asList();
-        for (var permission : newUsers) {
-            entityManager.persist(permission);
+        for (var user : newUsers) {
+            entityManager.persist(user);
         }
         entityManager.flush();
         entityManager.clear();

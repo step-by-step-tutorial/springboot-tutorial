@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
@@ -17,15 +18,17 @@ import static org.hamcrest.Matchers.not;
 @ActiveProfiles({"test", "h2"})
 public class TokenApiTest {
 
+    private static final String BASE_PATH = "/api/v1/token";
+
     @LocalServerPort
-    int port;
+    private int port;
 
     @Test
     void givenValidCredentials_whenGenerateToken_thenReturnJwtTokenWithOKStatus() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic("admin", "admin")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/token/new")
+                .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/me/new")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
@@ -39,8 +42,8 @@ public class TokenApiTest {
     void givenInvalidCredentials_whenGenerateToken_thenReturnUnauthorizedStatus() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .auth().basic("admin", "wrong_password")
-                .baseUri("http://localhost").port(port).basePath("/api/v1/token/new")
+                .auth().basic("test", "wrong_password")
+                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/me/new")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());

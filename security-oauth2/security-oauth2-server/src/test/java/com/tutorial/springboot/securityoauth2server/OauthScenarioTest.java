@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Base64;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

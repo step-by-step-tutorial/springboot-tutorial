@@ -1,13 +1,13 @@
-package com.tutorial.springboot.securityoauth2server.testutils.stub.factory;
+package com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory;
 
-import com.tutorial.springboot.securityoauth2server.dto.PermissionDto;
-import com.tutorial.springboot.securityoauth2server.entity.Permission;
-import com.tutorial.springboot.securityoauth2server.transformer.PermissionTransformer;
+import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.transformer.PermissionTransformer;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.TEST_USERNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_USERNAME;
 
 @Component
 public class PermissionTestFactory extends AbstractTestFactory<Long, Permission, PermissionDto> {
@@ -17,7 +17,7 @@ public class PermissionTestFactory extends AbstractTestFactory<Long, Permission,
     }
 
     @Override
-    public PermissionDto newOne() {
+    protected PermissionDto newOne() {
         return new PermissionDto()
                 .setName(faker.hacker().verb())
                 .setCreatedBy(TEST_USERNAME)

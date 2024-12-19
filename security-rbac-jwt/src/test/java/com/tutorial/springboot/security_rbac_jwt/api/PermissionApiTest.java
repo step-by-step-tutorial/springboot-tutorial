@@ -1,8 +1,9 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.DtoStubFactory;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.PermissionTestAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.PermissionTestFactory;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.test_utils.SecurityTestUtils.requestToGetTestToken;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_HOSTNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,41 +27,46 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles({"test", "h2"})
 public class PermissionApiTest {
 
-    @Autowired
-    TestDatabaseAssistant testDatabaseAssistant;
+    private static final String BASE_PATH = "/api/v1/permissions";
 
     @LocalServerPort
-    int port;
+    private int port;
+
+    @Autowired
+    private PermissionTestAssistant assistant;
+
+    @Autowired
+    private PermissionTestFactory factory;
 
     @Nested
     class SaveTests {
 
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
-            var givenToken = requestToGetTestToken();
-            var givenBody = DtoStubFactory.createPermission(1).asOne();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenBody = factory.newInstances(1).dto().asOne();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .body(givenBody)
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
-                    .header("Location", containsString("/api/v1/permissions/"))
+                    .header("Location", containsString(BASE_PATH))
                     .body("", notNullValue());
         }
 
         @Test
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
-            var givenToken = requestToGetTestToken();
-            var givenBody = DtoStubFactory.createPermission(2).asList();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenBody = factory.newInstances(2).dto().asList();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions/batch")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
                     .body(givenBody)
                     .when().post()
                     .then()
@@ -69,13 +76,13 @@ public class PermissionApiTest {
 
         @Test
         void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
-            var givenToken = requestToGetTestToken();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
             var givenBody = new PermissionDto();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .body(givenBody)
                     .when().post()
                     .then()
@@ -86,13 +93,13 @@ public class PermissionApiTest {
 
         @Test
         void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
-            var givenToken = requestToGetTestToken();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
             var givenBody = List.of(new PermissionDto(), new PermissionDto());
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions/batch")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
                     .body(givenBody)
                     .when().post()
                     .then()
@@ -107,15 +114,15 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOkStatus() {
-            var givenToken = requestToGetTestToken();
-            var givenPermission = testDatabaseAssistant.insertTestPermission(1).dto().asOne();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenPermission = assistant.populate(1).dto().asOne();
             var givenId = givenPermission.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port)
-                    .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/{id}")
+                    .pathParam("id", givenId)
                     .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
@@ -125,13 +132,13 @@ public class PermissionApiTest {
 
         @Test
         void givenNothing_whenFindAll_thenReturnListOfDtoWithOkStatus() {
-            var givenToken = requestToGetTestToken();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
             var expectedPermissionNumber = 2;
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
@@ -140,13 +147,12 @@ public class PermissionApiTest {
 
         @Test
         void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
-            var givenToken = requestToGetTestToken();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port)
-                    .basePath("/api/v1/permissions/batch/{page}/{size}")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch/{page}/{size}")
                     .pathParam("page", 0)
                     .pathParam("size", 10)
                     .when().get()
@@ -161,8 +167,8 @@ public class PermissionApiTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
-            var givenToken = requestToGetTestToken();
-            var givenBody = testDatabaseAssistant.insertTestPermission(1)
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenBody = assistant.populate(1)
                     .dto()
                     .asOne()
                     .setName("updated_value");
@@ -171,7 +177,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .body(givenBody)
                     .when().put()
@@ -179,7 +185,7 @@ public class PermissionApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = testDatabaseAssistant.selectTestPermission().dto().asOne();
+            var actual = assistant.select().dto().asOne();
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());
         }
@@ -190,27 +196,27 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
-            var givenToken = requestToGetTestToken();
-            var givenId = testDatabaseAssistant.insertTestPermission(1).dto().asOne().getId();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenId = assistant.populate(1).dto().asOne().getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().delete()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = testDatabaseAssistant.selectTestPermission().dto().asOne();
+            var actual = assistant.select().dto().asOne();
             assertNull(actual);
         }
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
-            var givenToken = requestToGetTestToken();
-            var givenBody = testDatabaseAssistant.insertTestPermission(2)
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenBody = assistant.populate(2)
                     .dto()
                     .asList()
                     .stream()
@@ -220,32 +226,32 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions/batch")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/api/v1/permissions/batch")
                     .body(givenBody)
                     .when().delete()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = testDatabaseAssistant.selectTestPermission().dto().asList();
+            var actual = assistant.select().dto().asList();
             assertTrue(actual.isEmpty());
         }
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
-            var givenToken = requestToGetTestToken();
-            testDatabaseAssistant.insertTestPermission(2);
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            assistant.populate(2);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port).basePath("/api/v1/permissions")
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .when().delete()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = testDatabaseAssistant.selectTestPermission().dto().asList();
+            var actual = assistant.select().dto().asList();
             assertTrue(actual.isEmpty());
         }
     }
@@ -255,13 +261,13 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenExists_ThenReturnOkStatus() {
-            var givenToken = requestToGetTestToken();
-            var givenId = testDatabaseAssistant.insertTestPermission(1).dto().asOne().getId();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenId = assistant.populate(1).dto().asOne().getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().head()
                     .then()
@@ -271,13 +277,13 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenNotExist_ThenReturnNotFoundStatus() {
-            var givenToken = requestToGetTestToken();
+            var givenToken = TestTokenUtils.requestToGetNewToken();
             var givenId = -1;
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://localhost").port(port)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().head()
                     .then()

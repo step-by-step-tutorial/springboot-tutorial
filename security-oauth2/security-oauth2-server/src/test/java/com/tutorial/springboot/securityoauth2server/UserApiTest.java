@@ -10,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.HttpTestUtils.TEST_HOSTNAME;
-import static com.tutorial.springboot.securityoauth2server.testutils.TokenTestUtils.requestToGetNewTestUserToken;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.TEST_HOSTNAME;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestTokenUtils.requestToGetNewTestUserToken;
 import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)

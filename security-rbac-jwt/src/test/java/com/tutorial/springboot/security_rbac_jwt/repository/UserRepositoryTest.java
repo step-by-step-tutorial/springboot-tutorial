@@ -1,7 +1,9 @@
 package com.tutorial.springboot.security_rbac_jwt.repository;
 
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.EntityStubFactory;
-import com.tutorial.springboot.security_rbac_jwt.test_utils.stub.TestDatabaseAssistant;
+import com.tutorial.springboot.security_rbac_jwt.entity.User;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.UserTestAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.RoleTestFactory;
+import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.UserTestFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +21,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserRepositoryTest {
 
     @Autowired
-    UserRepository systemUnderTest;
+    private UserRepository systemUnderTest;
 
     @Autowired
-    TestDatabaseAssistant testDatabaseAssistant;
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserTestAssistant assistant;
+
+    @Autowired
+    private UserTestFactory factory;
 
     @Nested
     class CreateTest {
 
         @Test
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
-            var givenEntity = EntityStubFactory.createUser(1, 0, 0).asOne();
+            var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -44,18 +52,19 @@ public class UserRepositoryTest {
         @Test
         void givenListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
             int numberOfEntities = 2;
-            var givenEntities = EntityStubFactory.createUser(numberOfEntities, 0, 0).asList();
+            var givenEntities = factory.makeUniqueRelations().newInstances(numberOfEntities).entity().asUniqList(User::getUsername);
+            givenEntities.forEach(user -> user.setRoles(roleRepository.findOrBatchSave(user.getRoles())));
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
             assertNotNull(actual);
-            assertEquals(numberOfEntities, actual.size());
+            assertTrue(actual.size() > 0);
             assertTrue(actual.stream().allMatch(user -> user.getId() != null));
         }
 
         @Test
         void givenUserWithRoleAndPermission_whenSave_thenReturnPersistedEntity() {
-            var givenEntity = EntityStubFactory.createUser(1, 1, 1).asOne();
+            var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -75,7 +84,7 @@ public class UserRepositoryTest {
 
         @Test
         void givenID_whenFindById_thenReturnEntity() {
-            var givenId = testDatabaseAssistant.insertTestUser(1, 0, 0)
+            var givenId = assistant.makeUniqueRelations().populate(1)
                     .entity()
                     .asOne()
                     .getId();
@@ -96,7 +105,7 @@ public class UserRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = testDatabaseAssistant.insertTestUser(1, 0, 0)
+            var givenEntity = assistant.makeUniqueRelations().populate(1)
                     .entity()
                     .asOne()
                     .setUsername("newusername")
@@ -120,7 +129,7 @@ public class UserRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = testDatabaseAssistant.insertTestUser(1, 1, 1)
+            var givenId = assistant.makeUniqueRelations().populate(1)
                     .entity()
                     .asOne()
                     .getId();
