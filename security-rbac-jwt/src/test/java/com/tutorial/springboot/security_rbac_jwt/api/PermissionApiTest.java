@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_HOSTNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +43,7 @@ public class PermissionApiTest {
 
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenBody = factory.newInstances(1).dto().asOne();
 
             RestAssured.given()
@@ -59,7 +60,7 @@ public class PermissionApiTest {
 
         @Test
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenBody = factory.newInstances(2).dto().asList();
 
             RestAssured.given()
@@ -75,7 +76,7 @@ public class PermissionApiTest {
 
         @Test
         void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenBody = new PermissionDto();
 
             RestAssured.given()
@@ -92,7 +93,7 @@ public class PermissionApiTest {
 
         @Test
         void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenBody = List.of(new PermissionDto(), new PermissionDto());
 
             RestAssured.given()
@@ -113,7 +114,7 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOkStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenPermission = assistant.populate(1).dto().asOne();
             var givenId = givenPermission.getId();
 
@@ -131,7 +132,7 @@ public class PermissionApiTest {
 
         @Test
         void givenNothing_whenFindAll_thenReturnListOfDtoWithOkStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var expectedPermissionNumber = 2;
 
             RestAssured.given()
@@ -146,7 +147,7 @@ public class PermissionApiTest {
 
         @Test
         void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -166,7 +167,7 @@ public class PermissionApiTest {
 
         @Test
         void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenBody = assistant.populate(1)
                     .dto()
                     .asOne()
@@ -195,7 +196,7 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenId = assistant.populate(1).dto().asOne().getId();
 
             RestAssured.given()
@@ -214,7 +215,7 @@ public class PermissionApiTest {
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenBody = assistant.populate(2)
                     .dto()
                     .asList()
@@ -238,7 +239,7 @@ public class PermissionApiTest {
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             assistant.populate(2);
 
             RestAssured.given()
@@ -260,7 +261,7 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenExists_ThenReturnOkStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenId = assistant.populate(1).dto().asOne().getId();
 
             RestAssured.given()
@@ -276,7 +277,7 @@ public class PermissionApiTest {
 
         @Test
         void givenId_whenNotExist_ThenReturnNotFoundStatus() {
-            var givenToken = TestTokenUtils.requestToGetNewToken();
+            var givenToken = requestToGetNewToken(port);
             var givenId = -1;
 
             RestAssured.given()

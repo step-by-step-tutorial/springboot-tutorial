@@ -88,15 +88,16 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
-        repository.findById(id)
-                .ifPresentOrElse(
-                        entity -> {
-                            entity.updateFrom(transformer.toEntity(dto));
-                            repository.save(entity);
-                            logger.info("{} entity updated with ID: {}", entityClass.getSimpleName(), entity.getId());
-                        },
-                        () -> logger.warn("{} entity not found with ID: {}", entityClass.getSimpleName(), id)
-                );
+        var entityOptional = repository.findById(id);
+        if (entityOptional.isPresent()) {
+            var entity = entityOptional.get();
+            entity.updateFrom(transformer.toEntity(dto));
+            repository.save(entity);
+            logger.info("{} entity updated with ID: {}", entityClass.getSimpleName(), entity.getId());
+        } else {
+            logger.warn("{} entity not found with ID: {}", entityClass.getSimpleName(), id);
+        }
+
     }
 
     @Override

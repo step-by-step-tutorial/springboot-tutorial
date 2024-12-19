@@ -19,13 +19,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final PermissionEvaluator permissionEvaluator;
-
-
-    public SecurityConfig(PermissionEvaluator permissionEvaluator) {
-        this.permissionEvaluator = permissionEvaluator;
-    }
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -39,12 +32,5 @@ public class SecurityConfig {
                 .formLogin(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
-    }
-
-    @Bean
-    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
-        var handler = new DefaultMethodSecurityExpressionHandler();
-        handler.setPermissionEvaluator(permissionEvaluator);
-        return handler;
     }
 }

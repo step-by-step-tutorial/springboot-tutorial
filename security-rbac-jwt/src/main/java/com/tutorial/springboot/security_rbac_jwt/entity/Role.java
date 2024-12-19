@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Entity
 public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority {
 
@@ -62,7 +64,16 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     public void updateFrom(Role newOne) {
         super.updateFrom(newOne);
         this.name = newOne.name;
+        var mergedPermission = newOne.permissions
+                .stream()
+                .map(newPermission ->
+                        this.permissions.stream()
+                                .filter(existingPermission -> existingPermission.getName().equals(newPermission.getName()))
+                                .findFirst()
+                                .orElse(newPermission))
+                .collect(toList());
+
         this.permissions.clear();
-        this.permissions.addAll(newOne.permissions);
+        this.permissions.addAll(mergedPermission);
     }
 }

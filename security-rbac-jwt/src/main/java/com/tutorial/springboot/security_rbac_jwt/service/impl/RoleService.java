@@ -28,5 +28,4 @@ public class RoleService extends AbstractService<Long, Role, RoleDto> implements
         entity.getPermissions().addAll(permissions);
     }
 
-
 }

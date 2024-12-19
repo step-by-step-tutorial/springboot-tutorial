@@ -55,4 +55,5 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
         entity.getRoles().clear();
         entity.getRoles().addAll(roles);
     }
+
 }

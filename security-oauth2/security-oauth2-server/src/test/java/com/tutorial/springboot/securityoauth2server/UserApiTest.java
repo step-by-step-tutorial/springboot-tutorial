@@ -28,7 +28,7 @@ public class UserApiTest {
     class GetUserResourceTests {
         @Test
         void givenToken_whenRequestToResource_thenReturnResourceWithOKStatus() {
-            var givenToken = requestToGetNewTestUserToken();
+            var givenToken = requestToGetNewTestUserToken(port);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)

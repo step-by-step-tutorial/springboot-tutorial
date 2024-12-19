@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Entity
 @Table(name = "users")
 public class User extends AbstractEntity<Long, User> implements UserDetails {
@@ -94,8 +96,22 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         this.password = newOne.password;
         this.email = newOne.email;
         this.enabled = newOne.enabled;
+        var updatedRoles = newOne.roles
+                .stream()
+                .map(newRole -> {
+                    var existingRole = this.roles.stream()
+                            .filter(role -> role.getName().equals(newRole.getName()))
+                            .findFirst();
+                    if (existingRole.isPresent()) {
+                        existingRole.get().updateFrom(newRole);
+                        return existingRole.get();
+                    } else {
+                        return newRole;
+                    }
+                })
+                .collect(toList());
         this.roles.clear();
-        this.roles.addAll(newOne.roles);
+        this.roles.addAll(updatedRoles);
     }
 
     @Transient
