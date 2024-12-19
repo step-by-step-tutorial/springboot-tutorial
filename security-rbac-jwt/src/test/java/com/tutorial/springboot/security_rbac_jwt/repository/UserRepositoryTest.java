@@ -9,14 +9,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Transactional
 @ActiveProfiles(value = {"test", "h2"})
 public class UserRepositoryTest {
 
@@ -38,6 +41,7 @@ public class UserRepositoryTest {
         @Test
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
             var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
+            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -65,6 +69,7 @@ public class UserRepositoryTest {
         @Test
         void givenUserWithRoleAndPermission_whenSave_thenReturnPersistedEntity() {
             var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
+            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -84,10 +89,10 @@ public class UserRepositoryTest {
 
         @Test
         void givenID_whenFindById_thenReturnEntity() {
-            var givenId = assistant.makeUniqueRelations().populate(1)
-                    .entity()
-                    .asOne()
-                    .getId();
+            var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
+            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
+            var givenId = givenEntity.getId();
+
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -112,6 +117,7 @@ public class UserRepositoryTest {
                     .setPassword("newpassword")
                     .setEmail("newusername@host.com")
                     .setEnabled(false);
+            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -129,9 +135,9 @@ public class UserRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = assistant.makeUniqueRelations().populate(1)
-                    .entity()
-                    .asOne()
+            var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
+            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
+            var givenId = givenEntity
                     .getId();
 
             systemUnderTest.deleteById(givenId);

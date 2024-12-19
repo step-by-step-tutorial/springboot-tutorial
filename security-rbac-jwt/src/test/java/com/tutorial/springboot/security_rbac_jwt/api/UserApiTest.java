@@ -177,6 +177,7 @@ public class UserApiTest {
                     .setUsername("newusername")
                     .setPassword("newpassword")
                     .setEmail("newusername@host.com");
+
             var givenId = givenBody.getId();
 
             RestAssured.given()

@@ -23,6 +23,7 @@ import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCu
 import static com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
+@Transactional
 public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
         implements CrudService<ID, DTO>, BatchService<ID, DTO>, AllService<ID, DTO> {
 
@@ -46,7 +47,6 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
-    @Transactional
     public Optional<ID> save(DTO dto) {
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
@@ -68,12 +68,10 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
         return Optional.of(savedEntity.getId());
     }
 
-    @Transactional(propagation = Propagation.NESTED, rollbackFor = Exception.class)
     protected void beforeSave(DTO dto, ENTITY entity) {
 
     }
 
-    @Transactional(propagation = Propagation.NESTED, rollbackFor = Exception.class)
     protected void afterSave(DTO dto, ENTITY entity) {
 
     }
@@ -87,7 +85,6 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
-    @Transactional
     public void update(ID id, DTO dto) {
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));

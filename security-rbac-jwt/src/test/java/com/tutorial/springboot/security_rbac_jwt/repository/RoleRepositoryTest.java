@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Transactional
 @ActiveProfiles(value = {"test", "h2"})
 public class RoleRepositoryTest {
 
@@ -40,6 +42,7 @@ public class RoleRepositoryTest {
         @Test
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
             var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
+            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -67,9 +70,9 @@ public class RoleRepositoryTest {
 
         @Test
         void givenId_whenFindById_thenReturnEntity() {
-            var givenId = assistant.makeUniqueRelations().populate(1)
-                    .entity()
-                    .asOne()
+            var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
+            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
+            var givenId = givenEntity
                     .getId();
 
             var actual = systemUnderTest.findById(givenId);
@@ -88,6 +91,7 @@ public class RoleRepositoryTest {
             var givenEntity = assistant.makeUniqueRelations().populate(1)
                     .entity().asOne()
                     .setName("updated_value");
+            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -102,9 +106,9 @@ public class RoleRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = assistant.makeUniqueRelations().populate(1)
-                    .entity()
-                    .asOne()
+            var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
+            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
+            var givenId = givenEntity
                     .getId();
 
             systemUnderTest.deleteById(givenId);

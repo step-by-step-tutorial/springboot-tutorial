@@ -5,11 +5,11 @@ import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
-import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 public class RoleRepositoryImpl implements CustomRepository<Role, Long> {
@@ -29,25 +29,17 @@ public class RoleRepositoryImpl implements CustomRepository<Role, Long> {
                     .setParameter("name", entity.getName())
                     .getSingleResult();
 
-            if (isNull(role)) {
-                entity.getPermissions().clear();
-                entity.getPermissions().addAll(permissions);
-                entityManager.persist(entity);
-                return entity;
-            } else {
-                role.getPermissions().addAll(permissions);
-                role.setPermissions(removeDuplication(role.getPermissions(), Permission::getName).collect(toList()));
-                entityManager.persist(entity);
-                return role;
-            }
+            role.getPermissions().addAll(permissions);
+            role.setPermissions(removeDuplication(role.getPermissions(), Permission::getName).collect(toList()));
+            entityManager.persist(role);
+            return role;
 
-        } catch (jakarta.persistence.NoResultException e) {
-            return null;
-        } finally {
-            entityManager.clear();
-            entityManager.close();
+        } catch (Exception e) {
+            entity.getPermissions().clear();
+            entity.getPermissions().addAll(permissions);
+            entityManager.persist(entity);
+            return entity;
         }
-
     }
 
     @Override
