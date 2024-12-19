@@ -72,6 +72,17 @@ public class AbstractAssistant<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DT
         return dto -> true;
     }
 
+    public AbstractAssistant<ID, ENTITY, DTO> makeUniqueData() {
+        this.factory.makeUniqueData();
+        return this;
+    }
+
+    public AbstractAssistant<ID, ENTITY, DTO> resetUniqueData() {
+        this.factory.resetUniqueData();
+        return this;
+    }
+
+
     public AbstractAssistant<ID, ENTITY, DTO> makeUniqueRelations() {
         this.factory.makeUniqueRelations();
         return this;

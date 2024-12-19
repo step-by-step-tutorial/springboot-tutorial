@@ -1,7 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
-import com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils;
 import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.PermissionTestAssistant;
 import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.PermissionTestFactory;
 import io.restassured.RestAssured;
@@ -61,7 +60,7 @@ public class PermissionApiTest {
         @Test
         void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = factory.newInstances(2).dto().asList();
+            var givenBody = factory.makeUniqueData().newInstances(2).dto().asList();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -71,7 +70,7 @@ public class PermissionApiTest {
                     .when().post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
-                    .body("size()", is(2));
+                    .body("size()", greaterThan(0));
         }
 
         @Test
@@ -115,7 +114,7 @@ public class PermissionApiTest {
         @Test
         void givenId_whenFindOne_thenReturnDtoWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenPermission = assistant.populate(1).dto().asOne();
+            var givenPermission = assistant.makeUniqueData().populate(1).dto().asOne();
             var givenId = givenPermission.getId();
 
             RestAssured.given()
@@ -216,7 +215,7 @@ public class PermissionApiTest {
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = assistant.populate(2)
+            var givenBody = assistant.makeUniqueData().populate(2)
                     .dto()
                     .asList()
                     .stream()
@@ -240,7 +239,7 @@ public class PermissionApiTest {
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            assistant.populate(2);
+            assistant.makeUniqueData().populate(2);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)

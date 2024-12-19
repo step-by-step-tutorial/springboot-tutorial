@@ -1,7 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
-import com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils;
 import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.RoleTestAssistant;
 import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.RoleTestFactory;
 import io.restassured.RestAssured;

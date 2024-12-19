@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Function;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_USERNAME;
 
@@ -42,6 +43,11 @@ public class RoleTestFactory extends AbstractTestFactory<Long, Role, RoleDto> {
                 .setCreatedAt(LocalDateTime.now())
                 .setVersion(0);
 
+    }
+
+    @Override
+    protected Function<RoleDto, ?> getComparator() {
+        return RoleDto::getName;
     }
 
     public int getMaxPermissions() {

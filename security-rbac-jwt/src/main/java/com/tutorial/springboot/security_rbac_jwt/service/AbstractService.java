@@ -123,7 +123,8 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
                 .mapToObj(i -> selectBatch(dtoList, i))
                 .flatMap(stream -> stream
                         .map(this::save)
-                        .map(id -> id.orElse(null)))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get))
                 .toList();
     }
 

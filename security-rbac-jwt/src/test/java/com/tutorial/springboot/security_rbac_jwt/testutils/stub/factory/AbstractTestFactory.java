@@ -9,8 +9,10 @@ import net.datafaker.Faker;
 
 import java.lang.reflect.Array;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
 import static com.tutorial.springboot.security_rbac_jwt.util.ReflectionUtils.identifyType;
 
 
@@ -26,6 +28,8 @@ public abstract class AbstractTestFactory<ID, ENTITY extends AbstractEntity<ID, 
 
     protected boolean uniqueRelations = false;
 
+    protected boolean uniqueData = false;
+
     protected AbstractTransformer<ID, ENTITY, DTO> transformer;
 
     protected AbstractTestFactory(AbstractTransformer<ID, ENTITY, DTO> transformer) {
@@ -36,14 +40,22 @@ public abstract class AbstractTestFactory<ID, ENTITY extends AbstractEntity<ID, 
     }
 
     public ConversionHelper<ENTITY, DTO> newInstances(int number) {
-        var dtoArray = IntStream.range(0, number).boxed()
+        var dtos = IntStream.range(0, number).boxed()
                 .map(index -> newOne())
-                .toArray(size -> (DTO[]) Array.newInstance(dtoClass, size));
+                .toList();
+        if (uniqueData) {
+            dtos = removeDuplication(dtos, getComparator()).toList();
+        }
 
-        var entityArray = transformer.toEntityArray(dtoArray);
+        var entities = transformer.toEntityList(dtos);
 
-        return new ConversionHelper<>(new VarcharHelper<>(entityArray), new VarcharHelper<>(dtoArray));
+        return new ConversionHelper<>(
+                new VarcharHelper<>(entities.toArray(size -> (ENTITY[]) Array.newInstance(entityClass, size))),
+                new VarcharHelper<>(dtos.toArray(size -> (DTO[]) Array.newInstance(dtoClass, size)))
+        );
     }
+
+    protected abstract Function<DTO, ?> getComparator();
 
     protected abstract DTO newOne();
 
@@ -55,6 +67,22 @@ public abstract class AbstractTestFactory<ID, ENTITY extends AbstractEntity<ID, 
         var random = new Random();
         return random.nextInt(1, 1 + bound);
     }
+
+    public AbstractTestFactory<ID, ENTITY, DTO> makeUniqueData() {
+        uniqueData = true;
+        return this;
+    }
+
+    public AbstractTestFactory<ID, ENTITY, DTO> resetUniqueData() {
+        uniqueData = false;
+        return this;
+    }
+
+    public AbstractTestFactory<ID, ENTITY, DTO> setUniqueData(boolean uniqueData) {
+        this.uniqueData = uniqueData;
+        return this;
+    }
+
 
     public AbstractTestFactory<ID, ENTITY, DTO> makeUniqueRelations() {
         uniqueRelations = true;
