@@ -1,13 +1,16 @@
 -- ========== Add User ==========
 -- username: admin, password: admin
 INSERT INTO user_management.users (id, username, password, email, enabled, created_by, version)
-VALUES (1000, 'admin', '$2a$10$r5p.DEUMgBCpDasy86n/Ue4aNYvDYAt8EkYt4EziQHWrTPKoqFWZO', 'admin@email.com', true, 'admin', 1);
+VALUES (1000, 'admin', '$2a$10$r5p.DEUMgBCpDasy86n/Ue4aNYvDYAt8EkYt4EziQHWrTPKoqFWZO', 'admin@email.com', true, 'admin',
+        1);
 -- username: user, password: user
 INSERT INTO user_management.users (id, username, password, email, enabled, created_by, version)
-VALUES (2000, 'user', '$2a$10$kdbtEguaRRGv3.y/wVIToOLIz4TzqIp2fk5E8slB.YOWvuyX.Z4u.', 'user@email.com', true, 'admin', 1);
+VALUES (2000, 'user', '$2a$10$kdbtEguaRRGv3.y/wVIToOLIz4TzqIp2fk5E8slB.YOWvuyX.Z4u.', 'user@email.com', true, 'admin',
+        1);
 -- username: test, password: test
 INSERT INTO users (id, username, password, email, enabled, created_by, version)
-VALUES (3000, 'test', '$2a$10$0af5EU3EIOnMlPBtxEN49O3fGMbExAX4kwhAAHisXE86WNOz6WoQi', 'test@email.com', true, 'admin', 1);
+VALUES (3000, 'test', '$2a$10$0af5EU3EIOnMlPBtxEN49O3fGMbExAX4kwhAAHisXE86WNOz6WoQi', 'test@email.com', true, 'admin',
+        1);
 
 -- ========== Add Role ==========
 INSERT INTO user_management.role (id, name, created_by, version)

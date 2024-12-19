@@ -41,7 +41,8 @@ public class RoleServiceTest {
 
         @Test
         void givenDto_whenSaveOne_thenReturnId() {
-            var givenDto = factory.newInstances(1).dto().asOne();;
+            var givenDto = factory.newInstances(1).dto().asOne();
+            ;
 
             var actual = systemUnderTest.save(givenDto);
 

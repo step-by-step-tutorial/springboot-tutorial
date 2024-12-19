@@ -3,7 +3,6 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

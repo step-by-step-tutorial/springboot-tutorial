@@ -13,6 +13,7 @@ docker compose --file ./docker-compose.yml --project-name grafana up --build -d
 ```shell
 curl http://localhost:8080/api/v1/application/status
 ```
+
 * Actuator: [http://localhost:8080/actuator](http://localhost:8080/actuator)
 * Grafana: [http://localhost:3000](http://localhost:3000)
 * Prometheus: [http://localhost:9090](http://localhost:9090)
@@ -20,8 +21,8 @@ curl http://localhost:8080/api/v1/application/status
 * Loki: [http://localhost:3100](http://localhost:3100)
 * Pyroscope: [http://localhost:4040](http://localhost:4040)
 
-
 ### Grafana Stack
+
 * k6 service running a load test against the above application.
 * Tempo service for storing and querying trace information.
 * Loki service for storing and querying log information.

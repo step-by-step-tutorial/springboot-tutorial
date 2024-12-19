@@ -3,7 +3,6 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.PermissionTestAssistant;
 import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.PermissionTestFactory;
-import com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest

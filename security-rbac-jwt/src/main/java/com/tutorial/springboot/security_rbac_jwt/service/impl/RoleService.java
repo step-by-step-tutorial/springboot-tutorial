@@ -1,7 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.service.impl;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
-import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.repository.PermissionRepository;
 import com.tutorial.springboot.security_rbac_jwt.repository.RoleRepository;
@@ -11,14 +10,6 @@ import com.tutorial.springboot.security_rbac_jwt.service.CrudService;
 import com.tutorial.springboot.security_rbac_jwt.transformer.RoleTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
-import static java.util.stream.Collectors.*;
 
 @Service
 public class RoleService extends AbstractService<Long, Role, RoleDto> implements CrudService<Long, RoleDto>, BatchService<Long, RoleDto> {

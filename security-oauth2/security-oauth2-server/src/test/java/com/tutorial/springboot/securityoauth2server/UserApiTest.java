@@ -14,7 +14,7 @@ import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUti
 import static com.tutorial.springboot.securityoauth2server.testutils.TestTokenUtils.requestToGetNewTestUserToken;
 import static org.hamcrest.Matchers.is;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test", "h2"})
 public class UserApiTest {

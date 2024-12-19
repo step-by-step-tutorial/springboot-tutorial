@@ -3,7 +3,6 @@ package com.tutorial.springboot.securityoauth2server.service;
 import com.tutorial.springboot.securityoauth2server.dto.AbstractDto;
 import com.tutorial.springboot.securityoauth2server.entity.AbstractEntity;
 import com.tutorial.springboot.securityoauth2server.transformer.AbstractTransformer;
-import com.tutorial.springboot.securityoauth2server.validation.ObjectValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -167,7 +166,6 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
         logger.info("Delete all {} entities", entityClass.getSimpleName());
         repository.deleteAll();
     }
-
 
 
 }

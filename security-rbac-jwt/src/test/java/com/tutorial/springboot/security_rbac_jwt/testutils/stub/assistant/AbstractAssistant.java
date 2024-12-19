@@ -50,7 +50,7 @@ public class AbstractAssistant<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DT
         var entities = transformer.toEntityList(dtos);
 
         return new ConversionHelper<>(
-                new VarcharHelper<>(entities.toArray(size -> (ENTITY[])Array.newInstance(entityClass, size))),
+                new VarcharHelper<>(entities.toArray(size -> (ENTITY[]) Array.newInstance(entityClass, size))),
                 new VarcharHelper<>(dtos.toArray(size -> (DTO[]) Array.newInstance(dtoClass, size)))
         );
     }
@@ -63,7 +63,7 @@ public class AbstractAssistant<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DT
         var entities = transformer.toEntityList(dtos);
 
         return new ConversionHelper<>(
-                new VarcharHelper<>(entities.toArray(size -> (ENTITY[])Array.newInstance(entityClass, size))),
+                new VarcharHelper<>(entities.toArray(size -> (ENTITY[]) Array.newInstance(entityClass, size))),
                 new VarcharHelper<>(dtos.toArray(size -> (DTO[]) Array.newInstance(dtoClass, size)))
         );
     }

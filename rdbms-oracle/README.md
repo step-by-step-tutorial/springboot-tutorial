@@ -155,10 +155,12 @@ Get `ords_installer_privileges.sql` file and then connect to the database.
 # download from ords container
 docker cp ords:/opt/oracle/ords/scripts/installer/ords_installer_privileges.sql ./
 ```
+
 ```shell
 # upload to oracle container
 docker cp ./ords_installer_privileges.sql oracle:/tmp
 ```
+
 ```shell
 # connect to database
 docker exec -it oracle sqlplus sys/password@//localhost:1521/xepdb1 as sysdba
@@ -184,6 +186,7 @@ docker exec -it ords ords --config /etc/ords/config install
 # password: password
 # [A] Accept and Continue - Create configuration and Install ORDS in the database
 ```
+
 ```shell
 docker restart ords
 ```

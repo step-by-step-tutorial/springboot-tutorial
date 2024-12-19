@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestSecurityUtils.loginToTestEnv;
-
 @Component
 @Transactional
 @ActiveProfiles({"test", "h2"})
