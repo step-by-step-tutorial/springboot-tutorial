@@ -20,8 +20,8 @@ public class RoleRepositoryImpl implements CustomRepository<Role, Long> {
     private PermissionRepository permissionRepository;
 
     @Override
-    public Role findOrSave(Role entity) {
-        var permissions = permissionRepository.findOrBatchSave(entity.getPermissions());
+    public Role findOrCreate(Role entity) {
+        var permissions = permissionRepository.findOrCreateAll(entity.getPermissions());
 
         try {
             var role = entityManager.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
@@ -42,9 +42,9 @@ public class RoleRepositoryImpl implements CustomRepository<Role, Long> {
     }
 
     @Override
-    public List<Role> findOrBatchSave(List<Role> entities) {
+    public List<Role> findOrCreateAll(List<Role> entities) {
         return removeDuplication(entities, Role::getName)
-                .map(entity -> findOrSave(entity))
+                .map(entity -> findOrCreate(entity))
                 .collect(toList());
     }
 }

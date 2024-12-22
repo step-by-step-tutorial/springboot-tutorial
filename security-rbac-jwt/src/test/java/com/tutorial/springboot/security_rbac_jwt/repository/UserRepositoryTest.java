@@ -39,7 +39,7 @@ public class UserRepositoryTest {
         @Test
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
             var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
+            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -55,7 +55,7 @@ public class UserRepositoryTest {
         void givenListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
             int numberOfEntities = 2;
             var givenEntities = factory.makeUniqueRelations().newInstances(numberOfEntities).entity().asUniqList(User::getUsername);
-            givenEntities.forEach(user -> user.setRoles(roleRepository.findOrBatchSave(user.getRoles())));
+            givenEntities.forEach(user -> user.setRoles(roleRepository.findOrCreateAll(user.getRoles())));
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
@@ -67,7 +67,7 @@ public class UserRepositoryTest {
         @Test
         void givenUserWithRoleAndPermission_whenSave_thenReturnPersistedEntity() {
             var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
+            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -88,7 +88,7 @@ public class UserRepositoryTest {
         @Test
         void givenID_whenFindById_thenReturnEntity() {
             var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
+            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
             var givenId = givenEntity.getId();
 
 
@@ -115,7 +115,7 @@ public class UserRepositoryTest {
                     .setPassword("newpassword")
                     .setEmail("newusername@host.com")
                     .setEnabled(false);
-            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
+            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -134,7 +134,7 @@ public class UserRepositoryTest {
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
             var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrBatchSave(givenEntity.getRoles()));
+            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
             var givenId = givenEntity
                     .getId();
 

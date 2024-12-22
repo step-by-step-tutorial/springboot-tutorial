@@ -10,6 +10,8 @@ import static org.hamcrest.Matchers.not;
 
 public final class TestTokenUtils {
 
+    public static final String TOKEN_API_BASE_PATH = "/api/v1/token";
+
     private TestTokenUtils() {
     }
 
@@ -25,7 +27,7 @@ public final class TestTokenUtils {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(username, password)
-                .baseUri("http://" + hostname).port(port).basePath("/api/v1/token/me/new")
+                .baseUri("http://" + hostname).port(port).basePath(TOKEN_API_BASE_PATH.concat("/me/new"))
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())

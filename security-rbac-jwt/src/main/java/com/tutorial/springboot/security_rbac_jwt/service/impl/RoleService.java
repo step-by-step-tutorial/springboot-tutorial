@@ -23,7 +23,7 @@ public class RoleService extends AbstractService<Long, Role, RoleDto> implements
 
     @Override
     protected void beforeSave(RoleDto dto, Role entity) {
-        var permissions = permissionRepository.findOrBatchSave(entity.getPermissions());
+        var permissions = permissionRepository.findOrCreateAll(entity.getPermissions());
         entity.getPermissions().clear();
         entity.getPermissions().addAll(permissions);
     }

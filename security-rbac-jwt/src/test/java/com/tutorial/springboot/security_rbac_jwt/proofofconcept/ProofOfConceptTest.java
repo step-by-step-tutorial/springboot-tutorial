@@ -1,4 +1,4 @@
-package com.tutorial.springboot.security_rbac_jwt.poc;
+package com.tutorial.springboot.security_rbac_jwt.proofofconcept;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @ActiveProfiles({"test"})
-class TechnicalTest {
+class ProofOfConceptTest {
 
     @Test
     void generatePassword() {

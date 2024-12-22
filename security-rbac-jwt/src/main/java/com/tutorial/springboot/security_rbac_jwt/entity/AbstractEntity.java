@@ -1,6 +1,9 @@
 package com.tutorial.springboot.security_rbac_jwt.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -16,8 +19,11 @@ public abstract class AbstractEntity<ID, SELF extends AbstractEntity<ID, SELF>> 
     @GeneratedValue(strategy = GenerationType.AUTO)
     private ID id;
 
+    @Size(min = 1, message = "Metadata [create_by] cannot be empty or null")
+    @Column(nullable = false, updatable = false)
     private String createdBy;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     private String updatedBy;
@@ -25,6 +31,9 @@ public abstract class AbstractEntity<ID, SELF extends AbstractEntity<ID, SELF>> 
     private LocalDateTime updatedAt;
 
     @Version
+    @NotNull(message = "Version cannot be null")
+    @Min(value = 0, message = "Version cannot be negative")
+    @Column(nullable = false)
     private Integer version;
 
     public ID getId() {

@@ -15,13 +15,13 @@ public class PermissionRepositoryImpl implements CustomRepository<Permission, Lo
     private EntityManager entityManager;
 
     @Override
-    public Permission findOrSave(Permission entity) {
+    public Permission findOrCreate(Permission entity) {
         try {
-            var permission = entityManager
-                    .createQuery("SELECT p FROM Permission p WHERE p.name = :name", Permission.class)
-                    .setParameter("name", entity.getName())
-                    .getSingleResult();
-            return permission;
+            var cb = entityManager.getCriteriaBuilder();
+            var cq = cb.createQuery(Permission.class);
+            var root = cq.from(Permission.class);
+            cq.select(root).where(cb.equal(root.get("name"), entity.getName()));
+            return entityManager.createQuery(cq).getSingleResult();
         } catch (Exception e) {
             entityManager.persist(entity);
             return entity;
@@ -29,9 +29,9 @@ public class PermissionRepositoryImpl implements CustomRepository<Permission, Lo
     }
 
     @Override
-    public List<Permission> findOrBatchSave(List<Permission> entities) {
+    public List<Permission> findOrCreateAll(List<Permission> entities) {
         return removeDuplication(entities, Permission::getName)
-                .map(entity -> findOrSave(entity))
+                .map(entity -> findOrCreate(entity))
                 .collect(toList());
     }
 }

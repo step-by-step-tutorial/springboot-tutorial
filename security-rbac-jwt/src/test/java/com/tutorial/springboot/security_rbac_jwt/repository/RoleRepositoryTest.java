@@ -37,7 +37,7 @@ public class RoleRepositoryTest {
         @Test
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
             var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
-            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
+            givenEntity.setPermissions(permissionRepository.findOrCreateAll(givenEntity.getPermissions()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -50,7 +50,7 @@ public class RoleRepositoryTest {
         void givenListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
             var numberOfEntities = 2;
             var givenEntities = factory.makeUniqueRelations().newInstances(numberOfEntities).entity().asUniqList(Role::getName);
-            givenEntities.forEach(role -> role.setPermissions(permissionRepository.findOrBatchSave(role.getPermissions())));
+            givenEntities.forEach(role -> role.setPermissions(permissionRepository.findOrCreateAll(role.getPermissions())));
 
             var actual = systemUnderTest.saveAll(givenEntities);
 
@@ -66,7 +66,7 @@ public class RoleRepositoryTest {
         @Test
         void givenId_whenFindById_thenReturnEntity() {
             var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
-            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
+            givenEntity.setPermissions(permissionRepository.findOrCreateAll(givenEntity.getPermissions()));
             var givenId = givenEntity
                     .getId();
 
@@ -86,7 +86,7 @@ public class RoleRepositoryTest {
             var givenEntity = assistant.makeUniqueRelations().populate(1)
                     .entity().asOne()
                     .setName("updated_value");
-            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
+            givenEntity.setPermissions(permissionRepository.findOrCreateAll(givenEntity.getPermissions()));
 
             var actual = systemUnderTest.save(givenEntity);
 
@@ -102,7 +102,7 @@ public class RoleRepositoryTest {
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
             var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
-            givenEntity.setPermissions(permissionRepository.findOrBatchSave(givenEntity.getPermissions()));
+            givenEntity.setPermissions(permissionRepository.findOrCreateAll(givenEntity.getPermissions()));
             var givenId = givenEntity
                     .getId();
 
