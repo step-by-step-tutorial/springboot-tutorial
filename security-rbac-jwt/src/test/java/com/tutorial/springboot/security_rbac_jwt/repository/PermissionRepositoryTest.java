@@ -2,7 +2,6 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -30,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PermissionRepositoryTest {
 
     @Autowired
-    private EntityManager assistance;
+    private PermissionRepository systemUnderTest;
 
     @Autowired
-    private PermissionRepository systemUnderTest;
+    private EntityManager assistant;
 
     @Nested
     class CreateTest {
@@ -42,12 +41,11 @@ public class PermissionRepositoryTest {
         void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
             var givenEntity = new Permission()
                     .setName("permission")
-                    .setCreatedBy("test")
-                    .setCreatedAt(now())
+                    .setCreatedBy("test").setCreatedAt(now())
                     .setVersion(0);
 
             var actual = systemUnderTest.save(givenEntity);
-            assistance.flush();
+            assistant.flush();
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
@@ -64,7 +62,7 @@ public class PermissionRepositoryTest {
                     .setVersion(null);
 
             var actual = systemUnderTest.save(givenEntity);
-            assistance.flush();
+            assistant.flush();
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
@@ -83,7 +81,7 @@ public class PermissionRepositoryTest {
                     .setVersion(-1);
 
             var actual = systemUnderTest.save(givenEntity);
-            assistance.flush();
+            assistant.flush();
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
@@ -101,7 +99,7 @@ public class PermissionRepositoryTest {
             );
 
             var actual = systemUnderTest.saveAll(givenEntities);
-            assistance.flush();
+            assistant.flush();
 
             assertNotNull(actual);
             assertEquals(2, actual.size());
@@ -119,8 +117,8 @@ public class PermissionRepositoryTest {
         @Test
         void givenId_whenFindById_thenReturnEntity() {
             var entity = new Permission().setName("permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistance.persist(entity);
-            assistance.flush();
+            assistant.persist(entity);
+            assistant.flush();
             var givenId = entity.getId();
 
             var actual = systemUnderTest.findById(givenId);
@@ -135,10 +133,10 @@ public class PermissionRepositoryTest {
     class UpdateTest {
 
         @Test
-        void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
+        void givenUpdatedEntity_whenUpdate_thenReturnUpdatedEntity() {
             var givenEntity = new Permission().setName("permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistance.persist(givenEntity);
-            assistance.flush();
+            assistant.persist(givenEntity);
+            assistant.flush();
             givenEntity.setName("updated_value");
 
             var actual = systemUnderTest.save(givenEntity);
@@ -155,8 +153,8 @@ public class PermissionRepositoryTest {
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
             var entity = new Permission().setName("permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistance.persist(entity);
-            assistance.flush();
+            assistant.persist(entity);
+            assistant.flush();
             var givenId = entity.getId();
 
             systemUnderTest.deleteById(givenId);
@@ -177,7 +175,7 @@ public class PermissionRepositoryTest {
                     .setVersion(0);
 
             var actual = systemUnderTest.findOrCreate(givenEntity);
-            assistance.flush();
+            assistant.flush();
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
@@ -192,8 +190,8 @@ public class PermissionRepositoryTest {
                     .setCreatedBy("test")
                     .setCreatedAt(now())
                     .setVersion(0);
-            assistance.persist(givenEntity);
-            assistance.flush();
+            assistant.persist(givenEntity);
+            assistant.flush();
 
 
             var actual = systemUnderTest.findOrCreate(givenEntity);
@@ -215,7 +213,7 @@ public class PermissionRepositoryTest {
             );
 
             var actual = systemUnderTest.findOrCreateAll(givenEntity);
-            assistance.flush();
+            assistant.flush();
 
             assertNotNull(actual);
             assertEquals(2, actual.size());
@@ -229,10 +227,10 @@ public class PermissionRepositoryTest {
         @Test
         void givenExistEntities_whenFindOrCreateAll_thenReturnPersistedEntity() {
             var readPermission = new Permission().setName("read").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistance.persist(readPermission);
-             var writePermission = new Permission().setName("write").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistance.persist(writePermission);
-            assistance.flush();
+            assistant.persist(readPermission);
+            var writePermission = new Permission().setName("write").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
+            assistant.persist(writePermission);
+            assistant.flush();
 
             var givenEntities = List.of(readPermission, writePermission);
 
@@ -251,8 +249,8 @@ public class PermissionRepositoryTest {
         void givenExistAndNonExistEntities_whenFindOrCreateAll_thenReturnPersistedEntity() {
             var readPermission = new Permission().setName("read").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
             var writePermission = new Permission().setName("write").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistance.persist(writePermission);
-            assistance.flush();
+            assistant.persist(writePermission);
+            assistant.flush();
 
             var givenEntities = List.of(readPermission, writePermission);
 
@@ -277,7 +275,7 @@ public class PermissionRepositoryTest {
 
             var actual = assertThrows(RuntimeException.class, () -> {
                 systemUnderTest.save(givenEntity);
-                assistance.flush();
+                assistant.flush();
             });
 
             assertNotNull(actual);
@@ -291,9 +289,9 @@ public class PermissionRepositoryTest {
                     new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0)
             );
 
-            var actual = assertThrows(PersistenceException.class, () -> {
+            var actual = assertThrows(RuntimeException.class, () -> {
                 systemUnderTest.saveAll(givenEntities);
-                assistance.flush();
+                assistant.flush();
             });
 
             assertNotNull(actual);

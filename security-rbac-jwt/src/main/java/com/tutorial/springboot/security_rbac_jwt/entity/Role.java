@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority {
 
     @NotBlank(message = "Name is mandatory")
-    @Size(max = 50, message = "Name cannot be longer than 50 characters")
+    @Size(min = 1, max = 50, message = "Name cannot be longer than 50 characters")
     @Column(unique = true, nullable = false)
     private String name;
 
