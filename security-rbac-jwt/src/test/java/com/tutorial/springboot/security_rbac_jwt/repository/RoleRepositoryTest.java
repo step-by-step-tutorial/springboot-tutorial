@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 

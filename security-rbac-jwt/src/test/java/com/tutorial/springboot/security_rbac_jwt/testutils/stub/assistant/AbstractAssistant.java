@@ -11,7 +11,7 @@ import com.tutorial.springboot.security_rbac_jwt.transformer.AbstractTransformer
 import java.lang.reflect.Array;
 import java.util.function.Predicate;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.util.ReflectionUtils.identifyType;
 
 public class AbstractAssistant<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {

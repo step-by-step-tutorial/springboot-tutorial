@@ -3,7 +3,6 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 

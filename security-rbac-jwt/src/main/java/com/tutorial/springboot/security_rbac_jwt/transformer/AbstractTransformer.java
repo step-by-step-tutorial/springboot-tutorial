@@ -13,15 +13,15 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {
 
-    private static final int ALLOWANCE_EXPOSE_SECURE_INFORMATION = 1;
+    private static final boolean ALLOWANCE_EXPOSE_SECURE_INFORMATION = true;
 
-    private static final int DISALLOWANCE_EXPOSE_SECURE_INFORMATION = 0;
+    private static final boolean DIS_ALLOWANCE_EXPOSE_SECURE_INFORMATION = false;
 
     private final Class<ENTITY> entityClass;
 
     private final Class<DTO> dtoClass;
 
-    private int exposeSecureInformation = DISALLOWANCE_EXPOSE_SECURE_INFORMATION;
+    private boolean exposeSecureInformation = DIS_ALLOWANCE_EXPOSE_SECURE_INFORMATION;
 
     public AbstractTransformer() {
         entityClass = identifyType(1, getClass());
@@ -106,7 +106,7 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
     }
 
     public void disAllowToExposeSecureInformation() {
-        this.exposeSecureInformation = DISALLOWANCE_EXPOSE_SECURE_INFORMATION;
+        this.exposeSecureInformation = DIS_ALLOWANCE_EXPOSE_SECURE_INFORMATION;
     }
 
     protected void exposeSecureInformation(ENTITY entity, DTO dto) {

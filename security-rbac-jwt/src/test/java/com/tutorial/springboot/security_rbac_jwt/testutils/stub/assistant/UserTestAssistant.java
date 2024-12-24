@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Predicate;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 
 @Component
 @Transactional

@@ -1,9 +1,10 @@
 package com.tutorial.springboot.security_rbac_jwt.service;
 
-import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
+import com.tutorial.springboot.security_rbac_jwt.entity.User;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.UserService;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.UserTestAssistant;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.UserTestFactory;
+import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
+import com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -23,26 +26,39 @@ public class UserServiceTest {
     @Autowired
     private UserService systemUnderTest;
 
+    @Autowired
+    private EntityManagerFactory assistant;
 
     @Autowired
-    private UserTestAssistant assistant;
-
-    @Autowired
-    private UserTestFactory factory;
+    private TestAuthenticationHelper testAuthHelper;
 
     @BeforeEach
     void setup() {
         login();
     }
 
+    private Long newGivenId() {
+        var em = assistant.createEntityManager();
+        var transaction = em.getTransaction();
+
+        transaction.begin();
+        var user = EntityFixture.newGivenUser();
+        em.persist(user);
+        em.flush();
+        em.clear();
+        transaction.commit();
+
+        return user.getId();
+    }
+
     @Nested
     class SaveTests {
 
         @Test
-        void givenValidDto_whenSaveOne_thenReturnId() {
-            var givenDto = factory.newInstances(1).dto().asOne();
+        void givenValidUser_whenSaveOne_thenReturnId() {
+            var givenUser = newGivenUser();
 
-            var actual = systemUnderTest.save(givenDto);
+            var actual = systemUnderTest.save(givenUser);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -51,9 +67,11 @@ public class UserServiceTest {
 
         @Test
         void givenUserWithRoleAndPermission_whenSaveOne_thenReturnId() {
-            var givenDto = factory.newInstances(1).dto().asOne();
+            var givenRole = newGivenRole();
+            var givenUser = newGivenUser();
+            givenUser.getRoles().add(givenRole);
 
-            var actual = systemUnderTest.save(givenDto);
+            var actual = systemUnderTest.save(givenUser);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -62,9 +80,7 @@ public class UserServiceTest {
 
         @Test
         void givenNull_whenSaveOne_thenReturnNullPointerException() {
-            final UserDto givenDto = null;
-
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.save(givenDto));
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.save(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -75,24 +91,21 @@ public class UserServiceTest {
     class FindTests {
 
         @Test
-        void givenId_whenFindById_thenReturnDto() {
-            var givenId = assistant.populate(1)
-                    .dto()
-                    .asOne()
-                    .getId();
+        void givenId_whenFindById_thenReturnUser() {
+            var givenId = newGivenId();
+
             var actual = systemUnderTest.getById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
             assertFalse(actual.get().getUsername().isEmpty());
+            assertFalse(actual.get().getPassword().isEmpty());
             assertFalse(actual.get().getEmail().isEmpty());
         }
 
         @Test
         void givenNull_whenFindById_thenReturnNullPointerException() {
-            final Long givenId = null;
-
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.getById(givenId));
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.getById(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -103,31 +116,26 @@ public class UserServiceTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
-            var givenDto = assistant.populate(1)
-                    .dto()
-                    .asOne()
-                    .setUsername("newusername")
-                    .setPassword("newpassword")
-                    .setEmail("newusername@host.com");
-            var givenId = givenDto.getId();
+        void givenUpdatedUser_whenUpdate_thenJustRunSuccessful() {
+            var givenId = newGivenId();
+            var givenUser = newGivenUser();
+            givenUser.setUsername("newusername");
+            givenUser.setEmail("newusername@email.com");
 
-            systemUnderTest.update(givenId, givenDto);
-            var actual = assistant.select().entity().asOne();
+            var actual = assertDoesNotThrow(() -> {
+                systemUnderTest.update(givenId, givenUser);
+                return systemUnderTest.getById(givenId).orElseThrow();
+            });
 
             assertNotNull(actual);
             assertEquals("newusername", actual.getUsername());
-            assertEquals("newpassword", actual.getPassword());
-            assertEquals("newusername@host.com", actual.getEmail());
+            assertEquals("newusername@email.com", actual.getEmail());
             assertTrue(actual.isEnabled());
         }
 
         @Test
         void givenNull_whenUpdate_thenReturnNullPointerException() {
-            final UserDto givenDto = null;
-            final Long givenId = null;
-
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.update(givenId, givenDto));
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.update(null, null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -139,22 +147,20 @@ public class UserServiceTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = assistant.populate(1)
-                    .dto()
-                    .asOne()
-                    .getId();
+            var givenId = newGivenId();
 
-            systemUnderTest.deleteById(givenId);
-            var actual = assistant.select().dto().asOne();
+            var actual = assertDoesNotThrow(() -> {
+                systemUnderTest.deleteById(givenId);
+                return systemUnderTest.getById(givenId);
+            });
 
-            assertNull(actual);
+            assertNotNull(actual);
+            assertFalse(actual.isPresent());
         }
 
         @Test
         void givenNull_whenDeleteById_thenReturnNullPointerException() {
-            final Long givenId = null;
-
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(givenId));
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -167,7 +173,7 @@ public class UserServiceTest {
 
         @Test
         void givenUsername_whenFindByUsername_thenReturnUser() {
-            var givenUser = assistant.signupAndLogin().entity().asOne();
+            var givenUser = testAuthHelper.signupAndLogin();
             var givenUserUsername = givenUser.getUsername();
 
             var actual = systemUnderTest.findByUsername(givenUserUsername);
@@ -179,32 +185,37 @@ public class UserServiceTest {
 
         @Test
         void givenOldPasswordAndNewPassword_whenChangePassword_thenUpdatePassword() {
-            var givenUser = assistant.signupAndLogin().entity().asOne();
+            var givenUser = testAuthHelper.signupAndLogin();
             var givenUserPassword = givenUser.getPassword();
 
-            systemUnderTest.changePassword(givenUserPassword, "updated_password");
-            var actual = assistant.select().entity().asOne();
+            var actual = assertDoesNotThrow(() -> {
+
+                systemUnderTest.changePassword(givenUserPassword, "updated_password");
+                var em = assistant.createEntityManager();
+                var transaction = em.getTransaction();
+                transaction.begin();
+                var user = em.find(User.class, givenUser.getId());
+                transaction.commit();
+                em.close();
+                return user;
+            });
 
             assertNotNull(actual);
             assertFalse(actual.getPassword().isEmpty());
         }
 
         @Test
-        void givenNull_whenChangePassword_thenReturnUser() {
-            String givenOldPassword = null;
-            String givenNewPassword = null;
-
-            var actual = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.changePassword(givenOldPassword, givenNewPassword));
+        void givenNull_whenChangePassword_thenReturnIllegalArgumentException() {
+            var actual = assertThrows(IllegalArgumentException.class,
+                    () -> systemUnderTest.changePassword(null, null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isEmpty());
         }
 
         @Test
-        void givenUser_whenFindByUsername_thenReturnUser() {
-            String givenUserUsername = null;
-
-            var actual = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.findByUsername(givenUserUsername));
+        void givenNull_whenFindByUsername_thenReturnIllegalArgumentException() {
+            var actual = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.findByUsername(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isEmpty());

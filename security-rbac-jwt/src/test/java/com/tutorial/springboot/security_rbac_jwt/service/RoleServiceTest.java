@@ -1,9 +1,8 @@
 package com.tutorial.springboot.security_rbac_jwt.service;
 
-import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.RoleService;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.RoleTestAssistant;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.RoleTestFactory;
+import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -13,7 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
+import java.util.List;
+
+import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -24,27 +27,36 @@ public class RoleServiceTest {
     @Autowired
     private RoleService systemUnderTest;
 
-
     @Autowired
-    private RoleTestAssistant assistant;
-
-    @Autowired
-    private RoleTestFactory factory;
+    private EntityManagerFactory assistant;
 
     @BeforeEach
     void setup() {
         login();
     }
 
+    private Long newGivenId() {
+        var em = assistant.createEntityManager();
+        var transaction = em.getTransaction();
+
+        transaction.begin();
+        var role = EntityFixture.newGivenRole();
+        em.persist(role);
+        em.flush();
+        em.clear();
+        transaction.commit();
+
+        return role.getId();
+    }
+
     @Nested
     class SaveTests {
 
         @Test
-        void givenDto_whenSaveOne_thenReturnId() {
-            var givenDto = factory.newInstances(1).dto().asOne();
-            ;
+        void givenRole_whenSaveOne_thenReturnId() {
+            var givenRole = newGivenRole();
 
-            var actual = systemUnderTest.save(givenDto);
+            var actual = systemUnderTest.save(givenRole);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -53,9 +65,10 @@ public class RoleServiceTest {
 
         @Test
         void givenRoleWithPermission_whenSaveOne_thenReturnId() {
-            var givenDto = factory.newInstances(1).dto().asOne();
+            var givenPermission = newGivenPermission();
+            var givenRole = newGivenRole().setPermissions(List.of(givenPermission));
 
-            var actual = systemUnderTest.save(givenDto);
+            var actual = systemUnderTest.save(givenRole);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -64,9 +77,7 @@ public class RoleServiceTest {
 
         @Test
         void givenNull_whenSaveOne_thenReturnNullPointerException() {
-            final RoleDto givenDto = null;
-
-            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.save(givenDto));
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.save(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -77,8 +88,8 @@ public class RoleServiceTest {
     class FindTests {
 
         @Test
-        void givenId_whenFindById_thenReturnDto() {
-            var givenId = assistant.populate(1).dto().asOne().getId();
+        void givenId_whenFindById_thenReturnRole() {
+            var givenId = newGivenId();
 
             var actual = systemUnderTest.getById(givenId);
 
@@ -89,9 +100,7 @@ public class RoleServiceTest {
 
         @Test
         void givenNull_whenFindById_thenReturnNullPointerException() {
-            final Long givenId = null;
-
-            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.getById(givenId));
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.getById(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -102,12 +111,14 @@ public class RoleServiceTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedDto_whenUpdate_thenJustRunSuccessful() {
-            var givenDto = assistant.populate(1).dto().asOne().setName("updated_value");
-            var givenId = givenDto.getId();
+        void givenUpdatedRole_whenUpdate_thenJustRunSuccessful() {
+            var givenId = newGivenId();
+            var givenRole = newGivenRole().setName("updated_value");
 
-            systemUnderTest.update(givenId, givenDto);
-            var actual = assistant.select().dto().asOne();
+            var actual = assertDoesNotThrow(() -> {
+                systemUnderTest.update(givenId, givenRole);
+                return systemUnderTest.getById(givenId).orElseThrow();
+            });
 
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());
@@ -115,10 +126,7 @@ public class RoleServiceTest {
 
         @Test
         void givenNull_whenUpdate_thenReturnNullPointerException() {
-            final RoleDto givenDto = null;
-            final Long givenId = null;
-
-            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.update(givenId, givenDto));
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.update(null, null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -130,19 +138,20 @@ public class RoleServiceTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenId = assistant.populate(1).dto().asOne().getId();
+            var givenId = newGivenId();
 
-            systemUnderTest.deleteById(givenId);
-            var actual = assistant.select().dto().asOne();
+            var actual = assertDoesNotThrow(() -> {
+                systemUnderTest.deleteById(givenId);
+                return systemUnderTest.getById(givenId);
+            });
 
-            assertNull(actual);
+            assertNotNull(actual);
+            assertFalse(actual.isPresent());
         }
 
         @Test
         void givenNull_whenDeleteById_thenReturnNullPointerException() {
-            final Long givenId = null;
-
-            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(givenId));
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
