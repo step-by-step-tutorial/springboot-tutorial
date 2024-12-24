@@ -106,6 +106,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
         var newRoles = newOne.roles.stream()
                 .filter(role -> !this.roles.contains(role))
+                .peek(role -> role.updateRelations(role))
                 .toList();
 
         var deletedRoles =  this.roles.stream()
