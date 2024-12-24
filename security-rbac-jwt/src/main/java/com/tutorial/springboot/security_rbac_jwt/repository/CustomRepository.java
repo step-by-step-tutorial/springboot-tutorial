@@ -3,7 +3,7 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 import java.util.List;
 
 public interface CustomRepository<ENTITY, ID> {
-    ENTITY findOrCreate(ENTITY entity);
+    ENTITY findOrSave(ENTITY entity);
 
-    List<ENTITY> findOrCreateAll(List<ENTITY> entities);
+    List<ENTITY> findOrSaveAll(List<ENTITY> entities);
 }

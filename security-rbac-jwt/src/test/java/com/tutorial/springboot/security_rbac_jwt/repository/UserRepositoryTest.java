@@ -1,18 +1,24 @@
 package com.tutorial.springboot.security_rbac_jwt.repository;
 
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
+import com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils;
 import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.UserTestAssistant;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.UserTestFactory;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.List;
+import java.util.Objects;
+
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
+import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -25,72 +31,107 @@ public class UserRepositoryTest {
     private UserRepository systemUnderTest;
 
     @Autowired
+    private EntityManager em;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
     private UserTestAssistant assistant;
 
-    @Autowired
-    private UserTestFactory factory;
-
     @Nested
-    class CreateTest {
+    class SaveTest {
 
         @Test
-        void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
-            var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
+        void givenNewUser_whenSave_thenReturnPersistedUser() {
+            var givenUser = newGivenUser();
 
-            var actual = systemUnderTest.save(givenEntity);
+            var actual = systemUnderTest.save(givenUser);
+            em.flush();
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
-            assertFalse(actual.getUsername().isEmpty());
-            assertFalse(actual.getPassword().isEmpty());
-            assertFalse(actual.getEmail().isEmpty());
-            assertTrue(actual.isEnabled());
+            assertTrue(actual.getId() > 0);
+            assertEquals(0, (int) actual.getVersion());
         }
 
         @Test
-        void givenListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
-            int numberOfEntities = 2;
-            var givenEntities = factory.makeUniqueRelations().newInstances(numberOfEntities).entity().asUniqList(User::getUsername);
-            givenEntities.forEach(user -> user.setRoles(roleRepository.findOrCreateAll(user.getRoles())));
+        void givenNewUserWithRole_whenSave_thenReturnPersistedUser() {
+            var givenRole = newGivenRole();
+            var givenUser = newGivenUser().setRoles(List.of(givenRole));
 
-            var actual = systemUnderTest.saveAll(givenEntities);
+            var actual = systemUnderTest.save(givenUser);
+            em.flush();
 
-            assertNotNull(actual);
-            assertTrue(actual.size() > 0);
-            assertTrue(actual.stream().allMatch(user -> user.getId() != null));
-        }
-
-        @Test
-        void givenUserWithRoleAndPermission_whenSave_thenReturnPersistedEntity() {
-            var givenEntity = factory.makeUniqueRelations().newInstances(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
-
-            var actual = systemUnderTest.save(givenEntity);
-
+            // assert user
             assertNotNull(actual);
             assertNotNull(actual.getId());
-            assertFalse(actual.getUsername().isEmpty());
-            assertFalse(actual.getPassword().isEmpty());
-            assertFalse(actual.getEmail().isEmpty());
-            assertTrue(actual.isEnabled());
-            assertThat(actual.getAuthorities().stream().map(GrantedAuthority::getAuthority)).isNotEmpty();
-            assertThat(actual.getPermissions()).isNotEmpty();
+            assertEquals(1, (int) actual.getVersion());
+
+            // assert role
+            assertNotNull(actual.getRoles());
+            assertEquals(1, actual.getRoles().size());
+            assertTrue(actual.getRoles().getFirst().getId() > 0);
+            assertEquals(0, (int) actual.getRoles().getFirst().getVersion());
+        }
+
+        @Test
+        void givenNewUserWithRoleAndPermission_whenSave_thenReturnPersistedUser() {
+            var permission = newGivenPermission();
+            var givenRole = newGivenRole().setPermissions(List.of(permission));
+            var givenUser = newGivenUser().setRoles(List.of(givenRole));
+
+            var actual = systemUnderTest.save(givenUser);
+            em.flush();
+
+            // assert user
+            assertNotNull(actual);
+            assertNotNull(actual.getId());
+            assertEquals(1, (int) actual.getVersion());
+
+            // assert role
+            assertNotNull(actual.getRoles());
+            assertEquals(1, actual.getRoles().size());
+            assertTrue(actual.getRoles().getFirst().getId() > 0);
+            assertEquals(1, (int) actual.getRoles().getFirst().getVersion());
+
+            // assert permission
+            assertNotNull(actual.getRoles().getFirst().getPermissions());
+            assertEquals(1, actual.getRoles().getFirst().getPermissions().size());
+            assertTrue(actual.getRoles().getFirst().getPermissions().getFirst().getId() > 0);
+            assertEquals(0, (int) actual.getRoles().getFirst().getPermissions().getFirst().getVersion());
         }
     }
 
     @Nested
-    class ReadTest {
+    class SaveAllTest {
 
         @Test
-        void givenID_whenFindById_thenReturnEntity() {
-            var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
-            var givenId = givenEntity.getId();
+        void givenListOfUser_whenSaveAll_thenReturnListOfPersistedUser() {
+            var givenUsers = List.of(newGivenUser("username1"), newGivenUser("username2"));
 
+            var actual = systemUnderTest.saveAll(givenUsers);
+            em.flush();
+
+            assertEquals(2, actual.size());
+            actual.forEach(actualItem -> {
+                assertNotNull(actualItem.getId());
+                assertTrue(actualItem.getId() > 0);
+                assertEquals(0, (int) actualItem.getVersion());
+            });
+        }
+    }
+
+    @Nested
+    class FindTest {
+
+        @Test
+        void givenId_whenFindById_thenReturnUser() {
+            var givenUser = newGivenUser();
+            em.persist(givenUser);
+            em.flush();
+            em.clear();
+            var givenId = givenUser.getId();
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -107,24 +148,95 @@ public class UserRepositoryTest {
     class UpdateTest {
 
         @Test
-        void givenUpdatedEntity_whenUpdate_thenJustRunSuccessful() {
-            var givenEntity = assistant.makeUniqueRelations().populate(1)
-                    .entity()
-                    .asOne()
-                    .setUsername("newusername")
-                    .setPassword("newpassword")
-                    .setEmail("newusername@host.com")
-                    .setEnabled(false);
-            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
+        void givenUpdatedUser_whenUpdate_thenReturnPersistedUser() {
+            login();
+            var user = newGivenUser();
+            em.persist(user);
+            em.flush();
+            em.clear();
+            em.detach(user);
+            var givenId = user.getId();
+            var givenVersion = user.getVersion();
 
-            var actual = systemUnderTest.save(givenEntity);
+            var givenUser = newGivenUser("newusername");
+            var toUpdate = em.find(User.class, givenId);
+            toUpdate.updateFrom(givenUser);
+
+            var actual = systemUnderTest.save(toUpdate);
 
             assertNotNull(actual);
-            assertEquals(givenEntity.getId(), actual.getId());
+            assertEquals(user.getId(), actual.getId());
+            assertEquals(givenVersion + 1, actual.getVersion());
             assertEquals("newusername", actual.getUsername());
-            assertEquals("newpassword", actual.getPassword());
-            assertEquals("newusername@host.com", actual.getEmail());
-            assertFalse(actual.isEnabled());
+        }
+
+        @Test
+        void givenUserWithUpdatedRoles_whenUpdate_thenReturnPersistedUser() {
+            login();
+            var role = newGivenRole("boss");
+            var user = newGivenUser().setRoles(List.of(role));
+            em.persist(user);
+            em.flush();
+            em.clear();
+            em.detach(user);
+            var givenId = user.getId();
+            var givenVersion = user.getVersion();
+
+            var givenRole = newGivenRole("client");
+            var givenUser = newGivenUser().setRoles(List.of(role, givenRole)) ;
+            var toUpdate = em.find(User.class, givenId);
+            toUpdate.updateFrom(givenUser);
+
+            var actual = systemUnderTest.save(toUpdate);
+
+            assertNotNull(actual);
+            assertEquals(user.getId(), actual.getId());
+            assertEquals(givenVersion + 1, actual.getVersion());
+
+            assertNotNull(actual.getPermissions());
+            assertEquals(0, actual.getPermissions().size());
+            assertEquals(2, actual.getRoles().size());
+            assertEquals("boss", actual.getRoles().getFirst().getName());
+            assertEquals(0, actual.getRoles().getFirst().getVersion());
+            assertEquals("client", actual.getRoles().getLast().getName());
+            assertEquals(0, actual.getRoles().getLast().getVersion());
+
+        }
+
+        @Test
+        void givenUserWithUpdatedRolesAndPermissions_whenUpdate_thenReturnPersistedUser() {
+            login();
+            var readPermission = newGivenPermission("read");
+            var guestRole = newGivenRole("guest").setPermissions(List.of(readPermission)) ;
+            var user = newGivenUser().setRoles(List.of(guestRole));
+            em.persist(user);
+            em.flush();
+            em.clear();
+            em.detach(user);
+            em.detach(guestRole);
+            em.detach(readPermission);
+            var givenId = user.getId();
+            var givenVersion = user.getVersion();
+
+            var writePermission = newGivenPermission("write");
+            guestRole.setPermissions(List.of(readPermission, writePermission));
+            var givenUser = newGivenUser().setRoles(List.of(guestRole)) ;
+            var toUpdate = em.find(User.class, givenId);
+            toUpdate.updateFrom(givenUser);
+
+            var actual = systemUnderTest.save(toUpdate);
+
+            assertNotNull(actual);
+            assertEquals(user.getId(), actual.getId());
+            assertEquals(givenVersion + 1, actual.getVersion());
+
+            assertNotNull(actual.getPermissions());
+            assertEquals(2, actual.getPermissions().size());
+
+            assertEquals(1, actual.getRoles().size());
+
+            assertEquals("guest", actual.getRoles().getFirst().getName());
+            assertEquals(0, actual.getRoles().getFirst().getVersion());
         }
     }
 
@@ -133,15 +245,62 @@ public class UserRepositoryTest {
 
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
-            var givenEntity = assistant.makeUniqueRelations().populate(1).entity().asOne();
-            givenEntity.setRoles(roleRepository.findOrCreateAll(givenEntity.getRoles()));
-            var givenId = givenEntity
-                    .getId();
+            var givenUser = newGivenUser();
+            em.persist(givenUser);
+            em.flush();
+            em.clear();
+            var givenId = givenUser.getId();
 
-            systemUnderTest.deleteById(givenId);
-            var actual = systemUnderTest.findById(givenId);
+            var actual = assertDoesNotThrow(() -> {
+                systemUnderTest.deleteById(givenId);
+                return systemUnderTest.findById(givenId);
+            });
 
             assertFalse(actual.isPresent());
         }
     }
+
+    private User newGivenUser() {
+        return new User()
+                .setUsername("username").setPassword("password").setEmail("username@email.com").setEnabled(true)
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private User newGivenUser(String username) {
+        Objects.requireNonNull(username);
+        return new User()
+                .setUsername(username).setPassword("password").setEmail(username + "@email.com").setEnabled(true)
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private Role newGivenRole() {
+        return new Role()
+                .setName("role")
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private Role newGivenRole(String name) {
+        return new Role()
+                .setName(name)
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private Permission newGivenPermission() {
+        return new Permission()
+                .setName("permission")
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private Permission newGivenPermission(String name) {
+        return new Permission()
+                .setName(name)
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
 }

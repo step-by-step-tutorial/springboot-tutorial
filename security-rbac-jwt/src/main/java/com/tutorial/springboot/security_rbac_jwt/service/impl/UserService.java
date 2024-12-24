@@ -52,7 +52,7 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
     protected void beforeSave(UserDto dto, User entity) {
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        var roles = roleRepository.findOrCreateAll(entity.getRoles());
+        var roles = roleRepository.findOrSaveAll(entity.getRoles());
         entity.getRoles().clear();
         entity.getRoles().addAll(roles);
     }

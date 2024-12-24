@@ -5,10 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.*;
 
 @Entity
 public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority {
@@ -25,7 +22,8 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     @JoinTable(
             name = "role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
+            inverseJoinColumns = @JoinColumn(name = "permission_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"role_id", "permission_id"})
     )
     private List<Permission> permissions = new ArrayList<>();
 
@@ -61,19 +59,42 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     }
 
     @Override
-    public void updateFrom(Role newOne) {
+    public Role updateFrom(Role newOne) {
         super.updateFrom(newOne);
         this.name = newOne.name;
-        var mergedPermission = newOne.permissions
-                .stream()
-                .map(newPermission ->
-                        this.permissions.stream()
-                                .filter(existingPermission -> existingPermission.getName().equals(newPermission.getName()))
-                                .findFirst()
-                                .orElse(newPermission))
-                .collect(toList());
+        return this;
+    }
 
-        this.permissions.clear();
-        this.permissions.addAll(mergedPermission);
+    @Override
+    public Role updateRelations(Role newOne) {
+        var newPermissions = newOne.permissions.stream()
+                .filter(permission -> !this.permissions.contains(permission))
+                .toList();
+
+        var deletedPermissions = this.permissions.stream()
+                .filter(permission -> !newOne.permissions.contains(permission))
+                .toList();
+
+        this.permissions.removeAll(deletedPermissions);
+        this.permissions.addAll(newPermissions);
+
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        var role = (Role) o;
+        return Objects.equals(name, role.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

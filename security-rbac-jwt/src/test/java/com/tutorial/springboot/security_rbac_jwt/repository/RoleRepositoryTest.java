@@ -16,10 +16,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestUtils.generateString;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,16 +37,13 @@ public class RoleRepositoryTest {
     private EntityManager assistant;
 
     @Nested
-    class CreateTest {
+    class SaveOneTest {
 
         @Test
-        void givenEntity_whenSaveOne_thenReturnPersistedEntity() {
-            var givenEntity = new Role()
-                    .setName("permission")
-                    .setCreatedBy("test").setCreatedAt(now())
-                    .setVersion(0);
+        void givenNewRole_whenSave_thenReturnPersistedRole() {
+            var givenRole = newGivenRole();
 
-            var actual = systemUnderTest.save(givenEntity);
+            var actual = systemUnderTest.save(givenRole);
             assistant.flush();
 
             assertNotNull(actual);
@@ -55,6 +52,89 @@ public class RoleRepositoryTest {
             assertFalse(actual.getName().isEmpty());
         }
 
+        @Test
+        void givenNewRoleWithNewPermission_whenSave_thenReturnPersistedRole() {
+            var givenPermission = newGivenPermission();
+            var givenRole = newGivenRole();
+            givenRole.getPermissions().add(givenPermission);
+
+            var actual = systemUnderTest.save(givenRole);
+            assistant.flush();
+
+            assertNotNull(actual);
+            assertNotNull(actual.getId());
+            assertTrue(actual.getId() > 0);
+            assertFalse(actual.getName().isEmpty());
+            assertNotNull(actual.getPermissions());
+            assertEquals(1, actual.getPermissions().size());
+            assertTrue(actual.getPermissions().getFirst().getId() > 0);
+            assertEquals(0, (int) actual.getPermissions().getFirst().getVersion());
+        }
+
+        @Test
+        void givenNewRoleWithExistingPermission_whenSave_thenReturnPersistedRole() {
+            var givenPermission = newGivenPermission();
+            assistant.persist(givenPermission);
+            assistant.flush();
+            var givenRole = newGivenRole();
+            givenRole.getPermissions().add(givenPermission);
+
+            var actual = systemUnderTest.save(givenRole);
+            assistant.flush();
+
+            assertNotNull(actual);
+            assertNotNull(actual.getId());
+            assertTrue(actual.getId() > 0);
+            assertFalse(actual.getName().isEmpty());
+            assertNotNull(actual.getPermissions());
+            assertEquals(1, actual.getPermissions().size());
+            assertTrue(actual.getPermissions().getFirst().getId() > 0);
+            assertEquals(0, (int) actual.getPermissions().getFirst().getVersion());
+        }
+
+        /**
+         * This test verifies that the combination of role ID and permission ID in the join table
+         * remains unique, ensuring no duplicate associations are allowed between a role and the same permission.
+         */
+        @Test
+        void givenNewRoleWithDuplicatedSamePermissionReference_whenSave_thenThrowRuntimeException() {
+            var givenPermission = newGivenPermission();
+            assistant.persist(givenPermission);
+            assistant.flush();
+            var givenRole = newGivenRole();
+            givenRole.getPermissions().add(givenPermission);
+            givenRole.getPermissions().add(givenPermission);
+
+            var actual = assertThrows(RuntimeException.class, () -> {
+                systemUnderTest.save(givenRole);
+                assistant.flush();
+            });
+
+            assertNotNull(actual);
+            assertNotNull(actual.getMessage());
+        }
+
+        @Test
+        void givenRoleWithDuplicatedPermission_whenSave_thenReturnPersistedRole() {
+            var givenPermission1 = newGivenPermission();
+            var givenPermission2 = newGivenPermission();
+
+            var givenRole = newGivenRole();
+            givenRole.getPermissions().add(givenPermission1);
+            givenRole.getPermissions().add(givenPermission2);
+
+            var actual = assertThrows(RuntimeException.class, () -> {
+                systemUnderTest.save(givenRole);
+                assistant.flush();
+            });
+
+            assertNotNull(actual);
+            assertNotNull(actual.getMessage());
+        }
+    }
+
+    @Nested
+    class SaveAllTest {
         @Test
         void givenUniqueListOfEntity_whenSaveAll_thenReturnListOfPersistedEntity() {
             var givenEntities = List.of(
@@ -72,61 +152,17 @@ public class RoleRepositoryTest {
                 assertFalse(actualItem.getName().isEmpty());
             });
         }
-
-        @Test
-        void givenRoleWithNewPermission_whenSaveOne_thenReturnPersistedEntity() {
-            var givenEntity = new Role()
-                    .setName("role with new permission")
-                    .setCreatedBy("test").setCreatedAt(now())
-                    .setVersion(0)
-                    .setPermissions(List.of(new Permission().setName("permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0)));
-
-            var actual = systemUnderTest.save(givenEntity);
-            assistant.flush();
-
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertTrue(actual.getId() > 0);
-            assertFalse(actual.getName().isEmpty());
-            assertNotNull(actual.getPermissions());
-            assertEquals(1, actual.getPermissions().size());
-            assertTrue(actual.getPermissions().getFirst().getId() > 0);
-            assertEquals(0, (int) actual.getPermissions().getFirst().getVersion());
-        }
-
-        @Test
-        void givenRoleWithExistsPermission_whenSaveOne_thenReturnPersistedEntity() {
-            var permission = new Permission().setName("permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistant.persist(permission);
-
-            var givenEntity = new Role()
-                    .setName("role with exists permission")
-                    .setCreatedBy("test").setCreatedAt(now())
-                    .setVersion(0)
-                    .setPermissions(List.of(permission));
-
-            var actual = systemUnderTest.save(givenEntity);
-            assistant.flush();
-
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertTrue(actual.getId() > 0);
-            assertFalse(actual.getName().isEmpty());
-            assertNotNull(actual.getPermissions());
-            assertEquals(1, actual.getPermissions().size());
-            assertTrue(actual.getPermissions().getFirst().getId() > 0);
-            assertEquals(0, (int) actual.getPermissions().getFirst().getVersion());
-        }
     }
 
     @Nested
-    class ReadTest {
+    class FindTest {
 
         @Test
         void givenId_whenFindById_thenReturnEntity() {
-            var role = new Role().setName("role").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
+            var role = newGivenRole();
             assistant.persist(role);
             assistant.flush();
+            assistant.clear();
             var givenId = role.getId();
 
             var actual = systemUnderTest.findById(givenId);
@@ -142,60 +178,113 @@ public class RoleRepositoryTest {
 
         @Test
         void givenUpdatedEntity_whenUpdate_thenReturnUpdatedEntity() {
-            var givenEntity = new Role().setName("role").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            assistant.persist(givenEntity);
+            login();
+            var role = newGivenRole();
+            assistant.persist(role);
             assistant.flush();
-            givenEntity.setName("updated_value");
+            assistant.clear();
+            assistant.detach(role);
+            var givenId = role.getId();
+            var givenVersion = role.getVersion();
 
-            var actual = systemUnderTest.save(givenEntity);
+            var givenRole = newGivenRole("updated_value");
+            var toUpdate = assistant.find(Role.class, givenId);
+            toUpdate.updateFrom(givenRole);
+
+            var actual = systemUnderTest.save(toUpdate);
             assistant.flush();
 
             assertNotNull(actual);
-            assertEquals(givenEntity.getId(), actual.getId());
+            assertEquals(role.getId(), actual.getId());
+            assertEquals(givenVersion + 1, actual.getVersion());
             assertEquals("updated_value", actual.getName());
         }
 
         @Test
         void givenRoleWithUpdatedPermissionList_whenUpdate_thenReturnUpdatedEntity() {
-            var permission = new Permission().setName("read").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            var givenRole = new Role()
-                    .setName("role")
-                    .setCreatedBy("test").setCreatedAt(now())
-                    .setVersion(0)
-                    .setPermissions(new ArrayList<>(List.of(permission)));
-            assistant.persist(givenRole);
+            login();
+            var readPermission = newGivenPermission("read");
+            var role = newGivenRole().setPermissions(List.of(readPermission));
+            assistant.persist(role);
+            assistant.flush();
+            assistant.clear();
+            assistant.detach(role);
+            var givenId = role.getId();
+            var givenVersion = role.getVersion();
+
+            var givenRole  = newGivenRole().setPermissions(List.of(readPermission, newGivenPermission("write")));
+            var toUpdate = assistant.find(Role.class, givenId);
+            toUpdate.updateFrom(givenRole);
+
+            var actual = systemUnderTest.save(toUpdate);
             assistant.flush();
 
-            givenRole.setPermissions(new ArrayList<>(List.of(permission, new Permission().setName("write").setCreatedBy("test").setCreatedAt(now()).setVersion(0))));
-
-            var actual = systemUnderTest.save(givenRole);
-
             assertNotNull(actual);
-            assertEquals(givenRole.getId(), actual.getId());
+            assertEquals(toUpdate.getId(), actual.getId());
+            assertEquals(givenVersion + 1, actual.getVersion());
+
             assertNotNull(actual.getPermissions());
             assertEquals(2, actual.getPermissions().size());
+            assertEquals("read", actual.getPermissions().getFirst().getName());
+            assertEquals(0, actual.getPermissions().getFirst().getVersion());
+            assertEquals("write", actual.getPermissions().getLast().getName());
+            assertEquals(0, actual.getPermissions().getLast().getVersion());
         }
 
         @Test
         void givenRoleWithReplacedPermission_whenUpdate_thenReturnUpdatedEntity() {
-            var permission = new Permission().setName("read").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
-            var givenRole = new Role()
-                    .setName("role")
-                    .setCreatedBy("test").setCreatedAt(now())
-                    .setVersion(0)
-                    .setPermissions(new ArrayList<>(List.of(permission)));
-            assistant.persist(givenRole);
+            login();
+            var readPermission = newGivenPermission("read");
+            var role = newGivenRole().setPermissions(List.of(readPermission));
+            assistant.persist(role);
+            assistant.flush();
+            assistant.clear();
+            assistant.detach(role);
+            var givenId = role.getId();
+            var givenVersion = role.getVersion();
+
+            var givenRole  = newGivenRole().setPermissions(List.of(newGivenPermission("write"))) ;
+            var toUpdate = assistant.find(Role.class, givenId);
+            toUpdate.updateFrom(givenRole);
+
+            var actual = systemUnderTest.save(toUpdate);
             assistant.flush();
 
-            givenRole.setPermissions(new ArrayList<>(List.of(new Permission().setName("write").setCreatedBy("test").setCreatedAt(now()).setVersion(0))));
-
-            var actual = systemUnderTest.save(givenRole);
-
             assertNotNull(actual);
-            assertEquals(givenRole.getId(), actual.getId());
+            assertEquals(toUpdate.getId(), actual.getId());
+            assertEquals(givenVersion + 1, actual.getVersion());
+
             assertNotNull(actual.getPermissions());
             assertEquals(1, actual.getPermissions().size());
-            assertEquals("write", actual.getPermissions().getFirst().getName());
+            assertEquals("write", actual.getPermissions().getLast().getName());
+            assertEquals(0, actual.getPermissions().getLast().getVersion());
+        }
+
+        @Test
+        void givenRoleWithDeletedPermission_whenUpdate_thenReturnUpdatedEntity() {
+            login();
+            var readPermission = newGivenPermission("read");
+            var role = newGivenRole().setPermissions(List.of(readPermission));
+            assistant.persist(role);
+            assistant.flush();
+            assistant.clear();
+            assistant.detach(role);
+            var givenId = role.getId();
+            var givenVersion = role.getVersion();
+
+            var givenRole  = newGivenRole() ;
+            var toUpdate = assistant.find(Role.class, givenId);
+            toUpdate.updateFrom(givenRole);
+
+            var actual = systemUnderTest.save(toUpdate);
+            assistant.flush();
+
+            assertNotNull(actual);
+            assertEquals(toUpdate.getId(), actual.getId());
+            assertEquals(givenVersion + 1, actual.getVersion());
+
+            assertNotNull(actual.getPermissions());
+            assertEquals(0, actual.getPermissions().size());
         }
     }
 
@@ -222,7 +311,7 @@ public class RoleRepositoryTest {
     class ValidationTest {
 
         @ParameterizedTest
-        @ArgumentsSource(InvalidRoleEntity.class)
+        @ArgumentsSource(InvalidRoles.class)
         void givenInvalidEntity_whenSaveOne_thenReturnRuntimeException(Role givenEntity) {
 
             var actual = assertThrows(RuntimeException.class, () -> {
@@ -251,7 +340,35 @@ public class RoleRepositoryTest {
         }
     }
 
-    static class InvalidRoleEntity implements ArgumentsProvider {
+    private Role newGivenRole() {
+        return new Role()
+                .setName("role")
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private Role newGivenRole(String name) {
+        return new Role()
+                .setName(name)
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private Permission newGivenPermission() {
+        return new Permission()
+                .setName("permission")
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    private Permission newGivenPermission(String name) {
+        return new Permission()
+                .setName(name)
+                .setCreatedBy("unittest").setCreatedAt(now())
+                .setVersion(0);
+    }
+
+    static class InvalidRoles implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(

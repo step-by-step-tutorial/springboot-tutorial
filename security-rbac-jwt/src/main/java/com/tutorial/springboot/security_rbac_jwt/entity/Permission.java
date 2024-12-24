@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Permission extends AbstractEntity<Long, Permission> {
@@ -40,8 +41,26 @@ public class Permission extends AbstractEntity<Long, Permission> {
     }
 
     @Override
-    public void updateFrom(Permission newOne) {
+    public Permission updateFrom(Permission newOne) {
         super.updateFrom(newOne);
         this.name = newOne.name;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        var that = (Permission) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

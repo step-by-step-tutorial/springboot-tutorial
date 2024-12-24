@@ -91,14 +91,22 @@ public abstract class AbstractEntity<ID, SELF extends AbstractEntity<ID, SELF>> 
     }
 
     @Transient
-    public void updateFrom(SELF newOne) {
+    public SELF updateFrom(SELF newOne) {
         if (!Objects.equals(this.version, newOne.getVersion())) {
             throw new IllegalStateException("The given entity has a different version. Cannot update.");
         }
 
         this.updatedBy = SecurityContextHolder.getContext().getAuthentication().getName();
         this.updatedAt = LocalDateTime.now();
-        this.version = newOne.getVersion();
+        this.version = newOne.getVersion() + 1;
+
+        updateRelations(newOne);
+
+        return (SELF) this;
     }
 
+    @Transient
+    public SELF updateRelations(SELF newOne) {
+        return (SELF) this;
+    }
 }

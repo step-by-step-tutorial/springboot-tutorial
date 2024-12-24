@@ -15,7 +15,7 @@ public class PermissionRepositoryImpl implements CustomRepository<Permission, Lo
     private EntityManager entityManager;
 
     @Override
-    public Permission findOrCreate(Permission entity) {
+    public Permission findOrSave(Permission entity) {
         try {
             var cb = entityManager.getCriteriaBuilder();
             var cq = cb.createQuery(Permission.class);
@@ -29,9 +29,9 @@ public class PermissionRepositoryImpl implements CustomRepository<Permission, Lo
     }
 
     @Override
-    public List<Permission> findOrCreateAll(List<Permission> entities) {
+    public List<Permission> findOrSaveAll(List<Permission> entities) {
         return removeDuplication(entities, Permission::getName)
-                .map(entity -> findOrCreate(entity))
+                .map(entity -> findOrSave(entity))
                 .collect(toList());
     }
 }

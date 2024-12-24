@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Entity
 @Table(name = "users")
 public class User extends AbstractEntity<Long, User> implements UserDetails {
@@ -90,28 +88,34 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     }
 
     @Override
-    public void updateFrom(User newOne) {
+    public User updateFrom(User newOne) {
         super.updateFrom(newOne);
         this.username = newOne.username;
         this.password = newOne.password;
         this.email = newOne.email;
         this.enabled = newOne.enabled;
-        var updatedRoles = newOne.roles
-                .stream()
-                .map(newRole -> {
-                    var existingRole = this.roles.stream()
-                            .filter(role -> role.getName().equals(newRole.getName()))
-                            .findFirst();
-                    if (existingRole.isPresent()) {
-                        existingRole.get().updateFrom(newRole);
-                        return existingRole.get();
-                    } else {
-                        return newRole;
-                    }
-                })
-                .collect(toList());
-        this.roles.clear();
-        this.roles.addAll(updatedRoles);
+
+        return this;
+    }
+
+    @Override
+    public User updateRelations(User newOne) {
+        this.roles.stream()
+                .filter(role -> newOne.roles.contains(role))
+                .forEach(role -> role.updateRelations(newOne.roles.get(newOne.roles.indexOf(role))));
+
+        var newRoles = newOne.roles.stream()
+                .filter(role -> !this.roles.contains(role))
+                .toList();
+
+        var deletedRoles =  this.roles.stream()
+                .filter(role -> !newOne.roles.contains(role))
+                .toList();
+
+        this.roles.removeAll(deletedRoles);
+        this.roles.addAll(newRoles);
+
+        return this;
     }
 
     @Transient
@@ -120,6 +124,12 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
                 .stream()
                 .flatMap(role -> role.getPermissions().stream())
                 .map(Permission::getName)
+                .distinct()
                 .toList();
+    }
+
+    @Override
+    public String toString() {
+        return username;
     }
 }
