@@ -10,11 +10,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.compareCollections;
+
 @Entity
 @Table(name = "users")
 public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     @NotBlank(message = "Username is mandatory")
+    @Column(unique = true, nullable = false)
     private String username;
 
     @NotBlank(message = "Password is mandatory")
@@ -22,6 +25,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email is not valid")
+    @Column(unique = true, nullable = false)
     private String email;
 
     private boolean enabled = true;
@@ -30,7 +34,8 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"})
     )
     private List<Role> roles = new ArrayList<>();
 
@@ -100,21 +105,12 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     @Override
     public User updateRelations(User newOne) {
-        this.roles.stream()
-                .filter(role -> newOne.roles.contains(role))
-                .forEach(role -> role.updateRelations(newOne.roles.get(newOne.roles.indexOf(role))));
+        var compared = compareCollections(this.roles, newOne.roles);
+        compared.commonItem().forEach(role -> role.updateRelations(newOne.roles.get(newOne.roles.indexOf(role))));
+        compared.newItems().forEach(role -> role.updateRelations(role));
 
-        var newRoles = newOne.roles.stream()
-                .filter(role -> !this.roles.contains(role))
-                .peek(role -> role.updateRelations(role))
-                .toList();
-
-        var deletedRoles =  this.roles.stream()
-                .filter(role -> !newOne.roles.contains(role))
-                .toList();
-
-        this.roles.removeAll(deletedRoles);
-        this.roles.addAll(newRoles);
+        this.roles.removeAll(compared.deletionItems());
+        this.roles.addAll(compared.newItems());
 
         return this;
     }

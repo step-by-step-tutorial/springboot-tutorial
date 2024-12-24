@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 
 public final class CollectionUtils {
 
@@ -29,5 +28,21 @@ public final class CollectionUtils {
         return collection
                 .stream()
                 .collect(collectingAndThen(toMap(comparator, e -> e, (existing, replacement) -> existing), map -> map.values().stream()));
+    }
+
+    public static <T> TripleCollection<T> compareCollections(Collection<T> ownerList, Collection<T> newList) {
+        var addedItems = newList.stream()
+                .filter(item -> !ownerList.contains(item))
+                .collect(toList());
+
+        var removedItems = ownerList.stream()
+                .filter(item -> !newList.contains(item))
+                .collect(toList());
+
+        var commonItems = newList.stream()
+                .filter(ownerList::contains)
+                .collect(toList());
+
+        return new TripleCollection<>(addedItems, removedItems, commonItems);
     }
 }

@@ -1,14 +1,10 @@
 package com.tutorial.springboot.security_rbac_jwt.repository;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
-import com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,11 +13,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.InvalidPermissions;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.newGivenPermission;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestUtils.generateString;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -70,7 +65,7 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenNewPermissionWithNegativeVersion_whenSave_thenReturnPersistedPermission() {
-            var givenPermission =newGivenPermission().setVersion(-1);
+            var givenPermission = newGivenPermission().setVersion(-1);
 
             var actual = systemUnderTest.save(givenPermission);
             assistant.flush();
@@ -187,7 +182,6 @@ public class PermissionRepositoryTest {
             assistant.persist(givenPermission);
             assistant.flush();
 
-
             var actual = systemUnderTest.findOrSave(givenPermission);
             assistant.flush();
 
@@ -202,9 +196,9 @@ public class PermissionRepositoryTest {
     class FindOrSaveAllTest {
         @Test
         void givenNonExistPermissions_whenFindOrCreateAll_thenReturnPersistedPermission() {
-            var givenPermission = List.of(newGivenPermission("read"), newGivenPermission("write"));
+            var givenPermissions = List.of(newGivenPermission("read"), newGivenPermission("write"));
 
-            var actual = systemUnderTest.findOrSaveAll(givenPermission);
+            var actual = systemUnderTest.findOrSaveAll(givenPermissions);
             assistant.flush();
 
             assertNotNull(actual);
@@ -218,15 +212,15 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenExistingPermissions_whenFindOrCreateAll_thenReturnPersistedPermission() {
-            var readPermission = new Permission().setName("read").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
+            var readPermission = newGivenPermission("read");
             assistant.persist(readPermission);
-            var writePermission = new Permission().setName("write").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
+            var writePermission = newGivenPermission("write");
             assistant.persist(writePermission);
             assistant.flush();
 
-            var givenEntities = List.of(readPermission, writePermission);
+            var givenPermissions = List.of(readPermission, writePermission);
 
-            var actual = systemUnderTest.findOrSaveAll(givenEntities);
+            var actual = systemUnderTest.findOrSaveAll(givenPermissions);
 
             assertNotNull(actual);
             assertEquals(2, actual.size());
@@ -291,33 +285,4 @@ public class PermissionRepositoryTest {
         }
     }
 
-    private Permission newGivenPermission() {
-        return new Permission()
-                .setName("permission")
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
-
-    private Permission newGivenPermission(String name) {
-        Objects.requireNonNull(name);
-        return new Permission()
-                .setName(name)
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
-
-    static class InvalidPermissions implements ArgumentsProvider {
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-            return Stream.of(
-                    Arguments.of(new Permission()),
-                    Arguments.of(new Permission().setName(null).setCreatedBy("user").setCreatedAt(now()).setVersion(0)),
-                    Arguments.of(new Permission().setName("").setCreatedBy("user").setCreatedAt(now()).setVersion(0)),
-                    Arguments.of(new Permission().setName(generateString(51)).setCreatedBy("user").setCreatedAt(now()).setVersion(0)),
-                    Arguments.of(new Permission().setName("permission").setCreatedBy(null).setCreatedAt(now()).setVersion(0)),
-                    Arguments.of(new Permission().setName("permission").setCreatedBy("").setCreatedAt(now()).setVersion(0)),
-                    Arguments.of(new Permission().setName("permission").setCreatedBy("user").setCreatedAt(null).setVersion(0))
-            );
-        }
-    }
 }

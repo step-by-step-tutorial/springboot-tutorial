@@ -3,11 +3,12 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
-import com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.UserTestAssistant;
+import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -16,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestSecurityUtils.login;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,13 +33,7 @@ public class UserRepositoryTest {
     private UserRepository systemUnderTest;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private UserTestAssistant assistant;
+    private EntityManager assistant;
 
     @Nested
     class SaveTest {
@@ -48,7 +43,7 @@ public class UserRepositoryTest {
             var givenUser = newGivenUser();
 
             var actual = systemUnderTest.save(givenUser);
-            em.flush();
+            assistant.flush();
 
             assertNotNull(actual);
             assertNotNull(actual.getId());
@@ -62,7 +57,7 @@ public class UserRepositoryTest {
             var givenUser = newGivenUser().setRoles(List.of(givenRole));
 
             var actual = systemUnderTest.save(givenUser);
-            em.flush();
+            assistant.flush();
 
             // assert user
             assertNotNull(actual);
@@ -83,7 +78,7 @@ public class UserRepositoryTest {
             var givenUser = newGivenUser().setRoles(List.of(givenRole));
 
             var actual = systemUnderTest.save(givenUser);
-            em.flush();
+            assistant.flush();
 
             // assert user
             assertNotNull(actual);
@@ -112,7 +107,7 @@ public class UserRepositoryTest {
             var givenUsers = List.of(newGivenUser("username1"), newGivenUser("username2"));
 
             var actual = systemUnderTest.saveAll(givenUsers);
-            em.flush();
+            assistant.flush();
 
             assertEquals(2, actual.size());
             actual.forEach(actualItem -> {
@@ -129,9 +124,9 @@ public class UserRepositoryTest {
         @Test
         void givenId_whenFindById_thenReturnUser() {
             var givenUser = newGivenUser();
-            em.persist(givenUser);
-            em.flush();
-            em.clear();
+            assistant.persist(givenUser);
+            assistant.flush();
+            assistant.clear();
             var givenId = givenUser.getId();
 
             var actual = systemUnderTest.findById(givenId);
@@ -152,15 +147,15 @@ public class UserRepositoryTest {
         void givenUpdatedUser_whenUpdate_thenReturnPersistedUser() {
             login();
             var user = newGivenUser();
-            em.persist(user);
-            em.flush();
-            em.clear();
-            em.detach(user);
+            assistant.persist(user);
+            assistant.flush();
+            assistant.clear();
+            assistant.detach(user);
             var givenId = user.getId();
             var givenVersion = user.getVersion();
 
             var givenUser = newGivenUser("newusername");
-            var toUpdate = em.find(User.class, givenId);
+            var toUpdate = assistant.find(User.class, givenId);
             toUpdate.updateFrom(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
@@ -169,6 +164,8 @@ public class UserRepositoryTest {
             assertEquals(user.getId(), actual.getId());
             assertEquals(givenVersion + 1, actual.getVersion());
             assertEquals("newusername", actual.getUsername());
+            assertNotNull(actual.getUpdatedBy());
+            assertNotNull(actual.getUpdatedAt());
         }
 
         @Test
@@ -176,18 +173,18 @@ public class UserRepositoryTest {
             login();
             var role = newGivenRole("guest");
             var user = newGivenUser().setRoles(List.of(role));
-            em.persist(user);
-            em.flush();
-            em.clear();
-            em.detach(user);
+            assistant.persist(user);
+            assistant.flush();
+            assistant.clear();
+            assistant.detach(user);
             var roleId = role.getId();
             var givenId = user.getId();
             var givenVersion = user.getVersion();
 
-            role = em.find(Role.class, roleId);
+            role = assistant.find(Role.class, roleId);
             var givenRole = newGivenRole("host");
-            var givenUser = newGivenUser().setRoles(List.of(role, givenRole)) ;
-            var toUpdate = em.find(User.class, givenId);
+            var givenUser = newGivenUser().setRoles(List.of(role, givenRole));
+            var toUpdate = assistant.find(User.class, givenId);
             toUpdate.updateRelations(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
@@ -210,22 +207,22 @@ public class UserRepositoryTest {
         void givenUserWithRolesAndUpdatedPermissions_whenUpdate_thenReturnPersistedUser() {
             login();
             var permission = newGivenPermission("read");
-            var role = newGivenRole("guest").setPermissions(List.of(permission)) ;
+            var role = newGivenRole("guest").setPermissions(List.of(permission));
             var user = newGivenUser().setRoles(List.of(role));
-            em.persist(user);
-            em.flush();
-            em.clear();
+            assistant.persist(user);
+            assistant.flush();
+            assistant.clear();
             var permissionId = permission.getId();
             var roleId = role.getId();
             var givenId = user.getId();
             var givenVersion = user.getVersion();
 
-            permission = em.find(Permission.class, permissionId);
+            permission = assistant.find(Permission.class, permissionId);
             var givenPermission = newGivenPermission("write");
-            role = em.find(Role.class, roleId);
+            role = assistant.find(Role.class, roleId);
             role.setPermissions(new ArrayList<>(List.of(permission, givenPermission)));
-            var givenUser = newGivenUser().setRoles(List.of(role)) ;
-            var toUpdate = em.find(User.class, givenId);
+            var givenUser = newGivenUser().setRoles(List.of(role));
+            var toUpdate = assistant.find(User.class, givenId);
             toUpdate.updateRelations(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
@@ -246,23 +243,23 @@ public class UserRepositoryTest {
         void givenUserWithUpdatedRolesAndPermissions_whenUpdate_thenReturnPersistedUser() {
             login();
             var permission = newGivenPermission("read");
-            var role = newGivenRole("guest").setPermissions(List.of(permission)) ;
+            var role = newGivenRole("guest").setPermissions(List.of(permission));
             var user = newGivenUser().setRoles(List.of(role));
-            em.persist(user);
-            em.flush();
-            em.clear();
+            assistant.persist(user);
+            assistant.flush();
+            assistant.clear();
             var permissionId = permission.getId();
             var roleId = role.getId();
             var givenId = user.getId();
             var givenVersion = user.getVersion();
 
-            permission = em.find(Permission.class, permissionId);
+            permission = assistant.find(Permission.class, permissionId);
             var givenPermission = newGivenPermission("write");
-            role = em.find(Role.class, roleId);
+            role = assistant.find(Role.class, roleId);
             role.setPermissions(new ArrayList<>(List.of(permission, givenPermission)));
             var givenRole = newGivenRole("host").setPermissions(new ArrayList<>(List.of(permission, givenPermission)));
-            var givenUser = newGivenUser().setRoles(new ArrayList<>(List.of(role, givenRole)) );
-            var toUpdate = em.find(User.class, givenId);
+            var givenUser = newGivenUser().setRoles(new ArrayList<>(List.of(role, givenRole)));
+            var toUpdate = assistant.find(User.class, givenId);
             toUpdate.updateRelations(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
@@ -288,9 +285,9 @@ public class UserRepositoryTest {
         @Test
         void givenId_whenDeleteById_thenJustRunSuccessful() {
             var givenUser = newGivenUser();
-            em.persist(givenUser);
-            em.flush();
-            em.clear();
+            assistant.persist(givenUser);
+            assistant.flush();
+            assistant.clear();
             var givenId = givenUser.getId();
 
             var actual = assertDoesNotThrow(() -> {
@@ -302,47 +299,33 @@ public class UserRepositoryTest {
         }
     }
 
-    private User newGivenUser() {
-        return new User()
-                .setUsername("username").setPassword("password").setEmail("username@email.com").setEnabled(true)
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
+    @Nested
+    class ValidationTest {
 
-    private User newGivenUser(String username) {
-        Objects.requireNonNull(username);
-        return new User()
-                .setUsername(username).setPassword("password").setEmail(username + "@email.com").setEnabled(true)
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
+        @ParameterizedTest
+        @ArgumentsSource(InvalidUsers.class)
+        void givenInvalidUser_whenSaveOne_thenReturnRuntimeException(User givenUser) {
 
-    private Role newGivenRole() {
-        return new Role()
-                .setName("role")
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
+            var actual = assertThrows(RuntimeException.class, () -> {
+                systemUnderTest.save(givenUser);
+                assistant.flush();
+            });
 
-    private Role newGivenRole(String name) {
-        return new Role()
-                .setName(name)
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
+            assertNotNull(actual);
+            assertNotNull(actual.getMessage());
+        }
 
-    private Permission newGivenPermission() {
-        return new Permission()
-                .setName("permission")
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
+        @Test
+        void givenListOfNonUniqueEntities_whenSaveAll_thenReturnRuntimeException() {
+            var givenUsers = List.of(newGivenUser("the same username"), newGivenUser("the same username"));
 
-    private Permission newGivenPermission(String name) {
-        return new Permission()
-                .setName(name)
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
-    }
+            var actual = assertThrows(RuntimeException.class, () -> {
+                systemUnderTest.saveAll(givenUsers);
+                assistant.flush();
+            });
 
+            assertNotNull(actual);
+            assertNotNull(actual.getMessage());
+        }
+    }
 }

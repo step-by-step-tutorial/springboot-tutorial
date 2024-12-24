@@ -2,12 +2,14 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
+import com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.compareCollections;
 import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.removeDuplication;
 import static java.util.stream.Collectors.toList;
 
@@ -24,12 +26,16 @@ public class RoleRepositoryImpl implements CustomRepository<Role, Long> {
         var permissions = permissionRepository.findOrSaveAll(entity.getPermissions());
 
         try {
-            var role = entityManager.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                    .setParameter("name", entity.getName())
-                    .getSingleResult();
+            var cb = entityManager.getCriteriaBuilder();
+            var cq = cb.createQuery(Role.class);
+            var root = cq.from(Role.class);
+            cq.select(root).where(cb.equal(root.get("name"), entity.getName()));
+            var role =  entityManager.createQuery(cq).getSingleResult();
 
-            role.getPermissions().addAll(permissions);
-            role.setPermissions(removeDuplication(role.getPermissions(), Permission::getName).collect(toList()));
+            var compared = compareCollections(role.getPermissions(), permissions);
+            role.getPermissions().removeAll(compared.deletionItems());
+            role.getPermissions().addAll(compared.newItems());
+
             entityManager.persist(role);
             return role;
 

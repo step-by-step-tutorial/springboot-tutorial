@@ -1,11 +1,15 @@
 package com.tutorial.springboot.security_rbac_jwt.entity;
 
+import com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils;
+import com.tutorial.springboot.security_rbac_jwt.util.TripleCollection;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.*;
+
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.compareCollections;
 
 @Entity
 public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority {
@@ -67,16 +71,10 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
 
     @Override
     public Role updateRelations(Role newOne) {
-        var newPermissions = newOne.permissions.stream()
-                .filter(permission -> !this.permissions.contains(permission))
-                .toList();
+        var compared = compareCollections(this.permissions, newOne.permissions);
 
-        var deletedPermissions = this.permissions.stream()
-                .filter(permission -> !newOne.permissions.contains(permission))
-                .toList();
-
-        this.permissions.removeAll(deletedPermissions);
-        this.permissions.addAll(newPermissions);
+        this.permissions.removeAll(compared.deletionItems());
+        this.permissions.addAll(compared.newItems());
 
         return this;
     }
