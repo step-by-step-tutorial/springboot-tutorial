@@ -1,10 +1,11 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.RoleTestAssistant;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.RoleTestFactory;
+import com.tutorial.springboot.security_rbac_jwt.entity.Role;
+import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
 import static org.hamcrest.Matchers.*;
@@ -32,18 +34,29 @@ public class RoleApiTest {
     private int port;
 
     @Autowired
-    private RoleTestAssistant assistant;
+    private EntityManagerFactory assistant;
 
-    @Autowired
-    private RoleTestFactory factory;
+    private Role insertRole() {
+        var em = assistant.createEntityManager();
+        var transaction = em.getTransaction();
+
+        transaction.begin();
+        var role = EntityFixture.newGivenRole();
+        em.persist(role);
+        em.flush();
+        em.clear();
+        transaction.commit();
+
+        return role;
+    }
 
     @Nested
-    class SaveTests {
+    class SaveOneTests {
 
         @Test
-        void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
+        void givenRole_whenSave_thenReturnIdWithCreatedStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = factory.newInstances(1).dto().asOne();
+            var givenBody = newGivenRole();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -58,25 +71,7 @@ public class RoleApiTest {
         }
 
         @Test
-        void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var numberOfRoles = 2;
-            var givenBody = factory.newInstances(numberOfRoles).dto().asList();
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.CREATED.value())
-                    .body("size()", is(numberOfRoles));
-        }
-
-
-        @Test
-        void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
+        void givenInvalidRole_whenSave_thenReturnErrorWithBadRequestStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = new RoleDto();
 
@@ -91,9 +86,29 @@ public class RoleApiTest {
                     .body("errors.size()", is(1))
                     .body("errors", hasItem("name should not be blank"));
         }
+    }
+
+    @Nested
+    class SaveBatchTests {
 
         @Test
-        void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
+        void givenRoleList_whenSave_thenReturnListOfIdWithCreatedStatus() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = List.of(newGivenRole("guest"), newGivenRole("host"));
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.CREATED.value())
+                    .body("size()", is(2));
+        }
+
+        @Test
+        void givenInvalidRoleList_whenSave_thenReturnListOfErrorsWithBadRequestStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = List.of(new RoleDto(), new RoleDto());
 
@@ -108,17 +123,16 @@ public class RoleApiTest {
                     .body("errors.size()", is(2))
                     .body("errors", hasItem("name should not be blank"));
         }
-
     }
 
     @Nested
     class FindTests {
 
         @Test
-        void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
+        void givenId_whenFindOne_thenReturnRoleWithOKStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenRole = assistant.populate(1).dto().asOne();
-            var givenId = givenRole.getId();
+            var role = insertRole();
+            var givenId = role.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -129,11 +143,11 @@ public class RoleApiTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("id", equalTo(givenId.intValue()))
-                    .body("name", equalTo(givenRole.getName()));
+                    .body("name", equalTo(role.getName()));
         }
 
         @Test
-        void givenNothing_whenFindAll_thenReturnListOfDtoWithOKStatus() {
+        void givenNothing_whenFindAll_thenReturnListOfRoleWithOKStatus() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -147,7 +161,7 @@ public class RoleApiTest {
         }
 
         @Test
-        void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
+        void givenPageAndSize_whenFindBatch_thenReturnListOfRoleWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -167,13 +181,12 @@ public class RoleApiTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
+        void givenUpdatedRole_whenUpdate_thenReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = assistant.populate(1)
-                    .dto()
-                    .asOne()
-                    .setName("updated_value");
-            var givenId = givenBody.getId();
+            var role = insertRole();
+            var givenId = role.getId();
+            var givenBody = newGivenRole("updated_value");
+            givenBody.setId(givenId);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -186,7 +199,11 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().dto().asOne();
+            var em = assistant.createEntityManager();
+            em.getTransaction().begin();
+            var actual = em.find(Role.class, givenId);
+            em.getTransaction().commit();
+
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());
         }
@@ -198,7 +215,8 @@ public class RoleApiTest {
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = assistant.populate(1).dto().asOne().getId();
+            var role = insertRole();
+            var givenId = role.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -210,19 +228,20 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().dto().asOne();
+            var em = assistant.createEntityManager();
+            em.getTransaction().begin();
+            var actual = em.find(Role.class, givenId);
+            em.getTransaction().commit();
+
             assertNull(actual);
         }
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = assistant.populate(2)
-                    .dto()
-                    .asList()
-                    .stream()
-                    .map(RoleDto::getId)
-                    .toList();
+            var role = insertRole();
+            var givenId = role.getId();
+            var givenBody = List.of(givenId);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -234,14 +253,19 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().dto().asList();
-            assertTrue(actual.isEmpty());
+            var em = assistant.createEntityManager();
+            em.getTransaction().begin();
+            var actual = em.find(Role.class, givenId);
+            em.getTransaction().commit();
+
+            assertNull(actual);
         }
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            assistant.populate(2);
+            var role = insertRole();
+            var givenId = role.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -252,8 +276,13 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().dto().asList();
-            assertTrue(actual.isEmpty());
+
+            var em = assistant.createEntityManager();
+            em.getTransaction().begin();
+            var actual = em.find(Role.class, givenId);
+            em.getTransaction().commit();
+
+            assertNull(actual);
         }
     }
 
@@ -263,7 +292,8 @@ public class RoleApiTest {
         @Test
         void givenId_whenExists_ThenReturnOKStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = assistant.populate(1).dto().asOne().getId();
+            var role = insertRole();
+            var givenId = role.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)

@@ -34,6 +34,7 @@ public class PermissionApiTest {
 
     @LocalServerPort
     private int port;
+
     @Autowired
     private EntityManagerFactory assistant;
 
@@ -205,7 +206,6 @@ public class PermissionApiTest {
             em.getTransaction().begin();
             var actual = em.find(Permission.class, givenId);
             em.getTransaction().commit();
-            em.detach(actual);
 
             assertNotNull(actual);
             assertEquals("updated_value", actual.getName());

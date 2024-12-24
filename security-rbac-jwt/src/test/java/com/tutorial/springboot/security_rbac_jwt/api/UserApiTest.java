@@ -40,7 +40,6 @@ public class UserApiTest {
     @Nested
     class SaveTests {
 
-
         @Test
         void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
             var givenToken = requestToGetNewToken(port);
