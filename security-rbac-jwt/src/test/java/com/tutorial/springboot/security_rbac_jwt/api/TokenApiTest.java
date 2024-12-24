@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.*;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
@@ -28,7 +28,7 @@ public class TokenApiTest {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/me/new")
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/me/new")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
@@ -43,7 +43,7 @@ public class TokenApiTest {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("test", "wrong_password")
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/me/new")
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/me/new")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());

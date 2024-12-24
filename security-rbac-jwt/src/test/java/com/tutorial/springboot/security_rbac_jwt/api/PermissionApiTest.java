@@ -5,7 +5,6 @@ import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,8 @@ import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenPermission;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_HOSTNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,7 +63,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .body(givenBody)
                     .when().post()
                     .then()
@@ -80,7 +80,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .body(givenBody)
                     .when().post()
                     .then()
@@ -101,7 +101,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
                     .body(givenBody)
                     .when().post()
                     .then()
@@ -117,7 +117,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
                     .body(givenBody)
                     .when().post()
                     .then()
@@ -139,7 +139,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/{id}")
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/{id}")
                     .pathParam("id", givenId)
                     .when().get()
                     .then()
@@ -156,7 +156,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
@@ -170,7 +170,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch/{page}/{size}")
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch/{page}/{size}")
                     .pathParam("page", 0)
                     .pathParam("size", 10)
                     .when().get()
@@ -194,7 +194,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .body(givenBody)
                     .when().put()
@@ -224,7 +224,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().delete()
                     .then()
@@ -249,7 +249,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/api/v1/permissions/batch")
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath("/api/v1/permissions/batch")
                     .body(givenBody)
                     .when().delete()
                     .then()
@@ -273,7 +273,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .when().delete()
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
@@ -300,7 +300,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().head()
                     .then()
@@ -316,7 +316,7 @@ public class PermissionApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .header("Authorization", "Bearer " + givenToken)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port)
                     .basePath("/api/v1/permissions/{id}").pathParam("id", givenId)
                     .when().head()
                     .then()

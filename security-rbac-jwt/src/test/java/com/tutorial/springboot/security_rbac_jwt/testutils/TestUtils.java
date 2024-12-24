@@ -6,17 +6,16 @@ public final class TestUtils {
 
     private TestUtils() {
     }
+
     public static String generateString(int length) {
         if (length < 0) {
             throw new IllegalArgumentException("Length cannot be negative");
         }
 
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                + "abcdefghijklmnopqrstuvwxyz"
-                + "0123456789";
-        Random random = new Random();
+        var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new Random();
 
-        StringBuilder result = new StringBuilder(length);
+        var result = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             int index = random.nextInt(characters.length());
             result.append(characters.charAt(index));

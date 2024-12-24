@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.springframework.http.HttpStatus;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.*;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 

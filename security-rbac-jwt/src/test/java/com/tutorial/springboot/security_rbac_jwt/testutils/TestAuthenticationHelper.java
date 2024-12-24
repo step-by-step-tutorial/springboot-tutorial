@@ -1,8 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.testutils;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
-import com.tutorial.springboot.security_rbac_jwt.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import net.datafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_PASSWORD;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_USERNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PASSWORD;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_USERNAME;
 import static java.time.LocalDateTime.now;
 
 @Component

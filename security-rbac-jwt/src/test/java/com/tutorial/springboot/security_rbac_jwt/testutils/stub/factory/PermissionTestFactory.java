@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.function.Function;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestHttpUtils.TEST_USERNAME;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_USERNAME;
 
 @Component
 public class PermissionTestFactory extends AbstractTestFactory<Long, Permission, PermissionDto> {
