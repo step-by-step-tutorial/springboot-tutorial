@@ -1,8 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.repository;
 
-import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
-import com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ public class RoleRepositoryImpl implements CustomRepository<Role, Long> {
             var cq = cb.createQuery(Role.class);
             var root = cq.from(Role.class);
             cq.select(root).where(cb.equal(root.get("name"), entity.getName()));
-            var role =  entityManager.createQuery(cq).getSingleResult();
+            var role = entityManager.createQuery(cq).getSingleResult();
 
             var compared = compareCollections(role.getPermissions(), permissions);
             role.getPermissions().removeAll(compared.deletionItems());

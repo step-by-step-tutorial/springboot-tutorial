@@ -8,7 +8,6 @@ import com.tutorial.springboot.security_rbac_jwt.service.AbstractService;
 import com.tutorial.springboot.security_rbac_jwt.service.BatchService;
 import com.tutorial.springboot.security_rbac_jwt.service.CrudService;
 import com.tutorial.springboot.security_rbac_jwt.transformer.UserTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +17,19 @@ import static com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidat
 @Service
 public class UserService extends AbstractService<Long, User, UserDto> implements CrudService<Long, UserDto>, BatchService<Long, UserDto> {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository repository, UserTransformer transformer) {
+    public UserService(
+            UserRepository repository,
+            RoleRepository roleRepository,
+            UserTransformer transformer,
+            PasswordEncoder passwordEncoder
+    ) {
         super(repository, transformer);
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User findByUsername(String username) {

@@ -1,13 +1,13 @@
 package com.tutorial.springboot.security_rbac_jwt.entity;
 
-import com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils;
-import com.tutorial.springboot.security_rbac_jwt.util.TripleCollection;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.compareCollections;
 

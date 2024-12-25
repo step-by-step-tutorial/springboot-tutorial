@@ -12,7 +12,7 @@ spring:
     database: H2
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
-#    show-sql: true
+    #    show-sql: true
     hibernate:
       ddl-auto: create-drop
     properties:
@@ -20,8 +20,8 @@ spring:
         persistence:
           create-database-schemas: false
       hibernate:
-#        generate_statistics: true
-#        format_sql: true
+        #        generate_statistics: true
+        #        format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         default_schema: ""
   h2:

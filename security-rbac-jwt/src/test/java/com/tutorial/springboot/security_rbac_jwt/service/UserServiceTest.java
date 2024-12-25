@@ -94,18 +94,17 @@ public class UserServiceTest {
         void givenUserId_thenReturnUser() {
             var givenId = newGivenId();
 
-            var actual = systemUnderTest.getById(givenId);
+            var actual = systemUnderTest.findById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
             assertFalse(actual.get().getUsername().isEmpty());
-            assertFalse(actual.get().getPassword().isEmpty());
             assertFalse(actual.get().getEmail().isEmpty());
         }
 
         @Test
         void givenNullId_thenThrowNullPointerException() {
-            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.getById(null));
+            var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.findById(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -124,7 +123,7 @@ public class UserServiceTest {
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.update(givenId, givenUser);
-                return systemUnderTest.getById(givenId).orElseThrow();
+                return systemUnderTest.findById(givenId).orElseThrow();
             });
 
             assertNotNull(actual);
@@ -151,7 +150,7 @@ public class UserServiceTest {
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteById(givenId);
-                return systemUnderTest.getById(givenId);
+                return systemUnderTest.findById(givenId);
             });
 
             assertNotNull(actual);

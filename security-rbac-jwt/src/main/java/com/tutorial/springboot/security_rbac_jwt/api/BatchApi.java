@@ -39,9 +39,9 @@ public abstract class BatchApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DT
     }
 
     @GetMapping(value = "/batch/{page}/{size}")
-    public ResponseEntity<Page<DTO>> findBatch(@PathVariable int page, @PathVariable int size) {
+    public ResponseEntity<Page<DTO>> findByPage(@PathVariable int page, @PathVariable int size) {
         logger.info("Received an inbound request to find a page[{},{}] of {}", page, size, dtoClass.getSimpleName());
-        var pageOfDto = service.getBatch(PageRequest.of(page, size));
+        var pageOfDto = service.findByPage(PageRequest.of(page, size));
         return ok(pageOfDto);
     }
 }

@@ -46,7 +46,7 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
     @GetMapping("/{id}")
     public ResponseEntity<DTO> findById(@PathVariable ID id) {
         logger.info("Received an inbound request to retrieve a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
-        return service.getById(id)
+        return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> notFound().build());
     }

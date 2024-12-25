@@ -18,10 +18,10 @@ public final class CollectionUtils {
         return (int) Math.ceil((double) length / BATCH_SIZE);
     }
 
-    public static <T> Stream<T> selectBatch(List<T> list, int batchIndex) {
+    public static <T> Stream<T> selectBatch(List<T> list, int batchIndex, int batchSize) {
         return list.stream()
-                .skip((long) batchIndex * BATCH_SIZE)
-                .limit(BATCH_SIZE);
+                .skip((long) batchIndex * batchSize)
+                .limit(batchSize);
     }
 
     public static <T, COMPARATOR_TYPE> Stream<T> removeDuplication(Collection<T> collection, Function<T, COMPARATOR_TYPE> comparator) {

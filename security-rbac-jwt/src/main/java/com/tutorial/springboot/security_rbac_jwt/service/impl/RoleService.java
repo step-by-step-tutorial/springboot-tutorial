@@ -8,17 +8,20 @@ import com.tutorial.springboot.security_rbac_jwt.service.AbstractService;
 import com.tutorial.springboot.security_rbac_jwt.service.BatchService;
 import com.tutorial.springboot.security_rbac_jwt.service.CrudService;
 import com.tutorial.springboot.security_rbac_jwt.transformer.RoleTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RoleService extends AbstractService<Long, Role, RoleDto> implements CrudService<Long, RoleDto>, BatchService<Long, RoleDto> {
 
-    @Autowired
-    private PermissionRepository permissionRepository;
+    private final PermissionRepository permissionRepository;
 
-    public RoleService(RoleRepository repository, RoleTransformer transformer) {
+    public RoleService(
+            RoleRepository repository,
+            PermissionRepository permissionRepository,
+            RoleTransformer transformer
+    ) {
         super(repository, transformer);
+        this.permissionRepository = permissionRepository;
     }
 
     @Override

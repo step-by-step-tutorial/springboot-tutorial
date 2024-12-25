@@ -76,7 +76,7 @@ public class PermissionServiceTest {
         void givenExistingId_whenFindById_thenReturnsPermission() {
             var givenId = newGivenId();
 
-            var actual = systemUnderTest.getById(givenId);
+            var actual = systemUnderTest.findById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
@@ -85,7 +85,7 @@ public class PermissionServiceTest {
 
         @Test
         void givenNullId_whenFindById_thenThrowsNullPointerException() {
-            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.getById(null));
+            var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.findById(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
@@ -102,7 +102,7 @@ public class PermissionServiceTest {
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.update(givenId, givenPermission);
-                return systemUnderTest.getById(givenId).orElseThrow();
+                return systemUnderTest.findById(givenId).orElseThrow();
             });
 
             assertNotNull(actual);
@@ -127,7 +127,7 @@ public class PermissionServiceTest {
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteById(givenId);
-                return systemUnderTest.getById(givenId);
+                return systemUnderTest.findById(givenId);
             });
 
             assertNotNull(actual);

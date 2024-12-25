@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AllService<ID, DTO extends AbstractDto<ID, DTO>> {
 
-    List<DTO> getAll();
+    List<DTO> findAll();
 
     void deleteAll();
 

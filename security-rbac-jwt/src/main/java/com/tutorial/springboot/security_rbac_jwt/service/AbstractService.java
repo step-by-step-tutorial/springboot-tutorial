@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.calculateBatchNumber;
-import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.selectBatch;
+import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.*;
 import static com.tutorial.springboot.security_rbac_jwt.util.ReflectionUtils.identifyType;
 import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;
 import static com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidation.shouldBeNotNullOrEmpty;
@@ -77,7 +76,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<DTO> getById(ID id) {
+    public Optional<DTO> findById(ID id) {
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
 
         return repository.findById(id).map(transformer::toDto);
@@ -120,7 +119,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
         shouldBeNotNullOrEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
 
         return IntStream.range(0, calculateBatchNumber(dtoList.size()))
-                .mapToObj(i -> selectBatch(dtoList, i))
+                .mapToObj(i -> selectBatch(dtoList, i, BATCH_SIZE))
                 .flatMap(stream -> stream
                         .map(this::save)
                         .filter(Optional::isPresent)
@@ -129,13 +128,13 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
-    public Page<DTO> getBatch(Pageable pageable) {
+    public Page<DTO> findByPage(Pageable pageable) {
         requireNonNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
         return repository.findAll(pageable).map(transformer::toDto);
     }
 
     @Override
-    public List<DTO> getBatch(List<ID> identities) {
+    public List<DTO> findByIdentities(List<ID> identities) {
         requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
         shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
 
@@ -155,7 +154,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     @Transactional(readOnly = true)
-    public List<DTO> getAll() {
+    public List<DTO> findAll() {
         return repository.findAll()
                 .stream()
                 .map(transformer::toDto)

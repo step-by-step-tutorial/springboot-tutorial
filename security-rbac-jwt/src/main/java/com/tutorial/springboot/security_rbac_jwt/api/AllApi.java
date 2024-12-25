@@ -22,7 +22,7 @@ public abstract class AllApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO 
     @GetMapping
     public ResponseEntity<List<DTO>> findAll() {
         logger.info("Received an inbound request to retrieve all {}", dtoClass.getSimpleName());
-        final var dtoList = service.getAll();
+        final var dtoList = service.findAll();
         return ok(dtoList);
     }
 

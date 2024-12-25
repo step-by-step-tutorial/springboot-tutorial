@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface CrudService<ID, DTO extends AbstractDto<ID, DTO>> {
     Optional<ID> save(DTO dto);
 
-    Optional<DTO> getById(ID id);
+    Optional<DTO> findById(ID id);
 
     void update(ID id, DTO dto);
 
