@@ -53,7 +53,7 @@ public class RoleServiceTest {
     class SaveTests {
 
         @Test
-        void givenRole_whenSaveOne_thenReturnId() {
+        void givenValidRole_whenSaved_thenReturnValidId() {
             var givenRole = newGivenRole();
 
             var actual = systemUnderTest.save(givenRole);
@@ -64,7 +64,7 @@ public class RoleServiceTest {
         }
 
         @Test
-        void givenRoleWithPermission_whenSaveOne_thenReturnId() {
+        void givenRoleWithPermissions_whenSaved_thenReturnValidId() {
             var givenPermission = newGivenPermission();
             var givenRole = newGivenRole().setPermissions(List.of(givenPermission));
 
@@ -76,7 +76,7 @@ public class RoleServiceTest {
         }
 
         @Test
-        void givenNull_whenSaveOne_thenReturnNullPointerException() {
+        void givenNullInput_whenSaved_thenThrowNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.save(null));
 
             assertNotNull(actual);
@@ -88,7 +88,7 @@ public class RoleServiceTest {
     class FindTests {
 
         @Test
-        void givenId_whenFindById_thenReturnRole() {
+        void givenExistingId_whenFindById_thenReturnRole() {
             var givenId = newGivenId();
 
             var actual = systemUnderTest.getById(givenId);
@@ -99,7 +99,7 @@ public class RoleServiceTest {
         }
 
         @Test
-        void givenNull_whenFindById_thenReturnNullPointerException() {
+        void givenNullId_whenFindById_thenThrowNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.getById(null));
 
             assertNotNull(actual);
@@ -111,7 +111,7 @@ public class RoleServiceTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedRole_whenUpdate_thenJustRunSuccessful() {
+        void givenExistingRoleWithUpdates_whenUpdated_thenFieldValuesAreUpdated() {
             var givenId = newGivenId();
             var givenRole = newGivenRole().setName("updated_value");
 
@@ -125,7 +125,7 @@ public class RoleServiceTest {
         }
 
         @Test
-        void givenNull_whenUpdate_thenReturnNullPointerException() {
+        void givenNullIdAndRole_whenUpdated_thenThrowNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.update(null, null));
 
             assertNotNull(actual);
@@ -137,7 +137,7 @@ public class RoleServiceTest {
     class DeleteTests {
 
         @Test
-        void givenId_whenDeleteById_thenJustRunSuccessful() {
+        void givenValidId_whenDeletedById_thenRoleIsDeleted() {
             var givenId = newGivenId();
 
             var actual = assertDoesNotThrow(() -> {
@@ -150,7 +150,7 @@ public class RoleServiceTest {
         }
 
         @Test
-        void givenNull_whenDeleteById_thenReturnNullPointerException() {
+        void givenNullId_whenDeletedById_thenThrowNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(null));
 
             assertNotNull(actual);

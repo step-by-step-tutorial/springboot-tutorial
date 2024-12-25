@@ -55,7 +55,7 @@ public class RoleApiTest {
     class SaveOneTests {
 
         @Test
-        void givenRole_whenSave_thenReturnIdWithCreatedStatus() {
+        void whenRoleIsValid_thenSaveAndReturnIdWithCreatedStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = newGivenRole();
 
@@ -70,30 +70,13 @@ public class RoleApiTest {
                     .header("Location", containsString(BASE_PATH))
                     .body("", notNullValue());
         }
-
-        @Test
-        void givenInvalidRole_whenSave_thenReturnErrorWithBadRequestStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var givenBody = new RoleDto();
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("errors.size()", is(1))
-                    .body("errors", hasItem("name should not be blank"));
-        }
     }
 
     @Nested
     class SaveBatchTests {
 
         @Test
-        void givenRoleList_whenSave_thenReturnListOfIdWithCreatedStatus() {
+        void whenRoleListIsValid_thenSaveAndReturnListOfIdsWithCreatedStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = List.of(newGivenRole("guest"), newGivenRole("host"));
 
@@ -107,30 +90,13 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.CREATED.value())
                     .body("size()", is(2));
         }
-
-        @Test
-        void givenInvalidRoleList_whenSave_thenReturnListOfErrorsWithBadRequestStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var givenBody = List.of(new RoleDto(), new RoleDto());
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("errors.size()", is(2))
-                    .body("errors", hasItem("name should not be blank"));
-        }
     }
 
     @Nested
     class FindTests {
 
         @Test
-        void givenId_whenFindOne_thenReturnRoleWithOKStatus() {
+        void whenIdExists_thenReturnRoleWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
             var role = insertRole();
             var givenId = role.getId();
@@ -148,7 +114,7 @@ public class RoleApiTest {
         }
 
         @Test
-        void givenNothing_whenFindAll_thenReturnListOfRoleWithOKStatus() {
+        void whenNoIdsProvided_thenReturnAllRolesWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -162,7 +128,7 @@ public class RoleApiTest {
         }
 
         @Test
-        void givenPageAndSize_whenFindBatch_thenReturnListOfRoleWithOkStatus() {
+        void whenPagedRequestIsValid_thenReturnPagedListOfRolesWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -182,7 +148,7 @@ public class RoleApiTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedRole_whenUpdate_thenReturnNoContentStatus() {
+        void whenUpdatedRoleIsProvided_thenUpdateAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var role = insertRole();
             var givenId = role.getId();
@@ -214,7 +180,7 @@ public class RoleApiTest {
     class DeleteTests {
 
         @Test
-        void givenId_whenDeleteOne_thenReturnNoContentStatus() {
+        void whenIdExists_thenDeleteRoleAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var role = insertRole();
             var givenId = role.getId();
@@ -238,7 +204,7 @@ public class RoleApiTest {
         }
 
         @Test
-        void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
+        void whenValidListOfIdsProvided_thenDeleteRolesAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var role = insertRole();
             var givenId = role.getId();
@@ -263,7 +229,7 @@ public class RoleApiTest {
         }
 
         @Test
-        void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
+        void whenNoDataProvided_thenDeleteAllRolesAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var role = insertRole();
             var givenId = role.getId();
@@ -276,7 +242,6 @@ public class RoleApiTest {
                     .then()
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
-
 
             var em = assistant.createEntityManager();
             em.getTransaction().begin();
@@ -291,7 +256,7 @@ public class RoleApiTest {
     class ExistsTests {
 
         @Test
-        void givenId_whenExists_ThenReturnOKStatus() {
+        void whenIdExists_thenReturnOkStatus() {
             var givenToken = requestToGetNewToken(port);
             var role = insertRole();
             var givenId = role.getId();
@@ -308,7 +273,7 @@ public class RoleApiTest {
         }
 
         @Test
-        void givenId_whenNotExist_ThenReturnNotFoundStatus() {
+        void whenIdDoesNotExist_thenReturnNotFoundStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenId = -1;
 
@@ -321,6 +286,44 @@ public class RoleApiTest {
                     .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body(is(emptyString()));
+        }
+    }
+
+    @Nested
+    class ValidateTests {
+
+        @Test
+        void whenRoleIsInvalid_thenReturnBadRequestWithValidationError() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = new RoleDto();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(1))
+                    .body("errors", hasItem("name should not be blank"));
+        }
+
+        @Test
+        void whenRoleListIsInvalid_thenReturnBadRequestWithListOfErrors() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = List.of(new RoleDto(), new RoleDto());
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(2))
+                    .body("errors", hasItem("name should not be blank"));
         }
     }
 }

@@ -36,7 +36,7 @@ public class PermissionRepositoryTest {
     class SaveOneTest {
 
         @Test
-        void givenNewPermission_whenSave_thenReturnPersistedPermission() {
+        void givenNewPermission_whenSave_thenShouldReturnPersistedPermission() {
             var givenPermission = newGivenPermission();
 
             var actual = systemUnderTest.save(givenPermission);
@@ -49,7 +49,7 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenNewPermissionWithNullVersion_whenSave_thenReturnPersistedPermission() {
+        void givenNewPermissionWithNullVersion_whenSave_thenShouldReturnPersistedPermission() {
             var givenPermission = newGivenPermission().setVersion(null);
 
             var actual = systemUnderTest.save(givenPermission);
@@ -64,7 +64,7 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenNewPermissionWithNegativeVersion_whenSave_thenReturnPersistedPermission() {
+        void givenNewPermissionWithNegativeVersion_whenSave_thenShouldReturnPersistedPermissionWithPositiveVersion() {
             var givenPermission = newGivenPermission().setVersion(-1);
 
             var actual = systemUnderTest.save(givenPermission);
@@ -82,7 +82,7 @@ public class PermissionRepositoryTest {
     @Nested
     class SaveAllTest {
         @Test
-        void givenListOfUniquePermissions_whenSave_thenReturnListOfPersistedPermission() {
+        void givenListOfUniquePermissions_whenSaveAll_thenShouldReturnPersistedPermissions() {
             var givenPermissions = List.of(newGivenPermission("read"), newGivenPermission("write"));
 
             var actual = systemUnderTest.saveAll(givenPermissions);
@@ -102,7 +102,7 @@ public class PermissionRepositoryTest {
     class FindTest {
 
         @Test
-        void givenId_whenFindById_thenReturnPermission() {
+        void givenPermissionId_whenFindById_thenShouldReturnPermission() {
             var entity = newGivenPermission();
             assistant.persist(entity);
             assistant.flush();
@@ -120,7 +120,7 @@ public class PermissionRepositoryTest {
     class UpdateTest {
 
         @Test
-        void givenUpdatedPermission_whenUpdate_thenReturnUpdatedPermission() {
+        void givenExistingPermission_whenUpdate_thenShouldReturnUpdatedPermission() {
             login();
             var permission = newGivenPermission();
             assistant.persist(permission);
@@ -148,7 +148,7 @@ public class PermissionRepositoryTest {
     class DeleteTest {
 
         @Test
-        void givenId_whenDeleteById_thenJustRunSuccessful() {
+        void givenPermissionId_whenDeleteById_thenShouldNotFindPermission() {
             var entity = newGivenPermission();
             assistant.persist(entity);
             assistant.flush();
@@ -164,7 +164,7 @@ public class PermissionRepositoryTest {
     @Nested
     class FindOrSaveTest {
         @Test
-        void givenNonExistPermission_whenFindOrCreate_thenReturnPersistedPermission() {
+        void givenNonExistentPermission_whenFindOrSave_thenShouldReturnPersistedPermission() {
             var givenPermission = newGivenPermission();
 
             var actual = systemUnderTest.findOrSave(givenPermission);
@@ -177,7 +177,7 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenExistingPermission_whenFindOrCreate_thenReturnPersistedPermission() {
+        void givenExistingPermission_whenFindOrSave_thenShouldReturnPersistedPermission() {
             var givenPermission = newGivenPermission();
             assistant.persist(givenPermission);
             assistant.flush();
@@ -195,7 +195,7 @@ public class PermissionRepositoryTest {
     @Nested
     class FindOrSaveAllTest {
         @Test
-        void givenNonExistPermissions_whenFindOrCreateAll_thenReturnPersistedPermission() {
+        void givenNonExistentPermissions_whenFindOrSaveAll_thenShouldReturnPersistedPermissions() {
             var givenPermissions = List.of(newGivenPermission("read"), newGivenPermission("write"));
 
             var actual = systemUnderTest.findOrSaveAll(givenPermissions);
@@ -211,7 +211,7 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenExistingPermissions_whenFindOrCreateAll_thenReturnPersistedPermission() {
+        void givenExistingPermissions_whenFindOrSaveAll_thenShouldReturnPersistedPermissions() {
             var readPermission = newGivenPermission("read");
             assistant.persist(readPermission);
             var writePermission = newGivenPermission("write");
@@ -232,7 +232,7 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenExistAndNonExistPermissions_whenFindOrCreateAll_thenReturnPersistedPermission() {
+        void givenMixOfExistingAndNonExistentPermissions_whenFindOrSaveAll_thenShouldReturnPersistedPermissions() {
             var readPermission = newGivenPermission("read");
             var writePermission = newGivenPermission("write");
             assistant.persist(writePermission);
@@ -257,7 +257,7 @@ public class PermissionRepositoryTest {
 
         @ParameterizedTest
         @ArgumentsSource(InvalidPermissions.class)
-        void givenInvalidPermission_whenSaveOne_thenReturnRuntimeException(Permission givenPermission) {
+        void givenInvalidPermission_whenSave_thenShouldThrowRuntimeException(Permission givenPermission) {
 
             var actual = assertThrows(RuntimeException.class, () -> {
                 systemUnderTest.save(givenPermission);
@@ -269,7 +269,7 @@ public class PermissionRepositoryTest {
         }
 
         @Test
-        void givenListOfNonUniquePermissions_whenSaveAll_thenReturnRuntimeException() {
+        void givenListOfNonUniquePermissions_whenSaveAll_thenShouldThrowRuntimeException() {
             var givenEntities = List.of(
                     new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0),
                     new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0)

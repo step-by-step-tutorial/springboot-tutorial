@@ -27,7 +27,7 @@ public final class TestTokenUtils {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(username, password)
-                .baseUri("http://" + hostname).port(port).basePath(TOKEN_API_BASE_PATH.concat("/me/new"))
+                .baseUri(TEST_PROTOCOL + hostname).port(port).basePath(TOKEN_API_BASE_PATH.concat("/me/new"))
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())

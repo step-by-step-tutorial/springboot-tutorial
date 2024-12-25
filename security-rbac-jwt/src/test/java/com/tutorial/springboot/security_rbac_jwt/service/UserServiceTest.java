@@ -55,7 +55,7 @@ public class UserServiceTest {
     class SaveTests {
 
         @Test
-        void givenValidUser_whenSaveOne_thenReturnId() {
+        void givenValidUser_thenReturnId() {
             var givenUser = newGivenUser();
 
             var actual = systemUnderTest.save(givenUser);
@@ -66,7 +66,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenUserWithRoleAndPermission_whenSaveOne_thenReturnId() {
+        void givenUserWithRoleAndPermission_thenReturnId() {
             var givenRole = newGivenRole();
             var givenUser = newGivenUser();
             givenUser.getRoles().add(givenRole);
@@ -79,7 +79,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenNull_whenSaveOne_thenReturnNullPointerException() {
+        void givenNullUser_thenThrowNullPointerException() {
             var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.save(null));
 
             assertNotNull(actual);
@@ -88,10 +88,10 @@ public class UserServiceTest {
     }
 
     @Nested
-    class FindTests {
+    class FindByIdTests {
 
         @Test
-        void givenId_whenFindById_thenReturnUser() {
+        void givenUserId_thenReturnUser() {
             var givenId = newGivenId();
 
             var actual = systemUnderTest.getById(givenId);
@@ -104,7 +104,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenNull_whenFindById_thenReturnNullPointerException() {
+        void givenNullId_thenThrowNullPointerException() {
             var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.getById(null));
 
             assertNotNull(actual);
@@ -116,7 +116,7 @@ public class UserServiceTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedUser_whenUpdate_thenJustRunSuccessful() {
+        void givenUser_thenUpdateSuccessfully() {
             var givenId = newGivenId();
             var givenUser = newGivenUser();
             givenUser.setUsername("newusername");
@@ -134,7 +134,7 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenNull_whenUpdate_thenReturnNullPointerException() {
+        void givenNullValues_thenThrowNullPointerException() {
             var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.update(null, null));
 
             assertNotNull(actual);
@@ -146,7 +146,7 @@ public class UserServiceTest {
     class DeleteTests {
 
         @Test
-        void givenId_whenDeleteById_thenJustRunSuccessful() {
+        void givenUserId_thenCompleteSuccessfully() {
             var givenId = newGivenId();
 
             var actual = assertDoesNotThrow(() -> {
@@ -159,20 +159,19 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenNull_whenDeleteById_thenReturnNullPointerException() {
+        void givenNullId_thenThrowNullPointerException() {
             var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
         }
-
     }
 
     @Nested
     class CustomMethodTests {
 
         @Test
-        void givenUsername_whenFindByUsername_thenReturnUser() {
+        void givenUsername_whenFindingByUsername_thenReturnUser() {
             var givenUser = testAuthHelper.signupAndLogin();
             var givenUserUsername = givenUser.getUsername();
 
@@ -184,7 +183,15 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenOldPasswordAndNewPassword_whenChangePassword_thenUpdatePassword() {
+        void givenNull_whenFindingByUsername_thenThrowIllegalArgumentException() {
+            var actual = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.findByUsername(null));
+
+            assertNotNull(actual);
+            assertFalse(actual.getMessage().isEmpty());
+        }
+
+        @Test
+        void givenValidPassword_whenChangingPassword_thenUpdateSuccessfully() {
             var givenUser = testAuthHelper.signupAndLogin();
             var givenUserPassword = givenUser.getPassword();
 
@@ -205,17 +212,9 @@ public class UserServiceTest {
         }
 
         @Test
-        void givenNull_whenChangePassword_thenReturnIllegalArgumentException() {
+        void givenNullValues_whenChangingPassword_thenThrowIllegalArgumentException() {
             var actual = assertThrows(IllegalArgumentException.class,
                     () -> systemUnderTest.changePassword(null, null));
-
-            assertNotNull(actual);
-            assertFalse(actual.getMessage().isEmpty());
-        }
-
-        @Test
-        void givenNull_whenFindByUsername_thenReturnIllegalArgumentException() {
-            var actual = assertThrows(IllegalArgumentException.class, () -> systemUnderTest.findByUsername(null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isEmpty());

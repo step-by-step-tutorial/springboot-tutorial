@@ -55,7 +55,7 @@ public class UserApiTest {
     class SaveOneTests {
 
         @Test
-        void givenUser_whenSave_thenReturnIdWithCreatedStatus() {
+        void whenSavingSingleUser_thenReturnsCreatedStatusAndId() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = newGivenUser();
 
@@ -70,47 +70,12 @@ public class UserApiTest {
                     .header("Location", containsString(BASE_PATH))
                     .body("", notNullValue());
         }
-
-
-        @Test
-        void givenInvalidUser_whenSave_thenReturnErrorWithBadRequestStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var givenBody = new UserDto();
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("errors.size()", is(3))
-                    .body("errors", hasItems("username should not be blank", "password should not be blank", "email should not be blank"));
-        }
-
-        @Test
-        void givenInvalidUserList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var givenBody = List.of(new UserDto(), new UserDto());
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("errors.size()", is(6))
-                    .body("errors", hasItems("username should not be blank", "password should not be blank", "email should not be blank"));
-        }
     }
 
     @Nested
     class SaveBatchTests {
         @Test
-        void givenUserList_whenSave_thenReturnListOfIdWithCreatedStatus() {
+        void whenSavingListOfUsers_thenReturnsCreatedStatusAndIds() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = List.of(newGivenUser("Bob"), newGivenUser("Alice"));
 
@@ -130,7 +95,7 @@ public class UserApiTest {
     class FindTests {
 
         @Test
-        void givenId_whenFindOne_thenReturnUserWithOKStatus() {
+        void whenFindingUserById_thenReturnsUserWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenUser = insertUser();
             var givenId = givenUser.getId();
@@ -149,7 +114,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenNothing_whenFindAll_thenReturnListOfUserWithOKStatus() {
+        void whenFindingAllUsers_thenReturnsUsersListWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -163,7 +128,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenPageAndSize_whenFindBatch_thenReturnListOfUserWithOkStatus() {
+        void whenFindingUsersByPageAndSize_thenReturnsPaginatedUsersList() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -184,7 +149,7 @@ public class UserApiTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedUser_whenUpdate_thenReturnNoContentStatus() {
+        void whenUpdatingUser_thenReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var user = insertUser();
             var givenId = user.getId();
@@ -221,7 +186,7 @@ public class UserApiTest {
     class DeleteTests {
 
         @Test
-        void givenId_whenDeleteOne_thenReturnNoContentStatus() {
+        void whenDeletingUserById_thenReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var user = insertUser();
             var givenId = user.getId();
@@ -246,7 +211,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
+        void whenDeletingListOfUserIds_thenReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var user = insertUser();
             var givenId = user.getId();
@@ -272,7 +237,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
+        void whenDeletingAllUsers_thenDeletesEverythingAndReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
             var user = insertUser();
             var givenId = user.getId();
@@ -300,7 +265,7 @@ public class UserApiTest {
     class ExistsTests {
 
         @Test
-        void givenId_whenExists_ThenReturnOKStatus() {
+        void whenCheckingIfUserExistsById_thenReturnsOkStatus() {
             var givenToken = requestToGetNewToken(port);
             var user = insertUser();
             var givenId = user.getId();
@@ -317,7 +282,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenId_whenNotExist_ThenReturnNotFoundStatus() {
+        void whenCheckingIfNonExistentUserExists_thenReturnsNotFoundStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenId = -1;
 
@@ -330,6 +295,44 @@ public class UserApiTest {
                     .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body(is(emptyString()));
+        }
+    }
+
+    @Nested
+    class ValidateTests {
+
+        @Test
+        void whenSavingInvalidUser_thenReturnsBadRequestWithErrors() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = new UserDto();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(3))
+                    .body("errors", hasItems("username should not be blank", "password should not be blank", "email should not be blank"));
+        }
+
+        @Test
+        void whenSavingListOfInvalidUsers_thenReturnsBadRequestWithErrorsForEachUser() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = List.of(new UserDto(), new UserDto());
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(6))
+                    .body("errors", hasItems("username should not be blank", "password should not be blank", "email should not be blank"));
         }
     }
 }

@@ -50,7 +50,7 @@ public class PermissionServiceTest {
     class SaveOneTests {
 
         @Test
-        void givenPermission_whenSave_thenReturnId() {
+        void givenValidPermission_whenSave_thenReturnsValidId() {
             var givenPermission = newGivenPermission();
 
             var actual = systemUnderTest.save(givenPermission);
@@ -61,7 +61,7 @@ public class PermissionServiceTest {
         }
 
         @Test
-        void givenNull_whenSave_thenReturnNullPointerException() {
+        void givenNullPermission_whenSave_thenThrowsNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.save(null));
 
             assertNotNull(actual);
@@ -73,7 +73,7 @@ public class PermissionServiceTest {
     class FindTests {
 
         @Test
-        void givenId_whenFindById_thenReturnPermission() {
+        void givenExistingId_whenFindById_thenReturnsPermission() {
             var givenId = newGivenId();
 
             var actual = systemUnderTest.getById(givenId);
@@ -84,7 +84,7 @@ public class PermissionServiceTest {
         }
 
         @Test
-        void givenNullId_whenFindById_thenReturnNullPointerException() {
+        void givenNullId_whenFindById_thenThrowsNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.getById(null));
 
             assertNotNull(actual);
@@ -96,7 +96,7 @@ public class PermissionServiceTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedPermission_whenUpdate_thenJustRunSuccessful() {
+        void givenValidIdAndUpdatedPermission_whenUpdate_thenSavesSuccessfully() {
             var givenId = newGivenId();
             var givenPermission = newGivenPermission().setName("updated_value");
 
@@ -110,7 +110,7 @@ public class PermissionServiceTest {
         }
 
         @Test
-        void givenNull_whenUpdate_thenReturnNullPointerException() {
+        void givenNullIdOrPermission_whenUpdate_thenThrowsNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.update(null, null));
 
             assertNotNull(actual);
@@ -122,7 +122,7 @@ public class PermissionServiceTest {
     class DeleteTests {
 
         @Test
-        void givenId_whenDeleteById_thenJustRunSuccessful() {
+        void givenExistingId_whenDeleteById_thenRemovesSuccessfully() {
             var givenId = newGivenId();
 
             var actual = assertDoesNotThrow(() -> {
@@ -135,7 +135,7 @@ public class PermissionServiceTest {
         }
 
         @Test
-        void givenNull_whenDeleteById_thenReturnNullPointerException() {
+        void givenNullId_whenDeleteById_thenThrowsNullPointerException() {
             var actual = Assertions.assertThrows(NullPointerException.class, () -> systemUnderTest.deleteById(null));
 
             assertNotNull(actual);

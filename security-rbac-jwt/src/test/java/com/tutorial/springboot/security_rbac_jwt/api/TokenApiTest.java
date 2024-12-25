@@ -24,7 +24,7 @@ public class TokenApiTest {
     private int port;
 
     @Test
-    void givenValidCredentials_whenGenerateToken_thenReturnJwtTokenWithOKStatus() {
+    void givenValidUserCredentials_whenRequestingNewToken_thenReturnsJwtTokenAndStatusOK() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(TEST_USERNAME, TEST_PASSWORD)
@@ -33,13 +33,11 @@ public class TokenApiTest {
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .body("token", not(emptyOrNullString()))
-                .body("expiration", not(emptyOrNullString()))
-                .log()
-                .all(true);
+                .body("expiration", not(emptyOrNullString()));
     }
 
     @Test
-    void givenInvalidCredentials_whenGenerateToken_thenReturnUnauthorizedStatus() {
+    void givenInvalidUserCredentials_whenRequestingNewToken_thenReturnsStatusUnauthorized() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic("test", "wrong_password")

@@ -35,7 +35,7 @@ public class RoleRepositoryTest {
     class SaveOneTest {
 
         @Test
-        void givenNewRole_whenSave_thenReturnPersistedRole() {
+        void givenNewRole_whenSave_thenPersistAndReturnRoleWithValidId() {
             var givenRole = newGivenRole();
 
             var actual = systemUnderTest.save(givenRole);
@@ -48,7 +48,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenNewRoleWithNewPermission_whenSave_thenReturnPersistedRole() {
+        void givenNewRoleWithNewPermission_whenSave_thenPersistRoleWithPermission() {
             var givenPermission = newGivenPermission();
             var givenRole = newGivenRole();
             givenRole.getPermissions().add(givenPermission);
@@ -67,7 +67,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenNewRoleWithExistingPermission_whenSave_thenReturnPersistedRole() {
+        void givenNewRoleWithExistingPermission_whenSave_thenPersistRoleWithValidPermissionReference() {
             var givenPermission = newGivenPermission();
             assistant.persist(givenPermission);
             assistant.flush();
@@ -92,7 +92,7 @@ public class RoleRepositoryTest {
          * remains unique, ensuring no duplicate associations are allowed between a role and the same permission.
          */
         @Test
-        void givenNewRoleWithDuplicatedSamePermissionReference_whenSave_thenThrowRuntimeException() {
+        void givenRoleWithDuplicatedPermissionReference_whenSave_thenThrowUniqueConstraintViolation() {
             var givenPermission = newGivenPermission();
             assistant.persist(givenPermission);
             assistant.flush();
@@ -110,7 +110,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenRoleWithDuplicatedPermission_whenSave_thenReturnPersistedRole() {
+        void givenRoleWithUniquePermissions_whenSave_thenThrowRuntimeExceptionDueToDuplicateValues() {
             var givenPermission1 = newGivenPermission();
             var givenPermission2 = newGivenPermission();
 
@@ -131,7 +131,7 @@ public class RoleRepositoryTest {
     @Nested
     class SaveAllTest {
         @Test
-        void givenUniqueListOfRole_whenSaveAll_thenReturnListOfPersistedRole() {
+        void givenUniqueRolesList_whenSaveAll_thenPersistAllRolesSuccessfully() {
             var givenEntities = List.of(new Role().setName("role a").setCreatedBy("test").setCreatedAt(now()).setVersion(0), new Role().setName("role b").setCreatedBy("test").setCreatedAt(now()).setVersion(0));
             var actual = systemUnderTest.saveAll(givenEntities);
             assistant.flush();
@@ -150,7 +150,7 @@ public class RoleRepositoryTest {
     class FindTest {
 
         @Test
-        void givenId_whenFindById_thenReturnRole() {
+        void givenValidRoleId_whenFindById_thenReturnMatchingRole() {
             var role = newGivenRole();
             assistant.persist(role);
             assistant.flush();
@@ -169,7 +169,7 @@ public class RoleRepositoryTest {
     class UpdateTest {
 
         @Test
-        void givenUpdatedRole_whenUpdate_thenReturnUpdatedRole() {
+        void givenUpdatedRoleDetails_whenUpdate_thenPersistAndReturnUpdatedRole() {
             login();
             var role = newGivenRole();
             assistant.persist(role);
@@ -193,7 +193,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenRoleWithUpdatedPermissionList_whenUpdate_thenReturnUpdatedRole() {
+        void givenRoleWithAdditionalPermissions_whenUpdate_thenPersistUpdatedPermissions() {
             login();
             var readPermission = newGivenPermission("read");
             var role = newGivenRole().setPermissions(List.of(readPermission));
@@ -224,7 +224,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenRoleWithReplacedPermission_whenUpdate_thenReturnUpdatedRole() {
+        void givenRoleWithReplacedPermissions_whenUpdate_thenPersistNewPermissionsSuccessfully() {
             login();
             var readPermission = newGivenPermission("read");
             var role = newGivenRole().setPermissions(List.of(readPermission));
@@ -253,7 +253,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenRoleWithDeletedPermission_whenUpdate_thenReturnUpdatedRole() {
+        void givenRoleWithDeletedPermissions_whenUpdate_thenPersistRoleWithoutPermissions() {
             login();
             var readPermission = newGivenPermission("read");
             var role = newGivenRole().setPermissions(List.of(readPermission));
@@ -284,7 +284,7 @@ public class RoleRepositoryTest {
     class DeleteTest {
 
         @Test
-        void givenId_whenDeleteById_thenJustRunSuccessful() {
+        void givenValidRoleId_whenDeleteById_thenRemoveRoleSuccessfully() {
             var role = new Role().setName("role").setCreatedBy("test").setCreatedAt(now()).setVersion(0);
             assistant.persist(role);
             assistant.flush();
@@ -302,7 +302,7 @@ public class RoleRepositoryTest {
     @Nested
     class FindOrSaveTest {
         @Test
-        void givenNonExistRole_whenFindOrCreate_thenReturnPersistedRole() {
+        void givenNonExistentRole_whenFindOrSave_thenPersistAndReturnRole() {
             var givenRole = newGivenRole();
 
             var actual = systemUnderTest.findOrSave(givenRole);
@@ -315,7 +315,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenExistingRole_whenFindOrCreate_thenReturnPersistedRole() {
+        void givenExistingRole_whenFindOrSave_thenReturnPersistedRole() {
             var givenRole = newGivenRole();
             assistant.persist(givenRole);
             assistant.flush();
@@ -333,7 +333,7 @@ public class RoleRepositoryTest {
     @Nested
     class FindOrSaveAllTest {
         @Test
-        void givenNonExistRoles_whenFindOrCreateAll_thenReturnPersistedRole() {
+        void givenNonExistentRoles_whenFindOrSaveAll_thenPersistAndReturnAllRoles() {
             var givenRole = List.of(newGivenRole("read"), newGivenRole("write"));
 
             var actual = systemUnderTest.findOrSaveAll(givenRole);
@@ -349,7 +349,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenExistingRoles_whenFindOrCreateAll_thenReturnPersistedRole() {
+        void givenAllExistingRoles_whenFindOrSaveAll_thenReturnPersistedRoles() {
             var guestRole = newGivenRole("guest");
             assistant.persist(guestRole);
             var hostRole = newGivenRole("host");
@@ -370,7 +370,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenExistAndNonExistRoles_whenFindOrCreateAll_thenReturnPersistedRole() {
+        void givenMixedRoles_whenFindOrSaveAll_thenPersistNewRolesAndReturnAllRoles() {
             var guestRole = newGivenRole("guest");
             var hostRole = newGivenRole("host");
             assistant.persist(hostRole);
@@ -395,7 +395,7 @@ public class RoleRepositoryTest {
 
         @ParameterizedTest
         @ArgumentsSource(InvalidRoles.class)
-        void givenInvalidRole_whenSaveOne_thenReturnRuntimeException(Role givenRole) {
+        void givenInvalidRoleData_whenSaveOne_thenThrowRuntimeException(Role givenRole) {
 
             var actual = assertThrows(RuntimeException.class, () -> {
                 systemUnderTest.save(givenRole);
@@ -407,7 +407,7 @@ public class RoleRepositoryTest {
         }
 
         @Test
-        void givenListOfNonUniqueEntities_whenSaveAll_thenReturnRuntimeException() {
+        void givenRolesWithNonUniqueNames_whenSaveAll_thenThrowRuntimeException() {
             var givenEntities = List.of(new Role().setName("the same role").setCreatedBy("test").setCreatedAt(now()).setVersion(0), new Role().setName("the same role").setCreatedBy("test").setCreatedAt(now()).setVersion(0));
 
             var actual = assertThrows(RuntimeException.class, () -> {

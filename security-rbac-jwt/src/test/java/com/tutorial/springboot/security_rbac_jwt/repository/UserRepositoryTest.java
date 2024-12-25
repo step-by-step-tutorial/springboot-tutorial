@@ -19,7 +19,6 @@ import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
-import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -38,7 +37,7 @@ public class UserRepositoryTest {
     class SaveTest {
 
         @Test
-        void givenNewUser_whenSave_thenReturnPersistedUser() {
+        void givenNewUser_whenSave_thenPersistedUserShouldBeReturned() {
             var givenUser = newGivenUser();
 
             var actual = systemUnderTest.save(givenUser);
@@ -51,7 +50,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void givenNewUserWithRole_whenSave_thenReturnPersistedUser() {
+        void givenNewUserWithRole_whenSave_thenPersistedUserWithRoleShouldBeReturned() {
             var givenRole = newGivenRole();
             var givenUser = newGivenUser().setRoles(List.of(givenRole));
 
@@ -71,7 +70,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void givenNewUserWithRoleAndPermission_whenSave_thenReturnPersistedUser() {
+        void givenNewUserWithRoleAndPermission_whenSave_thenPersistedUserWithRoleAndPermissionShouldBeReturned() {
             var permission = newGivenPermission();
             var givenRole = newGivenRole().setPermissions(List.of(permission));
             var givenUser = newGivenUser().setRoles(List.of(givenRole));
@@ -102,7 +101,7 @@ public class UserRepositoryTest {
     class SaveAllTest {
 
         @Test
-        void givenListOfUser_whenSaveAll_thenReturnListOfPersistedUser() {
+        void givenListOfUsers_whenSaveAll_thenListOfPersistedUsersShouldBeReturned() {
             var givenUsers = List.of(newGivenUser("username1"), newGivenUser("username2"));
 
             var actual = systemUnderTest.saveAll(givenUsers);
@@ -121,7 +120,7 @@ public class UserRepositoryTest {
     class FindTest {
 
         @Test
-        void givenId_whenFindById_thenReturnUser() {
+        void givenUserId_whenFindById_thenMatchingUserShouldBeReturned() {
             var givenUser = newGivenUser();
             assistant.persist(givenUser);
             assistant.flush();
@@ -143,7 +142,7 @@ public class UserRepositoryTest {
     class UpdateTest {
 
         @Test
-        void givenUpdatedUser_whenUpdate_thenReturnPersistedUser() {
+        void givenUserDetails_whenUpdate_thenUpdatedPersistedUserShouldBeReturned() {
             login();
             var user = newGivenUser();
             assistant.persist(user);
@@ -168,7 +167,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void givenUserWithUpdatedRoles_whenUpdate_thenReturnPersistedUser() {
+        void givenUserWithUpdatedRoles_whenUpdate_thenUserWithUpdatedRolesShouldBeReturned() {
             login();
             var role = newGivenRole("guest");
             var user = newGivenUser().setRoles(List.of(role));
@@ -199,11 +198,10 @@ public class UserRepositoryTest {
             assertEquals(0, actual.getRoles().getFirst().getVersion());
             assertEquals("host", actual.getRoles().getLast().getName());
             assertEquals(0, actual.getRoles().getLast().getVersion());
-
         }
 
         @Test
-        void givenUserWithRolesAndUpdatedPermissions_whenUpdate_thenReturnPersistedUser() {
+        void givenUserWithUpdatedPermissions_whenUpdate_thenUserWithUpdatedPermissionsShouldBeReturned() {
             login();
             var permission = newGivenPermission("read");
             var role = newGivenRole("guest").setPermissions(List.of(permission));
@@ -239,7 +237,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void givenUserWithUpdatedRolesAndPermissions_whenUpdate_thenReturnPersistedUser() {
+        void givenUserWithUpdatedRolesAndPermissions_whenUpdate_thenUserWithUpdatedRolesAndPermissionsShouldBeReturned() {
             login();
             var permission = newGivenPermission("read");
             var role = newGivenRole("guest").setPermissions(List.of(permission));
@@ -282,7 +280,7 @@ public class UserRepositoryTest {
     class DeleteTest {
 
         @Test
-        void givenId_whenDeleteById_thenJustRunSuccessful() {
+        void givenExistingUserId_whenDeleteById_thenUserShouldBeDeletedSuccessfully() {
             var givenUser = newGivenUser();
             assistant.persist(givenUser);
             assistant.flush();
@@ -303,7 +301,7 @@ public class UserRepositoryTest {
 
         @ParameterizedTest
         @ArgumentsSource(InvalidUsers.class)
-        void givenInvalidUser_whenSaveOne_thenReturnRuntimeException(User givenUser) {
+        void givenInvalidUser_whenSave_thenRuntimeExceptionShouldBeThrown(User givenUser) {
 
             var actual = assertThrows(RuntimeException.class, () -> {
                 systemUnderTest.save(givenUser);
@@ -315,7 +313,7 @@ public class UserRepositoryTest {
         }
 
         @Test
-        void givenListOfNonUniqueEntities_whenSaveAll_thenReturnRuntimeException() {
+        void givenDuplicateUsers_whenSaveAll_thenRuntimeExceptionShouldBeThrown() {
             var givenUsers = List.of(newGivenUser("the same username"), newGivenUser("the same username"));
 
             var actual = assertThrows(RuntimeException.class, () -> {

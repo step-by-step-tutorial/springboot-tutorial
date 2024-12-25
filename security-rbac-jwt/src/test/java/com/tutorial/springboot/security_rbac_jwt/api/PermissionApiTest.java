@@ -18,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenPermission;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
@@ -56,7 +55,7 @@ public class PermissionApiTest {
     class SaveOneTests {
 
         @Test
-        void givenDto_whenSave_thenReturnIdWithCreatedStatus() {
+        void whenSaveValidPermissionDto_thenReturnsIdAndStatusCreated() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = newGivenPermission();
 
@@ -71,30 +70,13 @@ public class PermissionApiTest {
                     .header("Location", containsString(BASE_PATH))
                     .body("", notNullValue());
         }
-
-        @Test
-        void givenInvalidDto_whenSave_thenReturnErrorWithBadRequestStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var givenBody = new PermissionDto();
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("errors.size()", is(1))
-                    .body("errors", hasItem("name should not be blank"));
-        }
-
     }
 
     @Nested
     class SaveBatchTests {
+
         @Test
-        void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
+        void whenSaveValidPermissionDtoList_thenReturnIdListAndStatusCreated() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = List.of(newGivenPermission("read"), newGivenPermission("write"));
 
@@ -108,30 +90,13 @@ public class PermissionApiTest {
                     .statusCode(HttpStatus.CREATED.value())
                     .body("size()", greaterThan(0));
         }
-
-        @Test
-        void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var givenBody = List.of(new PermissionDto(), new PermissionDto());
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
-                    .body("errors.size()", is(2))
-                    .body("errors", hasItem("name should not be blank"));
-        }
     }
 
     @Nested
     class FindTests {
 
         @Test
-        void givenId_whenFindOne_thenReturnDtoWithOkStatus() {
+        void whenFindPermissionById_thenReturnsPermissionDtoAndStatusOk() {
             var givenToken = requestToGetNewToken(port);
             var permission = insertPermission();
             var givenId = permission.getId();
@@ -149,7 +114,7 @@ public class PermissionApiTest {
         }
 
         @Test
-        void givenNothing_whenFindAll_thenReturnListOfDtoWithOkStatus() {
+        void whenFindAllPermissions_thenReturnsPermissionDtoListAndStatusOk() {
             var givenToken = requestToGetNewToken(port);
             var expectedPermissionNumber = 2;
 
@@ -164,7 +129,7 @@ public class PermissionApiTest {
         }
 
         @Test
-        void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
+        void whenFindPermissionsByPageAndSize_thenReturnsPagedPermissionDtoListAndStatusOk() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -184,7 +149,7 @@ public class PermissionApiTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
+        void whenUpdateValidPermissionDto_thenReturnsStatusNoContent() {
             var permission = insertPermission();
             var givenToken = requestToGetNewToken(port);
             var givenBody = newGivenPermission("updated_value");
@@ -216,7 +181,7 @@ public class PermissionApiTest {
     class DeleteTests {
 
         @Test
-        void givenId_whenDeleteOne_thenReturnNoContentStatus() {
+        void whenDeletePermissionById_thenReturnsStatusNoContent() {
             var givenToken = requestToGetNewToken(port);
             var permission = insertPermission();
             var givenId = permission.getId();
@@ -240,7 +205,7 @@ public class PermissionApiTest {
         }
 
         @Test
-        void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
+        void whenDeletePermissionBatchByIdList_thenReturnsStatusNoContent() {
             var permission = insertPermission();
             var givenToken = requestToGetNewToken(port);
             var givenId = permission.getId();
@@ -265,7 +230,7 @@ public class PermissionApiTest {
         }
 
         @Test
-        void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
+        void whenDeleteAllPermissions_thenReturnsStatusNoContentAndClearsDatabase() {
             var givenToken = requestToGetNewToken(port);
             var permission = insertPermission();
             var givenId = permission.getId();
@@ -292,7 +257,7 @@ public class PermissionApiTest {
     class ExistsTests {
 
         @Test
-        void givenId_whenExists_ThenReturnOkStatus() {
+        void whenPermissionExistsById_thenReturnsStatusOk() {
             var givenToken = requestToGetNewToken(port);
             var permission = insertPermission();
             var givenId = permission.getId();
@@ -309,7 +274,7 @@ public class PermissionApiTest {
         }
 
         @Test
-        void givenId_whenNotExist_ThenReturnNotFoundStatus() {
+        void whenPermissionDoesNotExistById_thenReturnsStatusNotFound() {
             var givenToken = requestToGetNewToken(port);
             var givenId = -1;
 
@@ -322,6 +287,44 @@ public class PermissionApiTest {
                     .then()
                     .statusCode(HttpStatus.NOT_FOUND.value())
                     .body(is(emptyString()));
+        }
+    }
+
+    @Nested
+    class ValidateTests {
+
+        @Test
+        void whenSaveInvalidPermissionDto_thenReturnsErrorAndStatusBadRequest() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = new PermissionDto();
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(1))
+                    .body("errors", hasItem("name should not be blank"));
+        }
+
+        @Test
+        void whenSaveInvalidPermissionDtoList_thenReturnErrorListAndStatusBadRequest() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = List.of(new PermissionDto(), new PermissionDto());
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .body("errors.size()", is(2))
+                    .body("errors", hasItem("name should not be blank"));
         }
     }
 }
