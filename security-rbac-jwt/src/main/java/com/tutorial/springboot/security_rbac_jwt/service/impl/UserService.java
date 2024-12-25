@@ -38,14 +38,15 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
                 .orElseThrow();
     }
 
-    public void changePassword(String oldPassword, String newPassword) {
-        shouldBeNotNullOrEmpty(oldPassword, "password is wrong");
-        shouldBeNotNullOrEmpty(newPassword, "password is wrong");
+    public void changePassword(String username, String password, String newPassword) {
+        shouldBeNotNullOrEmpty(username, "credentials are wrong");
+        shouldBeNotNullOrEmpty(password, "credentials are wrong");
+        shouldBeNotNullOrEmpty(newPassword, "credentials are wrong");
 
         var user = findByUsername(getCurrentUsername());
 
-        if (user.getPassword().equals(oldPassword)) {
-            user.setPassword(newPassword);
+        if (user.getUsername().equals(username) && passwordEncoder.matches(password, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
             repository.save(user);
         } else {
             throw new RuntimeException("Password could not be changed, due to incorrect password");

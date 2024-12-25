@@ -17,6 +17,7 @@ class ProofOfConceptTest {
         System.out.println("encoder.encode(\"admin\") = " + encoder.encode("admin"));
         System.out.println("encoder.encode(\"user\") = " + encoder.encode("user"));
         System.out.println("encoder.encode(\"test\") = " + encoder.encode("test"));
+        System.out.println("encoder.encode(\"password\") = " + encoder.encode("password"));
     }
 
     @Test
@@ -28,4 +29,5 @@ class ProofOfConceptTest {
 
         System.out.println("Secret Key: " + encodedKey);
     }
+
 }

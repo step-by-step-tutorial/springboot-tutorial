@@ -192,11 +192,11 @@ public class UserServiceTest {
         @Test
         void givenValidPassword_whenChangingPassword_thenUpdateSuccessfully() {
             var givenUser = testAuthHelper.signupAndLogin();
-            var givenUserPassword = givenUser.getPassword();
+            var givenPassword = givenUser.getPassword();
 
             var actual = assertDoesNotThrow(() -> {
 
-                systemUnderTest.changePassword(givenUserPassword, "updated_password");
+                systemUnderTest.changePassword(givenUser.getUsername(), givenPassword, "updated_password");
                 var em = assistant.createEntityManager();
                 var transaction = em.getTransaction();
                 transaction.begin();
@@ -213,7 +213,7 @@ public class UserServiceTest {
         @Test
         void givenNullValues_whenChangingPassword_thenThrowIllegalArgumentException() {
             var actual = assertThrows(IllegalArgumentException.class,
-                    () -> systemUnderTest.changePassword(null, null));
+                    () -> systemUnderTest.changePassword(null, null, null));
 
             assertNotNull(actual);
             assertFalse(actual.getMessage().isEmpty());

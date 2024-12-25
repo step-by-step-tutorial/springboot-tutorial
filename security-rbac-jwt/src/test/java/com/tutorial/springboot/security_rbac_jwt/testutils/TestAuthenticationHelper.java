@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PASSWORD;
@@ -20,6 +21,9 @@ public class TestAuthenticationHelper {
 
     @Autowired
     private EntityManagerFactory emf;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public TestAuthenticationHelper() {
     }
@@ -37,13 +41,14 @@ public class TestAuthenticationHelper {
         var username = FAKER.internet().username();
         var email = FAKER.internet().emailAddress();
         var password = FAKER.internet().password();
+        var encodedPassword = passwordEncoder.encode(password);
 
         var em = emf.createEntityManager();
         var transaction = em.getTransaction();
 
         transaction.begin();
         var user = new User()
-                .setUsername(username).setPassword(password).setEmail(email).setEnabled(true)
+                .setUsername(username).setPassword(encodedPassword).setEmail(email).setEnabled(true)
                 .setCreatedBy("unittest").setCreatedAt(now())
                 .setVersion(0);
         em.persist(user);
@@ -51,8 +56,8 @@ public class TestAuthenticationHelper {
         em.clear();
         transaction.commit();
 
-        login(user.getUsername(), user.getPassword());
+        login(user.getUsername(), password);
 
-        return user;
+        return user.setPassword(password);
     }
 }

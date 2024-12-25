@@ -1,5 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
+import com.tutorial.springboot.security_rbac_jwt.dto.ChangeCredentialsDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
 import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -21,6 +23,7 @@ import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.new
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.saveUserThroughApi;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -333,6 +336,42 @@ public class UserApiTest {
                     .statusCode(HttpStatus.BAD_REQUEST.value())
                     .body("errors.size()", is(6))
                     .body("errors", hasItems("username should not be blank", "password should not be blank", "email should not be blank"));
+        }
+    }
+
+    @Nested
+    class ChangePasswordTests {
+
+        @Test
+        void whenChangingPassword_thenReturnsOkStatus() {
+            var user = newGivenUser();
+            var userId = saveUserThroughApi(port, user);
+            var givenToken = requestToGetNewToken(TEST_HOSTNAME, port, user.getUsername(), user.getPassword());
+            var givenNewPassword = "updated_password";
+            var givenBody = new ChangeCredentialsDto(user.getUsername(), user.getPassword(), givenNewPassword);
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/change-password")
+                    .body(givenBody)
+                    .when().patch()
+                    .then()
+                    .statusCode(HttpStatus.NO_CONTENT.value())
+                    .body(is(emptyString()));
+
+            var em = assistant.createEntityManager();
+            var transaction = em.getTransaction();
+            transaction.begin();
+            var actual = em.find(User.class, userId);
+            transaction.commit();
+
+            assertNotNull(actual);
+
+            var passwordEncoder = new BCryptPasswordEncoder();
+            assertTrue(passwordEncoder.matches(givenNewPassword, actual.getPassword()));
+            assertEquals(user.getUsername(), actual.getUsername());
+            assertEquals(user.getEmail(), actual.getEmail());
         }
     }
 }
