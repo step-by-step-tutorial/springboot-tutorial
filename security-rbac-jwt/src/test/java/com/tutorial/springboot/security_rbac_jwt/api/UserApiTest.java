@@ -1,10 +1,11 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.assistant.UserTestAssistant;
-import com.tutorial.springboot.security_rbac_jwt.testutils.stub.factory.UserTestFactory;
+import com.tutorial.springboot.security_rbac_jwt.entity.User;
+import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenUser;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
@@ -33,18 +35,29 @@ public class UserApiTest {
     private int port;
 
     @Autowired
-    private UserTestAssistant assistant;
+    private EntityManagerFactory assistant;
 
-    @Autowired
-    private UserTestFactory factory;
+    private User insertUser() {
+        var em = assistant.createEntityManager();
+        var transaction = em.getTransaction();
+
+        transaction.begin();
+        var user = EntityFixture.newGivenUser();
+        em.persist(user);
+        em.flush();
+        em.clear();
+        transaction.commit();
+
+        return user;
+    }
 
     @Nested
-    class SaveTests {
+    class SaveOneTests {
 
         @Test
-        void givenDto_whenSaveOne_thenReturnIdWithCreatedStatus() {
+        void givenUser_whenSave_thenReturnIdWithCreatedStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = factory.newInstances(1).dto().asOne();
+            var givenBody = newGivenUser();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -58,25 +71,9 @@ public class UserApiTest {
                     .body("", notNullValue());
         }
 
-        @Test
-        void givenDtoList_whenSaveBatch_thenReturnListOfIdWithCreatedStatus() {
-            var givenToken = requestToGetNewToken(port);
-            var numberOfUsers = 2;
-            var givenBody = factory.newInstances(numberOfUsers).dto().asList();
-
-            RestAssured.given()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + givenToken)
-                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
-                    .body(givenBody)
-                    .when().post()
-                    .then()
-                    .statusCode(HttpStatus.CREATED.value())
-                    .body("size()", is(numberOfUsers));
-        }
 
         @Test
-        void givenInvalidDto_whenSaveOne_thenReturnErrorWithBadRequestStatus() {
+        void givenInvalidUser_whenSave_thenReturnErrorWithBadRequestStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = new UserDto();
 
@@ -93,7 +90,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenInvalidDtoList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
+        void givenInvalidUserList_whenSaveBatch_thenReturnListOfErrorsWithBadRequestStatus() {
             var givenToken = requestToGetNewToken(port);
             var givenBody = List.of(new UserDto(), new UserDto());
 
@@ -111,12 +108,31 @@ public class UserApiTest {
     }
 
     @Nested
+    class SaveBatchTests {
+        @Test
+        void givenUserList_whenSave_thenReturnListOfIdWithCreatedStatus() {
+            var givenToken = requestToGetNewToken(port);
+            var givenBody = List.of(newGivenUser("Bob"), newGivenUser("Alice"));
+
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + givenToken)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH + "/batch")
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.CREATED.value())
+                    .body("size()", is(2));
+        }
+    }
+
+    @Nested
     class FindTests {
 
         @Test
-        void givenId_whenFindOne_thenReturnDtoWithOKStatus() {
+        void givenId_whenFindOne_thenReturnUserWithOKStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenUser = assistant.populate(1).dto().asOne();
+            var givenUser = insertUser();
             var givenId = givenUser.getId();
 
             RestAssured.given()
@@ -133,7 +149,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenNothing_whenFindAll_thenReturnListOfDtoWithOKStatus() {
+        void givenNothing_whenFindAll_thenReturnListOfUserWithOKStatus() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -147,7 +163,7 @@ public class UserApiTest {
         }
 
         @Test
-        void givenPageAndSize_whenFindBatch_thenReturnListOfDtoWithOkStatus() {
+        void givenPageAndSize_whenFindBatch_thenReturnListOfUserWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
 
             RestAssured.given()
@@ -168,16 +184,14 @@ public class UserApiTest {
     class UpdateTests {
 
         @Test
-        void givenUpdatedDto_whenUpdate_thenReturnNoContentStatus() {
+        void givenUpdatedUser_whenUpdate_thenReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = assistant.populate(1)
-                    .dto()
-                    .asOne()
+            var user = insertUser();
+            var givenId = user.getId();
+            var givenBody = newGivenUser()
+                    .setId(givenId)
                     .setUsername("newusername")
-                    .setPassword("newpassword")
-                    .setEmail("newusername@host.com");
-
-            var givenId = givenBody.getId();
+                    .setEmail("newusername@email.com");
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -190,10 +204,15 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().entity().asOne();
+            var em = assistant.createEntityManager();
+            var transaction = em.getTransaction();
+            transaction.begin();
+            var actual = em.find(User.class, givenId);
+            transaction.commit();
+
             assertNotNull(actual);
             assertEquals("newusername", actual.getUsername());
-            assertEquals("newusername@host.com", actual.getEmail());
+            assertEquals("newusername@email.com", actual.getEmail());
             assertTrue(actual.isEnabled());
         }
     }
@@ -204,7 +223,8 @@ public class UserApiTest {
         @Test
         void givenId_whenDeleteOne_thenReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = assistant.populate(1).dto().asOne().getId();
+            var user = insertUser();
+            var givenId = user.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -216,19 +236,21 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().dto().asOne();
+            var em = assistant.createEntityManager();
+            var transaction = em.getTransaction();
+            transaction.begin();
+            var actual = em.find(User.class, givenId);
+            transaction.commit();
+
             assertNull(actual);
         }
 
         @Test
         void givenListOfId_whenDeleteBatch_thenReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenBody = assistant.populate(2)
-                    .dto()
-                    .asList()
-                    .stream()
-                    .map(UserDto::getId)
-                    .toList();
+            var user = insertUser();
+            var givenId = user.getId();
+            var givenBody = List.of(givenId);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -240,14 +262,20 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().dto().asList();
-            assertTrue(actual.isEmpty());
+            var em = assistant.createEntityManager();
+            var transaction = em.getTransaction();
+            transaction.begin();
+            var actual = em.find(User.class, givenId);
+            transaction.commit();
+
+            assertNull(actual);
         }
 
         @Test
         void givenNothing_whenDeleteAll_thenDeleteEveryThingWithNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            assistant.populate(2);
+            var user = insertUser();
+            var givenId = user.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -258,8 +286,13 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var actual = assistant.select().dto().asList();
-            assertTrue(actual.isEmpty());
+            var em = assistant.createEntityManager();
+            var transaction = em.getTransaction();
+            transaction.begin();
+            var actual = em.find(User.class, givenId);
+            transaction.commit();
+
+            assertNull(actual);
         }
     }
 
@@ -269,7 +302,8 @@ public class UserApiTest {
         @Test
         void givenId_whenExists_ThenReturnOKStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = assistant.populate(1).dto().asOne().getId();
+            var user = insertUser();
+            var givenId = user.getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
