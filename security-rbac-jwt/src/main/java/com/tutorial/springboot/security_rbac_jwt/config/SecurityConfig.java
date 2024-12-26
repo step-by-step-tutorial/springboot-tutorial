@@ -1,11 +1,11 @@
 package com.tutorial.springboot.security_rbac_jwt.config;
 
+import com.tutorial.springboot.security_rbac_jwt.dto.SecureResource;
 import com.tutorial.springboot.security_rbac_jwt.filter.JwtRequestFilter;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionEvaluatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;

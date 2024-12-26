@@ -1,4 +1,4 @@
-package com.tutorial.springboot.security_rbac_jwt.config;
+package com.tutorial.springboot.security_rbac_jwt.dto;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

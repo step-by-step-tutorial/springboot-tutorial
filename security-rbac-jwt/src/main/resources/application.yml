@@ -5,11 +5,13 @@ spring:
   main:
     banner-mode: OFF
   profiles:
-    active: ${APP_PROFILES:h2}
+    active: ${APP_PROFILES:h2,openapijwt}
 
 secure-resource:
   unsecure-urls:
     - /login
+    - /swagger-ui/**
+    - /v3/api-docs/**
   home-url: /api/v1/token/me/new
   cors-origin-urls:
     - http://localhost:*

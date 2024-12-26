@@ -32,3 +32,5 @@ spring:
 secure-resource:
   unsecure-urls:
     - /h2-console/**
+    - /swagger-ui/**
+    - /v3/api-docs/**
