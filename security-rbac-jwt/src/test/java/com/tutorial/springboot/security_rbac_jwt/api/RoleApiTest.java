@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
@@ -38,6 +39,7 @@ public class RoleApiTest {
     private EntityManagerFactory assistant;
 
     private Role insertRole() {
+        login();
         var em = assistant.createEntityManager();
         var transaction = em.getTransaction();
 

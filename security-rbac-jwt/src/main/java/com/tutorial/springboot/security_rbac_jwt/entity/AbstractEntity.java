@@ -1,14 +1,21 @@
 package com.tutorial.springboot.security_rbac_jwt.entity;
 
+import com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+
+import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;
 
 @SuppressWarnings("unchecked")
 @MappedSuperclass
@@ -21,13 +28,17 @@ public abstract class AbstractEntity<ID, SELF extends AbstractEntity<ID, SELF>> 
 
     @Size(min = 1, message = "Metadata [create_by] cannot be empty or null")
     @Column(nullable = false, updatable = false)
+    @CreatedBy
     private String createdBy;
 
     @Column(nullable = false, updatable = false)
+    @CreatedDate
     private LocalDateTime createdAt;
 
+    @LastModifiedBy
     private String updatedBy;
 
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Version
@@ -95,10 +106,6 @@ public abstract class AbstractEntity<ID, SELF extends AbstractEntity<ID, SELF>> 
         if (!Objects.equals(this.version, newOne.getVersion())) {
             throw new IllegalStateException("The given entity has a different version. Cannot update.");
         }
-
-        this.updatedBy = SecurityContextHolder.getContext().getAuthentication().getName();
-        this.updatedAt = LocalDateTime.now();
-        this.version = newOne.getVersion() + 1;
 
         updateRelations(newOne);
 

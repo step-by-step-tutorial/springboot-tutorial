@@ -6,3 +6,24 @@ spring:
     banner-mode: OFF
   profiles:
     active: ${APP_PROFILES:h2}
+
+secure-resource:
+  unsecure-urls:
+    - /login
+  home-url: /api/v1/token/me/new
+  cors-origin-urls:
+    - http://localhost:*
+  cors-http-methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - HEAD
+    - OPTIONS
+  cors-http-headers:
+    - Authorization
+    - Content-Type
+  base-path: /**
+
+

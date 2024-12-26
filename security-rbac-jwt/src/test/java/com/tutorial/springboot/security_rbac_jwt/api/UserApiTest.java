@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
@@ -41,6 +42,7 @@ public class UserApiTest {
     private EntityManagerFactory assistant;
 
     private User insertUser() {
+        login();
         var em = assistant.createEntityManager();
         var transaction = em.getTransaction();
 

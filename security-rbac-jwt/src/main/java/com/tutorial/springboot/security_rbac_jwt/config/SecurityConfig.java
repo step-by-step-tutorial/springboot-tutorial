@@ -2,8 +2,10 @@ package com.tutorial.springboot.security_rbac_jwt.config;
 
 import com.tutorial.springboot.security_rbac_jwt.filter.JwtRequestFilter;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionEvaluatorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +34,9 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private SecureResource secureResource;
 
     private final UserDetailsService userDetailsService;
 
@@ -64,9 +69,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(secureResource.unsecureUrls()).permitAll()
                         .anyRequest().authenticated())
-                .formLogin(login -> login.successForwardUrl("/api/v1/token/new"))
+                .formLogin(login -> login.successForwardUrl(secureResource.homeUrl()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authenticationProvider(authenticationProvider())
@@ -86,12 +91,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         var cors = new CorsConfiguration();
-        cors.setAllowedOrigins(List.of("http://localhost:*"));
-        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"));
-        cors.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        cors.setAllowedOrigins(List.of(secureResource.corsOriginUrls()));
+        cors.setAllowedMethods(List.of(secureResource.corsHttpMethods()));
+        cors.setAllowedHeaders(List.of(secureResource.corsHttpHeaders()));
 
         var source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cors);
+        source.registerCorsConfiguration(secureResource.basePath(), cors);
 
         return source;
     }

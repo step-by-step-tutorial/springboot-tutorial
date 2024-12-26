@@ -2,6 +2,7 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,6 +31,11 @@ public class RoleRepositoryTest {
 
     @Autowired
     private EntityManager assistant;
+
+    @BeforeEach
+    void setUp() {
+        login();
+    }
 
     @Nested
     class SaveOneTest {
@@ -170,16 +176,16 @@ public class RoleRepositoryTest {
 
         @Test
         void givenUpdatedRoleDetails_whenUpdate_thenPersistAndReturnUpdatedRole() {
-            login();
             var role = newGivenRole();
             assistant.persist(role);
             assistant.flush();
             assistant.clear();
             assistant.detach(role);
+
             var givenId = role.getId();
             var givenVersion = role.getVersion();
-
             var givenRole = newGivenRole("updated_value");
+
             var toUpdate = assistant.find(Role.class, givenId);
             toUpdate.updateFrom(givenRole);
 
@@ -194,7 +200,6 @@ public class RoleRepositoryTest {
 
         @Test
         void givenRoleWithAdditionalPermissions_whenUpdate_thenPersistUpdatedPermissions() {
-            login();
             var readPermission = newGivenPermission("read");
             var role = newGivenRole().setPermissions(List.of(readPermission));
             assistant.persist(role);
@@ -225,7 +230,6 @@ public class RoleRepositoryTest {
 
         @Test
         void givenRoleWithReplacedPermissions_whenUpdate_thenPersistNewPermissionsSuccessfully() {
-            login();
             var readPermission = newGivenPermission("read");
             var role = newGivenRole().setPermissions(List.of(readPermission));
             assistant.persist(role);
@@ -254,7 +258,6 @@ public class RoleRepositoryTest {
 
         @Test
         void givenRoleWithDeletedPermissions_whenUpdate_thenPersistRoleWithoutPermissions() {
-            login();
             var readPermission = newGivenPermission("read");
             var role = newGivenRole().setPermissions(List.of(readPermission));
             assistant.persist(role);

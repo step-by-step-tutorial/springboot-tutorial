@@ -19,6 +19,8 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     @Column(unique = true, nullable = false)
     private String name;
 
+    private String description;
+
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<>();
 
@@ -42,6 +44,15 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
 
     public Role setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Role setDescription(String description) {
+        this.description = description;
         return this;
     }
 

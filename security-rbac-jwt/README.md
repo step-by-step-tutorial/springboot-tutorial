@@ -106,30 +106,36 @@ Helps ensure that access controls are aligned with regulatory requirements and i
 @startuml
 
 class User {
-  - user_id: int
+  - id: int
   - username: string
+  - password: string
   - email: string
-  - password_hash: string
   - first_name: string
   - last_name: string
-  - status: string
+  - enabled: string
+  - created_by: datetime
   - created_at: datetime
+  - updated_by: datetime
   - updated_at: datetime
 }
 
 class Role {
-  - role_id: int
+  - id: int
   - role_name: string
   - description: string
+  - created_by: datetime
   - created_at: datetime
+  - updated_by: datetime
   - updated_at: datetime
 }
 
 class Permission {
-  - permission_id: int
+  - id: int
   - permission_name: string
   - description: string
+  - created_by: datetime
   - created_at: datetime
+  - updated_by: datetime
   - updated_at: datetime
 }
 

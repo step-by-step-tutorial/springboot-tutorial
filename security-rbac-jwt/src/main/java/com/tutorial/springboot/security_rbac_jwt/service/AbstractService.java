@@ -48,10 +48,6 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     public Optional<ID> save(DTO dto) {
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
-        dto.setCreatedBy(getCurrentUsername())
-                .setCreatedAt(LocalDateTime.now())
-                .setVersion(INIT_VERSION);
-
         var newEntity = transformer.toEntity(dto);
         beforeSave(dto, newEntity);
         ENTITY savedEntity;

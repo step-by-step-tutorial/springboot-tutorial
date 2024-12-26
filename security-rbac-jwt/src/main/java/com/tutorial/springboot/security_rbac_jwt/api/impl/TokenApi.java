@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,22 @@ public class TokenApi {
 
     @GetMapping("/me/new")
     public ResponseEntity<TokenDto> generateToken() {
-        logger.info("Received an inbound request to generate a token for user:{}", getCurrentUsername());
+        logger.info("Received an inbound request to generate a token for user: {} through GET request", getCurrentUsername());
+        return tokenService.generateToken(getCurrentUsername())
+                .map(ResponseEntity::ok)
+                .orElseThrow();
+    }
+
+    /**
+     * Generates a JWT token to display on the home URL.
+     * This method is the POST version of token generation, invoked via the {@code successForwardUrl}
+     * during login process.
+     *
+     * @return the generated JWT token
+     */
+    @PostMapping("/me/new")
+    public ResponseEntity<TokenDto> postGenerateToken() {
+        logger.info("Received an inbound request to generate a token for user: {} based on login form.", getCurrentUsername());
         return tokenService.generateToken(getCurrentUsername())
                 .map(ResponseEntity::ok)
                 .orElseThrow();

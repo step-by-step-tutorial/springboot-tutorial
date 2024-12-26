@@ -12,6 +12,8 @@ public class RoleDto extends AbstractDto<Long, RoleDto> {
     @NotBlank(groups = {SaveValidation.class, UpdateValidation.class}, message = "name should not be blank")
     private String name;
 
+    private String description;
+
     private List<PermissionDto> permissions = new ArrayList<>();
 
     public String getName() {
@@ -20,6 +22,15 @@ public class RoleDto extends AbstractDto<Long, RoleDto> {
 
     public RoleDto setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public RoleDto setDescription(String description) {
+        this.description = description;
         return this;
     }
 

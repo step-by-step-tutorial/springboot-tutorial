@@ -96,7 +96,6 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     public User updateFrom(User newOne) {
         super.updateFrom(newOne);
         this.username = newOne.username;
-        this.password = newOne.password;
         this.email = newOne.email;
         this.enabled = newOne.enabled;
 

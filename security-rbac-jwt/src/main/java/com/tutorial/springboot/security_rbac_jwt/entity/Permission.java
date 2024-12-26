@@ -19,6 +19,8 @@ public class Permission extends AbstractEntity<Long, Permission> {
     @Column(unique = true, nullable = false)
     private String name;
 
+    private String description;
+
     @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 
@@ -28,6 +30,15 @@ public class Permission extends AbstractEntity<Long, Permission> {
 
     public Permission setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Permission setDescription(String description) {
+        this.description = description;
         return this;
     }
 

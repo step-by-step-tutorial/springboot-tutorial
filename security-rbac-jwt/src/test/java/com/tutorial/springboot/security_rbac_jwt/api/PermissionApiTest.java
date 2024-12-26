@@ -3,6 +3,7 @@ package com.tutorial.springboot.security_rbac_jwt.api;
 import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
+import com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import jakarta.persistence.EntityManagerFactory;
@@ -18,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
@@ -38,6 +40,7 @@ public class PermissionApiTest {
     private EntityManagerFactory assistant;
 
     private Permission insertPermission() {
+        login();
         var em = assistant.createEntityManager();
         var transaction = em.getTransaction();
 

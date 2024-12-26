@@ -4,6 +4,7 @@ import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,6 +33,11 @@ public class UserRepositoryTest {
 
     @Autowired
     private EntityManager assistant;
+
+    @BeforeEach
+    void setUp() {
+        login();
+    }
 
     @Nested
     class SaveTest {
@@ -143,20 +149,21 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserDetails_whenUpdate_thenUpdatedPersistedUserShouldBeReturned() {
-            login();
             var user = newGivenUser();
             assistant.persist(user);
             assistant.flush();
             assistant.clear();
             assistant.detach(user);
+
             var givenId = user.getId();
             var givenVersion = user.getVersion();
-
             var givenUser = newGivenUser("newusername");
+
             var toUpdate = assistant.find(User.class, givenId);
             toUpdate.updateFrom(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
+            assistant.flush();
 
             assertNotNull(actual);
             assertEquals(user.getId(), actual.getId());
@@ -168,7 +175,6 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserWithUpdatedRoles_whenUpdate_thenUserWithUpdatedRolesShouldBeReturned() {
-            login();
             var role = newGivenRole("guest");
             var user = newGivenUser().setRoles(List.of(role));
             assistant.persist(user);
@@ -186,10 +192,11 @@ public class UserRepositoryTest {
             toUpdate.updateRelations(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
+            assistant.flush();
 
             assertNotNull(actual);
             assertEquals(user.getId(), actual.getId());
-            assertEquals(givenVersion, actual.getVersion());
+            assertEquals(givenVersion + 1, actual.getVersion());
 
             assertNotNull(actual.getPermissions());
             assertEquals(0, actual.getPermissions().size());
@@ -202,7 +209,6 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserWithUpdatedPermissions_whenUpdate_thenUserWithUpdatedPermissionsShouldBeReturned() {
-            login();
             var permission = newGivenPermission("read");
             var role = newGivenRole("guest").setPermissions(List.of(permission));
             var user = newGivenUser().setRoles(List.of(role));
@@ -223,6 +229,7 @@ public class UserRepositoryTest {
             toUpdate.updateRelations(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
+            assistant.flush();
 
             assertNotNull(actual);
             assertEquals(user.getId(), actual.getId());
@@ -230,7 +237,7 @@ public class UserRepositoryTest {
 
             assertEquals(1, actual.getRoles().size());
             assertEquals("guest", actual.getRoles().getFirst().getName());
-            assertEquals(0, actual.getRoles().getFirst().getVersion());
+            assertEquals(1, actual.getRoles().getFirst().getVersion());
 
             assertNotNull(actual.getPermissions());
             assertEquals(2, actual.getPermissions().size());
@@ -238,7 +245,6 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserWithUpdatedRolesAndPermissions_whenUpdate_thenUserWithUpdatedRolesAndPermissionsShouldBeReturned() {
-            login();
             var permission = newGivenPermission("read");
             var role = newGivenRole("guest").setPermissions(List.of(permission));
             var user = newGivenUser().setRoles(List.of(role));
@@ -260,16 +266,17 @@ public class UserRepositoryTest {
             toUpdate.updateRelations(givenUser);
 
             var actual = systemUnderTest.save(toUpdate);
+            assistant.flush();
 
             assertNotNull(actual);
             assertEquals(user.getId(), actual.getId());
-            assertEquals(givenVersion, actual.getVersion());
+            assertEquals(givenVersion + 1, actual.getVersion());
 
             assertEquals(2, actual.getRoles().size());
             assertEquals("guest", actual.getRoles().getFirst().getName());
-            assertEquals(0, actual.getRoles().getFirst().getVersion());
+            assertEquals(1, actual.getRoles().getFirst().getVersion());
             assertEquals("host", actual.getRoles().getLast().getName());
-            assertEquals(0, actual.getRoles().getLast().getVersion());
+            assertEquals(1, actual.getRoles().getLast().getVersion());
 
             assertNotNull(actual.getPermissions());
             assertEquals(2, actual.getPermissions().size());

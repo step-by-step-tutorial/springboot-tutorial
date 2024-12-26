@@ -1,5 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.service;
 
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionService;
 import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import jakarta.persistence.EntityManagerFactory;
@@ -58,6 +59,24 @@ public class PermissionServiceTest {
             assertNotNull(actual);
             assertTrue(actual.isPresent());
             assertTrue(actual.get() > 0);
+
+            actual.ifPresent(id -> {
+
+                var em = assistant.createEntityManager();
+                var transaction = em.getTransaction();
+                transaction.begin();
+                var permission = em.find(Permission.class, id);
+                assertNotNull(permission);
+                assertEquals(givenPermission.getName(), permission.getName());
+                assertNotNull(permission.getCreatedBy());
+                assertNotEquals("", permission.getCreatedBy());
+                assertNotNull(permission.getCreatedAt());
+                assertNotEquals("", permission.getCreatedAt());
+                em.flush();
+                em.clear();
+                transaction.commit();
+            });
+
         }
 
         @Test

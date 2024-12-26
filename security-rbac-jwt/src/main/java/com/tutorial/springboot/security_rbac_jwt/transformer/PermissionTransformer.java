@@ -12,10 +12,12 @@ public class PermissionTransformer extends AbstractTransformer<Long, Permission,
     @Override
     protected void copyEntityToDto(Permission entity, PermissionDto dto) {
         dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
     }
 
     @Override
     protected void copyDtoToEntity(PermissionDto dto, Permission entity) {
         entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
     }
 }

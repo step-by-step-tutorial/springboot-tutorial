@@ -2,6 +2,7 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +32,11 @@ public class PermissionRepositoryTest {
 
     @Autowired
     private EntityManager assistant;
+
+    @BeforeEach
+    void setUp() {
+        login();
+    }
 
     @Nested
     class SaveOneTest {
@@ -121,16 +127,16 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenExistingPermission_whenUpdate_thenShouldReturnUpdatedPermission() {
-            login();
             var permission = newGivenPermission();
             assistant.persist(permission);
             assistant.flush();
             assistant.clear();
             assistant.detach(permission);
+
             var givenId = permission.getId();
             var givenVersion = permission.getVersion();
-
             var givenPermission = newGivenPermission("updated_value");
+
             var toUpdate = assistant.find(Permission.class, givenId);
             toUpdate.updateFrom(givenPermission);
 
