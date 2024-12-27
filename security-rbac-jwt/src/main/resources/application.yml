@@ -5,7 +5,7 @@ spring:
   main:
     banner-mode: OFF
   profiles:
-    active: ${APP_PROFILES:h2,openapijwt}
+    active: ${APP_PROFILES:h2,openapibasic}
 
 secure-resource:
   unsecure-urls:

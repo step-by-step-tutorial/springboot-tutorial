@@ -1,6 +1,9 @@
 package com.tutorial.springboot.security_rbac_jwt.service;
 
+import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.RoleService;
+import com.tutorial.springboot.security_rbac_jwt.testutils.DtoAssertionUtils;
+import com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils;
 import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Assertions;
@@ -11,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenPermission;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
@@ -35,20 +36,6 @@ public class RoleServiceTest {
         login();
     }
 
-    private Long newGivenId() {
-        var em = assistant.createEntityManager();
-        var transaction = em.getTransaction();
-
-        transaction.begin();
-        var role = EntityFixture.newGivenRole();
-        em.persist(role);
-        em.flush();
-        em.clear();
-        transaction.commit();
-
-        return role.getId();
-    }
-
     @Nested
     class SaveTests {
 
@@ -60,19 +47,28 @@ public class RoleServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertTrue(actual.get() > 0);
+            actual.ifPresent(id -> {
+                var role = findRoleById(assistant, id);
+                EntityAssertionUtils.assertRole(role, 1, 0);
+                assertNotNull(role.getPermissions());
+                assertTrue(role.getPermissions().isEmpty());
+            });
         }
 
         @Test
         void givenRoleWithPermissions_whenSaved_thenReturnValidId() {
-            var givenPermission = newGivenPermission();
-            var givenRole = newGivenRole().setPermissions(List.of(givenPermission));
+            var givenRole = newGivenRole(newGivenPermission());
 
             var actual = systemUnderTest.save(givenRole);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertTrue(actual.get() > 0);
+            actual.ifPresent(id -> {
+                var role = findRoleById(assistant, id);
+                EntityAssertionUtils.assertRole(role, 1, 1);
+                assertNotNull(role.getPermissions());
+                assertEquals(1, role.getPermissions().size());
+            });
         }
 
         @Test
@@ -89,13 +85,15 @@ public class RoleServiceTest {
 
         @Test
         void givenExistingId_whenFindById_thenReturnRole() {
-            var givenId = newGivenId();
+            var givenId = EntityFixture.persistedGivenRole(assistant).getId();
 
             var actual = systemUnderTest.findById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertFalse(actual.get().getName().isEmpty());
+            actual.ifPresent(dto -> {
+                DtoAssertionUtils.assertRole(dto, 1, 0);
+            });
         }
 
         @Test
@@ -112,15 +110,14 @@ public class RoleServiceTest {
 
         @Test
         void givenExistingRoleWithUpdates_whenUpdated_thenFieldValuesAreUpdated() {
-            var givenId = newGivenId();
-            var givenRole = newGivenRole().setName("updated_value");
+            var givenId = EntityFixture.persistedGivenRole(assistant).getId();
+            var givenRole = newGivenRole("updated_value");
 
-            var actual = assertDoesNotThrow(() -> {
-                systemUnderTest.update(givenId, givenRole);
-                return systemUnderTest.findById(givenId).orElseThrow();
-            });
+            systemUnderTest.update(givenId, givenRole);
+            var actual = findRoleById(assistant, givenId);
 
             assertNotNull(actual);
+            EntityAssertionUtils.assertRole(actual, 1, 1);
             assertEquals("updated_value", actual.getName());
         }
 
@@ -138,15 +135,12 @@ public class RoleServiceTest {
 
         @Test
         void givenValidId_whenDeletedById_thenRoleIsDeleted() {
-            var givenId = newGivenId();
+            var givenId = EntityFixture.persistedGivenRole(assistant).getId();
 
-            var actual = assertDoesNotThrow(() -> {
-                systemUnderTest.deleteById(givenId);
-                return systemUnderTest.findById(givenId);
-            });
+            systemUnderTest.deleteById(givenId);
+            var actual = findRoleById(assistant, givenId);
 
-            assertNotNull(actual);
-            assertFalse(actual.isPresent());
+            assertNull(actual);
         }
 
         @Test
@@ -156,6 +150,16 @@ public class RoleServiceTest {
             assertNotNull(actual);
             assertFalse(actual.getMessage().isBlank());
         }
+    }
 
+    private Role findRoleById(EntityManagerFactory emf, Long id) {
+        var em = emf.createEntityManager();
+        var transaction = em.getTransaction();
+        transaction.begin();
+        var role = em.find(Role.class, id);
+        em.flush();
+        em.clear();
+        transaction.commit();
+        return role;
     }
 }

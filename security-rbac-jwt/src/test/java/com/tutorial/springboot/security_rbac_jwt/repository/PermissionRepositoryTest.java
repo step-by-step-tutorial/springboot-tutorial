@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.InvalidPermissions;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils.*;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,10 +48,7 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.save(givenPermission);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertTrue(actual.getId() > 0);
-            assertFalse(actual.getName().isEmpty());
+            assertPermission(actual, 1, 0);
         }
 
         @Test
@@ -61,12 +58,7 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.save(givenPermission);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertNotNull(actual.getVersion());
-            assertTrue(actual.getVersion() >= 0);
-            assertTrue(actual.getId() > 0);
-            assertFalse(actual.getName().isEmpty());
+            assertPermission(actual, 1, 0);
         }
 
         @Test
@@ -76,12 +68,7 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.save(givenPermission);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertNotNull(actual.getVersion());
-            assertTrue(actual.getVersion() >= 0);
-            assertTrue(actual.getId() > 0);
-            assertFalse(actual.getName().isEmpty());
+            assertPermission(actual, 1, 0);
         }
     }
 
@@ -94,13 +81,7 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.saveAll(givenPermissions);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertEquals(2, actual.size());
-            actual.forEach(actualItem -> {
-                assertNotNull(actualItem.getId());
-                assertTrue(actualItem.getId() > 0);
-                assertFalse(actualItem.getName().isEmpty());
-            });
+            assertPermissions(actual, 2, new long[]{1, 2}, new int[]{0, 0});
         }
     }
 
@@ -109,16 +90,15 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenPermissionId_whenFindById_thenShouldReturnPermission() {
-            var entity = newGivenPermission();
-            assistant.persist(entity);
-            assistant.flush();
-            var givenId = entity.getId();
+            var permission = persistedGivenPermission(assistant);
+            var givenId = permission.getId();
 
             var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
-            assertEquals(givenId, actual.get().getId());
-            assertFalse(actual.get().getName().isEmpty());
+            actual.ifPresent(actualItem -> {
+                assertPermission(actualItem, 1, 0);
+            });
         }
     }
 
@@ -127,25 +107,20 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenExistingPermission_whenUpdate_thenShouldReturnUpdatedPermission() {
-            var permission = newGivenPermission();
-            assistant.persist(permission);
-            assistant.flush();
-            assistant.clear();
-            assistant.detach(permission);
+            var permission = persistedGivenPermission(assistant);
 
             var givenId = permission.getId();
-            var givenVersion = permission.getVersion();
             var givenPermission = newGivenPermission("updated_value");
 
-            var toUpdate = assistant.find(Permission.class, givenId);
-            toUpdate.updateFrom(givenPermission);
+            var actual = assertDoesNotThrow(() -> {
+                var updatedPermission = assistant.find(Permission.class, givenId);
+                updatedPermission.updateFrom(givenPermission);
+                var result = systemUnderTest.save(updatedPermission);
+                assistant.flush();
+                return result;
+            });
 
-            var actual = systemUnderTest.save(toUpdate);
-            assistant.flush();
-
-            assertNotNull(actual);
-            assertEquals(givenId, actual.getId());
-            assertEquals(givenVersion + 1, actual.getVersion());
+            assertPermission(actual, 1, 1);
             assertEquals("updated_value", actual.getName());
         }
     }
@@ -155,13 +130,14 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenPermissionId_whenDeleteById_thenShouldNotFindPermission() {
-            var entity = newGivenPermission();
-            assistant.persist(entity);
-            assistant.flush();
-            var givenId = entity.getId();
+            var permission = persistedGivenPermission(assistant);
 
-            systemUnderTest.deleteById(givenId);
-            var actual = systemUnderTest.findById(givenId);
+            var givenId = permission.getId();
+
+            var actual = assertDoesNotThrow(() -> {
+                systemUnderTest.deleteById(givenId);
+                return systemUnderTest.findById(givenId);
+            });
 
             assertFalse(actual.isPresent());
         }
@@ -176,25 +152,17 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.findOrSave(givenPermission);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertTrue(actual.getId() > 0);
-            assertFalse(actual.getName().isEmpty());
+            assertPermission(actual, 1, 0);
         }
 
         @Test
         void givenExistingPermission_whenFindOrSave_thenShouldReturnPersistedPermission() {
-            var givenPermission = newGivenPermission();
-            assistant.persist(givenPermission);
-            assistant.flush();
+            var givenPermission = persistedGivenPermission(assistant);
 
             var actual = systemUnderTest.findOrSave(givenPermission);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertTrue(actual.getId() > 0);
-            assertFalse(actual.getName().isEmpty());
+            assertPermission(actual, 1, 0);
         }
     }
 
@@ -207,54 +175,26 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.findOrSaveAll(givenPermissions);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertEquals(2, actual.size());
-            actual.forEach(actualItem -> {
-                assertNotNull(actualItem.getId());
-                assertTrue(actualItem.getId() > 0);
-                assertFalse(actualItem.getName().isEmpty());
-            });
+            assertPermissions(actual, 2, new long[]{1, 2}, new int[]{0, 0});
         }
 
         @Test
         void givenExistingPermissions_whenFindOrSaveAll_thenShouldReturnPersistedPermissions() {
-            var readPermission = newGivenPermission("read");
-            assistant.persist(readPermission);
-            var writePermission = newGivenPermission("write");
-            assistant.persist(writePermission);
-            assistant.flush();
-
-            var givenPermissions = List.of(readPermission, writePermission);
+            var givenPermissions = List.of(persistedGivenPermission(assistant, "read"), persistedGivenPermission(assistant, "write"));
 
             var actual = systemUnderTest.findOrSaveAll(givenPermissions);
+            assistant.flush();
 
-            assertNotNull(actual);
-            assertEquals(2, actual.size());
-            actual.forEach(actualItem -> {
-                assertNotNull(actualItem.getId());
-                assertTrue(actualItem.getId() > 0);
-                assertFalse(actualItem.getName().isEmpty());
-            });
+            assertPermissions(actual, 2, new long[]{1, 2}, new int[]{0, 0});
         }
 
         @Test
         void givenMixOfExistingAndNonExistentPermissions_whenFindOrSaveAll_thenShouldReturnPersistedPermissions() {
-            var readPermission = newGivenPermission("read");
-            var writePermission = newGivenPermission("write");
-            assistant.persist(writePermission);
-            assistant.flush();
-
-            var givenPermissions = List.of(readPermission, writePermission);
+            var givenPermissions = List.of(persistedGivenPermission(assistant, "write"), newGivenPermission("read"));
 
             var actual = systemUnderTest.findOrSaveAll(givenPermissions);
 
-            assertNotNull(actual);
-            assertEquals(2, actual.size());
-            actual.forEach(actualItem -> {
-                assertNotNull(actualItem.getId());
-                assertTrue(actualItem.getId() > 0);
-                assertFalse(actualItem.getName().isEmpty());
-            });
+            assertPermissions(actual, 2, new long[]{2, 1}, new int[]{0, 0});
         }
     }
 
@@ -276,10 +216,7 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenListOfNonUniquePermissions_whenSaveAll_thenShouldThrowRuntimeException() {
-            var givenEntities = List.of(
-                    new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0),
-                    new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0)
-            );
+            var givenEntities = List.of(new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0), new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0));
 
             var actual = assertThrows(RuntimeException.class, () -> {
                 systemUnderTest.saveAll(givenEntities);

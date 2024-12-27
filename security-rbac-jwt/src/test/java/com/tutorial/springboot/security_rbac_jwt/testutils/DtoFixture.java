@@ -3,8 +3,13 @@ package com.tutorial.springboot.security_rbac_jwt.testutils;
 import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 
 import java.util.Objects;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public final class DtoFixture {
 
@@ -41,6 +46,14 @@ public final class DtoFixture {
         return new RoleDto()
                 .setName(name)
                 .setDescription("role description")
+                .setVersion(0);
+    }
+
+    public static RoleDto newGivenRole(PermissionDto... permissions) {
+        return new RoleDto()
+                .setName("role")
+                .setDescription("role description")
+                .setPermissions(Stream.of(permissions).collect(toList()))
                 .setVersion(0);
     }
 

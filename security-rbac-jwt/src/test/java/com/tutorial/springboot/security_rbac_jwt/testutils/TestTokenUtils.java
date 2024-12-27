@@ -5,15 +5,13 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.springframework.http.HttpStatus;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenUser;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.*;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.notNullValue;
 
 public final class TestTokenUtils {
 
     public static final String TOKEN_API_BASE_PATH = "/api/v1/token";
-    
+
     private static final String USER_BASE_PATH = "/api/v1/users";
 
     private TestTokenUtils() {
@@ -40,7 +38,7 @@ public final class TestTokenUtils {
                 .extract()
                 .jsonPath().getString("token");
     }
-    
+
     public static int saveUserThroughApi(int port, UserDto user) {
         var givenToken = requestToGetNewToken(port);
 
@@ -55,9 +53,9 @@ public final class TestTokenUtils {
                 .header("Location", containsString(USER_BASE_PATH))
                 .body("", notNullValue())
                 .extract().asString();
-        
+
         return Integer.parseInt(userId);
-        
+
     }
 
 }

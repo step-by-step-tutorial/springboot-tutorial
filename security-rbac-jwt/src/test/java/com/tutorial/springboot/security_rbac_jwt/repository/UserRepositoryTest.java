@@ -4,6 +4,7 @@ import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils.*;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,57 +51,32 @@ public class UserRepositoryTest {
             var actual = systemUnderTest.save(givenUser);
             assistant.flush();
 
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertTrue(actual.getId() > 0);
-            assertEquals(0, (int) actual.getVersion());
+            assertUser(actual, 1, 0);
         }
 
         @Test
         void givenNewUserWithRole_whenSave_thenPersistedUserWithRoleShouldBeReturned() {
-            var givenRole = newGivenRole();
-            var givenUser = newGivenUser().setRoles(List.of(givenRole));
+            var givenUser = newGivenUser(newGivenRole());
 
             var actual = systemUnderTest.save(givenUser);
             assistant.flush();
 
-            // assert user
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertEquals(1, (int) actual.getVersion());
-
-            // assert role
-            assertNotNull(actual.getRoles());
-            assertEquals(1, actual.getRoles().size());
-            assertTrue(actual.getRoles().getFirst().getId() > 0);
-            assertEquals(0, (int) actual.getRoles().getFirst().getVersion());
+            assertUser(actual, 1, 1);
+            assertRoles(actual.getRoles(), 1, new long[]{1}, new int[]{0});
         }
 
         @Test
         void givenNewUserWithRoleAndPermission_whenSave_thenPersistedUserWithRoleAndPermissionShouldBeReturned() {
-            var permission = newGivenPermission();
-            var givenRole = newGivenRole().setPermissions(List.of(permission));
-            var givenUser = newGivenUser().setRoles(List.of(givenRole));
+            var givenUser = newGivenUser(newGivenRole(newGivenPermission()));
 
             var actual = systemUnderTest.save(givenUser);
             assistant.flush();
 
-            // assert user
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertEquals(1, (int) actual.getVersion());
-
-            // assert role
-            assertNotNull(actual.getRoles());
-            assertEquals(1, actual.getRoles().size());
-            assertTrue(actual.getRoles().getFirst().getId() > 0);
-            assertEquals(1, (int) actual.getRoles().getFirst().getVersion());
-
-            // assert permission
-            assertNotNull(actual.getRoles().getFirst().getPermissions());
-            assertEquals(1, actual.getRoles().getFirst().getPermissions().size());
-            assertTrue(actual.getRoles().getFirst().getPermissions().getFirst().getId() > 0);
-            assertEquals(0, (int) actual.getRoles().getFirst().getPermissions().getFirst().getVersion());
+            assertUser(actual, 1, 1);
+            assertRoles(actual.getRoles(), 1, new long[]{1}, new int[]{1});
+            actual.getRoles().forEach(role -> {
+                assertPermissions(role.getPermissions(), 1, new long[]{1}, new int[]{0});
+            });
         }
     }
 
@@ -113,12 +90,7 @@ public class UserRepositoryTest {
             var actual = systemUnderTest.saveAll(givenUsers);
             assistant.flush();
 
-            assertEquals(2, actual.size());
-            actual.forEach(actualItem -> {
-                assertNotNull(actualItem.getId());
-                assertTrue(actualItem.getId() > 0);
-                assertEquals(0, (int) actualItem.getVersion());
-            });
+           assertUsers(actual, 2, new long[]{1, 2}, new int[]{0, 0});
         }
     }
 
@@ -127,20 +99,15 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserId_whenFindById_thenMatchingUserShouldBeReturned() {
-            var givenUser = newGivenUser();
-            assistant.persist(givenUser);
-            assistant.flush();
-            assistant.clear();
+            var givenUser = persistedGivenUser(assistant);
             var givenId = givenUser.getId();
 
             var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
-            assertEquals(givenId, actual.get().getId());
-            assertFalse(actual.get().getUsername().isEmpty());
-            assertFalse(actual.get().getPassword().isEmpty());
-            assertFalse(actual.get().getEmail().isEmpty());
-            assertTrue(actual.get().isEnabled());
+            actual.ifPresent(actualItem -> {
+                assertUser(actualItem, 1, 0);
+            });
         }
     }
 
@@ -149,137 +116,106 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserDetails_whenUpdate_thenUpdatedPersistedUserShouldBeReturned() {
-            var user = newGivenUser();
-            assistant.persist(user);
-            assistant.flush();
-            assistant.clear();
-            assistant.detach(user);
+            var user = persistedGivenUser(assistant);
 
             var givenId = user.getId();
-            var givenVersion = user.getVersion();
             var givenUser = newGivenUser("newusername");
 
-            var toUpdate = assistant.find(User.class, givenId);
-            toUpdate.updateFrom(givenUser);
+            var actual = Assertions.assertDoesNotThrow(() -> {
+                var updatedUser = assistant.find(User.class, givenId);
+                updatedUser.updateFrom(givenUser);
+                var result = systemUnderTest.save(updatedUser);
+                assistant.flush();
+                return result;
+            });
 
-            var actual = systemUnderTest.save(toUpdate);
-            assistant.flush();
-
-            assertNotNull(actual);
-            assertEquals(user.getId(), actual.getId());
-            assertEquals(givenVersion + 1, actual.getVersion());
-            assertEquals("newusername", actual.getUsername());
-            assertNotNull(actual.getUpdatedBy());
-            assertNotNull(actual.getUpdatedAt());
+            assertUser(actual, 1, 1);
         }
 
         @Test
         void givenUserWithUpdatedRoles_whenUpdate_thenUserWithUpdatedRolesShouldBeReturned() {
             var role = newGivenRole("guest");
-            var user = newGivenUser().setRoles(List.of(role));
-            assistant.persist(user);
-            assistant.flush();
-            assistant.clear();
-            assistant.detach(user);
-            var roleId = role.getId();
-            var givenId = user.getId();
-            var givenVersion = user.getVersion();
+            var user = persistedGivenUser(assistant, role);
+            var givenRoleId = role.getId();
+            var givenUserId = user.getId();
 
-            role = assistant.find(Role.class, roleId);
+            role = assistant.find(Role.class, givenRoleId);
             var givenRole = newGivenRole("host");
-            var givenUser = newGivenUser().setRoles(List.of(role, givenRole));
-            var toUpdate = assistant.find(User.class, givenId);
-            toUpdate.updateRelations(givenUser);
+            var givenUser = newGivenUser(role, givenRole);
 
-            var actual = systemUnderTest.save(toUpdate);
-            assistant.flush();
+            var actual = assertDoesNotThrow(() -> {
+                var updatedUser = assistant.find(User.class, givenUserId);
+                updatedUser.updateRelations(givenUser);
+                var result = systemUnderTest.save(updatedUser);
+                assistant.flush();
+                return result;
+            });
 
-            assertNotNull(actual);
-            assertEquals(user.getId(), actual.getId());
-            assertEquals(givenVersion + 1, actual.getVersion());
-
-            assertNotNull(actual.getPermissions());
-            assertEquals(0, actual.getPermissions().size());
-            assertEquals(2, actual.getRoles().size());
-            assertEquals("guest", actual.getRoles().getFirst().getName());
-            assertEquals(0, actual.getRoles().getFirst().getVersion());
-            assertEquals("host", actual.getRoles().getLast().getName());
-            assertEquals(0, actual.getRoles().getLast().getVersion());
+           assertUser(actual, 1, 1);
+           assertRoles(actual.getRoles(), 2, new long[]{1, 2}, new int[]{0, 0});
         }
 
         @Test
         void givenUserWithUpdatedPermissions_whenUpdate_thenUserWithUpdatedPermissionsShouldBeReturned() {
             var permission = newGivenPermission("read");
-            var role = newGivenRole("guest").setPermissions(List.of(permission));
-            var user = newGivenUser().setRoles(List.of(role));
-            assistant.persist(user);
-            assistant.flush();
-            assistant.clear();
-            var permissionId = permission.getId();
-            var roleId = role.getId();
-            var givenId = user.getId();
-            var givenVersion = user.getVersion();
+            var role = newGivenRole(permission);
+            var user = persistedGivenUser(assistant, role);
 
-            permission = assistant.find(Permission.class, permissionId);
+            var givenPermissionId = permission.getId();
+            var givenRoleId = role.getId();
+            var givenUserId = user.getId();
+
+            permission = assistant.find(Permission.class, givenPermissionId);
             var givenPermission = newGivenPermission("write");
-            role = assistant.find(Role.class, roleId);
+            role = assistant.find(Role.class, givenRoleId);
             role.setPermissions(new ArrayList<>(List.of(permission, givenPermission)));
-            var givenUser = newGivenUser().setRoles(List.of(role));
-            var toUpdate = assistant.find(User.class, givenId);
-            toUpdate.updateRelations(givenUser);
+            var givenUser = newGivenUser(role);
 
-            var actual = systemUnderTest.save(toUpdate);
-            assistant.flush();
+            var actual = assertDoesNotThrow(() -> {
+                var updatedUser = assistant.find(User.class, givenUserId);
+                updatedUser.updateRelations(givenUser);
+                var result = systemUnderTest.save(updatedUser);
+                assistant.flush();
+                return result;
+            });
 
-            assertNotNull(actual);
-            assertEquals(user.getId(), actual.getId());
-            assertEquals(givenVersion, actual.getVersion());
-
-            assertEquals(1, actual.getRoles().size());
-            assertEquals("guest", actual.getRoles().getFirst().getName());
-            assertEquals(1, actual.getRoles().getFirst().getVersion());
-
-            assertNotNull(actual.getPermissions());
-            assertEquals(2, actual.getPermissions().size());
+            assertUser(actual, 1, 0);
+            assertRoles(actual.getRoles(), 1, new long[]{1}, new int[]{1});
+            actual.getRoles().forEach(roleItem -> {
+                assertPermissions(roleItem.getPermissions(), 2, new long[]{1, 2}, new int[]{0, 0});
+            });
         }
 
         @Test
         void givenUserWithUpdatedRolesAndPermissions_whenUpdate_thenUserWithUpdatedRolesAndPermissionsShouldBeReturned() {
             var permission = newGivenPermission("read");
-            var role = newGivenRole("guest").setPermissions(List.of(permission));
-            var user = newGivenUser().setRoles(List.of(role));
-            assistant.persist(user);
-            assistant.flush();
-            assistant.clear();
-            var permissionId = permission.getId();
-            var roleId = role.getId();
-            var givenId = user.getId();
-            var givenVersion = user.getVersion();
+            var role = newGivenRole("guest", permission);
+            var user = persistedGivenUser(assistant, role);
 
-            permission = assistant.find(Permission.class, permissionId);
+            var givenPermissionId = permission.getId();
+            var givenRoleId = role.getId();
+            var givenUserId = user.getId();
+
+            permission = assistant.find(Permission.class, givenPermissionId);
             var givenPermission = newGivenPermission("write");
-            role = assistant.find(Role.class, roleId);
+            role = assistant.find(Role.class, givenRoleId);
             role.setPermissions(new ArrayList<>(List.of(permission, givenPermission)));
-            var givenRole = newGivenRole("host").setPermissions(new ArrayList<>(List.of(permission, givenPermission)));
-            var givenUser = newGivenUser().setRoles(new ArrayList<>(List.of(role, givenRole)));
-            var toUpdate = assistant.find(User.class, givenId);
-            toUpdate.updateRelations(givenUser);
+            var givenRole = newGivenRole("host", permission, givenPermission);
+            var givenUser = newGivenUser(role, givenRole);
 
-            var actual = systemUnderTest.save(toUpdate);
-            assistant.flush();
+            var actual = assertDoesNotThrow(() -> {
+                var updatedUser = assistant.find(User.class, givenUserId);
+                updatedUser.updateRelations(givenUser);
+                var result = systemUnderTest.save(updatedUser);
+                assistant.flush();
+                return result;
+            });
 
-            assertNotNull(actual);
-            assertEquals(user.getId(), actual.getId());
-            assertEquals(givenVersion + 1, actual.getVersion());
-
-            assertEquals(2, actual.getRoles().size());
-            assertEquals("guest", actual.getRoles().getFirst().getName());
-            assertEquals(1, actual.getRoles().getFirst().getVersion());
-            assertEquals("host", actual.getRoles().getLast().getName());
-            assertEquals(1, actual.getRoles().getLast().getVersion());
-
-            assertNotNull(actual.getPermissions());
-            assertEquals(2, actual.getPermissions().size());
+            assertUser(actual, 1, 1);
+            assertRoles(actual.getRoles(), 2, new long[]{1, 2}, new int[]{1, 1});
+            actual.getRoles().forEach(roleItem -> {
+                assertPermissions(roleItem.getPermissions(), 2, new long[]{1, 2}, new int[]{0, 0});
+            });
         }
     }
 
@@ -288,10 +224,7 @@ public class UserRepositoryTest {
 
         @Test
         void givenExistingUserId_whenDeleteById_thenUserShouldBeDeletedSuccessfully() {
-            var givenUser = newGivenUser();
-            assistant.persist(givenUser);
-            assistant.flush();
-            assistant.clear();
+            var givenUser = persistedGivenUser(assistant);
             var givenId = givenUser.getId();
 
             var actual = assertDoesNotThrow(() -> {

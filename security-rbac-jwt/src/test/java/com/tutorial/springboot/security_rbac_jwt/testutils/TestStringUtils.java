@@ -2,9 +2,9 @@ package com.tutorial.springboot.security_rbac_jwt.testutils;
 
 import java.util.Random;
 
-public final class TestUtils {
+public final class TestStringUtils {
 
-    private TestUtils() {
+    private TestStringUtils() {
     }
 
     public static String generateString(int length) {
