@@ -3,8 +3,6 @@ package com.tutorial.springboot.security_rbac_jwt.testutils;
 import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
-import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
-import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 
 import java.util.Objects;
 import java.util.stream.Stream;

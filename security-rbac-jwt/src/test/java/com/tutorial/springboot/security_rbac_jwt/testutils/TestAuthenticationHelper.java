@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PASSWORD;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_USERNAME;
-import static java.time.LocalDateTime.now;
 
 @Component
 public class TestAuthenticationHelper {

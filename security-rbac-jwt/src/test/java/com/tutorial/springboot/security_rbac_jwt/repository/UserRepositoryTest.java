@@ -74,9 +74,7 @@ public class UserRepositoryTest {
 
             assertUser(actual, 1, 1);
             assertRoles(actual.getRoles(), 1, new long[]{1}, new int[]{1});
-            actual.getRoles().forEach(role -> {
-                assertPermissions(role.getPermissions(), 1, new long[]{1}, new int[]{0});
-            });
+            actual.getRoles().forEach(role -> assertPermissions(role.getPermissions(), 1, new long[]{1}, new int[]{0}));
         }
     }
 
@@ -105,9 +103,7 @@ public class UserRepositoryTest {
             var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
-            actual.ifPresent(actualItem -> {
-                assertUser(actualItem, 1, 0);
-            });
+            actual.ifPresent(actualItem -> assertUser(actualItem, 1, 0));
         }
     }
 
@@ -181,9 +177,7 @@ public class UserRepositoryTest {
 
             assertUser(actual, 1, 0);
             assertRoles(actual.getRoles(), 1, new long[]{1}, new int[]{1});
-            actual.getRoles().forEach(roleItem -> {
-                assertPermissions(roleItem.getPermissions(), 2, new long[]{1, 2}, new int[]{0, 0});
-            });
+            actual.getRoles().forEach(roleItem -> assertPermissions(roleItem.getPermissions(), 2, new long[]{1, 2}, new int[]{0, 0}));
         }
 
         @Test
@@ -213,9 +207,7 @@ public class UserRepositoryTest {
 
             assertUser(actual, 1, 1);
             assertRoles(actual.getRoles(), 2, new long[]{1, 2}, new int[]{1, 1});
-            actual.getRoles().forEach(roleItem -> {
-                assertPermissions(roleItem.getPermissions(), 2, new long[]{1, 2}, new int[]{0, 0});
-            });
+            actual.getRoles().forEach(roleItem -> assertPermissions(roleItem.getPermissions(), 2, new long[]{1, 2}, new int[]{0, 0}));
         }
     }
 

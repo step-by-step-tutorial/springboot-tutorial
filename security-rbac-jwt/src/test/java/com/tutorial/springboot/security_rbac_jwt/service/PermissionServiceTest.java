@@ -72,9 +72,7 @@ public class PermissionServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            actual.ifPresent(dto -> {
-                DtoAssertionUtils.assertPermission(dto, 1, 0);
-            });
+            actual.ifPresent(dto -> DtoAssertionUtils.assertPermission(dto, 1, 0));
         }
 
         @Test

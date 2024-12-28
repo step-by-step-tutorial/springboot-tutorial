@@ -96,9 +96,7 @@ public class PermissionRepositoryTest {
             var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
-            actual.ifPresent(actualItem -> {
-                assertPermission(actualItem, 1, 0);
-            });
+            actual.ifPresent(actualItem -> assertPermission(actualItem, 1, 0));
         }
     }
 

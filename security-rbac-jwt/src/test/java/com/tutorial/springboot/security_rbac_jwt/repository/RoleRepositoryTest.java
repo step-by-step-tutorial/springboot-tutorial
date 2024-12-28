@@ -140,9 +140,7 @@ public class RoleRepositoryTest {
             var actual = systemUnderTest.findById(givenId);
 
             assertTrue(actual.isPresent());
-            actual.ifPresent(actualItem -> {
-                assertRole(actualItem, 1, 0);
-            });
+            actual.ifPresent(actualItem -> assertRole(actualItem, 1, 0));
         }
     }
 

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -35,8 +34,6 @@ public class UserServiceTest {
 
     @Autowired
     private TestAuthenticationHelper testAuthHelper;
-    @Autowired
-    private UserService userService;
 
     @BeforeEach
     void setup() {
@@ -98,9 +95,7 @@ public class UserServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            actual.ifPresent(dto -> {
-                DtoAssertionUtils.assertUser(dto, 1, 0);
-            });
+            actual.ifPresent(dto -> DtoAssertionUtils.assertUser(dto, 1, 0));
         }
 
         @Test

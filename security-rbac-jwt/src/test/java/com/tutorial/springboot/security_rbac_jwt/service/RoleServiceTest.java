@@ -90,9 +90,7 @@ public class RoleServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            actual.ifPresent(dto -> {
-                DtoAssertionUtils.assertRole(dto, 1, 0);
-            });
+            actual.ifPresent(dto -> DtoAssertionUtils.assertRole(dto, 1, 0));
         }
 
         @Test
