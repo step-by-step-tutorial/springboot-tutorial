@@ -2,7 +2,8 @@ package com.tutorial.springboot.security_rbac_jwt.service;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.UserService;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
+import com.tutorial.springboot.security_rbac_jwt.testutils.DtoAssertionUtils;
+import com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils;
 import com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,11 +11,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.persistedGivenUser;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,24 +35,12 @@ public class UserServiceTest {
 
     @Autowired
     private TestAuthenticationHelper testAuthHelper;
+    @Autowired
+    private UserService userService;
 
     @BeforeEach
     void setup() {
         login();
-    }
-
-    private Long newGivenId() {
-        var em = assistant.createEntityManager();
-        var transaction = em.getTransaction();
-
-        transaction.begin();
-        var user = EntityFixture.newGivenUser();
-        em.persist(user);
-        em.flush();
-        em.clear();
-        transaction.commit();
-
-        return user.getId();
     }
 
     @Nested
@@ -62,20 +54,28 @@ public class UserServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertTrue(actual.get() > 0);
+            actual.ifPresent(id -> {
+                var user = findUserById(assistant, id);
+                EntityAssertionUtils.assertUser(user, 1, 0);
+                assertNotNull(user.getRoles());
+                assertTrue(user.getRoles().isEmpty());
+            });
+
         }
 
         @Test
         void givenUserWithRoleAndPermission_thenReturnId() {
-            var givenRole = newGivenRole();
-            var givenUser = newGivenUser();
-            givenUser.getRoles().add(givenRole);
+            var givenUser = newGivenUser(newGivenRole());
 
             var actual = systemUnderTest.save(givenUser);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertTrue(actual.get() > 0);
+            actual.ifPresent(id -> {
+                var user = findUserById(assistant, id);
+                EntityAssertionUtils.assertUser(user, 1, 1);
+                EntityAssertionUtils.assertRoles(user.getRoles(), 1, new long[]{1}, new int[]{0});
+            });
         }
 
         @Test
@@ -92,14 +92,15 @@ public class UserServiceTest {
 
         @Test
         void givenUserId_thenReturnUser() {
-            var givenId = newGivenId();
+            var givenId = persistedGivenUser(assistant).getId();
 
             var actual = systemUnderTest.findById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            assertFalse(actual.get().getUsername().isEmpty());
-            assertFalse(actual.get().getEmail().isEmpty());
+            actual.ifPresent(dto -> {
+                DtoAssertionUtils.assertUser(dto, 1, 0);
+            });
         }
 
         @Test
@@ -116,20 +117,21 @@ public class UserServiceTest {
 
         @Test
         void givenUser_thenUpdateSuccessfully() {
-            var givenId = newGivenId();
+            var givenId = persistedGivenUser(assistant).getId();
             var givenUser = newGivenUser();
             givenUser.setUsername("newusername");
             givenUser.setEmail("newusername@email.com");
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.update(givenId, givenUser);
-                return systemUnderTest.findById(givenId).orElseThrow();
+                return findUserById(assistant, givenId);
             });
 
-            assertNotNull(actual);
+            EntityAssertionUtils.assertUser(actual, 1, 1);
+            assertNotNull(actual.getRoles());
+            assertTrue(actual.getRoles().isEmpty());
             assertEquals("newusername", actual.getUsername());
             assertEquals("newusername@email.com", actual.getEmail());
-            assertTrue(actual.isEnabled());
         }
 
         @Test
@@ -146,15 +148,14 @@ public class UserServiceTest {
 
         @Test
         void givenUserId_thenCompleteSuccessfully() {
-            var givenId = newGivenId();
+            var givenId = persistedGivenUser(assistant).getId();
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteById(givenId);
-                return systemUnderTest.findById(givenId);
+                return findUserById(assistant, givenId);
             });
 
-            assertNotNull(actual);
-            assertFalse(actual.isPresent());
+            assertNull(actual);
         }
 
         @Test
@@ -176,9 +177,7 @@ public class UserServiceTest {
 
             var actual = systemUnderTest.findByUsername(givenUserUsername);
 
-            assertNotNull(actual);
-            assertFalse(actual.getUsername().isEmpty());
-            assertFalse(actual.getEmail().isEmpty());
+            DtoAssertionUtils.assertUser(actual, 1, 0);
         }
 
         @Test
@@ -191,23 +190,19 @@ public class UserServiceTest {
 
         @Test
         void givenValidPassword_whenChangingPassword_thenUpdateSuccessfully() {
-            var givenUser = testAuthHelper.signupAndLogin();
-            var givenPassword = givenUser.getPassword();
+            var passwordEncoder = new BCryptPasswordEncoder();
+            var user = testAuthHelper.signupAndLogin();
+            var givenUsername = user.getUsername();
+            var givenCurrentPassword = user.getPassword();
+            var givenNewPassword = "updated_password";
 
             var actual = assertDoesNotThrow(() -> {
-
-                systemUnderTest.changePassword(givenUser.getUsername(), givenPassword, "updated_password");
-                var em = assistant.createEntityManager();
-                var transaction = em.getTransaction();
-                transaction.begin();
-                var user = em.find(User.class, givenUser.getId());
-                transaction.commit();
-                em.close();
-                return user;
+                systemUnderTest.changePassword(givenUsername, givenCurrentPassword, givenNewPassword);
+                return findUserById(assistant, user.getId());
             });
 
-            assertNotNull(actual);
-            assertFalse(actual.getPassword().isEmpty());
+            EntityAssertionUtils.assertUser(actual, 1, 1);
+            passwordEncoder.matches(givenNewPassword, actual.getPassword());
         }
 
         @Test
@@ -219,4 +214,16 @@ public class UserServiceTest {
             assertFalse(actual.getMessage().isEmpty());
         }
     }
+
+    private User findUserById(EntityManagerFactory emf, Long id) {
+        var em = emf.createEntityManager();
+        var transaction = em.getTransaction();
+        transaction.begin();
+        var user = em.find(User.class, id);
+        em.flush();
+        em.clear();
+        transaction.commit();
+        return user;
+    }
+
 }

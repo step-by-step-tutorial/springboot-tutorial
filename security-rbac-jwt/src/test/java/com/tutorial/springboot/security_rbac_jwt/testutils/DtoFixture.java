@@ -16,6 +16,39 @@ public final class DtoFixture {
     private DtoFixture() {
     }
 
+    public static PermissionDto newGivenPermission() {
+        return new PermissionDto()
+                .setName("permission")
+                .setDescription("permission description")
+                .setVersion(0);
+    }
+
+    public static PermissionDto newGivenPermission(String name) {
+        return new PermissionDto()
+                .setName(name)
+                .setDescription(name + "description")
+                .setVersion(0);
+    }
+
+    public static RoleDto newGivenRole() {
+        return new RoleDto()
+                .setName("role")
+                .setDescription("role description")
+                .setVersion(0);
+    }
+
+    public static RoleDto newGivenRole(String name) {
+        return new RoleDto()
+                .setName(name)
+                .setDescription(name + "description")
+                .setVersion(0);
+    }
+
+    public static RoleDto newGivenRole(PermissionDto... permissions) {
+        return newGivenRole()
+                .setPermissions(Stream.of(permissions).collect(toList()));
+    }
+
     public static UserDto newGivenUser() {
         return new UserDto()
                 .setUsername("username")
@@ -35,39 +68,14 @@ public final class DtoFixture {
                 .setVersion(0);
     }
 
-    public static RoleDto newGivenRole() {
-        return new RoleDto()
-                .setName("role")
-                .setDescription("role description")
+    public static UserDto newGivenUser(RoleDto... roles) {
+        return new UserDto()
+                .setUsername("username")
+                .setPassword("password")
+                .setEmail("username@email.com")
+                .setEnabled(true)
+                .setRoles(Stream.of(roles).collect(toList()))
                 .setVersion(0);
     }
 
-    public static RoleDto newGivenRole(String name) {
-        return new RoleDto()
-                .setName(name)
-                .setDescription("role description")
-                .setVersion(0);
-    }
-
-    public static RoleDto newGivenRole(PermissionDto... permissions) {
-        return new RoleDto()
-                .setName("role")
-                .setDescription("role description")
-                .setPermissions(Stream.of(permissions).collect(toList()))
-                .setVersion(0);
-    }
-
-    public static PermissionDto newGivenPermission() {
-        return new PermissionDto()
-                .setName("permission")
-                .setDescription("permission description")
-                .setVersion(0);
-    }
-
-    public static PermissionDto newGivenPermission(String name) {
-        return new PermissionDto()
-                .setName(name)
-                .setDescription("permission description")
-                .setVersion(0);
-    }
 }

@@ -66,8 +66,7 @@ public class RoleServiceTest {
             actual.ifPresent(id -> {
                 var role = findRoleById(assistant, id);
                 EntityAssertionUtils.assertRole(role, 1, 1);
-                assertNotNull(role.getPermissions());
-                assertEquals(1, role.getPermissions().size());
+                EntityAssertionUtils.assertPermissions(role.getPermissions(), 1, new long[]{1}, new int[]{0});
             });
         }
 

@@ -48,9 +48,11 @@ public class TestAuthenticationHelper {
 
         transaction.begin();
         var user = new User()
-                .setUsername(username).setPassword(encodedPassword).setEmail(email).setEnabled(true)
-                .setCreatedBy("unittest").setCreatedAt(now())
-                .setVersion(0);
+                .setUsername(username)
+                .setPassword(encodedPassword)
+                .setEmail(email)
+                .setEnabled(true);
+
         em.persist(user);
         em.flush();
         em.clear();

@@ -32,20 +32,21 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User findByUsername(String username) {
+    public UserDto findByUsername(String username) {
         shouldBeNotNullOrEmpty(username, "username is wrong");
         return ((UserRepository) repository).findByUsername(username)
+                .map(transformer::toDto)
                 .orElseThrow();
     }
 
-    public void changePassword(String username, String password, String newPassword) {
+    public void changePassword(String username, String currentPassword, String newPassword) {
         shouldBeNotNullOrEmpty(username, "credentials are wrong");
-        shouldBeNotNullOrEmpty(password, "credentials are wrong");
+        shouldBeNotNullOrEmpty(currentPassword, "credentials are wrong");
         shouldBeNotNullOrEmpty(newPassword, "credentials are wrong");
 
-        var user = findByUsername(getCurrentUsername());
+        var user = ((UserRepository) repository).findByUsername(username).orElseThrow();
 
-        if (user.getUsername().equals(username) && passwordEncoder.matches(password, user.getPassword())) {
+        if (user.getUsername().equals(username) && passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             repository.save(user);
         } else {

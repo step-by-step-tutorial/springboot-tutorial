@@ -1,5 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tutorial.springboot.security_rbac_jwt.validation.SaveValidation;
 import com.tutorial.springboot.security_rbac_jwt.validation.UpdateValidation;
 import jakarta.validation.constraints.NotBlank;
@@ -65,5 +66,14 @@ public class UserDto extends AbstractDto<Long, UserDto> {
     public UserDto setRoles(List<RoleDto> roles) {
         this.roles = roles;
         return this;
+    }
+
+    @JsonIgnore
+    public List<String> getPermissions() {
+        return roles.stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(PermissionDto::getName)
+                .distinct()
+                .toList();
     }
 }

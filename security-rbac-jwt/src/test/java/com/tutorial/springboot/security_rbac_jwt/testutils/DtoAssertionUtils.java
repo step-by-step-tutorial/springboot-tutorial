@@ -57,7 +57,6 @@ public final class DtoAssertionUtils {
         assertEquals(expectedId, actual.getId());
         assertEquals(expectedVersion, actual.getVersion().intValue());
         assertFalse(actual.getUsername().isBlank());
-        assertFalse(actual.getPassword().isBlank());
         assertFalse(actual.getEmail().isBlank());
         assertTrue(actual.isEnabled());
         assertAuditFields(actual);

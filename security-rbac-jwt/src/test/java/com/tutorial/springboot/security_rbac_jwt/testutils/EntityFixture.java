@@ -179,6 +179,20 @@ public final class EntityFixture {
         return user;
     }
 
+    public static User persistedGivenUser(EntityManagerFactory emf) {
+        var em = emf.createEntityManager();
+        var transaction = em.getTransaction();
+
+        transaction.begin();
+        var user = EntityFixture.newGivenUser();
+        em.persist(user);
+        em.flush();
+        em.clear();
+        transaction.commit();
+
+        return user;
+    }
+
     public static class InvalidPermissions implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
