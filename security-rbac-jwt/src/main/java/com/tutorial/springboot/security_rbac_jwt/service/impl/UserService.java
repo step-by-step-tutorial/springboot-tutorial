@@ -11,7 +11,6 @@ import com.tutorial.springboot.security_rbac_jwt.transformer.UserTransformer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;
 import static com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 
 @Service

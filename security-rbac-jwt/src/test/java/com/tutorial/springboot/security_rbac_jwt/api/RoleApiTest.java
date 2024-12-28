@@ -2,10 +2,12 @@ package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
+import com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleDtoAssertionUtils;
+import com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityAssertionUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import jakarta.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleDtoFixture.newGivenRole;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityFixture.findRoleById;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityFixture.persistedGivenRole;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
@@ -38,19 +42,9 @@ public class RoleApiTest {
     @Autowired
     private EntityManagerFactory assistant;
 
-    private Role insertRole() {
+    @BeforeEach
+    void setUp() {
         login();
-        var em = assistant.createEntityManager();
-        var transaction = em.getTransaction();
-
-        transaction.begin();
-        var role = EntityFixture.newGivenRole();
-        em.persist(role);
-        em.flush();
-        em.clear();
-        transaction.commit();
-
-        return role;
     }
 
     @Nested
@@ -100,7 +94,7 @@ public class RoleApiTest {
         @Test
         void whenIdExists_thenReturnRoleWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
-            var role = insertRole();
+            var role = persistedGivenRole(assistant);
             var givenId = role.getId();
 
             RestAssured.given()
@@ -152,8 +146,7 @@ public class RoleApiTest {
         @Test
         void whenUpdatedRoleIsProvided_thenUpdateAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var role = insertRole();
-            var givenId = role.getId();
+            var givenId = persistedGivenRole(assistant).getId();
             var givenBody = newGivenRole("updated_value");
             givenBody.setId(givenId);
 
@@ -168,12 +161,9 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            em.getTransaction().begin();
-            var actual = em.find(Role.class, givenId);
-            em.getTransaction().commit();
+            var actual = findRoleById(assistant, givenId);
 
-            assertNotNull(actual);
+            RoleEntityAssertionUtils.assertRole(actual, 1, 1);
             assertEquals("updated_value", actual.getName());
         }
     }
@@ -184,8 +174,7 @@ public class RoleApiTest {
         @Test
         void whenIdExists_thenDeleteRoleAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var role = insertRole();
-            var givenId = role.getId();
+            var givenId = persistedGivenRole(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -197,19 +186,14 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            em.getTransaction().begin();
-            var actual = em.find(Role.class, givenId);
-            em.getTransaction().commit();
-
+            var actual = findRoleById(assistant, givenId);
             assertNull(actual);
         }
 
         @Test
         void whenValidListOfIdsProvided_thenDeleteRolesAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var role = insertRole();
-            var givenId = role.getId();
+            var givenId = persistedGivenRole(assistant).getId();
             var givenBody = List.of(givenId);
 
             RestAssured.given()
@@ -222,10 +206,7 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            em.getTransaction().begin();
-            var actual = em.find(Role.class, givenId);
-            em.getTransaction().commit();
+            var actual = findRoleById(assistant, givenId);
 
             assertNull(actual);
         }
@@ -233,8 +214,7 @@ public class RoleApiTest {
         @Test
         void whenNoDataProvided_thenDeleteAllRolesAndReturnNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var role = insertRole();
-            var givenId = role.getId();
+            var givenId = persistedGivenRole(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -245,10 +225,7 @@ public class RoleApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            em.getTransaction().begin();
-            var actual = em.find(Role.class, givenId);
-            em.getTransaction().commit();
+            var actual = findRoleById(assistant, givenId);
 
             assertNull(actual);
         }
@@ -260,8 +237,7 @@ public class RoleApiTest {
         @Test
         void whenIdExists_thenReturnOkStatus() {
             var givenToken = requestToGetNewToken(port);
-            var role = insertRole();
-            var givenId = role.getId();
+            var givenId = persistedGivenRole(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)

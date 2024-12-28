@@ -1,6 +1,5 @@
 package com.tutorial.springboot.security_rbac_jwt.entity;
 
-import com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -10,12 +9,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;
 
 @SuppressWarnings("unchecked")
 @MappedSuperclass

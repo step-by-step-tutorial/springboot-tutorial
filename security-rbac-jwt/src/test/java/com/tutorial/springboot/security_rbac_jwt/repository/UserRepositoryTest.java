@@ -3,6 +3,7 @@ package com.tutorial.springboot.security_rbac_jwt.repository;
 import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
+import com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,9 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils.*;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityAssertionUtils.assertPermissions;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityAssertionUtils.assertRoles;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityFixture.newGivenRole;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils.assertUser;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils.assertUsers;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.newGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.persistedGivenUser;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -88,7 +95,7 @@ public class UserRepositoryTest {
             var actual = systemUnderTest.saveAll(givenUsers);
             assistant.flush();
 
-           assertUsers(actual, 2, new long[]{1, 2}, new int[]{0, 0});
+            assertUsers(actual, 2, new long[]{1, 2}, new int[]{0, 0});
         }
     }
 
@@ -97,8 +104,7 @@ public class UserRepositoryTest {
 
         @Test
         void givenUserId_whenFindById_thenMatchingUserShouldBeReturned() {
-            var givenUser = persistedGivenUser(assistant);
-            var givenId = givenUser.getId();
+            var givenId = persistedGivenUser(assistant).getId();
 
             var actual = systemUnderTest.findById(givenId);
 
@@ -147,8 +153,8 @@ public class UserRepositoryTest {
                 return result;
             });
 
-           assertUser(actual, 1, 1);
-           assertRoles(actual.getRoles(), 2, new long[]{1, 2}, new int[]{0, 0});
+            assertUser(actual, 1, 1);
+            assertRoles(actual.getRoles(), 2, new long[]{1, 2}, new int[]{0, 0});
         }
 
         @Test
@@ -232,7 +238,7 @@ public class UserRepositoryTest {
     class ValidationTest {
 
         @ParameterizedTest
-        @ArgumentsSource(InvalidUsers.class)
+        @ArgumentsSource(UserEntityFixture.InvalidUsers.class)
         void givenInvalidUser_whenSave_thenRuntimeExceptionShouldBeThrown(User givenUser) {
 
             var actual = assertThrows(RuntimeException.class, () -> {

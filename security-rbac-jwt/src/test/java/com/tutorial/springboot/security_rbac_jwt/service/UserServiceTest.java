@@ -1,9 +1,9 @@
 package com.tutorial.springboot.security_rbac_jwt.service;
 
-import com.tutorial.springboot.security_rbac_jwt.entity.User;
+import com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityAssertionUtils;
+import com.tutorial.springboot.security_rbac_jwt.fixture.user.UserDtoAssertionUtils;
+import com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.UserService;
-import com.tutorial.springboot.security_rbac_jwt.testutils.DtoAssertionUtils;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils;
 import com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,9 +15,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenRole;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenUser;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.persistedGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleDtoFixture.newGivenRole;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserDtoFixture.newGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.findUserById;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.persistedGivenUser;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,7 +54,7 @@ public class UserServiceTest {
             assertTrue(actual.isPresent());
             actual.ifPresent(id -> {
                 var user = findUserById(assistant, id);
-                EntityAssertionUtils.assertUser(user, 1, 0);
+                UserEntityAssertionUtils.assertUser(user, 1, 0);
                 assertNotNull(user.getRoles());
                 assertTrue(user.getRoles().isEmpty());
             });
@@ -70,8 +71,8 @@ public class UserServiceTest {
             assertTrue(actual.isPresent());
             actual.ifPresent(id -> {
                 var user = findUserById(assistant, id);
-                EntityAssertionUtils.assertUser(user, 1, 1);
-                EntityAssertionUtils.assertRoles(user.getRoles(), 1, new long[]{1}, new int[]{0});
+                UserEntityAssertionUtils.assertUser(user, 1, 1);
+                RoleEntityAssertionUtils.assertRoles(user.getRoles(), 1, new long[]{1}, new int[]{0});
             });
         }
 
@@ -95,7 +96,7 @@ public class UserServiceTest {
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            actual.ifPresent(dto -> DtoAssertionUtils.assertUser(dto, 1, 0));
+            actual.ifPresent(dto -> UserDtoAssertionUtils.assertUser(dto, 1, 0));
         }
 
         @Test
@@ -122,7 +123,7 @@ public class UserServiceTest {
                 return findUserById(assistant, givenId);
             });
 
-            EntityAssertionUtils.assertUser(actual, 1, 1);
+            UserEntityAssertionUtils.assertUser(actual, 1, 1);
             assertNotNull(actual.getRoles());
             assertTrue(actual.getRoles().isEmpty());
             assertEquals("newusername", actual.getUsername());
@@ -172,7 +173,7 @@ public class UserServiceTest {
 
             var actual = systemUnderTest.findByUsername(givenUserUsername);
 
-            DtoAssertionUtils.assertUser(actual, 1, 0);
+            UserDtoAssertionUtils.assertUser(actual, 1, 0);
         }
 
         @Test
@@ -196,7 +197,7 @@ public class UserServiceTest {
                 return findUserById(assistant, user.getId());
             });
 
-            EntityAssertionUtils.assertUser(actual, 1, 1);
+            UserEntityAssertionUtils.assertUser(actual, 1, 1);
             passwordEncoder.matches(givenNewPassword, actual.getPassword());
         }
 
@@ -208,17 +209,6 @@ public class UserServiceTest {
             assertNotNull(actual);
             assertFalse(actual.getMessage().isEmpty());
         }
-    }
-
-    private User findUserById(EntityManagerFactory emf, Long id) {
-        var em = emf.createEntityManager();
-        var transaction = em.getTransaction();
-        transaction.begin();
-        var user = em.find(User.class, id);
-        em.flush();
-        em.clear();
-        transaction.commit();
-        return user;
     }
 
 }

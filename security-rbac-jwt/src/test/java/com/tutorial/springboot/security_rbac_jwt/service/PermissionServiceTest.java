@@ -1,11 +1,8 @@
 package com.tutorial.springboot.security_rbac_jwt.service;
 
-import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionDtoAssertionUtils;
+import com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityAssertionUtils;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionService;
-import com.tutorial.springboot.security_rbac_jwt.testutils.DtoAssertionUtils;
-import com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionDtoFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.findPermissionById;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.persistedGivenPermission;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +40,7 @@ public class PermissionServiceTest {
 
         @Test
         void givenValidPermission_whenSave_thenReturnsValidId() {
-            var givenPermission = DtoFixture.newGivenPermission();
+            var givenPermission = newGivenPermission();
 
             var actual = systemUnderTest.save(givenPermission);
 
@@ -48,7 +48,7 @@ public class PermissionServiceTest {
             assertTrue(actual.isPresent());
             actual.ifPresent(id -> {
                 var permission = findPermissionById(assistant, id);
-                EntityAssertionUtils.assertPermission(permission, 1, 0);
+                PermissionEntityAssertionUtils.assertPermission(permission, 1, 0);
             });
         }
 
@@ -66,13 +66,13 @@ public class PermissionServiceTest {
 
         @Test
         void givenExistingId_whenFindById_thenReturnsPermission() {
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
+            var givenId = persistedGivenPermission(assistant).getId();
 
             var actual = systemUnderTest.findById(givenId);
 
             assertNotNull(actual);
             assertTrue(actual.isPresent());
-            actual.ifPresent(dto -> DtoAssertionUtils.assertPermission(dto, 1, 0));
+            actual.ifPresent(dto -> PermissionDtoAssertionUtils.assertPermission(dto, 1, 0));
         }
 
         @Test
@@ -89,8 +89,8 @@ public class PermissionServiceTest {
 
         @Test
         void givenValidIdAndUpdatedPermission_whenUpdate_thenSavesSuccessfully() {
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
-            var givenPermission = DtoFixture.newGivenPermission("updated_value");
+            var givenId = persistedGivenPermission(assistant).getId();
+            var givenPermission = newGivenPermission("updated_value");
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.update(givenId, givenPermission);
@@ -98,7 +98,7 @@ public class PermissionServiceTest {
             });
 
             assertNotNull(actual);
-            EntityAssertionUtils.assertPermission(actual, 1, 1);
+            PermissionEntityAssertionUtils.assertPermission(actual, 1, 1);
             assertEquals("updated_value", actual.getName());
         }
 
@@ -116,7 +116,7 @@ public class PermissionServiceTest {
 
         @Test
         void givenExistingId_whenDeleteById_thenRemovesSuccessfully() {
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
+            var givenId = persistedGivenPermission(assistant).getId();
 
             var actual = assertDoesNotThrow(() -> {
                 systemUnderTest.deleteById(givenId);
@@ -135,14 +135,4 @@ public class PermissionServiceTest {
         }
     }
 
-    private Permission findPermissionById(EntityManagerFactory emf, Long id) {
-        var em = emf.createEntityManager();
-        var transaction = em.getTransaction();
-        transaction.begin();
-        var permission = em.find(Permission.class, id);
-        em.flush();
-        em.clear();
-        transaction.commit();
-        return permission;
-    }
 }

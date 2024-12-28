@@ -39,7 +39,7 @@ public final class TestTokenUtils {
                 .jsonPath().getString("token");
     }
 
-    public static int saveUserThroughApi(int port, UserDto user) {
+    public static long saveUserThroughApi(int port, UserDto user) {
         var givenToken = requestToGetNewToken(port);
 
         var userId = RestAssured.given()
@@ -54,7 +54,7 @@ public final class TestTokenUtils {
                 .body("", notNullValue())
                 .extract().asString();
 
-        return Integer.parseInt(userId);
+        return Long.parseLong(userId);
 
     }
 

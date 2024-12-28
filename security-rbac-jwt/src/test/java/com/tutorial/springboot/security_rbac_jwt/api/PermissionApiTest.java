@@ -1,9 +1,7 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.PermissionDto;
-import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
+import com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityAssertionUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import jakarta.persistence.EntityManagerFactory;
@@ -19,7 +17,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionDtoFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.findPermissionById;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.persistedGivenPermission;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
@@ -92,7 +92,7 @@ public class PermissionApiTest {
         @Test
         void whenFindPermissionById_thenReturnsPermissionDtoAndStatusOk() {
             var givenToken = requestToGetNewToken(port);
-            var permission = EntityFixture.persistedGivenPermission(assistant);
+            var permission = persistedGivenPermission(assistant);
             var givenId = permission.getId();
 
             RestAssured.given()
@@ -152,7 +152,7 @@ public class PermissionApiTest {
         @Test
         void whenUpdateValidPermissionDto_thenReturnsStatusNoContent() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
+            var givenId = persistedGivenPermission(assistant).getId();
             var givenBody = newGivenPermission("updated_value").setId(givenId);
 
             RestAssured.given()
@@ -168,7 +168,7 @@ public class PermissionApiTest {
 
             var actual = findPermissionById(assistant, givenId);
             assertNotNull(actual);
-            EntityAssertionUtils.assertPermission(actual, 1, 1);
+            PermissionEntityAssertionUtils.assertPermission(actual, 1, 1);
             assertEquals("updated_value", actual.getName());
         }
     }
@@ -179,7 +179,7 @@ public class PermissionApiTest {
         @Test
         void whenDeletePermissionById_thenReturnsStatusNoContent() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
+            var givenId = persistedGivenPermission(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -198,7 +198,7 @@ public class PermissionApiTest {
         @Test
         void whenDeletePermissionBatchByIdList_thenReturnsStatusNoContent() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
+            var givenId = persistedGivenPermission(assistant).getId();
             var givenBody = List.of(givenId);
 
             RestAssured.given()
@@ -218,7 +218,7 @@ public class PermissionApiTest {
         @Test
         void whenDeleteAllPermissions_thenReturnsStatusNoContentAndClearsDatabase() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
+            var givenId = persistedGivenPermission(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -240,7 +240,7 @@ public class PermissionApiTest {
         @Test
         void whenPermissionExistsById_thenReturnsStatusOk() {
             var givenToken = requestToGetNewToken(port);
-            var givenId = EntityFixture.persistedGivenPermission(assistant).getId();
+            var givenId = persistedGivenPermission(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -308,14 +308,4 @@ public class PermissionApiTest {
         }
     }
 
-    private Permission findPermissionById(EntityManagerFactory emf, Long id) {
-        var em = emf.createEntityManager();
-        var transaction = em.getTransaction();
-        transaction.begin();
-        var permission = em.find(Permission.class, id);
-        em.flush();
-        em.clear();
-        transaction.commit();
-        return permission;
-    }
 }

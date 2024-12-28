@@ -10,14 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.*;
 import static com.tutorial.springboot.security_rbac_jwt.util.ReflectionUtils.identifyType;
-import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;
 import static com.tutorial.springboot.security_rbac_jwt.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 

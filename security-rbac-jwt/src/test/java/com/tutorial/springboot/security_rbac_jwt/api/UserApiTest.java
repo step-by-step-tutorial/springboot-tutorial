@@ -3,10 +3,12 @@ package com.tutorial.springboot.security_rbac_jwt.api;
 import com.tutorial.springboot.security_rbac_jwt.dto.ChangeCredentialsDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
-import com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture;
+import com.tutorial.springboot.security_rbac_jwt.fixture.user.UserDtoFixture;
+import com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import jakarta.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.DtoFixture.newGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserDtoFixture.newGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils.assertUser;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.findUserById;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.persistedGivenUser;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_HOSTNAME;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
@@ -41,19 +46,9 @@ public class UserApiTest {
     @Autowired
     private EntityManagerFactory assistant;
 
-    private User insertUser() {
+    @BeforeEach
+    void setUp() {
         login();
-        var em = assistant.createEntityManager();
-        var transaction = em.getTransaction();
-
-        transaction.begin();
-        var user = EntityFixture.newGivenUser();
-        em.persist(user);
-        em.flush();
-        em.clear();
-        transaction.commit();
-
-        return user;
     }
 
     @Nested
@@ -102,7 +97,7 @@ public class UserApiTest {
         @Test
         void whenFindingUserById_thenReturnsUserWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
-            var givenUser = insertUser();
+            var givenUser = persistedGivenUser(assistant);
             var givenId = givenUser.getId();
 
             RestAssured.given()
@@ -118,6 +113,10 @@ public class UserApiTest {
                     .body("email", equalTo(givenUser.getEmail()));
         }
 
+        /**
+         * Three users inserted into database through {@code data.sql} file
+         * before loading application context.
+         */
         @Test
         void whenFindingAllUsers_thenReturnsUsersListWithOkStatus() {
             var givenToken = requestToGetNewToken(port);
@@ -132,6 +131,10 @@ public class UserApiTest {
                     .body("size()", is(3));
         }
 
+        /**
+         * Three users inserted into database through {@code data.sql} file
+         * before loading application context.
+         */
         @Test
         void whenFindingUsersByPageAndSize_thenReturnsPaginatedUsersList() {
             var givenToken = requestToGetNewToken(port);
@@ -156,8 +159,7 @@ public class UserApiTest {
         @Test
         void whenUpdatingUser_thenReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var user = insertUser();
-            var givenId = user.getId();
+            var givenId = persistedGivenUser(assistant).getId();
             var givenBody = newGivenUser()
                     .setId(givenId)
                     .setUsername("newusername")
@@ -174,16 +176,11 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            var transaction = em.getTransaction();
-            transaction.begin();
-            var actual = em.find(User.class, givenId);
-            transaction.commit();
-
-            assertNotNull(actual);
+            var actual = findUserById(assistant, givenId);
+            assertUser(actual, 1, 1);
             assertEquals("newusername", actual.getUsername());
             assertEquals("newusername@email.com", actual.getEmail());
-            assertTrue(actual.isEnabled());
+
         }
     }
 
@@ -193,8 +190,7 @@ public class UserApiTest {
         @Test
         void whenDeletingUserById_thenReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var user = insertUser();
-            var givenId = user.getId();
+            var givenId = persistedGivenUser(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -206,20 +202,14 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            var transaction = em.getTransaction();
-            transaction.begin();
-            var actual = em.find(User.class, givenId);
-            transaction.commit();
-
+            var actual = findUserById(assistant, givenId);
             assertNull(actual);
         }
 
         @Test
         void whenDeletingListOfUserIds_thenReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var user = insertUser();
-            var givenId = user.getId();
+            var givenId = persistedGivenUser(assistant).getId();
             var givenBody = List.of(givenId);
 
             RestAssured.given()
@@ -232,20 +222,14 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            var transaction = em.getTransaction();
-            transaction.begin();
-            var actual = em.find(User.class, givenId);
-            transaction.commit();
-
+            var actual = findUserById(assistant, givenId);
             assertNull(actual);
         }
 
         @Test
         void whenDeletingAllUsers_thenDeletesEverythingAndReturnsNoContentStatus() {
             var givenToken = requestToGetNewToken(port);
-            var user = insertUser();
-            var givenId = user.getId();
+            var givenId = persistedGivenUser(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -256,12 +240,7 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            var transaction = em.getTransaction();
-            transaction.begin();
-            var actual = em.find(User.class, givenId);
-            transaction.commit();
-
+            var actual = findUserById(assistant, givenId);
             assertNull(actual);
         }
     }
@@ -272,8 +251,7 @@ public class UserApiTest {
         @Test
         void whenCheckingIfUserExistsById_thenReturnsOkStatus() {
             var givenToken = requestToGetNewToken(port);
-            var user = insertUser();
-            var givenId = user.getId();
+            var givenId = persistedGivenUser(assistant).getId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -346,11 +324,15 @@ public class UserApiTest {
 
         @Test
         void whenChangingPassword_thenReturnsOkStatus() {
+            var passwordEncoder = new BCryptPasswordEncoder();
             var user = newGivenUser();
             var userId = saveUserThroughApi(port, user);
-            var givenToken = requestToGetNewToken(TEST_HOSTNAME, port, user.getUsername(), user.getPassword());
+            var givenUsername = user.getUsername();
+            var givenCurrentPassword = user.getPassword();
             var givenNewPassword = "updated_password";
-            var givenBody = new ChangeCredentialsDto(user.getUsername(), user.getPassword(), givenNewPassword);
+
+            var givenToken = requestToGetNewToken(TEST_HOSTNAME, port, givenUsername, givenCurrentPassword);
+            var givenBody = new ChangeCredentialsDto(givenUsername, givenCurrentPassword, givenNewPassword);
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
@@ -362,18 +344,10 @@ public class UserApiTest {
                     .statusCode(HttpStatus.NO_CONTENT.value())
                     .body(is(emptyString()));
 
-            var em = assistant.createEntityManager();
-            var transaction = em.getTransaction();
-            transaction.begin();
-            var actual = em.find(User.class, userId);
-            transaction.commit();
+            var actual = findUserById(assistant, userId);
 
-            assertNotNull(actual);
-
-            var passwordEncoder = new BCryptPasswordEncoder();
+            assertUser(actual, 1, 1);
             assertTrue(passwordEncoder.matches(givenNewPassword, actual.getPassword()));
-            assertEquals(user.getUsername(), actual.getUsername());
-            assertEquals(user.getEmail(), actual.getEmail());
         }
     }
 }

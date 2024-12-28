@@ -5,12 +5,13 @@ import com.tutorial.springboot.security_rbac_jwt.dto.ChangeCredentialsDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.UserService;
-import com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.tutorial.springboot.security_rbac_jwt.util.ApiErrorUtils.checkValidation;
 import static com.tutorial.springboot.security_rbac_jwt.util.SecurityUtils.getCurrentUsername;

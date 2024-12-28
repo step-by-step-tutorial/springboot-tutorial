@@ -1,6 +1,7 @@
 package com.tutorial.springboot.security_rbac_jwt.repository;
 
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
+import com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityFixture;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -15,8 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityAssertionUtils.*;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.EntityFixture.*;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityAssertionUtils.assertPermission;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityAssertionUtils.assertPermissions;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.newGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.persistedGivenPermission;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityAssertionUtils.assertRole;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityAssertionUtils.assertRoles;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityFixture.newGivenRole;
+import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityFixture.persistedGivenRole;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
@@ -282,7 +289,7 @@ public class RoleRepositoryTest {
         @Test
         void givenAllExistingRoles_whenFindOrSaveAll_thenReturnPersistedRoles() {
             var guestRole = persistedGivenRole(assistant, "guest");
-            var hostRole = persistedGivenRole(assistant,"host");
+            var hostRole = persistedGivenRole(assistant, "host");
 
             var givenRoles = List.of(guestRole, hostRole);
 
@@ -294,7 +301,7 @@ public class RoleRepositoryTest {
         @Test
         void givenMixedRoles_whenFindOrSaveAll_thenPersistNewRolesAndReturnAllRoles() {
             var guestRole = newGivenRole("guest");
-            var hostRole = persistedGivenRole(assistant,"host");
+            var hostRole = persistedGivenRole(assistant, "host");
 
             var givenRoles = List.of(guestRole, hostRole);
 
@@ -308,7 +315,7 @@ public class RoleRepositoryTest {
     class ValidationTest {
 
         @ParameterizedTest
-        @ArgumentsSource(InvalidRoles.class)
+        @ArgumentsSource(RoleEntityFixture.InvalidRoles.class)
         void givenInvalidRoleData_whenSaveOne_thenThrowRuntimeException(Role givenRole) {
 
             var actual = assertThrows(RuntimeException.class, () -> {
