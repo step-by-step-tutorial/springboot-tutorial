@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and RBAC.
+This tutorial is about implementing RBAC by Spring Boot.
 
 </p>
 
@@ -234,6 +234,8 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ### Docker Compose
 
+#### Application dockerfile
+
 [Dockerfile](Dockerfile)
 
 ```dockerfile
@@ -253,6 +255,32 @@ ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 EXPOSE ${APP_PORT}
 ENTRYPOINT java -jar ${APPLICATION}
 ```
+
+#### H2 Server dockerfile
+
+Download h2 jar file from [https://www.h2database.com/html/download.html](https://www.h2database.com/html/download.html)
+into [h2server](./h2server) directory.
+
+[Dockerfile](/h2server/Dockerfile)
+
+```dockerfile
+FROM openjdk:11-jre-slim
+
+WORKDIR /opt/h2
+
+COPY h2-*.jar /opt/h2/h2.jar
+ENV WEB_PORT=8082
+ENV TCP_PORT=9092
+EXPOSE $WEB_PORT $TCP_PORT
+
+CMD java -cp h2.jar org.h2.tools.Server \
+    -web -webAllowOthers -webPort $WEB_PORT \
+    -tcp -tcpAllowOthers -tcpPort $TCP_PORT \
+    -baseDir /opt/h2-data -ifNotExists
+
+```
+
+#### Default Docker Compose
 
 [docker-compose.yml](docker-compose.yml)
 
@@ -277,6 +305,8 @@ services:
       APP_PROFILES: h2,openapibasic
       DATABASE_NAME: test_db
 ```
+
+#### With Postgres Docker Compose
 
 [docker-compose-postgres.yml](docker-compose-postgres.yml)
 
@@ -328,6 +358,46 @@ services:
       DATABASE_SCHEMA: user_management
 ```
 
+#### With H2 Server Docker Compose
+
+[docker-compose-h2server.yml](docker-compose-h2server.yml)
+
+```yaml
+version: "3.9"
+
+services:
+  securityrbacjwt:
+    image: samanalishiri/securityrbacjwt:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: securityrbacjwt
+    hostname: securityrbacjwt
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      APP_PROFILES: h2server,openapibasic
+      DATABASE_HOST: h2server
+      DATABASE_PORT: 9092
+      DATABASE_NAME: test_db
+  h2server:
+    image: samanalishiri/h2dbserver
+    build:
+      context: ./h2server
+      dockerfile: ./Dockerfile
+    container_name: h2server
+    hostname: h2server
+    ports:
+      - "8082:8082"
+      - "9092:9092"
+    environment:
+      TCP_PORT: 9092
+      WEB_PORT: 8082
+```
+
 ### Apply Docker Compose
 
 Execute the following command to install Application.
@@ -374,14 +444,14 @@ spec:
             - name: APP_PORT
               value: "8080"
             - name: APP_PROFILES
-              value: postgres
+              value: postgres,openapibasic
             - name: DATABASE_USERNAME
               value: user
             - name: DATABASE_PASSWORD
               value: password
-            - name: POSTGRESQL_HOST
+            - name: DATABASE_HOST
               value: postgres
-            - name: POSTGRESQL_PORT
+            - name: DATABASE_PORT
               value: "5432"
             - name: DATABASE_NAME
               value: test_db
@@ -682,6 +752,7 @@ kubectl port-forward service/pgadmin 8081:80
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
+    <!--security-->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-security</artifactId>
@@ -692,13 +763,17 @@ kubectl port-forward service/pgadmin 8081:80
         <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
     <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-envers</artifactId>
+        <version>3.3.6</version>
+    </dependency>
+    <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
     </dependency>
     <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
-        <scope>runtime</scope>
     </dependency>
     <!--utils-->
     <dependency>
@@ -734,10 +809,23 @@ kubectl port-forward service/pgadmin 8081:80
         <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         <version>2.3.0</version>
     </dependency>
+    <!--developer-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+        <scope>runtime</scope>
+        <optional>true</optional>
+    </dependency>
 </dependencies>
 ```
 
 ### Application Properties
+
+#### Main Profile
 
 ```yaml
 # application.yml
@@ -748,26 +836,49 @@ spring:
   main:
     banner-mode: OFF
   profiles:
-    active: ${APP_PROFILES:h2}
+    active: ${APP_PROFILES:h2,openapibasic}
+
+secure-resource:
+  unsecure-urls:
+    - /login
+    - /swagger-ui/**
+    - /v3/api-docs/**
+  home-url: /api/v1/token/me/new
+  cors-origin-urls:
+    - http://localhost:*
+  cors-http-methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+    - HEAD
+    - OPTIONS
+  cors-http-headers:
+    - Authorization
+    - Content-Type
+  base-path: /**
+
 ```
+
+#### H2 Profile
 
 ```yaml
 # application-h2.yml
 spring:
   datasource:
-    username: sa
-    password: ''
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
     url: jdbc:h2:mem:${DATABASE_NAME:test_db}
     driver-class-name: org.h2.Driver
   data:
     jdbc:
       repositories:
-        enabled:
+        enabled: true
   jpa:
     database: H2
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
-    show-sql: true
     hibernate:
       ddl-auto: create-drop
     properties:
@@ -775,8 +886,6 @@ spring:
         persistence:
           create-database-schemas: false
       hibernate:
-        generate_statistics: true
-        format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         default_schema: ""
   h2:
@@ -787,7 +896,52 @@ spring:
     init:
       data-locations: classpath:data-h2.sql
 
+secure-resource:
+  unsecure-urls:
+    - /h2-console/**
+    - /swagger-ui/**
+    - /v3/api-docs/**
 ```
+
+#### H2 Server Profile
+
+```yaml
+# application-h2server.yml
+spring:
+  datasource:
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    url: jdbc:h2:tcp://${DATABASE_HOST:localhost}:${DATABASE_PORT:9092}/mem:${DATABASE_NAME:test_db}
+    driver-class-name: org.h2.Driver
+  data:
+    jdbc:
+      repositories:
+        enabled: true
+  jpa:
+    database: H2
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: false
+      hibernate:
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ""
+  sql:
+    init:
+      data-locations: classpath:data-h2.sql
+      mode: always
+
+secure-resource:
+  unsecure-urls:
+    - /swagger-ui/**
+    - /v3/api-docs/**
+```
+
+#### Postgres Profile
 
 ```yaml
 # application-postgres.yml
@@ -797,7 +951,7 @@ spring:
   datasource:
     username: ${DATABASE_USERNAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:test_db}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:test_db}
     driver-class-name: org.postgresql.Driver
   data:
     jpa:
@@ -807,7 +961,6 @@ spring:
     database: POSTGRESQL
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
-    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
@@ -815,13 +968,16 @@ spring:
         persistence:
           create-database-schemas: true
       hibernate:
-        generate_statistics: true
-        format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         default_schema: ${DATABASE_SCHEMA:user_management}
   sql:
     init:
       mode: always
+
+secure-resource:
+  unsecure-urls:
+    - /swagger-ui/**
+    - /v3/api-docs/**
 ```
 
 ## How To Set up Spring Boot Test

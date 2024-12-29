@@ -26,3 +26,8 @@ spring:
   sql:
     init:
       mode: always
+
+secure-resource:
+  unsecure-urls:
+    - /swagger-ui/**
+    - /v3/api-docs/**
