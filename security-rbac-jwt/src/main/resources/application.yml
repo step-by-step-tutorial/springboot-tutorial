@@ -27,5 +27,3 @@ secure-resource:
     - Authorization
     - Content-Type
   base-path: /**
-
-

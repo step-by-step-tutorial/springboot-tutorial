@@ -3,6 +3,8 @@ package com.tutorial.springboot.security_rbac_jwt.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Objects;
 import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.compareCollections;
 
 @Entity
+@Audited
 public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority {
 
     @NotBlank(message = "Name is mandatory")
@@ -21,9 +24,11 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
 
     private String description;
 
+    @NotAudited
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<>();
 
+    @NotAudited
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "role_permission",

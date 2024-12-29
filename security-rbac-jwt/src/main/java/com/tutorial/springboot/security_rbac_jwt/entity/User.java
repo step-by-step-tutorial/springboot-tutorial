@@ -3,6 +3,8 @@ package com.tutorial.springboot.security_rbac_jwt.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,6 +16,7 @@ import static com.tutorial.springboot.security_rbac_jwt.util.CollectionUtils.com
 
 @Entity
 @Table(name = "users")
+@Audited
 public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     @NotBlank(message = "Username is mandatory")
@@ -30,6 +33,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     private boolean enabled = true;
 
+    @NotAudited
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_role",

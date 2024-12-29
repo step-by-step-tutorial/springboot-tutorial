@@ -6,12 +6,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Audited
 public class Permission extends AbstractEntity<Long, Permission> {
 
     @NotBlank(message = "Name is mandatory")
@@ -21,6 +24,7 @@ public class Permission extends AbstractEntity<Long, Permission> {
 
     private String description;
 
+    @NotAudited
     @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 

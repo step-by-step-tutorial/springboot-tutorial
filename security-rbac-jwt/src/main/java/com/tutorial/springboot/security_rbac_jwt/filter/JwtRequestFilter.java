@@ -42,7 +42,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 var user = userDetailsService.loadUserByUsername(username);
                 setAuthenticationIfAbsent(request, user);
             }
-
         } catch (NullPointerException e) {
             logger.warn("JWT token is invalid");
         } catch (ExpiredJwtException e) {
