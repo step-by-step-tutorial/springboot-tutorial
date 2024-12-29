@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
   postgres:
@@ -36,10 +36,10 @@ services:
     environment:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
-      APP_PROFILES: postgres
+      APP_PROFILES: postgres,openapibasic
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
-      POSTGRESQL_HOST: postgres,openapibasic
-      POSTGRESQL_PORT: 5432
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
       DATABASE_NAME: test_db
       DATABASE_SCHEMA: user_management

@@ -258,7 +258,30 @@ ENTRYPOINT java -jar ${APPLICATION}
 
 ```yaml
 #docker-compose.yml
-version: "3.8"
+version: "3.9"
+
+services:
+  securityrbacjwt:
+    image: samanalishiri/securityrbacjwt:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: securityrbacjwt
+    hostname: securityrbacjwt
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      APP_PROFILES: h2,openapibasic
+      DATABASE_NAME: test_db
+```
+
+[docker-compose-postgres.yml](docker-compose-postgres.yml)
+
+```yaml
+version: "3.9"
 
 services:
   postgres:
@@ -299,11 +322,10 @@ services:
       APP_PROFILES: postgres
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
-      POSTGRESQL_HOST: postgres
+      POSTGRESQL_HOST: postgres,openapibasic
       POSTGRESQL_PORT: 5432
       DATABASE_NAME: test_db
       DATABASE_SCHEMA: user_management
-
 ```
 
 ### Apply Docker Compose

@@ -26,14 +26,14 @@ spec:
             - name: APP_PORT
               value: "8080"
             - name: APP_PROFILES
-              value: postgres
+              value: postgres,openapibasic
             - name: DATABASE_USERNAME
               value: user
             - name: DATABASE_PASSWORD
               value: password
-            - name: POSTGRESQL_HOST
+            - name: DATABASE_HOST
               value: postgres
-            - name: POSTGRESQL_PORT
+            - name: DATABASE_PORT
               value: "5432"
             - name: DATABASE_NAME
               value: test_db

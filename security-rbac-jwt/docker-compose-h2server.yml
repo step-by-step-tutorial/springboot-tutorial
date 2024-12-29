@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  securityrbacjwt:
+    image: samanalishiri/securityrbacjwt:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: securityrbacjwt
+    hostname: securityrbacjwt
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      APP_PROFILES: h2server,openapibasic
+      DATABASE_HOST: h2server
+      DATABASE_PORT: 9092
+      DATABASE_NAME: test_db
+  h2server:
+    image: samanalishiri/h2dbserver
+    build:
+      context: ./h2server
+      dockerfile: ./Dockerfile
+    container_name: h2server
+    hostname: h2server
+    ports:
+      - "8082:8082"
+      - "9092:9092"
+    environment:
+      TCP_PORT: 9092
+      WEB_PORT: 8082
