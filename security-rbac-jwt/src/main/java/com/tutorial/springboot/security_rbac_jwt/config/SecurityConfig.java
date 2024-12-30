@@ -1,9 +1,8 @@
 package com.tutorial.springboot.security_rbac_jwt.config;
 
-import com.tutorial.springboot.security_rbac_jwt.dto.SecureResource;
+import com.tutorial.springboot.security_rbac_jwt.dto.SecureProperties;
 import com.tutorial.springboot.security_rbac_jwt.filter.JwtRequestFilter;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionEvaluatorService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -35,22 +34,28 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private SecureResource secureResource;
-
     private final UserDetailsService userDetailsService;
-
-    private final PermissionEvaluatorService permissionEvaluator;
-
-    private final JwtRequestFilter jwtRequestFilter;
 
     private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UserDetailsService userDetailsService, PermissionEvaluatorService permissionEvaluator, JwtRequestFilter jwtRequestFilter, BCryptPasswordEncoder passwordEncoder) {
+    private final PermissionEvaluatorService permissionEvaluator;
+
+    private final SecureProperties secureProperties;
+
+    private final JwtRequestFilter jwtRequestFilter;
+
+    public SecurityConfig(
+            UserDetailsService userDetailsService,
+            BCryptPasswordEncoder passwordEncoder,
+            PermissionEvaluatorService permissionEvaluator,
+            SecureProperties secureProperties,
+            JwtRequestFilter jwtRequestFilter
+    ) {
         this.userDetailsService = userDetailsService;
         this.permissionEvaluator = permissionEvaluator;
         this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
+        this.secureProperties = secureProperties;
     }
 
     @Bean
@@ -69,9 +74,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(secureResource.unsecureUrls()).permitAll()
+                        .requestMatchers(secureProperties.unsecureUrls()).permitAll()
                         .anyRequest().authenticated())
-                .formLogin(login -> login.successForwardUrl(secureResource.homeUrl()))
+                .formLogin(login -> login.successForwardUrl(secureProperties.homeUrl()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authenticationProvider(authenticationProvider())
@@ -91,12 +96,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         var cors = new CorsConfiguration();
-        cors.setAllowedOrigins(List.of(secureResource.corsOriginUrls()));
-        cors.setAllowedMethods(List.of(secureResource.corsHttpMethods()));
-        cors.setAllowedHeaders(List.of(secureResource.corsHttpHeaders()));
+        cors.setAllowedOrigins(List.of(secureProperties.corsOriginUrls()));
+        cors.setAllowedMethods(List.of(secureProperties.corsHttpMethods()));
+        cors.setAllowedHeaders(List.of(secureProperties.corsHttpHeaders()));
 
         var source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(secureResource.basePath(), cors);
+        source.registerCorsConfiguration(secureProperties.basePath(), cors);
 
         return source;
     }

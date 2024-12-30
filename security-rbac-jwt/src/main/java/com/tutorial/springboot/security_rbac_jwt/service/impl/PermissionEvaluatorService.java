@@ -1,5 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.service.impl;
 
+import com.tutorial.springboot.security_rbac_jwt.repository.UserRepository;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,10 +13,10 @@ import static java.util.Objects.isNull;
 @Component
 public class PermissionEvaluatorService implements PermissionEvaluator {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
-    public PermissionEvaluatorService(UserService userService) {
-        this.userService = userService;
+    public PermissionEvaluatorService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -25,7 +26,8 @@ public class PermissionEvaluatorService implements PermissionEvaluator {
         }
 
         var username = String.valueOf(authentication.getPrincipal());
-        return userService.findByUsername(username)
+        return userRepository.findByUsername(username)
+                .orElseThrow()
                 .getPermissions()
                 .contains(String.valueOf(permission));
     }

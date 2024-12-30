@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,8 +23,6 @@ import static java.util.Objects.requireNonNull;
 @Transactional
 public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>>
         implements CrudService<ID, DTO>, BatchService<ID, DTO>, AllService<ID, DTO> {
-
-    public static final int INIT_VERSION = 0;
 
     protected final Logger logger = LoggerFactory.getLogger(AbstractService.class);
 
@@ -43,6 +42,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @PreAuthorize("hasPermission(#dto, 'CREAT')")
     public Optional<ID> save(DTO dto) {
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
 
@@ -70,6 +70,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(#dto, 'READ')")
     public Optional<DTO> findById(ID id) {
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
 
@@ -77,6 +78,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @PreAuthorize("hasPermission(#dto, 'UPDATE')")
     public void update(ID id, DTO dto) {
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
         requireNonNull(dto, String.format("%s should not be null", dtoClass.getSimpleName()));
@@ -94,6 +96,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @PreAuthorize("hasPermission(#dto, 'DELETE')")
     public void deleteById(ID id) {
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
 
@@ -102,12 +105,15 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(#dto, 'READ')")
     public boolean exists(ID id) {
         requireNonNull(id, String.format("ID of %s should not be null", entityClass.getSimpleName()));
         return repository.existsById(id);
     }
 
     @Override
+    @PreAuthorize("hasPermission(#dto, 'CREAT')")
     public List<ID> saveBatch(List<DTO> dtoList) {
         requireNonNull(dtoList, String.format("List of %s should not be null", entityClass.getSimpleName()));
         shouldBeNotNullOrEmpty(dtoList, String.format("List of %s should not be empty", entityClass.getSimpleName()));
@@ -122,12 +128,16 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(#dto, 'READ')")
     public Page<DTO> findByPage(Pageable pageable) {
         requireNonNull(pageable, String.format("Page of %s should not be null", entityClass.getSimpleName()));
         return repository.findAll(pageable).map(transformer::toDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(#dto, 'READ')")
     public List<DTO> findByIdentities(List<ID> identities) {
         requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
         shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
@@ -139,6 +149,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @PreAuthorize("hasPermission(#dto, 'DELETE')")
     public void deleteBatch(List<ID> identities) {
         requireNonNull(identities, String.format("List of ID of %s should not be null", entityClass.getSimpleName()));
         shouldBeNotNullOrEmpty(identities, String.format("List of ID of %s should not be empty", entityClass.getSimpleName()));
@@ -148,6 +159,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(#dto, 'READ')")
     public List<DTO> findAll() {
         return repository.findAll()
                 .stream()
@@ -156,6 +168,7 @@ public abstract class AbstractService<ID, ENTITY extends AbstractEntity<ID, ENTI
     }
 
     @Override
+    @PreAuthorize("hasPermission(#dto, 'DELETE')")
     public void deleteAll() {
         logger.info("Delete all {} entities", entityClass.getSimpleName());
         repository.deleteAll();

@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @ConfigurationProperties(prefix = "secure-resource")
 @EnableConfigurationProperties
-public record SecureResource(
+public record SecureProperties(
         String homeUrl,
         String[] unsecureUrls,
         String[] corsOriginUrls,

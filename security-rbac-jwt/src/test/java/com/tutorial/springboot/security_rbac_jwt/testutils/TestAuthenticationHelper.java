@@ -1,5 +1,7 @@
 package com.tutorial.springboot.security_rbac_jwt.testutils;
 
+import com.tutorial.springboot.security_rbac_jwt.entity.Permission;
+import com.tutorial.springboot.security_rbac_jwt.entity.Role;
 import com.tutorial.springboot.security_rbac_jwt.entity.User;
 import jakarta.persistence.EntityManagerFactory;
 import net.datafaker.Faker;
@@ -9,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PASSWORD;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_USERNAME;
@@ -32,7 +36,15 @@ public class TestAuthenticationHelper {
     }
 
     public static void login(String username, String password) {
-        var auth = new UsernamePasswordAuthenticationToken(username, password);
+        var creatPermission = new Permission().setName("CREAT");
+        var readPermission = new Permission().setName("READ");
+        var updatePermission = new Permission().setName("UPDATE");
+        var deletePermission = new Permission().setName("DELETE");
+        var adminRole = new Role().setName("ADMIN").setPermissions(List.of(creatPermission, readPermission, updatePermission, deletePermission));
+        var userRole = new Role().setName("USER").setPermissions(List.of(readPermission));
+        var user = new User().setUsername(username).setPassword(password).setRoles(List.of(adminRole, userRole));
+
+        var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.setContext(new SecurityContextImpl(auth));
     }
 

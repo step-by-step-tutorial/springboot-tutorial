@@ -122,7 +122,7 @@ public class PermissionApiTest {
                     .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("size()", is(2));
+                    .body("size()", is(4));
         }
 
         /**
@@ -142,7 +142,7 @@ public class PermissionApiTest {
                     .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("content.size()", is(2));
+                    .body("content.size()", is(4));
         }
     }
 
