@@ -2,11 +2,7 @@ package com.tutorial.springboot.securityoauth2server.repository;
 
 import com.tutorial.springboot.securityoauth2server.entity.Permission;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.history.RevisionRepository;
 
-import java.util.Optional;
-
-public interface PermissionRepository extends JpaRepository<Permission, Long> {
-    Optional<Permission> findByName(String name);
-
-    Boolean existsByName(String name);
+public interface PermissionRepository extends JpaRepository<Permission, Long>, RevisionRepository<Permission, Long, Long>, CustomRepository<Permission, Long> {
 }

@@ -1,7 +1,6 @@
 package com.tutorial.springboot.securityoauth2server.api;
 
 import com.tutorial.springboot.securityoauth2server.dto.AbstractDto;
-import com.tutorial.springboot.securityoauth2server.dto.StatusDto;
 import com.tutorial.springboot.securityoauth2server.entity.AbstractEntity;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.validation.SaveValidation;
@@ -15,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.tutorial.springboot.securityoauth2server.util.ApiErrorUtils.checkValidation;
-import static com.tutorial.springboot.securityoauth2server.util.HttpUtils.createUriFromId;
+import static com.tutorial.springboot.securityoauth2server.util.HttpUtils.uriOf;
 import static com.tutorial.springboot.securityoauth2server.util.ReflectionUtils.identifyType;
 import static org.springframework.http.ResponseEntity.*;
 
@@ -40,14 +39,14 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
         logger.info("Received an inbound request to save a {}", dtoClass.getSimpleName());
         checkValidation(bindingResult);
         return service.save(dto)
-                .map(id -> created(createUriFromId(id)).body(id))
+                .map(id -> created(uriOf(id)).body(id))
                 .orElseThrow();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DTO> findById(@PathVariable ID id) {
         logger.info("Received an inbound request to retrieve a {} by its unique ID[{}]", dtoClass.getSimpleName(), id);
-        return service.getById(id)
+        return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> notFound().build());
     }
@@ -75,12 +74,6 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
         return service.exists(id) ? ok().build() : notFound().build();
     }
 
-    @GetMapping(value = "/health")
-    public ResponseEntity<StatusDto> getHealthCheck() {
-        logger.info("Received an inbound request to check health status of {} API", dtoClass.getSimpleName());
-        return ResponseEntity.ok(new StatusDto("UP"));
-    }
-
     @RequestMapping(value = "/options", method = RequestMethod.OPTIONS)
     public ResponseEntity<String> getHttpMethods() {
         logger.info("Received an inbound request to show supported HTTP verbs");
@@ -88,5 +81,7 @@ public abstract class CrudApi<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO
                 .allow(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS)
                 .build();
     }
+
+    protected abstract AbstractService<ID, ENTITY, DTO> getService();
 }
 

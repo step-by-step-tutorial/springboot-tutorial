@@ -1,18 +1,18 @@
 package com.tutorial.springboot.securityoauth2server.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tutorial.springboot.securityoauth2server.validation.SaveValidation;
 import com.tutorial.springboot.securityoauth2server.validation.UpdateValidation;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleDto extends AbstractDto<Long, RoleDto> implements GrantedAuthority {
+public class RoleDto extends AbstractDto<Long, RoleDto> {
 
     @NotBlank(groups = {SaveValidation.class, UpdateValidation.class}, message = "name should not be blank")
     private String name;
+
+    private String description;
 
     private List<PermissionDto> permissions = new ArrayList<>();
 
@@ -25,6 +25,15 @@ public class RoleDto extends AbstractDto<Long, RoleDto> implements GrantedAuthor
         return this;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public RoleDto setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
     public List<PermissionDto> getPermissions() {
         return permissions;
     }
@@ -32,11 +41,5 @@ public class RoleDto extends AbstractDto<Long, RoleDto> implements GrantedAuthor
     public RoleDto setPermissions(List<PermissionDto> permissions) {
         this.permissions = permissions;
         return this;
-    }
-
-    @JsonIgnore
-    @Override
-    public String getAuthority() {
-        return getName();
     }
 }

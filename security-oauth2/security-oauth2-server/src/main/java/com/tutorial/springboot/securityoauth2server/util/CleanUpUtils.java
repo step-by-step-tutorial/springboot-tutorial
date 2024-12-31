@@ -16,13 +16,15 @@ public final class CleanUpUtils {
     }
 
     public static <T> Stream<T> clean(Stream<T> stream, Class<?>... groups) {
-        return stream.filter(Objects::nonNull)
+        return stream
+                .filter(Objects::nonNull)
                 .filter((T object) -> validator.validate(object, groups).isEmpty())
                 .distinct();
     }
 
     public static <T> void validate(Stream<T> stream, Class<?>... groups) {
-        var errorMessages = stream.filter(Objects::nonNull)
+        var errorMessages = stream
+                .filter(Objects::nonNull)
                 .map((T object) -> validator.validate(object, groups))
                 .filter(errors -> !errors.isEmpty())
                 .flatMap(errors -> errors.stream().map(ConstraintViolation::getMessage))

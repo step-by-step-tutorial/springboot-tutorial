@@ -1,0 +1,33 @@
+spring:
+  main:
+    banner-mode: OFF
+  datasource:
+    username: ${DATABASE_USERNAME:user}
+    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:test_db}
+    driver-class-name: org.postgresql.Driver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: true
+      hibernate:
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ${DATABASE_SCHEMA:user_management}
+  sql:
+    init:
+      mode: always
+
+secure-resource:
+  unsecure-urls:
+    - /swagger-ui/**
+    - /v3/api-docs/**

@@ -8,6 +8,7 @@ import com.tutorial.springboot.securityoauth2server.entity.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @Component
 public class ClientTransformer extends AbstractTransformer<Long, Client, ClientDto> {
@@ -16,18 +17,15 @@ public class ClientTransformer extends AbstractTransformer<Long, Client, ClientD
     protected void copyEntityToDto(Client entity, ClientDto dto) {
         dto.setClientId(entity.getClientId())
                 .setRedirectUri(entity.getRedirectUri())
-                .setGrantTypes(entity.getGrantTypes().stream().toList())
+                .setGrantTypes(entity.getGrantTypes())
                 .setScopes(entity.getScopes()
                         .stream()
                         .map(Scope::getName)
-                        .toList())
+                        .collect(Collectors.toList()))
                 .setAccessTokenValiditySeconds(entity.getAccessTokenValiditySeconds())
                 .setRefreshTokenValiditySeconds(entity.getRefreshTokenValiditySeconds());
 
-        entity.getAccessTokens()
-                .stream()
-                .max(Comparator.comparing(AccessToken::getExpiration))
-                .ifPresent(it -> dto.setToken(new TokenDto(new String(it.getToken()), it.getExpiration())));
+        getLastToken(entity, dto);
     }
 
     @Override
@@ -35,12 +33,19 @@ public class ClientTransformer extends AbstractTransformer<Long, Client, ClientD
         entity.setClientId(dto.getClientId())
                 .setClientSecret(dto.getClientSecret())
                 .setRedirectUri(dto.getRedirectUri())
-                .setGrantTypes(dto.getGrantTypes().stream().toList())
+                .setGrantTypes(dto.getGrantTypes())
                 .setScopes(dto.getScopes()
                         .stream()
                         .map(s -> new Scope().setName(s))
-                        .toList())
+                        .collect(Collectors.toList()))
                 .setAccessTokenValiditySeconds(dto.getAccessTokenValiditySeconds())
                 .setRefreshTokenValiditySeconds(dto.getRefreshTokenValiditySeconds());
+    }
+
+    private void getLastToken(Client entity, ClientDto dto) {
+        entity.getAccessTokens()
+                .stream()
+                .max(Comparator.comparing(AccessToken::getExpiration))
+                .ifPresent(it -> dto.setToken(new TokenDto(new String(it.getToken()), it.getExpiration())));
     }
 }

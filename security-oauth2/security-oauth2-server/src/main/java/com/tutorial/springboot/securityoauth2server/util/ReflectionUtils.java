@@ -2,12 +2,12 @@ package com.tutorial.springboot.securityoauth2server.util;
 
 import java.lang.reflect.ParameterizedType;
 
-@SuppressWarnings("unchecked")
 public final class ReflectionUtils {
 
     private ReflectionUtils() {
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> Class<T> identifyType(int index, Class<?> clazz) {
         try {
             var superClass = clazz.getGenericSuperclass();

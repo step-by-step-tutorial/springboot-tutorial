@@ -1,4 +1,4 @@
-package com.tutorial.springboot.securityoauth2server.util;
+package com.tutorial.springboot.securityoauth2server.filter;
 
 import com.tutorial.springboot.securityoauth2server.service.impl.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;

@@ -1,9 +1,11 @@
 package com.tutorial.springboot.securityoauth2server.entity;
 
+import com.tutorial.springboot.securityoauth2server.util.CollectionUtils;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Client extends AbstractEntity<Long, Client> {
@@ -16,6 +18,10 @@ public class Client extends AbstractEntity<Long, Client> {
 
     private String redirectUri;
 
+    private Integer accessTokenValiditySeconds;
+
+    private Integer refreshTokenValiditySeconds;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "client_grant_types", joinColumns = @JoinColumn(name = "client_id"))
     @Column(name = "grant_type")
@@ -25,13 +31,10 @@ public class Client extends AbstractEntity<Long, Client> {
     @JoinTable(
             name = "client_scopes",
             joinColumns = @JoinColumn(name = "client_id"),
-            inverseJoinColumns = @JoinColumn(name = "scope_id")
+            inverseJoinColumns = @JoinColumn(name = "scope_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"client_id", "scope_id"})
     )
     private List<Scope> scopes = new ArrayList<>();
-
-    private Integer accessTokenValiditySeconds;
-
-    private Integer refreshTokenValiditySeconds;
 
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private List<AccessToken> accessTokens = new ArrayList<>();
@@ -103,7 +106,49 @@ public class Client extends AbstractEntity<Long, Client> {
         return accessTokens;
     }
 
-    public void setAccessTokens(List<AccessToken> accessTokens) {
+    public Client setAccessTokens(List<AccessToken> accessTokens) {
         this.accessTokens = accessTokens;
+        return this;
+    }
+
+    @Override
+    public Client updateFrom(Client newOne) {
+        super.updateFrom(newOne);
+        this.clientId = newOne.clientId;
+        this.clientSecret = newOne.clientSecret;
+        this.redirectUri = newOne.redirectUri;
+        this.grantTypes = newOne.grantTypes;
+        this.scopes = newOne.scopes;
+        this.accessTokenValiditySeconds = newOne.accessTokenValiditySeconds;
+        this.refreshTokenValiditySeconds = newOne.refreshTokenValiditySeconds;
+        this.accessTokens = newOne.accessTokens;
+        return this;
+    }
+
+    @Override
+    public Client updateRelations(Client newOne) {
+        var compared = CollectionUtils.compareCollections(this.scopes, newOne.scopes);
+
+        this.scopes.removeAll(compared.deletionItems());
+        this.scopes.addAll(compared.newItems());
+
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return Objects.equals(clientId, client.clientId) && Objects.equals(clientSecret, client.clientSecret) && Objects.equals(redirectUri, client.redirectUri);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(clientId, clientSecret, redirectUri);
+    }
+
+    @Override
+    public String toString() {
+        return clientId;
     }
 }

@@ -7,7 +7,12 @@ spring:
   profiles:
     active: ${APP_PROFILES:h2}
 
-local:
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
+app:
   oauth2:
     authorizationserver: ${AUTHORIZATION_SERVER:http://securityoauth2server.localhost}
     resourceserver: ${RESOURCE_SERVER:http://securityoauth2server:8080}

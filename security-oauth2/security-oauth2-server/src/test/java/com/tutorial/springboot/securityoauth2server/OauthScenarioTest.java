@@ -1,9 +1,11 @@
 package com.tutorial.springboot.securityoauth2server;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
-import com.tutorial.springboot.securityoauth2server.testutils.stub.factory.ClientTestFactory;
+import com.tutorial.springboot.securityoauth2server.fixture.client.ClientDtoFixture;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import jakarta.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Base64;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestAuthenticationHelper.login;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestConstant.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestTokenUtils.extractAuthorizationCodeFromUrl;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -31,13 +35,18 @@ public class OauthScenarioTest {
     private int port;
 
     @Autowired
-    private ClientTestFactory clientFactory;
+    private EntityManagerFactory assistant;
+
+    @BeforeEach
+    void setUp() {
+        login();
+    }
 
     private String requestToGetNewTestUserToken() {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                .baseUri("http://" + TEST_HOSTNAME).port(port)
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port)
                 .basePath("/api/v1/token/me/new")
                 .when().get()
                 .then()
@@ -52,7 +61,7 @@ public class OauthScenarioTest {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                .baseUri("http://" + TEST_HOSTNAME).port(port)
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port)
                 .basePath("/api/v1/token/me/client/{clientId}").pathParam("clientId", clientId)
                 .when().get()
                 .then()
@@ -67,7 +76,7 @@ public class OauthScenarioTest {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/api/v1/clients")
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath("/api/v1/clients")
                 .body(client)
                 .when().post()
                 .then()
@@ -81,7 +90,7 @@ public class OauthScenarioTest {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", String.format("Bearer %s", givenToken))
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/api/v1/health")
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath("/api/v1/health")
                 .when().get()
                 .then()
                 .statusCode(HttpStatus.OK.value())
@@ -94,7 +103,7 @@ public class OauthScenarioTest {
                 .contentType(ContentType.URLENC)
                 .formParam("username", TEST_USERNAME)
                 .formParam("password", TEST_PASSWORD)
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/login")
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath("/login")
                 .redirects().follow(false)
                 .post()
                 .then()
@@ -108,7 +117,7 @@ public class OauthScenarioTest {
         var redirectUrl = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .cookie("JSESSIONID", jsessionid)
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/oauth2/authorize")
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath("/oauth2/authorize")
                 .queryParam("response_type", "code")
                 .queryParam("client_id", client.getClientId())
                 .queryParam("scope", "read")
@@ -128,7 +137,7 @@ public class OauthScenarioTest {
         return RestAssured.given()
                 .contentType(ContentType.URLENC)
                 .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((client.getClientId() + ":" + client.getClientSecret()).getBytes()))
-                .baseUri("http://" + TEST_HOSTNAME).port(port).basePath("/oauth2/token")
+                .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath("/oauth2/token")
                 .formParam("grant_type", "authorization_code")
                 .formParam("code", authorizationCode)
                 .formParam("redirect_uri", client.getRedirectUri())
@@ -170,7 +179,7 @@ public class OauthScenarioTest {
     @Test
     void registerClient_getToken_getRequest() {
         // Preparation
-        var client = clientFactory.newOne();
+        var client = ClientDtoFixture.newGivenClient();
 
         // round 1: send request to register client.
         requestToRegisterClient(client);
@@ -194,7 +203,7 @@ public class OauthScenarioTest {
     @Test
     void getGrantType_getToken_getRequest() {
         // Preparation
-        var givenClient = clientFactory.newOne();
+        var givenClient = ClientDtoFixture.newGivenClient();
 
         // round 1: send request to get grant type.
         requestToRegisterClient(givenClient);

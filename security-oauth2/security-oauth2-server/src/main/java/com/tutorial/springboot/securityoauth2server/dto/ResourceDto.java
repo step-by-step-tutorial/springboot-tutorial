@@ -12,31 +12,35 @@ public class ResourceDto extends AbstractDto<Long, ResourceDto> {
         return resourceId;
     }
 
-    public void setResourceId(String resourceId) {
+    public ResourceDto setResourceId(String resourceId) {
         this.resourceId = resourceId;
+        return this;
     }
 
     public String getResourceName() {
         return resourceName;
     }
 
-    public void setResourceName(String resourceName) {
+    public ResourceDto setResourceName(String resourceName) {
         this.resourceName = resourceName;
+        return this;
     }
 
     public String getResourceDescription() {
         return resourceDescription;
     }
 
-    public void setResourceDescription(String resourceDescription) {
+    public ResourceDto setResourceDescription(String resourceDescription) {
         this.resourceDescription = resourceDescription;
+        return this;
     }
 
     public List<String> getScopes() {
         return scopes;
     }
 
-    public void setScopes(List<String> scopes) {
+    public ResourceDto setScopes(List<String> scopes) {
         this.scopes = scopes;
+        return this;
     }
 }

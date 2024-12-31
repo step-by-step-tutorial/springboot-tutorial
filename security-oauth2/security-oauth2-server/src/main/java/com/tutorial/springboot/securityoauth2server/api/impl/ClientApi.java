@@ -20,10 +20,15 @@ public class ClientApi extends AllApi<Long, Client, ClientDto> {
         super(service);
     }
 
+    @Override
+    protected ClientService getService() {
+        return (ClientService) service;
+    }
+
     @GetMapping("/findByClientId/{clientId}")
     public ResponseEntity<ClientDto> getClientByClientId(@PathVariable String clientId) {
         logger.info("Received an inbound request to get client:{} of username:{}", getCurrentUsername(), clientId);
-        return ((ClientService) service).getByClientId(clientId)
+        return getService().getByClientId(clientId)
                 .map(ResponseEntity::ok)
                 .orElseThrow();
     }

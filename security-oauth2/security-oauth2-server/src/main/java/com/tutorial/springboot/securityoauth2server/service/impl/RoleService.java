@@ -8,31 +8,27 @@ import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.service.BatchService;
 import com.tutorial.springboot.securityoauth2server.service.CrudService;
 import com.tutorial.springboot.securityoauth2server.transformer.RoleTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RoleService extends AbstractService<Long, Role, RoleDto> implements CrudService<Long, RoleDto>, BatchService<Long, RoleDto> {
 
-    @Autowired
-    private PermissionRepository permissionRepository;
+    private final PermissionRepository permissionRepository;
 
-    public RoleService(RoleRepository repository, RoleTransformer transformer) {
+    public RoleService(
+            RoleRepository repository,
+            PermissionRepository permissionRepository,
+            RoleTransformer transformer
+    ) {
         super(repository, transformer);
+        this.permissionRepository = permissionRepository;
     }
 
     @Override
     protected void beforeSave(RoleDto dto, Role entity) {
-        var permissions = entity.getPermissions()
-                .stream()
-                .map(permission -> {
-                    if (permissionRepository.existsByName(permission.getName())) {
-                        return permissionRepository.findByName(permission.getName()).get();
-                    } else {
-                        return permission;
-                    }
-                })
-                .toList();
-        entity.setPermissions(permissions);
+        var permissions = permissionRepository.findOrSaveAll(entity.getPermissions());
+        entity.getPermissions().clear();
+        entity.getPermissions().addAll(permissions);
     }
+
 }

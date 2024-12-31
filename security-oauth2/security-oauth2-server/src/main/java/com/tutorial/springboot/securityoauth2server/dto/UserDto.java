@@ -1,5 +1,9 @@
 package com.tutorial.springboot.securityoauth2server.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tutorial.springboot.securityoauth2server.dto.AbstractDto;
+import com.tutorial.springboot.securityoauth2server.dto.PermissionDto;
+import com.tutorial.springboot.securityoauth2server.dto.RoleDto;
 import com.tutorial.springboot.securityoauth2server.validation.SaveValidation;
 import com.tutorial.springboot.securityoauth2server.validation.UpdateValidation;
 import jakarta.validation.constraints.NotBlank;
@@ -65,5 +69,14 @@ public class UserDto extends AbstractDto<Long, UserDto> {
     public UserDto setRoles(List<RoleDto> roles) {
         this.roles = roles;
         return this;
+    }
+
+    @JsonIgnore
+    public List<String> getPermissions() {
+        return roles.stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(PermissionDto::getName)
+                .distinct()
+                .toList();
     }
 }

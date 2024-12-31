@@ -26,31 +26,35 @@ public class Resource extends AbstractEntity<Long, Resource> {
         return resourceId;
     }
 
-    public void setResourceId(String resourceId) {
+    public Resource setResourceId(String resourceId) {
         this.resourceId = resourceId;
+        return this;
     }
 
     public String getResourceName() {
         return resourceName;
     }
 
-    public void setResourceName(String resourceName) {
+    public Resource setResourceName(String resourceName) {
         this.resourceName = resourceName;
+        return this;
     }
 
     public String getResourceDescription() {
         return resourceDescription;
     }
 
-    public void setResourceDescription(String resourceDescription) {
+    public Resource setResourceDescription(String resourceDescription) {
         this.resourceDescription = resourceDescription;
+        return this;
     }
 
     public List<Scope> getScopes() {
         return scopes;
     }
 
-    public void setScopes(List<Scope> scopes) {
+    public Resource setScopes(List<Scope> scopes) {
         this.scopes = scopes;
+        return this;
     }
 }

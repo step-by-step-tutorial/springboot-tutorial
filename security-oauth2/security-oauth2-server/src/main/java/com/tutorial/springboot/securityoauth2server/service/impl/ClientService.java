@@ -10,6 +10,7 @@ import com.tutorial.springboot.securityoauth2server.repository.UserRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.transformer.ClientTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,17 +46,9 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
     protected void beforeSave(ClientDto dto, Client entity) {
         entity.setClientSecret(passwordEncoder.encode(dto.getClientSecret()));
 
-        var scopes = entity.getScopes()
-                .stream()
-                .map(scope -> {
-                    if (scopeRepository.existsByName(scope.getName())) {
-                        return scopeRepository.findByName(scope.getName()).get();
-                    } else {
-                        return scope;
-                    }
-                })
-                .toList();
-        entity.setScopes(scopes);
+        var scopes = scopeRepository.findOrSaveAll(entity.getScopes());
+        entity.getScopes().clear();
+        entity.getScopes().addAll(scopes);
     }
 
     @Override
@@ -64,11 +57,13 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasPermission(#dto, 'READ')")
     public Optional<ClientDto> getByClientId(String clientId) {
         return (ClientRepository.class.cast(repository)).findByClientId(clientId).map(transformer::toDto);
     }
 
-    @Transactional
+
+    @PreAuthorize("hasPermission(#dto, 'UPDATE')")
     public void updateToken(String clientId) {
         var clientEntity = (ClientRepository.class.cast(repository)).findByClientId(clientId);
         if (clientEntity.isEmpty()) {
@@ -90,10 +85,7 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
                 .setToken(jwtToken.token().getBytes())
                 .setExpiration(jwtToken.expiration())
                 .setClient(entity)
-                .setUser(user)
-                .setCreatedBy(getCurrentUsername())
-                .setCreatedAt(LocalDateTime.now())
-                .setVersion(INIT_VERSION);
+                .setUser(user);
 
         accessTokenRepository.save(accessToken);
     }

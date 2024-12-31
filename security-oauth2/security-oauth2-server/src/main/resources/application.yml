@@ -5,7 +5,7 @@ spring:
   main:
     banner-mode: OFF
   profiles:
-    active: ${APP_PROFILES:h2}
+    active: ${APP_PROFILES:h2,openapibasic}
   security:
     oauth2:
       authorizationserver:
@@ -19,7 +19,6 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
-
 
 rsa:
   private-key: classpath:private-key.pem

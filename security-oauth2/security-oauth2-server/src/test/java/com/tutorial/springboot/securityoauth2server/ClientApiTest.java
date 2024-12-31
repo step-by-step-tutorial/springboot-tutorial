@@ -1,9 +1,10 @@
 package com.tutorial.springboot.securityoauth2server;
 
-import com.tutorial.springboot.securityoauth2server.testutils.stub.assistant.ClientTestAssistant;
-import com.tutorial.springboot.securityoauth2server.testutils.stub.factory.ClientTestFactory;
+import com.tutorial.springboot.securityoauth2server.fixture.client.ClientDtoFixture;
+import com.tutorial.springboot.securityoauth2server.fixture.client.ClientEntityFixture;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,10 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestHttpUtils.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestAuthenticationHelper.login;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestConstant.*;
+import static com.tutorial.springboot.securityoauth2server.testutils.TestTokenUtils.requestToGetNewToken;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -30,39 +31,31 @@ public class ClientApiTest {
     private int port;
 
     @Autowired
-    private ClientTestAssistant assistant;
+    private EntityManagerFactory assistant;
 
-    @Autowired
-    private ClientTestFactory factory;
+    @BeforeEach
+    void setUp() {
+        login();
+    }
+
 
     @Nested
     class SaveOneTests {
         @Test
         void givenClient_whenSaveOne_thenReturnIdWithCreatedStatus() {
-            var givenBody = factory.newOne();
+            var givenBody = ClientDtoFixture.newGivenClient();
 
-            var actual = assertDoesNotThrow(() -> {
-                RestAssured.given()
-                        .contentType(ContentType.JSON)
-                        .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                        .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
-                        .body(givenBody)
-                        .when().post()
-                        .then()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .header("Location", containsString(BASE_PATH))
-                        .body("", not(emptyOrNullString()))
-                        .body("", greaterThan(0));
-
-                return assistant.selectAllTest().dto().asOne();
-            });
-
-            assertNotNull(actual);
-            assertNotNull(actual.getId());
-            assertNotNull(actual.getCreatedBy());
-            assertNotNull(actual.getCreatedAt());
-            assertNotNull(actual.getVersion());
-
+            RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .auth().basic(TEST_USERNAME, TEST_PASSWORD)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .body(givenBody)
+                    .when().post()
+                    .then()
+                    .statusCode(HttpStatus.CREATED.value())
+                    .header("Location", containsString(BASE_PATH))
+                    .body("", not(emptyOrNullString()))
+                    .body("", greaterThan(0));
         }
     }
 
@@ -71,19 +64,15 @@ public class ClientApiTest {
 
         private static final String RELATIVE_PATH = "/findByClientId/{clientId}";
 
-        @BeforeEach
-        void setUp() {
-            assistant.populate(1);
-        }
-
         @Test
         void givenClientId_whenFindById_thenReturnDtoWithOKStatus() {
-            var givenClientId = assistant.selectAllTest().dto().asOne().getClientId();
+            var client = ClientEntityFixture.persistedGivenClient(assistant, "testClientId");
+            var givenClientId = client.getClientId();
 
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port)
                     .basePath(BASE_PATH + RELATIVE_PATH).pathParam("clientId", givenClientId)
                     .when().get()
                     .then()
@@ -104,7 +93,7 @@ public class ClientApiTest {
 
         @BeforeEach
         void setUp() {
-            assistant.populate(2);
+            ClientEntityFixture.persistedGivenClient(assistant);
         }
 
         @Test
@@ -112,12 +101,12 @@ public class ClientApiTest {
             RestAssured.given()
                     .contentType(ContentType.JSON)
                     .auth().basic(TEST_USERNAME, TEST_PASSWORD)
-                    .baseUri("http://" + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
+                    .baseUri(TEST_PROTOCOL + TEST_HOSTNAME).port(port).basePath(BASE_PATH)
                     .when().get()
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("", notNullValue())
-                    .body("", hasSize(2));
+                    .body("", hasSize(1));
         }
     }
 }

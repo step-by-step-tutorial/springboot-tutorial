@@ -8,40 +8,45 @@ import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.service.BatchService;
 import com.tutorial.springboot.securityoauth2server.service.CrudService;
 import com.tutorial.springboot.securityoauth2server.transformer.UserTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentUsername;
 import static com.tutorial.springboot.securityoauth2server.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 
 @Service
 public class UserService extends AbstractService<Long, User, UserDto> implements CrudService<Long, UserDto>, BatchService<Long, UserDto> {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository repository, UserTransformer transformer) {
+    public UserService(
+            UserRepository repository,
+            RoleRepository roleRepository,
+            UserTransformer transformer,
+            PasswordEncoder passwordEncoder
+    ) {
         super(repository, transformer);
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public User findByUsername(String username) {
+    public UserDto findByUsername(String username) {
         shouldBeNotNullOrEmpty(username, "username is wrong");
         return ((UserRepository) repository).findByUsername(username)
+                .map(transformer::toDto)
                 .orElseThrow();
     }
 
-    public void changePassword(String oldPassword, String newPassword) {
-        shouldBeNotNullOrEmpty(oldPassword, "password is wrong");
-        shouldBeNotNullOrEmpty(newPassword, "password is wrong");
+    public void changePassword(String username, String currentPassword, String newPassword) {
+        shouldBeNotNullOrEmpty(username, "credentials are wrong");
+        shouldBeNotNullOrEmpty(currentPassword, "credentials are wrong");
+        shouldBeNotNullOrEmpty(newPassword, "credentials are wrong");
 
-        var user = findByUsername(getCurrentUsername());
+        var user = ((UserRepository) repository).findByUsername(username).orElseThrow();
 
-        if (user.getPassword().equals(oldPassword)) {
-            user.setPassword(newPassword);
+        if (user.getUsername().equals(username) && passwordEncoder.matches(currentPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
             repository.save(user);
         } else {
             throw new RuntimeException("Password could not be changed, due to incorrect password");
@@ -52,16 +57,9 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
     protected void beforeSave(UserDto dto, User entity) {
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        var roles = entity.getRoles()
-                .stream()
-                .map(role -> {
-                    if (roleRepository.existsByName(role.getName())) {
-                        return roleRepository.findByName(role.getName()).get();
-                    } else {
-                        return role;
-                    }
-                })
-                .toList();
-        entity.setRoles(roles);
+        var roles = roleRepository.findOrSaveAll(entity.getRoles());
+        entity.getRoles().clear();
+        entity.getRoles().addAll(roles);
     }
+
 }

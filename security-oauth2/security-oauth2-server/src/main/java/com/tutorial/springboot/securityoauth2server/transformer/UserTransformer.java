@@ -2,9 +2,13 @@ package com.tutorial.springboot.securityoauth2server.transformer;
 
 import com.tutorial.springboot.securityoauth2server.dto.UserDto;
 import com.tutorial.springboot.securityoauth2server.entity.User;
+import com.tutorial.springboot.securityoauth2server.transformer.AbstractTransformer;
+import com.tutorial.springboot.securityoauth2server.transformer.RoleTransformer;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope("prototype")
 public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
 
     private final RoleTransformer roleTransformer;
@@ -19,7 +23,7 @@ public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
         dto.setUsername(entity.getUsername())
                 .setEmail(entity.getEmail())
                 .setEnabled(entity.isEnabled())
-                .setRoles(entity.getRoles().stream().map(roleTransformer::toDto).toList());
+                .setRoles(roleTransformer.toDtoList(entity.getRoles()));
     }
 
     @Override
@@ -28,7 +32,11 @@ public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
                 .setPassword(dto.getPassword())
                 .setEmail(dto.getEmail())
                 .setEnabled(dto.isEnabled())
-                .setRoles(dto.getRoles().stream().map(roleTransformer::toEntity).toList());
+                .setRoles(roleTransformer.toEntityList(dto.getRoles()));
     }
 
+    @Override
+    protected void exposeSecureInformation(User entity, UserDto dto) {
+        dto.setPassword(entity.getPassword());
+    }
 }

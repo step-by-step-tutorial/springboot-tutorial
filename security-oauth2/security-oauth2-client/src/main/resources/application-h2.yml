@@ -1,7 +1,7 @@
 spring:
   datasource:
-    username: sa
-    password: ''
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
     url: jdbc:h2:mem:${DATABASE_NAME:test_db}
     driver-class-name: org.h2.Driver
   data:
@@ -11,7 +11,6 @@ spring:
   jpa:
     database: H2
     database-platform: org.hibernate.dialect.H2Dialect
-    #show-sql: true
     hibernate:
       ddl-auto: create-drop
     properties:
@@ -19,8 +18,6 @@ spring:
         persistence:
           create-database-schemas: false
       hibernate:
-        #generate_statistics: true
-        #format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         default_schema: ""
   h2:

@@ -51,8 +51,8 @@ services:
       APP_PROFILES: postgres
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
-      POSTGRESQL_HOST: postgres
-      POSTGRESQL_PORT: 5432
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
       DATABASE_NAME: test_db
       DATABASE_SCHEMA: user_management
   securityoauth2server:
@@ -70,10 +70,10 @@ services:
       APP_PORT: "8080"
       AUTHORIZATION_SERVER: "http://securityoauth2server.localhost"
       RESOURCE_SERVER: "http://securityoauth2server:8080"
-      APP_PROFILES: postgres
+      APP_PROFILES: postgres,openapibasic
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
-      POSTGRESQL_HOST: postgres
-      POSTGRESQL_PORT: 5432
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
       DATABASE_NAME: test_db
       DATABASE_SCHEMA: user_management

@@ -29,5 +29,6 @@ spring:
 
 secure-resource:
   unsecure-urls:
+    - /login
     - /swagger-ui/**
     - /v3/api-docs/**

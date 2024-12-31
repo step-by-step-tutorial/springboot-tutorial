@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientRegistrationFactory {
 
-    @Value("${local.oauth2.authorizationserver}")
+    @Value("${app.oauth2.authorizationserver}")
     private String authorizationserver;
 
-    @Value("${local.oauth2.resourceserver}")
+    @Value("${app.oauth2.resourceserver}")
     private String resourceserver;
 
-    @Value("${local.oauth2.clientapp}")
+    @Value("${app.oauth2.clientapp}")
     private String clientapp;
 
     public ClientRegistration createTestClient() {

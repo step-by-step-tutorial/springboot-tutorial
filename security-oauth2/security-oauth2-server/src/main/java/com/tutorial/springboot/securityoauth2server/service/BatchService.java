@@ -9,9 +9,9 @@ import java.util.List;
 public interface BatchService<ID, DTO extends AbstractDto<ID, DTO>> {
     List<ID> saveBatch(List<DTO> dtoList);
 
-    Page<DTO> getBatch(Pageable pageable);
+    Page<DTO> findByPage(Pageable pageable);
 
-    List<DTO> getBatch(List<ID> identities);
+    List<DTO> findByIdentities(List<ID> identities);
 
     void deleteBatch(List<ID> identities);
 }

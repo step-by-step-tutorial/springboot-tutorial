@@ -2,11 +2,7 @@ package com.tutorial.springboot.securityoauth2server.repository;
 
 import com.tutorial.springboot.securityoauth2server.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.history.RevisionRepository;
 
-import java.util.Optional;
-
-public interface RoleRepository extends JpaRepository<Role, Long> {
-    Optional<Role> findByName(String name);
-
-    Boolean existsByName(String name);
+public interface RoleRepository extends JpaRepository<Role, Long>, RevisionRepository<Role, Long, Long>, CustomRepository<Role, Long> {
 }

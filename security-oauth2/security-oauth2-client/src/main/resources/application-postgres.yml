@@ -4,7 +4,7 @@ spring:
   datasource:
     username: ${DATABASE_USERNAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:5432}/${DATABASE_NAME:test_db}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:test_db}
     driver-class-name: org.postgresql.Driver
   data:
     jpa:
@@ -13,7 +13,6 @@ spring:
   jpa:
     database: POSTGRESQL
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    #    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
@@ -21,7 +20,5 @@ spring:
         persistence:
           create-database-schemas: true
       hibernate:
-        #        generate_statistics: true
-        #        format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        default_schema: ${DATABASE_SCHEMA:client}
+        default_schema: ${DATABASE_SCHEMA:user_management}

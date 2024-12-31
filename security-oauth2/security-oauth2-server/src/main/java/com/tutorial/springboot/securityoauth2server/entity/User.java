@@ -1,8 +1,11 @@
 package com.tutorial.springboot.securityoauth2server.entity;
 
+import com.tutorial.springboot.securityoauth2server.util.CollectionUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,9 +15,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Audited
 public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     @NotBlank(message = "Username is mandatory")
+    @Column(unique = true, nullable = false)
     private String username;
 
     @NotBlank(message = "Password is mandatory")
@@ -22,20 +27,20 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
 
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email is not valid")
+    @Column(unique = true, nullable = false)
     private String email;
 
     private boolean enabled = true;
 
+    @NotAudited
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"})
     )
     private List<Role> roles = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<AccessToken> accessTokens = new ArrayList<>();
 
     @Override
     public String getUsername() {
@@ -90,23 +95,26 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
         return getRoles();
     }
 
-    public List<AccessToken> getAccessTokens() {
-        return accessTokens;
-    }
+    @Override
+    public User updateFrom(User newOne) {
+        super.updateFrom(newOne);
+        this.username = newOne.username;
+        this.email = newOne.email;
+        this.enabled = newOne.enabled;
 
-    public void setAccessTokens(List<AccessToken> accessTokens) {
-        this.accessTokens = accessTokens;
+        return this;
     }
 
     @Override
-    public void updateFrom(User newOne) {
-        super.updateFrom(newOne);
-        this.username = newOne.username;
-        this.password = newOne.password;
-        this.email = newOne.email;
-        this.enabled = newOne.enabled;
-        this.roles.clear();
-        this.roles.addAll(newOne.roles);
+    public User updateRelations(User newOne) {
+        var compared = CollectionUtils.compareCollections(this.roles, newOne.roles);
+        compared.commonItem().forEach(role -> role.updateRelations(newOne.roles.get(newOne.roles.indexOf(role))));
+        compared.newItems().forEach(role -> role.updateRelations(role));
+
+        this.roles.removeAll(compared.deletionItems());
+        this.roles.addAll(compared.newItems());
+
+        return this;
     }
 
     @Transient
@@ -115,6 +123,12 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
                 .stream()
                 .flatMap(role -> role.getPermissions().stream())
                 .map(Permission::getName)
+                .distinct()
                 .toList();
+    }
+
+    @Override
+    public String toString() {
+        return username;
     }
 }
