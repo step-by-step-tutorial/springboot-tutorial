@@ -147,7 +147,7 @@ public class UserRepositoryTest {
 
             var actual = assertDoesNotThrow(() -> {
                 var updatedUser = assistant.find(User.class, givenUserId);
-                updatedUser.updateRelations(givenUser);
+                updatedUser.updateJoinTableRelations(givenUser);
                 var result = systemUnderTest.save(updatedUser);
                 assistant.flush();
                 return result;
@@ -175,7 +175,7 @@ public class UserRepositoryTest {
 
             var actual = assertDoesNotThrow(() -> {
                 var updatedUser = assistant.find(User.class, givenUserId);
-                updatedUser.updateRelations(givenUser);
+                updatedUser.updateJoinTableRelations(givenUser);
                 var result = systemUnderTest.save(updatedUser);
                 assistant.flush();
                 return result;
@@ -205,7 +205,7 @@ public class UserRepositoryTest {
 
             var actual = assertDoesNotThrow(() -> {
                 var updatedUser = assistant.find(User.class, givenUserId);
-                updatedUser.updateRelations(givenUser);
+                updatedUser.updateJoinTableRelations(givenUser);
                 var result = systemUnderTest.save(updatedUser);
                 assistant.flush();
                 return result;

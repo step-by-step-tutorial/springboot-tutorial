@@ -32,10 +32,11 @@ public class ExceptionApi {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorDto> catchBadCredentialsException(BadCredentialsException ex) {
-        logger.error(ex.getMessage());
+        var message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+        logger.error(message);
         return ResponseEntity.status(UNAUTHORIZED)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(new ErrorDto(ex.getMessage()));
+                .body(new ErrorDto(message));
     }
 
     @ExceptionHandler(value = {
@@ -46,10 +47,11 @@ public class ExceptionApi {
             IllegalArgumentException.class
     })
     public ResponseEntity<ErrorDto> catchException(Exception ex) {
-        logger.error(ex.getMessage());
+        var message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+        logger.error(message);
         return ResponseEntity.internalServerError()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(new ErrorDto(ex.getMessage()));
+                .body(new ErrorDto(message));
     }
 
 }

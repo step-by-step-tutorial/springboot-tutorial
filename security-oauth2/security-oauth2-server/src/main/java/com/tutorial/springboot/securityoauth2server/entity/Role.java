@@ -14,14 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Audited
-public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority {
-
-    @NotBlank(message = "Name is mandatory")
-    @Size(min = 1, max = 50, message = "Name cannot be longer than 50 characters")
-    @Column(unique = true, nullable = false)
-    private String name;
-
-    private String description;
+public class Role extends CodeTable<Long, Role> implements GrantedAuthority {
 
     @NotAudited
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
@@ -42,21 +35,12 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
         return getName();
     }
 
-    public String getName() {
-        return name;
-    }
+    @Override
+    public Role updateJoinTableRelations(Role newOne) {
+        var permissionsCompared = CollectionUtils.compareCollections(this.permissions, newOne.permissions);
+        this.permissions.removeAll(permissionsCompared.deletionItems());
+        this.permissions.addAll(permissionsCompared.newItems());
 
-    public Role setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Role setDescription(String description) {
-        this.description = description;
         return this;
     }
 
@@ -75,39 +59,5 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     public Role setPermissions(List<Permission> permissions) {
         this.permissions = permissions;
         return this;
-    }
-
-    @Override
-    public Role updateFrom(Role newOne) {
-        super.updateFrom(newOne);
-        this.name = newOne.name;
-        return this;
-    }
-
-    @Override
-    public Role updateRelations(Role newOne) {
-        var compared = CollectionUtils.compareCollections(this.permissions, newOne.permissions);
-
-        this.permissions.removeAll(compared.deletionItems());
-        this.permissions.addAll(compared.newItems());
-
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        var role = (Role) o;
-        return Objects.equals(name, role.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(name);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

@@ -2,7 +2,7 @@ package com.tutorial.springboot.securityoauth2server.service.impl;
 
 import com.tutorial.springboot.securityoauth2server.dto.PermissionDto;
 import com.tutorial.springboot.securityoauth2server.entity.Permission;
-import com.tutorial.springboot.securityoauth2server.repository.PermissionRepository;
+import com.tutorial.springboot.securityoauth2server.repository.rbac.PermissionRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.service.BatchService;
 import com.tutorial.springboot.securityoauth2server.service.CrudService;

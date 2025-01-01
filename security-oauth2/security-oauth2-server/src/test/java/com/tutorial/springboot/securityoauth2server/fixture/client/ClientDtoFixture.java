@@ -1,7 +1,7 @@
 package com.tutorial.springboot.securityoauth2server.fixture.client;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
-import com.tutorial.springboot.securityoauth2server.enums.GrantType;
+import com.tutorial.springboot.securityoauth2server.enums.GrantTypeEnum;
 import net.datafaker.Faker;
 
 import java.util.Arrays;
@@ -19,7 +19,7 @@ public final class ClientDtoFixture {
                 .setClientId(name)
                 .setClientSecret("password")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/" + name)
-                .setGrantTypes(GrantType.allType())
+                .setGrantTypes(GrantTypeEnum.allType())
                 .setScopes(Arrays.asList("read", "write"))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600);
@@ -30,7 +30,7 @@ public final class ClientDtoFixture {
                 .setClientId(name)
                 .setClientSecret("password")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/" + name)
-                .setGrantTypes(GrantType.allType())
+                .setGrantTypes(GrantTypeEnum.allType())
                 .setScopes(Arrays.asList("read", "write"))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600);

@@ -1,8 +1,7 @@
-package com.tutorial.springboot.securityoauth2server.repository;
+package com.tutorial.springboot.securityoauth2server.repository.rbac;
 
 import com.tutorial.springboot.securityoauth2server.entity.Role;
 import com.tutorial.springboot.securityoauth2server.repository.CustomRepository;
-import com.tutorial.springboot.securityoauth2server.repository.PermissionRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;

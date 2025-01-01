@@ -107,10 +107,11 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     }
 
     @Override
-    public User updateRelations(User newOne) {
+    public User updateJoinTableRelations(User newOne) {
         var compared = compareCollections(this.roles, newOne.roles);
-        compared.commonItem().forEach(role -> role.updateRelations(newOne.roles.get(newOne.roles.indexOf(role))));
-        compared.newItems().forEach(role -> role.updateRelations(role));
+        compared.commonItem().forEach(role -> role.updateJoinTableRelations(newOne.roles.get(newOne.roles.indexOf(role))));
+        // Some roles use persisted permissions
+        compared.newItems().forEach(role -> role.updateJoinTableRelations(role));
 
         this.roles.removeAll(compared.deletionItems());
         this.roles.addAll(compared.newItems());

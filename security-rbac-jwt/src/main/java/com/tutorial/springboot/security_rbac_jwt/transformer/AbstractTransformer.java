@@ -13,15 +13,9 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, ENTITY>, DTO extends AbstractDto<ID, DTO>> {
 
-    private static final boolean ALLOWANCE_EXPOSE_SECURE_INFORMATION = true;
-
-    private static final boolean DIS_ALLOWANCE_EXPOSE_SECURE_INFORMATION = false;
-
     private final Class<ENTITY> entityClass;
 
     private final Class<DTO> dtoClass;
-
-    private boolean exposeSecureInformation = DIS_ALLOWANCE_EXPOSE_SECURE_INFORMATION;
 
     public AbstractTransformer() {
         entityClass = identifyType(1, getClass());
@@ -43,10 +37,6 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
                 .setVersion(entity.getVersion());
 
         copyEntityToDto(entity, dto);
-
-        if (exposeSecureInformation == ALLOWANCE_EXPOSE_SECURE_INFORMATION) {
-            exposeSecureInformation(entity, dto);
-        }
 
         return dto;
     }
@@ -99,17 +89,6 @@ public abstract class AbstractTransformer<ID, ENTITY extends AbstractEntity<ID, 
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public void allowToExposeSecureInformation() {
-        this.exposeSecureInformation = ALLOWANCE_EXPOSE_SECURE_INFORMATION;
-    }
-
-    public void disAllowToExposeSecureInformation() {
-        this.exposeSecureInformation = DIS_ALLOWANCE_EXPOSE_SECURE_INFORMATION;
-    }
-
-    protected void exposeSecureInformation(ENTITY entity, DTO dto) {
     }
 
     protected abstract void copyEntityToDto(ENTITY entity, DTO dto);

@@ -1,4 +1,4 @@
-package com.tutorial.springboot.securityoauth2server.repository;
+package com.tutorial.springboot.securityoauth2server.repository.rbac;
 
 import com.tutorial.springboot.securityoauth2server.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -45,7 +45,7 @@ public class TokenApi {
     @PatchMapping("/me/client/{clientId}")
     public ResponseEntity<Void> generateTokenByClientId(@PathVariable String clientId) {
         logger.info("Received an inbound request to generate a new token for user:{}, client:{}", getCurrentUsername(), clientId);
-        clientService.updateToken(clientId);
+        clientService.updateTokenBasedOnClientId(clientId);
 
         return ResponseEntity.noContent().build();
     }

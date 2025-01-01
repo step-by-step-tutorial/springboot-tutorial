@@ -1,7 +1,7 @@
 package com.tutorial.springboot.securityoauth2server.service.impl;
 
 import com.tutorial.springboot.securityoauth2server.entity.User;
-import com.tutorial.springboot.securityoauth2server.repository.UserRepository;
+import com.tutorial.springboot.securityoauth2server.repository.rbac.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 

@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
 public class RoleTransformer extends AbstractTransformer<Long, Role, RoleDto> {
 
     private final PermissionTransformer permissionTransformer;

@@ -10,39 +10,29 @@ import java.util.List;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-public class Scope extends AbstractEntity<Long, Scope> {
-
-    @Column(unique = true, nullable = false)
-    private String name;
-
-    private String description;
+public class Scope extends CodeTable<Long, Scope> {
 
     @ManyToMany(mappedBy = "scopes", fetch = LAZY)
     private List<Client> clients = new ArrayList<>();
 
-    public String getName() {
-        return name;
-    }
-
-    public Scope setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Scope setDescription(String description) {
-        this.description = description;
-        return this;
-    }
+    @ManyToMany(mappedBy = "scopes", fetch = LAZY)
+    private List<Resource> resources = new ArrayList<>();
 
     public List<Client> getClients() {
         return clients;
     }
 
-    public void setClients(List<Client> clients) {
+    public Scope setClients(List<Client> clients) {
         this.clients = clients;
+        return this;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public Scope setResources(List<Resource> resources) {
+        this.resources = resources;
+        return this;
     }
 }

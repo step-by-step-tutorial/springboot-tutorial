@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -91,7 +90,7 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection<Role> getAuthorities() {
         return getRoles();
     }
 
@@ -106,13 +105,14 @@ public class User extends AbstractEntity<Long, User> implements UserDetails {
     }
 
     @Override
-    public User updateRelations(User newOne) {
-        var compared = CollectionUtils.compareCollections(this.roles, newOne.roles);
-        compared.commonItem().forEach(role -> role.updateRelations(newOne.roles.get(newOne.roles.indexOf(role))));
-        compared.newItems().forEach(role -> role.updateRelations(role));
+    public User updateJoinTableRelations(User newOne) {
+        var rolesCompared = CollectionUtils.compareCollections(this.roles, newOne.roles);
+        rolesCompared.commonItem().forEach(role -> role.updateJoinTableRelations(newOne.roles.get(newOne.roles.indexOf(role))));
+        // Some roles use persisted permissions
+        rolesCompared.newItems().forEach(role -> role.updateJoinTableRelations(role));
 
-        this.roles.removeAll(compared.deletionItems());
-        this.roles.addAll(compared.newItems());
+        this.roles.removeAll(rolesCompared.deletionItems());
+        this.roles.addAll(rolesCompared.newItems());
 
         return this;
     }

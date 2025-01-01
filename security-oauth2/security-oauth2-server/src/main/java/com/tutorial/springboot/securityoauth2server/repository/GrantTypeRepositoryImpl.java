@@ -1,7 +1,6 @@
 package com.tutorial.springboot.securityoauth2server.repository;
 
-import com.tutorial.springboot.securityoauth2server.entity.Permission;
-import com.tutorial.springboot.securityoauth2server.repository.CustomRepository;
+import com.tutorial.springboot.securityoauth2server.entity.GrantType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -10,17 +9,17 @@ import java.util.List;
 import static com.tutorial.springboot.securityoauth2server.util.CollectionUtils.removeDuplication;
 import static java.util.stream.Collectors.toList;
 
-public class PermissionRepositoryImpl implements CustomRepository<Permission, Long> {
+public class GrantTypeRepositoryImpl implements CustomRepository<GrantType, Long> {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Permission findOrSave(Permission entity) {
+    public GrantType findOrSave(GrantType entity) {
         try {
             var cb = entityManager.getCriteriaBuilder();
-            var cq = cb.createQuery(Permission.class);
-            var root = cq.from(Permission.class);
+            var cq = cb.createQuery(GrantType.class);
+            var root = cq.from(GrantType.class);
             cq.select(root).where(cb.equal(root.get("name"), entity.getName()));
             return entityManager.createQuery(cq).getSingleResult();
         } catch (Exception e) {
@@ -30,8 +29,8 @@ public class PermissionRepositoryImpl implements CustomRepository<Permission, Lo
     }
 
     @Override
-    public List<Permission> findOrSaveAll(List<Permission> entities) {
-        return removeDuplication(entities, Permission::getName)
+    public List<GrantType> findOrSaveAll(List<GrantType> entities) {
+        return removeDuplication(entities, GrantType::getName)
                 .map(entity -> findOrSave(entity))
                 .collect(toList());
     }

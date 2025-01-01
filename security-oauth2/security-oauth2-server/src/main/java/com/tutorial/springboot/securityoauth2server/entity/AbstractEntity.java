@@ -9,7 +9,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -104,13 +103,13 @@ public abstract class AbstractEntity<ID, SELF extends AbstractEntity<ID, SELF>> 
             throw new IllegalStateException("The given entity has a different version. Cannot update.");
         }
 
-        updateRelations(newOne);
+        updateJoinTableRelations(newOne);
 
         return (SELF) this;
     }
 
     @Transient
-    public SELF updateRelations(SELF newOne) {
+    public SELF updateJoinTableRelations(SELF newOne) {
         return (SELF) this;
     }
 }

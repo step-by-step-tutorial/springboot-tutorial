@@ -1,6 +1,6 @@
 package com.tutorial.springboot.securityoauth2server.api.impl;
 
-import com.tutorial.springboot.securityoauth2server.dto.ListDto;
+import com.tutorial.springboot.securityoauth2server.dto.StringListDto;
 import com.tutorial.springboot.securityoauth2server.dto.StatusDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,8 @@ public class ApplicationApi {
     }
 
     @GetMapping(value = "/services")
-    public ResponseEntity<ListDto> getServices() {
+    public ResponseEntity<StringListDto> getServices() {
         logger.info("Received an inbound request to show all available services");
-        return ResponseEntity.ok(new ListDto(List.of("User API", "Client API", "Token API")));
+        return ResponseEntity.ok(new StringListDto(List.of("User API", "Client API", "Token API")));
     }
 }

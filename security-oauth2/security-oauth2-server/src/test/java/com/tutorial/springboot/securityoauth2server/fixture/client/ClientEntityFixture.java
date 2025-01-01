@@ -1,7 +1,8 @@
 package com.tutorial.springboot.securityoauth2server.fixture.client;
 
 import com.tutorial.springboot.securityoauth2server.entity.*;
-import com.tutorial.springboot.securityoauth2server.enums.GrantType;
+import com.tutorial.springboot.securityoauth2server.enums.GrantTypeEnum;
+import com.tutorial.springboot.securityoauth2server.enums.ScopeEnum;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import net.datafaker.Faker;
@@ -11,10 +12,10 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.tutorial.springboot.securityoauth2server.testutils.TestStringUtils.generateString;
+import static java.util.stream.Collectors.toList;
 
 public final class ClientEntityFixture {
 
@@ -29,11 +30,8 @@ public final class ClientEntityFixture {
                 .setClientId(name)
                 .setClientSecret("password")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/" + name)
-                .setGrantTypes(GrantType.allType())
-                .setScopes(Arrays.asList(
-                        new Scope().setName("read").setDescription("read description"),
-                        new Scope().setName("write").setDescription("write description")
-                ))
+                .setGrantTypes(GrantTypeEnum.allType().stream().map(it-> new GrantType().setName(it)).collect(toList()))
+                .setScopes(ScopeEnum.allType().stream().map(it-> new Scope().setName(it)).collect(toList()))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600)
                 .setVersion(0);
@@ -44,11 +42,8 @@ public final class ClientEntityFixture {
                 .setClientId(name)
                 .setClientSecret("password")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/" + name)
-                .setGrantTypes(GrantType.allType())
-                .setScopes(Arrays.asList(
-                        new Scope().setName("read").setDescription("read description"),
-                        new Scope().setName("write").setDescription("write description")
-                ))
+                .setGrantTypes(GrantTypeEnum.allType().stream().map(it-> new GrantType().setName(it)).collect(toList()))
+                .setScopes(ScopeEnum.allType().stream().map(it-> new Scope().setName(it)).collect(toList()))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600)
                 .setVersion(0);

@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
 public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
 
     private final RoleTransformer roleTransformer;
@@ -33,10 +32,5 @@ public class UserTransformer extends AbstractTransformer<Long, User, UserDto> {
                 .setEmail(dto.getEmail())
                 .setEnabled(dto.isEnabled())
                 .setRoles(roleTransformer.toEntityList(dto.getRoles()));
-    }
-
-    @Override
-    protected void exposeSecureInformation(User entity, UserDto dto) {
-        dto.setPassword(entity.getPassword());
     }
 }

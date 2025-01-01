@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
 public class PermissionTransformer extends AbstractTransformer<Long, Permission, PermissionDto> {
 
     @Override

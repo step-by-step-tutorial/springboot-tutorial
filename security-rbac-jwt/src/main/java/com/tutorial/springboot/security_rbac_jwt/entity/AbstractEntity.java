@@ -103,13 +103,13 @@ public abstract class AbstractEntity<ID, SELF extends AbstractEntity<ID, SELF>> 
             throw new IllegalStateException("The given entity has a different version. Cannot update.");
         }
 
-        updateRelations(newOne);
+        updateJoinTableRelations(newOne);
 
         return (SELF) this;
     }
 
     @Transient
-    public SELF updateRelations(SELF newOne) {
+    public SELF updateJoinTableRelations(SELF newOne) {
         return (SELF) this;
     }
 }

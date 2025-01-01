@@ -44,7 +44,7 @@ public class UserApi extends AllApi<Long, User, UserDto> {
     public ResponseEntity<Void> changePassword(@RequestBody @Validated ChangeCredentialsDto dto, BindingResult bindingResult) {
         logger.info("Received an inbound request to change password of {}", getCurrentUsername());
         checkValidation(bindingResult);
-        getService().changePassword(dto.username(), dto.password(), dto.newPassword());
+        getService().changePassword(dto.username(), dto.currentPassword(), dto.newPassword());
         return ResponseEntity.noContent().build();
     }
 }

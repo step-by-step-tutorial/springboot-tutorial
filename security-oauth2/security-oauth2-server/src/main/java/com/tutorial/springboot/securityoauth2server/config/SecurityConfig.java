@@ -18,11 +18,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class ServerSecurityConfig {
+public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-    public ServerSecurityConfig(UserDetailsService userDetailsService) {
+    public SecurityConfig(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 

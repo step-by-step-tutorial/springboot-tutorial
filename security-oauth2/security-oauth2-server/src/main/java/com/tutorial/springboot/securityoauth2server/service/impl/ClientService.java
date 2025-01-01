@@ -3,10 +3,10 @@ package com.tutorial.springboot.securityoauth2server.service.impl;
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.entity.AccessToken;
 import com.tutorial.springboot.securityoauth2server.entity.Client;
-import com.tutorial.springboot.securityoauth2server.repository.AccessTokenRepository;
-import com.tutorial.springboot.securityoauth2server.repository.ClientRepository;
-import com.tutorial.springboot.securityoauth2server.repository.ScopeRepository;
-import com.tutorial.springboot.securityoauth2server.repository.UserRepository;
+import com.tutorial.springboot.securityoauth2server.repository.*;
+import com.tutorial.springboot.securityoauth2server.repository.client.ClientRepository;
+import com.tutorial.springboot.securityoauth2server.repository.rbac.UserRepository;
+import com.tutorial.springboot.securityoauth2server.repository.token.AccessTokenRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.transformer.ClientTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentUsername;
@@ -31,6 +30,9 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
 
     @Autowired
     private ScopeRepository scopeRepository;
+
+    @Autowired
+    private GrantTypeRepository grantTypeRepository;
 
     @Autowired
     private TokenService tokenService;
@@ -49,6 +51,10 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
         var scopes = scopeRepository.findOrSaveAll(entity.getScopes());
         entity.getScopes().clear();
         entity.getScopes().addAll(scopes);
+
+        var grantTypes = grantTypeRepository.findOrSaveAll(entity.getGrantTypes());
+        entity.getGrantTypes().clear();
+        entity.getGrantTypes().addAll(grantTypes);
     }
 
     @Override
@@ -59,13 +65,14 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
     @Transactional(readOnly = true)
     @PreAuthorize("hasPermission(#dto, 'READ')")
     public Optional<ClientDto> getByClientId(String clientId) {
-        return (ClientRepository.class.cast(repository)).findByClientId(clientId).map(transformer::toDto);
+        return getClientRepository()
+                .findByClientId(clientId)
+                .map(transformer::toDto);
     }
 
-
     @PreAuthorize("hasPermission(#dto, 'UPDATE')")
-    public void updateToken(String clientId) {
-        var clientEntity = (ClientRepository.class.cast(repository)).findByClientId(clientId);
+    public void updateTokenBasedOnClientId(String clientId) {
+        var clientEntity = getClientRepository().findByClientId(clientId);
         if (clientEntity.isEmpty()) {
             throw new RuntimeException("Client with clientId " + clientId + " not found");
         }
@@ -88,6 +95,10 @@ public class ClientService extends AbstractService<Long, Client, ClientDto> {
                 .setUser(user);
 
         accessTokenRepository.save(accessToken);
+    }
+
+    private ClientRepository getClientRepository() {
+        return ClientRepository.class.cast(repository);
     }
 
 }

@@ -2,26 +2,27 @@ package com.tutorial.springboot.securityoauth2server.transformer;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.dto.TokenDto;
-import com.tutorial.springboot.securityoauth2server.entity.AccessToken;
-import com.tutorial.springboot.securityoauth2server.entity.Client;
-import com.tutorial.springboot.securityoauth2server.entity.Scope;
+import com.tutorial.springboot.securityoauth2server.entity.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 @Component
 public class ClientTransformer extends AbstractTransformer<Long, Client, ClientDto> {
+
+    @Autowired
+    private ScopeTransformer scopeTransformer;
+
+    @Autowired
+    private GrantTypeTransformer grantTypeTransformer;
 
     @Override
     protected void copyEntityToDto(Client entity, ClientDto dto) {
         dto.setClientId(entity.getClientId())
                 .setRedirectUri(entity.getRedirectUri())
-                .setGrantTypes(entity.getGrantTypes())
-                .setScopes(entity.getScopes()
-                        .stream()
-                        .map(Scope::getName)
-                        .collect(Collectors.toList()))
+                .setGrantTypes(grantTypeTransformer.toStringList(entity.getGrantTypes()))
+                .setScopes(scopeTransformer.toStringList(entity.getScopes()))
                 .setAccessTokenValiditySeconds(entity.getAccessTokenValiditySeconds())
                 .setRefreshTokenValiditySeconds(entity.getRefreshTokenValiditySeconds());
 
@@ -33,11 +34,8 @@ public class ClientTransformer extends AbstractTransformer<Long, Client, ClientD
         entity.setClientId(dto.getClientId())
                 .setClientSecret(dto.getClientSecret())
                 .setRedirectUri(dto.getRedirectUri())
-                .setGrantTypes(dto.getGrantTypes())
-                .setScopes(dto.getScopes()
-                        .stream()
-                        .map(s -> new Scope().setName(s))
-                        .collect(Collectors.toList()))
+                .setGrantTypes(grantTypeTransformer.fromStringList(dto.getGrantTypes()))
+                .setScopes(scopeTransformer.fromStringList(dto.getScopes()))
                 .setAccessTokenValiditySeconds(dto.getAccessTokenValiditySeconds())
                 .setRefreshTokenValiditySeconds(dto.getRefreshTokenValiditySeconds());
     }

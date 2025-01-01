@@ -86,7 +86,7 @@ public class Role extends AbstractEntity<Long, Role> implements GrantedAuthority
     }
 
     @Override
-    public Role updateRelations(Role newOne) {
+    public Role updateJoinTableRelations(Role newOne) {
         var compared = compareCollections(this.permissions, newOne.permissions);
 
         this.permissions.removeAll(compared.deletionItems());

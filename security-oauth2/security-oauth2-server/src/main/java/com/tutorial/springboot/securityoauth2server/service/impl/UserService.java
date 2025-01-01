@@ -2,8 +2,8 @@ package com.tutorial.springboot.securityoauth2server.service.impl;
 
 import com.tutorial.springboot.securityoauth2server.dto.UserDto;
 import com.tutorial.springboot.securityoauth2server.entity.User;
-import com.tutorial.springboot.securityoauth2server.repository.RoleRepository;
-import com.tutorial.springboot.securityoauth2server.repository.UserRepository;
+import com.tutorial.springboot.securityoauth2server.repository.rbac.RoleRepository;
+import com.tutorial.springboot.securityoauth2server.repository.rbac.UserRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.service.BatchService;
 import com.tutorial.springboot.securityoauth2server.service.CrudService;
@@ -33,7 +33,8 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
 
     public UserDto findByUsername(String username) {
         shouldBeNotNullOrEmpty(username, "username is wrong");
-        return ((UserRepository) repository).findByUsername(username)
+        return getUserRepository()
+                .findByUsername(username)
                 .map(transformer::toDto)
                 .orElseThrow();
     }
@@ -43,7 +44,9 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
         shouldBeNotNullOrEmpty(currentPassword, "credentials are wrong");
         shouldBeNotNullOrEmpty(newPassword, "credentials are wrong");
 
-        var user = ((UserRepository) repository).findByUsername(username).orElseThrow();
+        var user = getUserRepository()
+                .findByUsername(username)
+                .orElseThrow();
 
         if (user.getUsername().equals(username) && passwordEncoder.matches(currentPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
@@ -60,6 +63,10 @@ public class UserService extends AbstractService<Long, User, UserDto> implements
         var roles = roleRepository.findOrSaveAll(entity.getRoles());
         entity.getRoles().clear();
         entity.getRoles().addAll(roles);
+    }
+
+    private UserRepository getUserRepository() {
+        return (UserRepository) repository;
     }
 
 }

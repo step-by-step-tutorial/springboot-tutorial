@@ -82,7 +82,7 @@ public class ClientApiTest {
                     .body("clientSecret", emptyOrNullString())
                     .body("redirectUri", equalTo("http://localhost:8080/login/oauth2/code/" + givenClientId))
                     .body("grantTypes", hasSize(6))
-                    .body("scopes", hasSize(2))
+                    .body("scopes", hasSize(4))
                     .body("accessTokenValiditySeconds", equalTo(3600))
                     .body("refreshTokenValiditySeconds", equalTo(1209600));
         }
