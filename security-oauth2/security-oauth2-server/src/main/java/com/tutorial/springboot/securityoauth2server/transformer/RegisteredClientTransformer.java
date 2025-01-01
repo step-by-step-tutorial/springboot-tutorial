@@ -1,15 +1,12 @@
 package com.tutorial.springboot.securityoauth2server.transformer;
 
 import com.tutorial.springboot.securityoauth2server.entity.Client;
-import com.tutorial.springboot.securityoauth2server.entity.GrantType;
-import com.tutorial.springboot.securityoauth2server.entity.Scope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;

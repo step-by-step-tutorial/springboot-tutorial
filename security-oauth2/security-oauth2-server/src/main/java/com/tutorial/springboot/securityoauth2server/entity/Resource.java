@@ -2,13 +2,11 @@ package com.tutorial.springboot.securityoauth2server.entity;
 
 import com.tutorial.springboot.securityoauth2server.util.CollectionUtils;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Audited

@@ -1,8 +1,5 @@
 package com.tutorial.springboot.securityoauth2server.dto;
 
-import com.tutorial.springboot.securityoauth2server.entity.AbstractEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

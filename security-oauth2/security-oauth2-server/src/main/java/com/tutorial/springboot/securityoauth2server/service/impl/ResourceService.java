@@ -2,8 +2,8 @@ package com.tutorial.springboot.securityoauth2server.service.impl;
 
 import com.tutorial.springboot.securityoauth2server.dto.ResourceDto;
 import com.tutorial.springboot.securityoauth2server.entity.Resource;
-import com.tutorial.springboot.securityoauth2server.repository.resource.ResourceRepository;
 import com.tutorial.springboot.securityoauth2server.repository.ScopeRepository;
+import com.tutorial.springboot.securityoauth2server.repository.resource.ResourceRepository;
 import com.tutorial.springboot.securityoauth2server.service.AbstractService;
 import com.tutorial.springboot.securityoauth2server.transformer.ResourceTransformer;
 import org.springframework.beans.factory.annotation.Autowired;

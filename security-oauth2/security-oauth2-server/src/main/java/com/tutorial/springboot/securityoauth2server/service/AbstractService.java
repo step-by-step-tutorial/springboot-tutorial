@@ -11,14 +11,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static com.tutorial.springboot.securityoauth2server.util.CollectionUtils.*;
 import static com.tutorial.springboot.securityoauth2server.util.ReflectionUtils.identifyType;
-import static com.tutorial.springboot.securityoauth2server.util.SecurityUtils.getCurrentUsername;
 import static com.tutorial.springboot.securityoauth2server.validation.ObjectValidation.shouldBeNotNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 

@@ -1,7 +1,7 @@
 package com.tutorial.springboot.securityoauth2server.api.impl;
 
-import com.tutorial.springboot.securityoauth2server.dto.StringListDto;
 import com.tutorial.springboot.securityoauth2server.dto.StatusDto;
+import com.tutorial.springboot.securityoauth2server.dto.StringListDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

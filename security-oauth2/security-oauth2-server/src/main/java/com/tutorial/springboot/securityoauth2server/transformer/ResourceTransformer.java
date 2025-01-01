@@ -17,16 +17,16 @@ public class ResourceTransformer extends AbstractTransformer<Long, Resource, Res
     @Override
     protected void copyEntityToDto(Resource entity, ResourceDto dto) {
         dto
-        .setName(entity.getName())
-        .setDescription(entity.getDescription())
-        .setScopes(scopeTransformer.toStringList(entity.getScopes()));
+                .setName(entity.getName())
+                .setDescription(entity.getDescription())
+                .setScopes(scopeTransformer.toStringList(entity.getScopes()));
     }
 
     @Override
     protected void copyDtoToEntity(ResourceDto dto, Resource entity) {
         entity
-        .setName(dto.getName())
-        .setDescription(dto.getDescription())
-        .setScopes(scopeTransformer.fromStringList(dto.getScopes()));
+                .setName(dto.getName())
+                .setDescription(dto.getDescription())
+                .setScopes(scopeTransformer.fromStringList(dto.getScopes()));
     }
 }

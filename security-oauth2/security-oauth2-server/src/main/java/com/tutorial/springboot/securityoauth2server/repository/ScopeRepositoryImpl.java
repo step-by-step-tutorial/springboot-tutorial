@@ -1,6 +1,5 @@
 package com.tutorial.springboot.securityoauth2server.repository;
 
-import com.tutorial.springboot.securityoauth2server.entity.Permission;
 import com.tutorial.springboot.securityoauth2server.entity.Scope;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

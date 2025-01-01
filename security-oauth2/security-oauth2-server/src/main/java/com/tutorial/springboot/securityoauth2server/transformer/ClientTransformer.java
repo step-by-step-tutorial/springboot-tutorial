@@ -2,7 +2,8 @@ package com.tutorial.springboot.securityoauth2server.transformer;
 
 import com.tutorial.springboot.securityoauth2server.dto.ClientDto;
 import com.tutorial.springboot.securityoauth2server.dto.TokenDto;
-import com.tutorial.springboot.securityoauth2server.entity.*;
+import com.tutorial.springboot.securityoauth2server.entity.AccessToken;
+import com.tutorial.springboot.securityoauth2server.entity.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -11,8 +11,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -30,8 +28,8 @@ public final class ClientEntityFixture {
                 .setClientId(name)
                 .setClientSecret("password")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/" + name)
-                .setGrantTypes(GrantTypeEnum.allType().stream().map(it-> new GrantType().setName(it)).collect(toList()))
-                .setScopes(ScopeEnum.allType().stream().map(it-> new Scope().setName(it)).collect(toList()))
+                .setGrantTypes(GrantTypeEnum.allType().stream().map(it -> new GrantType().setName(it)).collect(toList()))
+                .setScopes(ScopeEnum.allType().stream().map(it -> new Scope().setName(it)).collect(toList()))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600)
                 .setVersion(0);
@@ -42,8 +40,8 @@ public final class ClientEntityFixture {
                 .setClientId(name)
                 .setClientSecret("password")
                 .setRedirectUri("http://localhost:8080/login/oauth2/code/" + name)
-                .setGrantTypes(GrantTypeEnum.allType().stream().map(it-> new GrantType().setName(it)).collect(toList()))
-                .setScopes(ScopeEnum.allType().stream().map(it-> new Scope().setName(it)).collect(toList()))
+                .setGrantTypes(GrantTypeEnum.allType().stream().map(it -> new GrantType().setName(it)).collect(toList()))
+                .setScopes(ScopeEnum.allType().stream().map(it -> new Scope().setName(it)).collect(toList()))
                 .setAccessTokenValiditySeconds(3600)
                 .setRefreshTokenValiditySeconds(1209600)
                 .setVersion(0);

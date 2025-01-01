@@ -1,6 +1,5 @@
 package com.tutorial.springboot.securityoauth2server.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 

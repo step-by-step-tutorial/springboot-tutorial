@@ -2,9 +2,6 @@ package com.tutorial.springboot.securityoauth2server.transformer;
 
 import com.tutorial.springboot.securityoauth2server.dto.UserDto;
 import com.tutorial.springboot.securityoauth2server.entity.User;
-import com.tutorial.springboot.securityoauth2server.transformer.AbstractTransformer;
-import com.tutorial.springboot.securityoauth2server.transformer.RoleTransformer;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component

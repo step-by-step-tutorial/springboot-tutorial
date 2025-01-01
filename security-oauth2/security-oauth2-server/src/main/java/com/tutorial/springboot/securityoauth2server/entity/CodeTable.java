@@ -1,13 +1,10 @@
 package com.tutorial.springboot.securityoauth2server.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @MappedSuperclass

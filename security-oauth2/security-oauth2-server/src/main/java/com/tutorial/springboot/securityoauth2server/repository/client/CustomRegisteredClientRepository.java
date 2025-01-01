@@ -1,11 +1,9 @@
 package com.tutorial.springboot.securityoauth2server.repository.client;
 
 import com.tutorial.springboot.securityoauth2server.transformer.RegisteredClientTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;

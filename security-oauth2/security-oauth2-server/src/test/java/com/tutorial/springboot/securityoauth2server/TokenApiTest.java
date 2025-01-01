@@ -1,7 +1,6 @@
 package com.tutorial.springboot.securityoauth2server;
 
 import com.tutorial.springboot.securityoauth2server.fixture.client.ClientEntityFixture;
-import com.tutorial.springboot.securityoauth2server.testutils.TestAuthenticationHelper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import jakarta.persistence.EntityManagerFactory;

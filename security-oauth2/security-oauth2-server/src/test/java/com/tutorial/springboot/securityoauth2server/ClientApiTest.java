@@ -17,7 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static com.tutorial.springboot.securityoauth2server.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.securityoauth2server.testutils.TestConstant.*;
-import static com.tutorial.springboot.securityoauth2server.testutils.TestTokenUtils.requestToGetNewToken;
 import static org.hamcrest.Matchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -49,6 +49,7 @@ public class RefreshToken extends AbstractEntity<Long, RefreshToken> {
                 """;
         return template.formatted(accessToken.getUser().getUsername(), accessToken.getClient().getClientId(), expiration);
     }
+
     public byte[] getToken() {
         return token;
     }
