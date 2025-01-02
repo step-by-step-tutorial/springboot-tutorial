@@ -108,7 +108,7 @@ public class SecurityConfig {
         cors.setAllowedHeaders(List.of(secureProperties.corsHttpHeaders()));
 
         var source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(secureProperties.basePath(), cors);
+        source.registerCorsConfiguration(secureProperties.corsBasePath(), cors);
 
         return source;
     }

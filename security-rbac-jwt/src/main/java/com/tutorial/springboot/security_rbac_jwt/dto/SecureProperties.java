@@ -11,7 +11,7 @@ public record SecureProperties(
         String[] corsOriginUrls,
         String[] corsHttpMethods,
         String[] corsHttpHeaders,
-        String basePath
+        String corsBasePath
 ) {
 
 }

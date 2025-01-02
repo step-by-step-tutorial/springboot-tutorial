@@ -25,8 +25,3 @@ spring:
     init:
       data-locations: classpath:data-h2.sql
       mode: always
-
-secure-resource:
-  unsecure-urls:
-    - /swagger-ui/**
-    - /v3/api-docs/**

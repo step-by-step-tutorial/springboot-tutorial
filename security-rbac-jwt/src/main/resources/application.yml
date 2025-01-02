@@ -26,4 +26,4 @@ secure-resource:
   cors-http-headers:
     - Authorization
     - Content-Type
-  base-path: /**
+  cors-base-path: /**
