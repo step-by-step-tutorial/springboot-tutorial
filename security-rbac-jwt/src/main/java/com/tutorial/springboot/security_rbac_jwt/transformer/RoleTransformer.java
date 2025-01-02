@@ -2,7 +2,6 @@ package com.tutorial.springboot.security_rbac_jwt.transformer;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
 import com.tutorial.springboot.security_rbac_jwt.entity.Role;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -2,9 +2,6 @@ package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.ChangeCredentialsDto;
 import com.tutorial.springboot.security_rbac_jwt.dto.UserDto;
-import com.tutorial.springboot.security_rbac_jwt.entity.User;
-import com.tutorial.springboot.security_rbac_jwt.fixture.user.UserDtoFixture;
-import com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import jakarta.persistence.EntityManagerFactory;

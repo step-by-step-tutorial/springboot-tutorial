@@ -1,8 +1,6 @@
 package com.tutorial.springboot.security_rbac_jwt.api;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.RoleDto;
-import com.tutorial.springboot.security_rbac_jwt.entity.Role;
-import com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleDtoAssertionUtils;
 import com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityAssertionUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -27,7 +25,8 @@ import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.T
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestConstant.TEST_PROTOCOL;
 import static com.tutorial.springboot.security_rbac_jwt.testutils.TestTokenUtils.requestToGetNewToken;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

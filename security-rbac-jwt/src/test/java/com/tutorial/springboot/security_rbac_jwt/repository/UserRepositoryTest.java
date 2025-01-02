@@ -24,11 +24,11 @@ import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.Permi
 import static com.tutorial.springboot.security_rbac_jwt.fixture.permission.PermissionEntityFixture.newGivenPermission;
 import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityAssertionUtils.assertRoles;
 import static com.tutorial.springboot.security_rbac_jwt.fixture.role.RoleEntityFixture.newGivenRole;
-import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils.assertUser;
 import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityAssertionUtils.assertUsers;
 import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.newGivenUser;
 import static com.tutorial.springboot.security_rbac_jwt.fixture.user.UserEntityFixture.persistedGivenUser;
+import static com.tutorial.springboot.security_rbac_jwt.testutils.TestAuthenticationHelper.login;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
