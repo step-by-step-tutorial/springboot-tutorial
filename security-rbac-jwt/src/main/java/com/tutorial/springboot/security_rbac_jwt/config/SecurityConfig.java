@@ -1,9 +1,7 @@
 package com.tutorial.springboot.security_rbac_jwt.config;
 
 import com.tutorial.springboot.security_rbac_jwt.dto.SecureProperties;
-import com.tutorial.springboot.security_rbac_jwt.filter.DynamicPolicyFilter;
 import com.tutorial.springboot.security_rbac_jwt.filter.JwtRequestFilter;
-import com.tutorial.springboot.security_rbac_jwt.service.PolicyEngine;
 import com.tutorial.springboot.security_rbac_jwt.service.impl.PermissionEvaluatorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,22 +44,18 @@ public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
 
-    private final PolicyEngine policyEngine;
-
     public SecurityConfig(
             UserDetailsService userDetailsService,
             BCryptPasswordEncoder passwordEncoder,
             PermissionEvaluatorService permissionEvaluator,
             SecureProperties secureProperties,
-            JwtRequestFilter jwtRequestFilter,
-            PolicyEngine policyEngine
+            JwtRequestFilter jwtRequestFilter
     ) {
         this.userDetailsService = userDetailsService;
         this.permissionEvaluator = permissionEvaluator;
         this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
         this.secureProperties = secureProperties;
-        this.policyEngine = policyEngine;
     }
 
     @Bean
@@ -79,7 +73,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
+        return http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(secureProperties.unsecureUrls()).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(login -> login.successForwardUrl(secureProperties.homeUrl()))
@@ -88,9 +82,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(new DynamicPolicyFilter(policyEngine), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
