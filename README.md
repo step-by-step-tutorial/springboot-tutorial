@@ -40,6 +40,7 @@ This tutorial provides many best practises and examples include documentation.
 * [step: observability-grafana-stack](observability-grafana-stack)
 * [step: observability-Jaeger](observability-jaeger)
 * [step: security-rbac-inmemory](security-rbac-inmemory)
+* [step: security-dynamic-policy](security-dynamic-policy)
 * [step: security-rbac-jwt](security-rbac-jwt)
     * RBAC
     * JWT

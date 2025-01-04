@@ -1,0 +1,9 @@
+spring:
+  pulsar:
+    admin:
+      service-url: ${APACHE_PULSAR_ADMIN_URL:http://localhost:8080}
+    client:
+      service-url: ${APACHE_PULSAR_URL:pulsar://localhost:6650}
+  shell:
+    interactive:
+      enabled: true
