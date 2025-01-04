@@ -104,8 +104,8 @@ curl http://localhost:7750/pulsar-manager/csrf-token
 
 ```shell
 curl \
-   -H 'X-XSRF-TOKEN: 8e197fb2-eaa9-49a6-a60e-5ae66c07bf61' \
-   -H 'Cookie: XSRF-TOKEN=8e197fb2-eaa9-49a6-a60e-5ae66c07bf61;' \
+   -H 'X-XSRF-TOKEN: $TOKEN' \
+   -H 'Cookie: XSRF-TOKEN=$TOKEN;' \
    -H "Content-Type: application/json" \
    -X PUT http://localhost:7750/pulsar-manager/users/superuser \
    -d '{"name": "admin", "password": "password", "description": "administrator", "email": "admin@email.com"}'
@@ -113,7 +113,7 @@ curl \
 
 #### New Environment
 ```yaml
-environment-name: local-docker
+environment-name: docker.local
 broker-url: http://broker:8080
 bookie-url: http://bookie:3181
 ```
