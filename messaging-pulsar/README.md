@@ -98,6 +98,27 @@ curl -X GET http://localhost:8080/admin/v2/persistent/public/default
 curl -X DELETE http://localhost:8080/admin/v2/persistent/public/default/test-topic-2/partitions
 ```
 
+```shell
+curl http://localhost:7750/pulsar-manager/csrf-token
+```
+
+```shell
+curl \
+   -H 'X-XSRF-TOKEN: 8e197fb2-eaa9-49a6-a60e-5ae66c07bf61' \
+   -H 'Cookie: XSRF-TOKEN=8e197fb2-eaa9-49a6-a60e-5ae66c07bf61;' \
+   -H "Content-Type: application/json" \
+   -X PUT http://localhost:7750/pulsar-manager/users/superuser \
+   -d '{"name": "admin", "password": "password", "description": "administrator", "email": "admin@email.com"}'
+```
+
+#### New Environment
+```yaml
+environment-name: local-docker
+broker-url: http://broker:8080
+bookie-url: http://bookie:3181
+```
+
+
 ## Install TOOLS_NAME on Kubernetes
 
 Create the following files for installing TOOLS_NAME.
