@@ -74,8 +74,14 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 Execute the following command to install TOOLS_NAME.
 
+#### Cluster Mode
 ```shell
 docker compose --file ./docker-compose.yml --project-name pulsar up --build -d
+```
+
+#### Standalone Mode
+```shell
+docker compose --file ./docker-compose-standalone.yml --project-name pulsar up --build -d
 ```
 
 ```shell
@@ -103,9 +109,10 @@ curl http://localhost:7750/pulsar-manager/csrf-token
 ```
 
 ```shell
+CSRF_TOKEN=$(curl http://backend-service:7750/pulsar-manager/csrf-token)
 curl \
-   -H 'X-XSRF-TOKEN: $TOKEN' \
-   -H 'Cookie: XSRF-TOKEN=$TOKEN;' \
+   -H 'X-XSRF-TOKEN: $CSRF_TOKEN' \
+   -H 'Cookie: XSRF-TOKEN=$CSRF_TOKEN;' \
    -H "Content-Type: application/json" \
    -X PUT http://localhost:7750/pulsar-manager/users/superuser \
    -d '{"name": "admin", "password": "password", "description": "administrator", "email": "admin@email.com"}'
@@ -113,6 +120,7 @@ curl \
 
 #### New Environment
 ```yaml
+web-ui: http://localhost:9527
 environment-name: docker.local
 broker-url: http://broker:8080
 bookie-url: http://bookie:3181

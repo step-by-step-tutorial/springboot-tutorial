@@ -10,6 +10,7 @@ import static com.tutorial.springboot.messagingpulsar.MessengerConstance.TOPIC_N
 
 @Service
 public class MessageListener {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @PulsarListener(
