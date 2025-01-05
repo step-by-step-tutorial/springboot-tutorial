@@ -109,12 +109,11 @@ curl http://localhost:7750/pulsar-manager/csrf-token
 ```
 
 ```shell
-CSRF_TOKEN=$(curl http://backend-service:7750/pulsar-manager/csrf-token)
-curl \
+CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
+curl -X PUT http://localhost:7750/pulsar-manager/users/superuser \
    -H 'X-XSRF-TOKEN: $CSRF_TOKEN' \
    -H 'Cookie: XSRF-TOKEN=$CSRF_TOKEN;' \
    -H "Content-Type: application/json" \
-   -X PUT http://localhost:7750/pulsar-manager/users/superuser \
    -d '{"name": "admin", "password": "password", "description": "administrator", "email": "admin@email.com"}'
 ```
 
