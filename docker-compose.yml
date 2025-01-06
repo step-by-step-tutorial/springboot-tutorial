@@ -190,6 +190,29 @@ services:
     environment:
       KAFKA_BROKERCONNECT: kafka:9093
       JVM_OPTS: "-Xms32M -Xmx64M"
+  pulsar:
+    image: apachepulsar/pulsar:latest
+    container_name: broker
+    hostname: broker
+    restart: on-failure
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    command: bash -c "exec bin/pulsar standalone"
+  pulsardashboard:
+    image: apachepulsar/pulsar-manager:latest
+    container_name: pulsardashboard
+    hostname: pulsardashboard
+    restart: on-failure
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    depends_on:
+      - pulsar
+    links:
+      - pulsar
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
   jaeger:
     container_name: jaeger
     hostname: jaeger

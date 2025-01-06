@@ -18,6 +18,8 @@ docker rm -f \
   zookeeper \
   kafka \
   kafdrop \
+  pulsar \
+  pulsardashboard \
   jaeger \
   loki \
   tempo \

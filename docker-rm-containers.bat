@@ -18,6 +18,8 @@ artemis ^
 zookeeper ^
 kafka ^
 kafdrop ^
+pulsar ^
+pulsardashboard ^
 jaeger ^
 loki ^
 tempo ^

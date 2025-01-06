@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
+        <version>3.4.1</version>
         <relativePath/>
     </parent>
     <groupId>com.tutorial.springboot</groupId>
@@ -15,17 +15,6 @@
     <properties>
         <java.version>21</java.version>
     </properties>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>1.18.3</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,22 +40,57 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>start-mysql</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>test-compile</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>mysql</argument>
+                                <argument>up</argument>
+                                <argument>--build</argument>
+                                <argument>-d</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-mysql</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>mysql</argument>
+                                <argument>down</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

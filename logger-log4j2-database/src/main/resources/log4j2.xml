@@ -8,9 +8,20 @@
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
-        <Loki name="LokiAppender">
 
-        </Loki>
+        <JDBC name="databaseAppender" tableName="LOG_TABLE" bufferSize="1" ignoreExceptions="true">
+            <DriverManager
+                    driverClassName="com.mysql.cj.jdbc.Driver"
+                    connectionString="jdbc:mysql://localhost:3306/test_db"
+                    userName="user"
+                    password="password"
+            />
+            <ReconnectIntervalMillis>8000</ReconnectIntervalMillis>
+            <Column name="EVENT_DATE" isEventTimestamp="true"/>
+            <Column name="LEVEL" pattern="%level"/>
+            <Column name="LOGGER" pattern="%logger"/>
+            <Column name="MESSAGE" pattern="%message"/>
+        </JDBC>
 
     </Appenders>
     <Loggers>

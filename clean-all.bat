@@ -16,6 +16,8 @@ call mvn -f nosql-mongodb-reactive/pom.xml clean
 call mvn -f messaging-apache-artemis-mq/pom.xml clean
 call mvn -f messaging-rabbit-mq/pom.xml clean
 call mvn -f messaging-apache-kafka/pom.xml clean
+call mvn -f messaging-pulsar/pom.xml clean
+call mvn -f messaging-redis/pom.xml clean
 call mvn -f streaming-apache-kafka/pom.xml clean
 call mvn -f observability-grafana-stack/pom.xml clean
 call mvn -f observability-jaeger/pom.xml clean

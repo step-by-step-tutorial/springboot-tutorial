@@ -1,7 +1,5 @@
 package com.tutorial.springboot.logger_log4j2;
 
-import org.testcontainers.containers.JdbcDatabaseContainer;
-
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Optional;
@@ -11,8 +9,8 @@ public final class JdbcUtils {
     private JdbcUtils() {
     }
 
-    public static <E> Optional<E> executeQuery(JdbcDatabaseContainer<?> db, Throwable<Statement, E> query) {
-        try (var connection = DriverManager.getConnection(db.getJdbcUrl(), db.getUsername(), db.getPassword());
+    public static <E> Optional<E> executeQuery(Throwable<Statement, E> query) {
+        try (var connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "user", "password");
              var statement = connection.createStatement()) {
             return Optional.of(query.accept(statement));
         } catch (Exception e) {
