@@ -29,8 +29,8 @@ This tutorial provides many best practises and examples include documentation.
 * [step: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
 * [step: messaging-rabbit-mq](messaging-rabbit-mq)
 * [step: messaging-apache-kafka](messaging-apache-kafka)
-* step: messaging-redis
-* step: messaging-pulsar
+* [step: messaging-redis](messaging-redis)
+* [step: messaging-pulsar](messaging-pulsar)
 * [step: streaming-apache-kafka](streaming-apache-kafka)
 * [step: restful-web-api](restful-web-api)
 * step: rest-hateoas
