@@ -217,7 +217,9 @@ public class PermissionRepositoryTest {
 
         @Test
         void givenListOfNonUniquePermissions_whenSaveAll_thenShouldThrowRuntimeException() {
-            var givenEntities = List.of(new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0), new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0));
+            var givenEntities = List.of(
+                    new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0),
+                    new Permission().setName("the same permission").setCreatedBy("test").setCreatedAt(now()).setVersion(0));
 
             var actual = assertThrows(RuntimeException.class, () -> {
                 systemUnderTest.saveAll(givenEntities);

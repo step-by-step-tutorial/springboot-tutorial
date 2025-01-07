@@ -34,10 +34,6 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
-
-    private final PasswordEncoder passwordEncoder;
-
     private final PermissionEvaluatorService permissionEvaluator;
 
     private final SecureProperties secureProperties;
@@ -51,25 +47,11 @@ public class SecurityConfig {
             SecureProperties secureProperties,
             JwtRequestFilter jwtRequestFilter
     ) {
-        this.userDetailsService = userDetailsService;
         this.permissionEvaluator = permissionEvaluator;
         this.jwtRequestFilter = jwtRequestFilter;
-        this.passwordEncoder = passwordEncoder;
         this.secureProperties = secureProperties;
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        var provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -79,7 +61,6 @@ public class SecurityConfig {
                 .formLogin(login -> login.successForwardUrl(secureProperties.homeUrl()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .authenticationProvider(authenticationProvider())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
