@@ -1,0 +1,7 @@
+spring:
+  kafka:
+    topic:
+      name: ${KAFKA_TOPIC_NAME:tutorial.main-topic}
+    consumer:
+      group-id: ${KAFKA_GROUP_ID:tutorial.main-group}
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}

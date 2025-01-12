@@ -1,0 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: embedded-kafka
+  kafka:
+    topic:
+      name: tutorial.embedded-topic
+    consumer:
+      group-id: tutorial.embedded-group
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
