@@ -7,4 +7,4 @@ spring:
       name: tutorial.embedded-topic
     consumer:
       group-id: tutorial.embedded-group
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    bootstrap-servers: ${KAFKA_URL:localhost:9094}

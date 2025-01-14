@@ -1,0 +1,6 @@
+server:
+  address: ${APP_HOST:0.0.0.0}
+  port: ${APP_PORT:8080}
+spring:
+  profiles:
+    active: mysql,redis,kafka

@@ -3,7 +3,7 @@
 -- password: admin
 INSERT INTO user_management.users (id, username, password, email, enabled, created_by, created_at, version)
 VALUES (1000, 'admin', '$2a$10$r5p.DEUMgBCpDasy86n/Ue4aNYvDYAt8EkYt4EziQHWrTPKoqFWZO', 'admin@email.com', true, 'admin',
-        CURRENT_TIMESTAMP, 0;
+        CURRENT_TIMESTAMP, 0);
 -- username: user
 -- password: user
 INSERT INTO user_management.users (id, username, password, email, enabled, created_by, created_at, version)

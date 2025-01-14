@@ -78,37 +78,49 @@ docker compose --file ./docker-compose.yml --project-name cdc-stack up --build -
 ```
 
 ```shell
-curl -i -X POST 'http://localhost:8083/connectors' \
+curl -i -X POST http://localhost:8083/connectors \
 -H "Accept:application/json" \
 -H 'Content-Type: application/json' \
 -d '{
-    "name": "spring-boot-tutorial",
-    "config": {
-        "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-        "database.allowPublicKeyRetrieval":"true",
-        "database.hostname": "mysql",
-        "database.port": "3306",
-        "database.user": "user",
-        "database.password": "password",
-        "database.include.list": "test_db",
-        "database.server.id": 1,
-        "topic.prefix": "tutorial",
-        "schema.history.internal.kafka.bootstrap.servers":  "kafka:9093",
-        "schema.history.internal.kafka.topic": "schema-changes.db"
-    }
-  }'
+  "name": "spring-boot-tutorial",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "mysql",
+    "database.port": "3306",
+    "database.user": "user",
+    "database.password": "password",
+    "database.server.id": "1",
+    "database.server.name": "mysql",
+    "database.whitelist": "test_db",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
+    "schema.history.internal.kafka.topic": "schema-changes.db",
+    "topic.prefix": "tutorial",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}'
+```
+```json
+```
+
+```sql
+insert into sample_table (id, code, name, datetime) values (1,1,'test name 1', CURRENT_TIMESTAMP);
+insert into sample_table (id, code, name, datetime) values (2,2,'test name 2', CURRENT_TIMESTAMP);
+```
+
+
+```shell
+curl -i -X GET http://localhost:8083/connectors -H "Accept:application/json"
 ```
 
 ```shell
-curl -i -X GET 'http://localhost:8083/connectors' -H "Accept:application/json"
+curl -i -X GET http://localhost:8083/connectors/spring-boot-tutorial -H "Accept:application/json"
 ```
 
 ```shell
-curl -i -X GET 'http://localhost:8083/connectors/spring-boot-tutorial' -H "Accept:application/json"
-```
-
-```shell
-curl -i -X DELETE 'http://localhost:8083/connectors/spring-boot-tutorial'
+curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
 ```
 
 ## Install TOOLS_NAME on Kubernetes
