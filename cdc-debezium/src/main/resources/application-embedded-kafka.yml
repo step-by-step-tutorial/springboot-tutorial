@@ -4,7 +4,7 @@ spring:
       on-profile: embedded-kafka
   kafka:
     topic:
-      name: tutorial.embedded-topic
+      name: cdc.test_db.embedded-topic
     consumer:
-      group-id: tutorial.embedded-group
+      group-id: cdc.test_db.embedded-group
     bootstrap-servers: ${KAFKA_URL:localhost:9094}

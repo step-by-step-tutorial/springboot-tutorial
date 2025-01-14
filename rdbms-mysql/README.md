@@ -96,7 +96,7 @@ A few SQL commands to create schema (database), user and grant to the user.
 ```mysql
 # schema (database)
 SHOW DATABASES;
-CREATE DATABASE IF NOT EXISTS 'db-name' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+CREATE DATABASE IF NOT EXISTS 'dbname' DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 USE dbname;
 DROP DATABASE dbname;
 SHOW TABLES;

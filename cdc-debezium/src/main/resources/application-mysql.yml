@@ -23,4 +23,4 @@ spring:
         generate_statistics: true
         format_sql: true
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        default_schema: ${DATABASE_SCHEMA:tutorial}
+        default_schema: ${DATABASE_SCHEMA:test_db}
