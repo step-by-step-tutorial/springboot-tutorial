@@ -21,5 +21,6 @@ mvn -f streaming-pulsar/pom.xml clean
 mvn -f streaming-redis/pom.xml clean
 mvn -f observability-grafana-stack/pom.xml clean
 mvn -f observability-jaeger/pom.xml clean
+mvn -f cdc-debezium/pom.xml clean
 mvn -f security-rbac-inmemory/pom.xml clean
 mvn -f security-rbac-jwt/pom.xml clean

@@ -21,6 +21,7 @@ mvn -f messaging-redis/pom.xml clean package
 mvn -f streaming-apache-kafka/pom.xml clean package
 mvn -f observability-grafana-stack/pom.xml clean package
 mvn -f observability-jaeger/pom.xml clean package
+mvn -f cdc-debezium/pom.xml clean package
 mvn -f restful-web-api/pom.xml clean package
 mvn -f security-rbac-inmemory/pom.xml clean package
 mvn -f security-rbac-jwt/pom.xml clean package
