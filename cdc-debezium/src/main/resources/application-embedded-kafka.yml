@@ -1,10 +1,7 @@
 spring:
-  config:
-    activate:
-      on-profile: embedded-kafka
   kafka:
     topic:
-      name: cdc.test_db.embedded-topic
+      name: cdc.test_db.sample_table
     consumer:
-      group-id: cdc.test_db.embedded-group
-    bootstrap-servers: ${KAFKA_URL:localhost:9094}
+      group-id: cdc.test_db.main-group
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}

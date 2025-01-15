@@ -1,8 +1,14 @@
 package com.tutorial.springboot.cdcdebezium;
 
+import com.tutorial.springboot.cdcdebezium.entity.SampleEntity;
+import com.tutorial.springboot.cdcdebezium.repository.JdbcSampleRepository;
+import com.tutorial.springboot.cdcdebezium.service.MainTopicService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -10,16 +16,23 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDateTime;
+
 @SpringBootTest
-@ActiveProfiles({"test", "mysql", "redis", "embedded-kafka"})
+@ActiveProfiles({"test", "mysql", "embedded-kafka", "embedded-debezium"})
 @Testcontainers
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9094", "port=9094"})
+@EmbeddedKafka(partitions = 1, brokerProperties = {
+        "listeners=PLAINTEXT://:9092",
+        "port=9092"
+})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext
+@Transactional
 class ApplicationTests {
 
     static final Logger LOGGER = LoggerFactory.getLogger(ApplicationTests.class.getSimpleName());
@@ -30,8 +43,9 @@ class ApplicationTests {
     static {
         try {
             MYSQL.withDatabaseName("test_db")
-                    .withUsername("user")
-                    .withPassword("password");
+                    .withUsername("root")
+                    .withPassword("password")
+                    .withInitScript("init.sql");
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -46,16 +60,26 @@ class ApplicationTests {
         registry.add("spring.datasource.driver-class-name", MYSQL::getDriverClassName);
     }
 
+    @BeforeAll
     static void start() {
         MYSQL.start();
     }
 
+    @AfterAll
     static void stop() {
         MYSQL.stop();
     }
 
+    @Autowired
+    private JdbcSampleRepository jdbcSampleRepository;
+
+    @Autowired
+    private MainTopicService mainTopicService;
+
     @Test
     void contextLoads() {
+        jdbcSampleRepository.save(new SampleEntity().setCode(1).setName("test name").setDatetime(LocalDateTime.now()));
+        mainTopicService.push("test message");
     }
 
 }

@@ -1,0 +1,3 @@
+debezium:
+  topic-prefix: "cdc"
+  tables: "test_db.sample_table"

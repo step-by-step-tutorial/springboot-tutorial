@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@Profile({"redis", "embedded-redis"})
 public class JedisConfig {
 
     @Bean

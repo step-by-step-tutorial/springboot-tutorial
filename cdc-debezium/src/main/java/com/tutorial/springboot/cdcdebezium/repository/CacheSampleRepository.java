@@ -1,9 +1,11 @@
 package com.tutorial.springboot.cdcdebezium.repository;
 
 import com.tutorial.springboot.cdcdebezium.model.SampleModel;
+import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,7 @@ import static com.tutorial.springboot.cdcdebezium.util.JsonUtils.toModel;
 import static java.util.Objects.requireNonNull;
 
 @Repository
+@Profile({"redis", "embedded-redis"})
 public class CacheSampleRepository {
 
     private static final String Hash_KEY = "Sample";
