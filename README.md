@@ -35,8 +35,8 @@ This tutorial provides many best practises and examples include documentation.
 * [step: restful-web-api](restful-web-api)
 * step: rest-hateoas
 * step: webflux
-* [step: cdc-debezium](/cdc-debezium)
-* step: ELK
+* [step: cdc-debezium](cdc-debezium)
+* [step: log-aggregation-elk](log-aggregation-elk)
 * [step: observability-grafana-stack](observability-grafana-stack)
 * [step: observability-Jaeger](observability-jaeger)
 * [step: security-rbac-inmemory](security-rbac-inmemory)
