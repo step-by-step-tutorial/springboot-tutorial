@@ -1,6 +1,6 @@
 package com.tutorial.springboot.cdcdebezium.util;
 
-import com.tutorial.springboot.cdcdebezium.model.JdbcUrlParts;
+import com.tutorial.springboot.cdcdebezium.model.JdbcUrlModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public final class DbUtils {
     private DbUtils() {
     }
 
-    public static Optional<JdbcUrlParts> extractJdbcUrlParts(String jdbcUrl) {
+    public static Optional<JdbcUrlModel> toJdbcUrlModel(String jdbcUrl) {
         Objects.requireNonNull(jdbcUrl, "jdbcUrl should not be null");
         if (jdbcUrl.isBlank()) {
             LOGGER.error("jdbcUrl should not be blank");
@@ -22,11 +22,11 @@ public final class DbUtils {
         }
 
         if (jdbcUrl.startsWith("jdbc:mysql://")) {
-            return splitJdbcUrl(jdbcUrl, Pattern.compile("jdbc:mysql://([^:/]+):([^/]+)/([^?]+)"));
+            return convertToJdbcUrlModel(jdbcUrl, Pattern.compile("jdbc:mysql://([^:/]+):([^/]+)/([^?]+)"));
         } else if (jdbcUrl.startsWith("jdbc:postgresql://")) {
-            return splitJdbcUrl(jdbcUrl, Pattern.compile("jdbc:postgresql://([^:/]+):([^/]+)/([^?]+)"));
+            return convertToJdbcUrlModel(jdbcUrl, Pattern.compile("jdbc:postgresql://([^:/]+):([^/]+)/([^?]+)"));
         } else if (jdbcUrl.startsWith("jdbc:oracle:thin:@")) {
-            return splitJdbcUrl(jdbcUrl, Pattern.compile("jdbc:oracle:thin:@([^:/]+):(\\d+)/([^?]+)"));
+            return convertToJdbcUrlModel(jdbcUrl, Pattern.compile("jdbc:oracle:thin:@([^:/]+):(\\d+)/([^?]+)"));
         } else {
             LOGGER.error("Unsupported JDBC URL format: {}", jdbcUrl);
             return Optional.empty();
@@ -34,14 +34,14 @@ public final class DbUtils {
 
     }
 
-    private static Optional<JdbcUrlParts> splitJdbcUrl(String jdbcUrl, Pattern pattern) {
+    private static Optional<JdbcUrlModel> convertToJdbcUrlModel(String jdbcUrl, Pattern pattern) {
         var matcher = pattern.matcher(jdbcUrl);
 
         if (matcher.find()) {
             var host = matcher.group(1);
             var port = matcher.group(2);
             var dbName = matcher.group(3);
-            return Optional.of(new JdbcUrlParts(host, port, dbName));
+            return Optional.of(new JdbcUrlModel(host, port, dbName));
         } else {
             LOGGER.error("Invalid JDBC URL format");
             return Optional.empty();

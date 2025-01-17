@@ -1,8 +1,8 @@
 package com.tutorial.springboot.cdcdebezium;
 
-import com.tutorial.springboot.cdcdebezium.entity.SampleEntity;
-import com.tutorial.springboot.cdcdebezium.repository.JdbcSampleRepository;
-import com.tutorial.springboot.cdcdebezium.service.MainTopicService;
+import com.redis.testcontainers.RedisContainer;
+import com.tutorial.springboot.cdcdebezium.entity.Example;
+import com.tutorial.springboot.cdcdebezium.repository.JdbcExampleRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -40,12 +40,15 @@ class ApplicationTests {
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0");
 
+    @Container
+    static final RedisContainer REDIS = new RedisContainer("redis:latest");
+
     static {
         try {
             MYSQL.withDatabaseName("test_db")
                     .withUsername("root")
                     .withPassword("password")
-                    .withInitScript("init.sql");
+                    .withInitScript("users.sql");
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -58,28 +61,28 @@ class ApplicationTests {
         registry.add("spring.datasource.username", MYSQL::getUsername);
         registry.add("spring.datasource.password", MYSQL::getPassword);
         registry.add("spring.datasource.driver-class-name", MYSQL::getDriverClassName);
+        registry.add("spring.data.redis.host", REDIS::getHost);
+        registry.add("spring.data.redis.port", REDIS::getRedisPort);
     }
 
     @BeforeAll
     static void start() {
         MYSQL.start();
+        REDIS.start();
     }
 
     @AfterAll
     static void stop() {
         MYSQL.stop();
+        REDIS.stop();
     }
 
     @Autowired
-    private JdbcSampleRepository jdbcSampleRepository;
-
-    @Autowired
-    private MainTopicService mainTopicService;
+    private JdbcExampleRepository jdbcExampleRepository;
 
     @Test
     void contextLoads() {
-        jdbcSampleRepository.save(new SampleEntity().setCode(1).setName("test name").setDatetime(LocalDateTime.now()));
-        mainTopicService.push("test message");
+        jdbcExampleRepository.save(new Example().setCode(1).setName("test name").setDatetime(LocalDateTime.now()));
     }
 
 }

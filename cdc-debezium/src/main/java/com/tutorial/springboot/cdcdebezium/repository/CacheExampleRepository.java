@@ -1,7 +1,6 @@
 package com.tutorial.springboot.cdcdebezium.repository;
 
-import com.tutorial.springboot.cdcdebezium.model.SampleModel;
-import jakarta.annotation.PreDestroy;
+import com.tutorial.springboot.cdcdebezium.model.ExampleDto;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +18,16 @@ import static java.util.Objects.requireNonNull;
 
 @Repository
 @Profile({"redis", "embedded-redis"})
-public class CacheSampleRepository {
+public class CacheExampleRepository {
 
     private static final String Hash_KEY = "Sample";
 
-    private final Logger logger = LoggerFactory.getLogger(JdbcSampleRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(JdbcExampleRepository.class);
 
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, String> hashOperations;
 
-    public Optional<String> save(SampleModel model) {
+    public Optional<String> save(ExampleDto model) {
         requireNonNull(model);
 
         try {
@@ -41,7 +40,7 @@ public class CacheSampleRepository {
         }
     }
 
-    public void update(SampleModel model) {
+    public void update(ExampleDto model) {
         requireNonNull(model);
         requireNonNull(model.getId());
 
@@ -52,28 +51,28 @@ public class CacheSampleRepository {
         }
     }
 
-    public Optional<SampleModel> findById(String id) {
+    public Optional<ExampleDto> findById(String id) {
         requireNonNull(id);
 
         try {
             final var jsonString = hashOperations.get(Hash_KEY, id);
-            return Optional.ofNullable(toModel(jsonString, SampleModel.class));
+            return Optional.ofNullable(toModel(jsonString, ExampleDto.class));
         } catch (Exception exception) {
             logger.error(exception.getMessage());
             return Optional.empty();
         }
     }
 
-    public List<SampleModel> findAll() {
+    public List<ExampleDto> findAll() {
         return hashOperations.entries(Hash_KEY)
                 .values()
                 .stream()
                 .map(item -> {
                     try {
-                        return toModel(item, SampleModel.class);
+                        return toModel(item, ExampleDto.class);
                     } catch (Exception exception) {
                         logger.error(exception.getMessage());
-                        return new SampleModel();
+                        return new ExampleDto();
                     }
                 })
                 .toList();

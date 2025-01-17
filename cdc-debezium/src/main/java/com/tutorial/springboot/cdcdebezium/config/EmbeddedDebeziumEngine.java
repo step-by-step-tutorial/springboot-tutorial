@@ -32,22 +32,22 @@ public class EmbeddedDebeziumEngine {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
-    @Value("${debezium.topic-prefix}")
+    @Value("${embedded-debezium.topic-prefix}")
     private String topicPrefix;
 
-    @Value("${debezium.tables}")
+    @Value("${embedded-debezium.tables}")
     private String tables;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @PostConstruct
     private void startEngine() {
-        var jdbcUrlParts = DbUtils.extractJdbcUrlParts(url);
-        if (jdbcUrlParts.isEmpty()) {
+        var jdbcUrl = DbUtils.toJdbcUrlModel(url);
+        if (jdbcUrl.isEmpty()) {
             throw new IllegalArgumentException("Invalid JDBC URL: " + url);
         }
 
-        var url = jdbcUrlParts.get();
+        var url = jdbcUrl.get();
 
         var dbhistoryFile = new File(System.getProperty("java.io.tmpdir"), "dbhistory.dat");
         var offsetsFile = new File(System.getProperty("java.io.tmpdir"), "offsets.dat");

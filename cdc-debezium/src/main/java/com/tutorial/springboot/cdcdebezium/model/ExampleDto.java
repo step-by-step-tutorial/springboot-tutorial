@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class SampleModel {
+public class ExampleDto {
 
     private String id;
 
@@ -22,15 +22,15 @@ public class SampleModel {
     private LocalDateTime datetime;
 
     @JsonIgnore
-    public static SampleModel create() {
-        return new SampleModel();
+    public static ExampleDto create() {
+        return new ExampleDto();
     }
 
     public String getId() {
         return id;
     }
 
-    public SampleModel setId(String id) {
+    public ExampleDto setId(String id) {
         this.id = id;
         return this;
     }
@@ -39,7 +39,7 @@ public class SampleModel {
         return name;
     }
 
-    public SampleModel setName(String name) {
+    public ExampleDto setName(String name) {
         this.name = name;
         return this;
     }
@@ -48,7 +48,7 @@ public class SampleModel {
         return code;
     }
 
-    public SampleModel setCode(int code) {
+    public ExampleDto setCode(int code) {
         this.code = code;
         return this;
     }
@@ -57,7 +57,7 @@ public class SampleModel {
         return datetime;
     }
 
-    public SampleModel setDatetime(LocalDateTime datetime) {
+    public ExampleDto setDatetime(LocalDateTime datetime) {
         this.datetime = datetime;
         return this;
     }
@@ -70,8 +70,8 @@ public class SampleModel {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SampleModel sampleModel = (SampleModel) o;
-        return Objects.equals(id, sampleModel.id);
+        ExampleDto exampleDto = (ExampleDto) o;
+        return Objects.equals(id, exampleDto.id);
     }
 
     @Override
@@ -81,6 +81,6 @@ public class SampleModel {
 
     @Override
     public String toString() {
-        return "Sample Model: {" + "id:" + id + ", username:" + name + ", code:" + code + ", date:" + datetime + "}";
+        return "Example DTO: {" + "id:" + id + ", username:" + name + ", code:" + code + ", date:" + datetime + "}";
     }
 }

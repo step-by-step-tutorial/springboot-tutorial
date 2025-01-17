@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "SAMPLE_TABLE")
-public class SampleEntity {
+@Table(name = "example_table")
+public class Example {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAMPLE_GEN")
@@ -24,15 +24,15 @@ public class SampleEntity {
     @Column(name = "DATETIME")
     private LocalDateTime datetime;
 
-    public static SampleEntity create() {
-        return new SampleEntity();
+    public static Example create() {
+        return new Example();
     }
 
     public Long getId() {
         return id;
     }
 
-    public SampleEntity setId(Long id) {
+    public Example setId(Long id) {
         this.id = id;
         return this;
     }
@@ -41,7 +41,7 @@ public class SampleEntity {
         return name;
     }
 
-    public SampleEntity setName(String name) {
+    public Example setName(String name) {
         this.name = name;
         return this;
     }
@@ -50,7 +50,7 @@ public class SampleEntity {
         return code;
     }
 
-    public SampleEntity setCode(int code) {
+    public Example setCode(int code) {
         this.code = code;
         return this;
     }
@@ -59,7 +59,7 @@ public class SampleEntity {
         return datetime;
     }
 
-    public SampleEntity setDatetime(LocalDateTime datetime) {
+    public Example setDatetime(LocalDateTime datetime) {
         this.datetime = datetime;
         return this;
     }
@@ -72,8 +72,8 @@ public class SampleEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SampleEntity sampleEntity = (SampleEntity) o;
-        return Objects.equals(id, sampleEntity.id);
+        Example example = (Example) o;
+        return Objects.equals(id, example.id);
     }
 
     @Override
@@ -83,11 +83,6 @@ public class SampleEntity {
 
     @Override
     public String toString() {
-        return "Sample Entity: {"
-                + "id:" + id
-                + ", username:" + name
-                + ", code:" + code
-                + ", date:" + datetime
-                + "}";
+        return "Example Entity: {" + "id:" + id + ", username:" + name + ", code:" + code + ", date:" + datetime + "}";
     }
 }

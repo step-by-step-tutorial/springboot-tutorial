@@ -1,0 +1,4 @@
+debezium:
+  url: ${DEBEZIUM_URL:http://localhost:8083}
+  register-path: ${DEBEZIUM_REGISTER_PATH:/connectors}
+  connectors-file: ${DEBEZIUM_CONNECTORS_FILE:connectors.json}

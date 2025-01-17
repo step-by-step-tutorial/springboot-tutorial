@@ -108,7 +108,7 @@ services:
       - MYSQL_DATABASE=test_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
   adminer:
     image: adminer
     container_name: adminer
@@ -183,10 +183,15 @@ services:
 Execute the following command to install Debezium.
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name cdc-stack up --build -d
+docker compose --file ./docker-compose.yml --project-name cdc-debezium up --build -d
+```
+
+```shell
+docker compose --file ./docker-compose.yml --project-name cdc-debezium down
 ```
 
 #### Add Debezium Config
+
 ```shell
 curl -i -X POST http://localhost:8083/connectors \
 -H "Accept:application/json" \
@@ -203,7 +208,7 @@ curl -i -X POST http://localhost:8083/connectors \
     "database.server.id": "1",
     "database.server.name": "mysql",
     "database.whitelist": "test_db",
-    "table.include.list": "test_db.sample_table",
+    "table.include.list": "test_db.example_table",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
     "schema.history.internal.kafka.topic": "schema-changes.db",
     "topic.prefix": "cdc",
@@ -213,20 +218,29 @@ curl -i -X POST http://localhost:8083/connectors \
   }
 }'
 ```
+
 #### List of Debezium Configs
+
 ```shell
 curl -i -X GET http://localhost:8083/connectors -H "Accept:application/json"
 ```
+
 #### Get Debezium Config
+
 ```shell
 curl -i -X GET http://localhost:8083/connectors/spring-boot-tutorial -H "Accept:application/json"
 ```
+
 #### Delete Debezium Config
+
 ```shell
 curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
 ```
 
-#### Test Config
+#### Test
+
+**Solution 1**
+
 ```shell
 docker exec -it mysql mysql -u root -p -h localhost
 # password: root
@@ -234,8 +248,18 @@ docker exec -it mysql mysql -u root -p -h localhost
 
 ```mysql
 USE test_db;
-INSERT INTO sample_table (id, code, name, datetime) VALUES(1, 1, 'test name 1', CURRENT_TIMESTAMP);
-INSERT INTO sample_table (id, code, name, datetime) VALUES (2, 2, 'test name 2', CURRENT_TIMESTAMP);
+INSERT INTO example_table (id, code, name, datetime) VALUES (1, 1, 'test name 1', CURRENT_TIMESTAMP);
+INSERT INTO example_table (id, code, name, datetime) VALUES (2, 2, 'test name 2', CURRENT_TIMESTAMP);
+```
+
+**Solution 2**
+
+```shell
+docker cp example_data.sql mysql:/example_data.sql
+```
+
+```shell
+docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
 
 ## Install Debezium on Kubernetes
@@ -308,8 +332,6 @@ kubectl port-forward service/debezium port:port
 ```yaml
 ```
 
-## License
-
 ## Appendix
 
 ### Makefile
@@ -325,23 +347,13 @@ run:
 	mvn spring-boot:run
 	
 docker-compose-deploy:
-	docker compose --file docker-compose.yml --project-name tools-name up --build -d
+	docker compose --file docker-compose.yml --project-name cdc-debezium up --build -d
 
-docker-remove-container:
-	docker rm tools-name --force
+docker-compose-down:
+	docker compose --file docker-compose.yml --project-name cdc-debezium down
 
 docker-remove-image:
-	docker image rm image-name
-
-kube-deploy:
-	kubectl apply -f ./kube/tools-name-deployment.yml
-	kubectl apply -f ./kube/tools-name-service.yml
-
-kube-delete:
-	kubectl delete all --all
-
-kube-port-forward-db:
-	kubectl port-forward service/tools-name port:port
+	docker image rm samanalishiri/cdcdebezium:last
 ```
 
 ##
