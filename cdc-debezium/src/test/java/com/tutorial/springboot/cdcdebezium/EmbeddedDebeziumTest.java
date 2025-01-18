@@ -1,6 +1,5 @@
 package com.tutorial.springboot.cdcdebezium;
 
-import com.redis.testcontainers.RedisContainer;
 import com.tutorial.springboot.cdcdebezium.entity.Example;
 import com.tutorial.springboot.cdcdebezium.repository.JdbcExampleRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -24,7 +23,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.time.LocalDateTime;
 
 @SpringBootTest
-@ActiveProfiles({"test", "mysql", "embedded-kafka", "embedded-debezium"})
 @Testcontainers
 @EmbeddedKafka(partitions = 1, brokerProperties = {
         "listeners=PLAINTEXT://:9092",
@@ -33,15 +31,13 @@ import java.time.LocalDateTime;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext
 @Transactional
-class ApplicationTests {
+@ActiveProfiles({"test", "mysql", "embedded-kafka", "embedded-debezium"})
+class EmbeddedDebeziumTest {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ApplicationTests.class.getSimpleName());
+    static final Logger LOGGER = LoggerFactory.getLogger(EmbeddedDebeziumTest.class.getSimpleName());
 
     @Container
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0");
-
-    @Container
-    static final RedisContainer REDIS = new RedisContainer("redis:latest");
 
     static {
         try {
@@ -61,20 +57,16 @@ class ApplicationTests {
         registry.add("spring.datasource.username", MYSQL::getUsername);
         registry.add("spring.datasource.password", MYSQL::getPassword);
         registry.add("spring.datasource.driver-class-name", MYSQL::getDriverClassName);
-        registry.add("spring.data.redis.host", REDIS::getHost);
-        registry.add("spring.data.redis.port", REDIS::getRedisPort);
     }
 
     @BeforeAll
     static void start() {
         MYSQL.start();
-        REDIS.start();
     }
 
     @AfterAll
     static void stop() {
         MYSQL.stop();
-        REDIS.stop();
     }
 
     @Autowired

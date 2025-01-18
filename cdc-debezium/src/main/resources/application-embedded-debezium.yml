@@ -1,3 +1,4 @@
 embedded-debezium:
-  topic-prefix: "cdc"
-  tables: "test_db.example_table"
+  kafka-url: ${KAFKA_URL:localhost:9092}
+  topic-prefix: ${TOPIC_PREFIX:cdc}
+  tables: ${TABLES:test_db.example_table}

@@ -10,7 +10,6 @@ This tutorial is about integration of Spring Boot and Debezium.
 
 * [Getting Started](#getting-started)
 * [Debezium](#debezium)
-* [Debezium Use Cases](#debezium-use-cases)
 * [Install Debezium on Docker](#install-debezium-on-docker)
 * [Install Debezium on Kubernetes](#install-debezium-on-kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
@@ -47,6 +46,12 @@ mvn test
 mvn  spring-boot:run
 ```
 
+#### Deploy
+
+```shell
+docker compose --file ./docker-compose.yml --project-name cdc-debezium up --build -d
+```
+
 ## Debezium
 
 <p align="justify">
@@ -54,9 +59,65 @@ mvn  spring-boot:run
 Debezium is an open source distributed platform for change data capture (CDC). For more information about Debezium see
 the [https://debezium.io](https://debezium.io).
 
+### Debezium Connector
+
+Connectors use for establish a connection between Debezium, Kafka and a database.
+
+**General Format**
+
+```json
+{
+  "name": "connectorname",
+  "config": {
+    "connector.class": "io.debezium.connector....",
+    "tasks.max": "1",
+    "database.hostname": "hostname",
+    "database.port": "port",
+    "database.user": "username",
+    "database.password": "password",
+    "database.server.id": "a number",
+    "database.server.name": "servername",
+    "database.whitelist": "databases name",
+    "table.include.list": "a comma separate list of tables name include schema name like schemaname.tablename, ...",
+    "schema.history.internal.kafka.bootstrap.servers": "kafkaurl",
+    "schema.history.internal.kafka.topic": "a name like schema-changes.db",
+    "topic.prefix": "a word use as prefix",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}
+```
+
+**MySQL Connector**
+
+```json
+ {
+  "name": "spring-boot-tutorial",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "mysql",
+    "database.port": "3306",
+    "database.user": "user",
+    "database.password": "password",
+    "database.server.id": "1",
+    "database.server.name": "mysql",
+    "database.whitelist": "test_db",
+    "table.include.list": "test_db.example_table",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
+    "schema.history.internal.kafka.topic": "schema-changes.db",
+    "topic.prefix": "cdc",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}
+```
+
 </p>
 
-## Debezium Use Cases
+### Debezium Use Cases
 
 * Real-Time Data Integration
 * Event-Driven Architectures
@@ -69,7 +130,7 @@ the [https://debezium.io](https://debezium.io).
 * CDC for Legacy Systems
 * Data Recovery and Backup
 
-## Install Debezium on Docker
+## Dockerized Debezium
 
 Create a file named `docker-compose.yml` with the following configuration.
 
@@ -142,6 +203,16 @@ services:
       KAFKA_CFG_ADVERTISED_LISTENERS: LOCALHOST://localhost:9092,CONTAINER://kafka:9093
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LOCALHOST
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    hostname: kafdrop
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9093
+      JVM_OPTS: "-Xms32M -Xmx64M"
   debezium:
     image: debezium/connect:3.0.0.Final
     container_name: debezium
@@ -156,16 +227,6 @@ services:
       OFFSET_STORAGE_TOPIC: debezium-offset
       STATUS_STORAGE_TOPIC: debezium-status
       BOOTSTRAP_SERVERS: kafka:9093
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    container_name: kafdrop
-    hostname: kafdrop
-    restart: always
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: kafka:9093
-      JVM_OPTS: "-Xms32M -Xmx64M"
   debeziumui:
     image: debezium/debezium-ui:latest
     container_name: debeziumui
@@ -175,10 +236,9 @@ services:
     environment:
       - KAFKA_CONNECT_URIS=http://debezium:8083
     restart: always
-
 ```
 
-### Apply Docker Compose
+### Deploy
 
 Execute the following command to install Debezium.
 
@@ -186,11 +246,44 @@ Execute the following command to install Debezium.
 docker compose --file ./docker-compose.yml --project-name cdc-debezium up --build -d
 ```
 
+### DOWN
+
 ```shell
 docker compose --file ./docker-compose.yml --project-name cdc-debezium down
 ```
 
-#### Add Debezium Config
+### Set up Connectors
+
+#### Add Debezium Connectors Via Restful Web service
+
+```shell
+curl -i -X POST http://localhost:8083/connectors \
+-H "Accept:application/json" \
+-H 'Content-Type: application/json' \
+-d '{
+  "name": "connectorname",
+  "config": {
+    "connector.class": "io.debezium.connector....",
+    "tasks.max": "1",
+    "database.hostname": "hostname",
+    "database.port": "port",
+    "database.user": "username",
+    "database.password": "password",
+    "database.server.id": "a number",
+    "database.server.name": "servername",
+    "database.whitelist": "databases name",
+    "table.include.list": "a comma separate list of tables name include schema name like schemaname.tablename, ...",
+    "schema.history.internal.kafka.bootstrap.servers": "kafkaurl",
+    "schema.history.internal.kafka.topic": "a name like schema-changes.db",
+    "topic.prefix": "a word use as prefix",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}'
+```
+
+Example of the request for MySQL.
 
 ```shell
 curl -i -X POST http://localhost:8083/connectors \
@@ -203,7 +296,7 @@ curl -i -X POST http://localhost:8083/connectors \
     "tasks.max": "1",
     "database.hostname": "mysql",
     "database.port": "3306",
-    "database.user": "user",
+    "database.user": "username",
     "database.password": "password",
     "database.server.id": "1",
     "database.server.name": "mysql",
@@ -219,40 +312,49 @@ curl -i -X POST http://localhost:8083/connectors \
 }'
 ```
 
-#### List of Debezium Configs
+#### List of Debezium Connectors
 
 ```shell
 curl -i -X GET http://localhost:8083/connectors -H "Accept:application/json"
 ```
 
-#### Get Debezium Config
+#### Get Debezium Connector
 
 ```shell
+curl -i -X GET http://localhost:8083/connectors/connectorname -H "Accept:application/json"
+```
+
+```shell
+# example
 curl -i -X GET http://localhost:8083/connectors/spring-boot-tutorial -H "Accept:application/json"
 ```
 
-#### Delete Debezium Config
+#### Delete Debezium Connector
 
 ```shell
+curl -i -X DELETE http://localhost:8083/connectors/connectorname
+```
+
+```shell
+# example
 curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
 ```
 
-#### Test
+### Test
 
-**Solution 1**
+#### Solution 1
 
 ```shell
-docker exec -it mysql mysql -u root -p -h localhost
-# password: root
+docker exec -it mysql mysql -u root -proot -h localhost
 ```
 
 ```mysql
 USE test_db;
-INSERT INTO example_table (id, code, name, datetime) VALUES (1, 1, 'test name 1', CURRENT_TIMESTAMP);
-INSERT INTO example_table (id, code, name, datetime) VALUES (2, 2, 'test name 2', CURRENT_TIMESTAMP);
+INSERT INTO example_table (id, code, name, datetime)
+VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);
 ```
 
-**Solution 2**
+#### Solution 2
 
 ```shell
 docker cp example_data.sql mysql:/example_data.sql
@@ -310,14 +412,118 @@ kubectl port-forward service/debezium port:port
 
 ## How To Set up Spring Boot
 
+You need to set up a database like MySQL, Kafka and Debzium.
+
 ### Dependencies
 
 ```xml
+
+<dependencies>
+    <!--spring-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-cache</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-docker-compose</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <!--spring-->
+    <!--drivers-->
+    <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+    </dependency>
+    <!--drivers-->
+    <!--embedded debezium-->
+    <dependency>
+        <groupId>io.debezium</groupId>
+        <artifactId>debezium-api</artifactId>
+        <version>2.6.0.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>io.debezium</groupId>
+        <artifactId>debezium-embedded</artifactId>
+        <version>2.6.0.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>io.debezium</groupId>
+        <artifactId>debezium-connector-mysql</artifactId>
+        <version>2.6.0.Final</version>
+    </dependency>
+    <!--embedded debezium-->
+</dependencies>
 ```
 
 ### Application Properties
 
 ```yaml
+# mysql
+spring:
+  datasource:
+    username: ${DATABASE_USERNAME:user}
+    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:test_db}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: MYSQL
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: true
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+```
+
+```yaml
+# kafka
+spring:
+  kafka:
+    topic:
+      name: ${KAFKA_TOPIC_NAME:cdc.test_db.example_table}
+    consumer:
+      group-id: ${KAFKA_GROUP_ID:cdc.test_db.main-group}
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
 ```
 
 ## How To Set up Spring Boot Test

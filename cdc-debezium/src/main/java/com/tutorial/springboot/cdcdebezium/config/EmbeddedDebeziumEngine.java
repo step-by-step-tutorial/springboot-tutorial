@@ -38,6 +38,9 @@ public class EmbeddedDebeziumEngine {
     @Value("${embedded-debezium.tables}")
     private String tables;
 
+    @Value("${embedded-debezium.kafka-url}")
+    private String kafkaUrl;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @PostConstruct
@@ -66,7 +69,7 @@ public class EmbeddedDebeziumEngine {
                 .with("database.whitelist", url.dbName())
                 .with("table.include.list", tables)
                 .with("topic.prefix", topicPrefix)
-                .with("schema.history.internal.kafka.bootstrap.servers", "localhost:9092")
+                .with("schema.history.internal.kafka.bootstrap.servers", kafkaUrl)
                 .with("schema.history.internal.kafka.topic", "schema-changes.db")
                 .with("database.history", "io.debezium.relational.history.FileDatabaseHistory")
                 .with("database.history.file.filename",dbhistoryFile.getAbsolutePath())

@@ -21,6 +21,8 @@ ENV KAFKA_URL=kafka:9093
 ENV DEBEZIUM_URL=http://debezium:8083
 ENV DEBEZIUM_REGISTER_PATH=/connectors
 ENV DEBEZIUM_CONNECTORS_FILE=connectors.json
+ENV TOPIC_PREFIX=cdc
+ENV TABLES=test_db.example_table
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 
