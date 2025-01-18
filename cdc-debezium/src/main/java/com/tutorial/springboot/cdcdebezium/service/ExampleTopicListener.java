@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 @Service
 @Profile({"kafka", "embedded-kafka"})
-public class MainTopicListener {
+public class ExampleTopicListener {
 
-    private final Logger logger = LoggerFactory.getLogger(MainTopicListener.class);
+    private final Logger logger = LoggerFactory.getLogger(ExampleTopicListener.class);
 
     @KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
     public void onMessage(@Payload String message) {

@@ -47,7 +47,7 @@ public class RegisterConnector {
             var connectors = objectMapper.readTree(inputStream);
             if (connectors.isArray()) {
                 for (JsonNode connector : connectors) {
-                    logger.info("Sent request to register connector: {}.", connector.get("name").asText());
+                    logger.info("Sent request to register a connector: {}.", connector.get("name").asText());
                     webClient.post()
                             .uri(registerPath)
                             .bodyValue(connector.toString())

@@ -41,7 +41,7 @@ class EmbeddedDebeziumTest {
 
     static {
         try {
-            MYSQL.withDatabaseName("test_db")
+            MYSQL.withDatabaseName("tutorial_db")
                     .withUsername("root")
                     .withPassword("password")
                     .withInitScript("users.sql");

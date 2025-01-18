@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +16,9 @@ import static java.util.Objects.requireNonNull;
 
 @Service
 @Profile({"kafka", "embedded-kafka"})
-public class MainTopicService {
+public class ExampleTopicService {
 
-    private final Logger logger = LoggerFactory.getLogger(MainTopicService.class);
+    private final Logger logger = LoggerFactory.getLogger(ExampleTopicService.class);
 
     private final KafkaTemplate<String, String> template;
 
@@ -27,7 +26,7 @@ public class MainTopicService {
     private String topic;
 
     @Autowired
-    public MainTopicService(final KafkaTemplate<String, String> template) {
+    public ExampleTopicService(final KafkaTemplate<String, String> template) {
         this.template = template;
     }
 

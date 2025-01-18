@@ -6,12 +6,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "example_table")
+@Table(name = "EXAMPLE_TABLE")
 public class Example {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAMPLE_GEN")
-    @SequenceGenerator(name = "SAMPLE_GEN", sequenceName = "SAMPLE_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EXAMPLE_GEN")
+    @SequenceGenerator(name = "EXAMPLE_GEN", sequenceName = "EXAMPLE_SEQ", allocationSize = 1)
     @Column(name = "ID")
     private Long id;
 

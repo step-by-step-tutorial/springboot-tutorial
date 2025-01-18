@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNull;
 @Profile({"redis", "embedded-redis"})
 public class CacheExampleRepository {
 
-    private static final String Hash_KEY = "Sample";
+    private static final String Hash_KEY = "Example";
 
     private final Logger logger = LoggerFactory.getLogger(JdbcExampleRepository.class);
 

@@ -52,6 +52,20 @@ mvn  spring-boot:run
 docker compose --file ./docker-compose.yml --project-name cdc-debezium up --build -d
 ```
 
+#### All in One
+
+```shell
+make local-pipeline
+```
+
+```shell
+make dockerized-pipeline
+```
+
+```shell
+make e2e-test
+```
+
 ## Debezium
 
 <p align="justify">
@@ -103,8 +117,8 @@ Connectors use for establish a connection between Debezium, Kafka and a database
     "database.password": "password",
     "database.server.id": "1",
     "database.server.name": "mysql",
-    "database.whitelist": "test_db",
-    "table.include.list": "test_db.example_table",
+    "database.whitelist": "tutorial_db",
+    "table.include.list": "tutorial_db.example_table",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
     "schema.history.internal.kafka.topic": "schema-changes.db",
     "topic.prefix": "cdc",
@@ -166,7 +180,7 @@ services:
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=test_db
+      - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
@@ -300,8 +314,8 @@ curl -i -X POST http://localhost:8083/connectors \
     "database.password": "password",
     "database.server.id": "1",
     "database.server.name": "mysql",
-    "database.whitelist": "test_db",
-    "table.include.list": "test_db.example_table",
+    "database.whitelist": "tutorial_db",
+    "table.include.list": "tutorial_db.example_table",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
     "schema.history.internal.kafka.topic": "schema-changes.db",
     "topic.prefix": "cdc",
@@ -349,7 +363,7 @@ docker exec -it mysql mysql -u root -proot -h localhost
 ```
 
 ```mysql
-USE test_db;
+USE tutorial_db;
 INSERT INTO example_table (id, code, name, datetime)
 VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);
 ```
@@ -492,7 +506,7 @@ spring:
   datasource:
     username: ${DATABASE_USERNAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:test_db}
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:tutorial_db}
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     jpa:
@@ -520,9 +534,9 @@ spring:
 spring:
   kafka:
     topic:
-      name: ${KAFKA_TOPIC_NAME:cdc.test_db.example_table}
+      name: ${KAFKA_TOPIC_NAME:cdc.tutorial_db.example_table}
     consumer:
-      group-id: ${KAFKA_GROUP_ID:cdc.test_db.main-group}
+      group-id: ${KAFKA_GROUP_ID:cdc.tutorial_db.main-group}
     bootstrap-servers: ${KAFKA_URL:localhost:9092}
 ```
 

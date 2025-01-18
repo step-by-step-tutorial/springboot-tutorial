@@ -7,6 +7,11 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redisinsight:
     image: redislabs/redisinsight:latest
     container_name: redisinsight
@@ -24,10 +29,15 @@ services:
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=test_db
+      - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   adminer:
     image: adminer
     container_name: adminer
@@ -79,12 +89,18 @@ services:
       - "8083:8083"
     depends_on:
       - kafka
+      - mysql
     environment:
       GROUP_ID: 1
       CONFIG_STORAGE_TOPIC: debezium-config
       OFFSET_STORAGE_TOPIC: debezium-offset
       STATUS_STORAGE_TOPIC: debezium-status
       BOOTSTRAP_SERVERS: kafka:9093
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8083" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   debeziumui:
     image: debezium/debezium-ui:latest
     container_name: debeziumui

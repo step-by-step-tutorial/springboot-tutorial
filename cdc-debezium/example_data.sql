@@ -1,4 +1,4 @@
-USE test_db;
+USE tutorial_db;
 
 INSERT INTO example_table (id, code, name, datetime) VALUES (1, 101, 'example name 1', CURRENT_TIMESTAMP);
 INSERT INTO example_table (id, code, name, datetime) VALUES (2, 102, 'example name 2', CURRENT_TIMESTAMP);
