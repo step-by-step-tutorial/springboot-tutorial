@@ -1,7 +1,6 @@
 package com.tutorial.springboot.event_processor.service;
 
 import com.tutorial.springboot.event_processor.model.EventModel;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,36 +11,32 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RecordApplicationEvents
-@DisplayName("unit tests of event publisher")
-class EventPublisherTest {
+class EventPublisherServiceTest {
 
     @Autowired
-    EventPublisher systemUnderTest;
+    EventPublisherService systemUnderTest;
 
     @Autowired
     ApplicationEvents applicationEvents;
 
     @Test
-    @DisplayName("should throw a NullPointException if the event is null")
     void shouldThrowNullPointExceptionIfEventIsNull() {
-        final EventModel givenEvent = null;
-
-        final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "Event should not be null";
-
-        final var actual = assertThrows(expectedException, () -> systemUnderTest.publish(givenEvent));
+        final var actual = assertThrows(NullPointerException.class, () -> systemUnderTest.publish(null));
 
         assertNotNull(actual);
-        assertEquals(expectedExceptionMessage, actual.getMessage());
+        assertEquals("Event should not be null", actual.getMessage());
     }
 
     @Test
-    @DisplayName("the event should publish successful")
     void shouldPublishEventSuccessfulWhenThereIsNoError() {
         final var givenEvent = new EventModel("content");
 
-        assertDoesNotThrow(() -> systemUnderTest.publish(givenEvent));
-        final var actual = applicationEvents.stream(EventModel.class).toList();
+        final var actual = assertDoesNotThrow(
+                () -> {
+                    systemUnderTest.publish(givenEvent);
+                    return applicationEvents.stream(EventModel.class).toList();
+                }
+        );
 
         assertNotNull(actual);
         assertEquals(1, actual.size());

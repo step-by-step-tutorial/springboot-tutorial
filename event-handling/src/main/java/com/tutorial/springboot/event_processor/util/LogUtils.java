@@ -11,6 +11,6 @@ public final class LogUtils {
     }
 
     public static void logInfo(LogModel model) {
-        logger.info(String.format("%s: %s", model.topic().getMessage(), model.message()));
+        logger.info(String.format("%s: %s", model.subject().getMessage(), model.message()));
     }
 }

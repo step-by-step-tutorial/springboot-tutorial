@@ -5,16 +5,16 @@ import com.tutorial.springboot.event_processor.model.LogModel;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import static com.tutorial.springboot.event_processor.model.LogTopic.OUTPUT_EVENT;
+import static com.tutorial.springboot.event_processor.model.LogSubject.OUTPUT_EVENT;
 import static com.tutorial.springboot.event_processor.util.LogUtils.logInfo;
 import static java.util.Objects.requireNonNull;
 
 @Component
-public class EventPublisher {
+public class EventPublisherService {
 
     private final ApplicationEventPublisher publisher;
 
-    public EventPublisher(ApplicationEventPublisher publisher) {
+    public EventPublisherService(ApplicationEventPublisher publisher) {
         this.publisher = publisher;
     }
 

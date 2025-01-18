@@ -1,13 +1,13 @@
 package com.tutorial.springboot.event_processor.model;
 
-public enum LogTopic {
+public enum LogSubject {
     INPUT_EVENT("Event is subscribed"),
     OUTPUT_EVENT("Event is published"),
     ;
 
     private final String message;
 
-    LogTopic(String message) {
+    LogSubject(String message) {
         this.message = message;
     }
 
