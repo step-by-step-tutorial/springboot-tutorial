@@ -545,11 +545,47 @@ spring:
 ### Dependencies
 
 ```xml
+<dependencies>
+    <!--test-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>mysql</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.redis</groupId>
+        <artifactId>testcontainers-redis</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <!--test-->
+</dependencies>
 ```
 
 ### Application Properties
 
 ```yaml
+spring:
+  kafka:
+    topic:
+      name: cdc.tutorial_db.example_table
+    consumer:
+      group-id: cdc.tutorial_db.main-group
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
 ```
 
 ## Appendix
