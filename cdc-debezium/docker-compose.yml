@@ -107,7 +107,7 @@ services:
       environment:
         APP_HOST: "0.0.0.0"
         APP_PORT: "8080"
-        APP_PROFILES: mysql,redis,kafka,embedded-debezium
+        APP_PROFILES: mysql,redis,kafka,debezium
         DATABASE_USERNAME: user
         DATABASE_PASSWORD: password
         DATABASE_HOST: mysql
