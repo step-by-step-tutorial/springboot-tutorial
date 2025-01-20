@@ -10,11 +10,10 @@ This tutorial is about integration of Spring Boot and Debezium.
 
 * [Getting Started](#getting-started)
 * [Debezium](#debezium)
-* [Install Debezium on Docker](#install-debezium-on-docker)
-* [Install Debezium on Kubernetes](#install-debezium-on-kubernetes)
+* [Dockerized](#dockerized)
+* [Cloud-Native](#cloud-native)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
-* [License](#license)
 * [Appendix](#appendix )
 
 ## Getting Started
@@ -26,44 +25,40 @@ This tutorial is about integration of Spring Boot and Debezium.
 * [Docker](https://www.docker.com/)
 * [Kubernetes](https://kubernetes.io/)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
 mvn clean package -DskipTests=true 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Run
 
 ```shell
 mvn  spring-boot:run
 ```
 
-#### Deploy
+### Pipeline
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name cdc-debezium up --build -d
-```
-
-#### All in One
-
-```shell
-make local-pipeline
+make LocalPipeline
 ```
 
 ```shell
-make dockerized-pipeline
+make DockerizedPipeline
 ```
 
 ```shell
 make e2e-test
+```
+
+```shell
+docker compose --file ./docker-compose.yml --project-name dev-env down
 ```
 
 ## Debezium
@@ -73,7 +68,7 @@ make e2e-test
 Debezium is an open source distributed platform for change data capture (CDC). For more information about Debezium see
 the [https://debezium.io](https://debezium.io).
 
-### Debezium Connector
+### Connector
 
 Connectors use for establish a connection between Debezium, Kafka and a database.
 
@@ -131,7 +126,7 @@ Connectors use for establish a connection between Debezium, Kafka and a database
 
 </p>
 
-### Debezium Use Cases
+### Use Cases
 
 * Real-Time Data Integration
 * Event-Driven Architectures
@@ -144,7 +139,7 @@ Connectors use for establish a connection between Debezium, Kafka and a database
 * CDC for Legacy Systems
 * Data Recovery and Backup
 
-## Dockerized Debezium
+## Dockerized
 
 Create a file named `docker-compose.yml` with the following configuration.
 
@@ -163,6 +158,11 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redisinsight:
     image: redislabs/redisinsight:latest
     container_name: redisinsight
@@ -184,6 +184,11 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   adminer:
     image: adminer
     container_name: adminer
@@ -235,12 +240,18 @@ services:
       - "8083:8083"
     depends_on:
       - kafka
+      - mysql
     environment:
       GROUP_ID: 1
       CONFIG_STORAGE_TOPIC: debezium-config
       OFFSET_STORAGE_TOPIC: debezium-offset
       STATUS_STORAGE_TOPIC: debezium-status
       BOOTSTRAP_SERVERS: kafka:9093
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8083" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   debeziumui:
     image: debezium/debezium-ui:latest
     container_name: debeziumui
@@ -257,13 +268,13 @@ services:
 Execute the following command to install Debezium.
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name cdc-debezium up --build -d
+docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
 ```
 
 ### DOWN
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name cdc-debezium down
+docker compose --file ./docker-compose.yml --project-name dev-env down
 ```
 
 ### Set up Connectors
@@ -378,7 +389,7 @@ docker cp example_data.sql mysql:/example_data.sql
 docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
 
-## Install Debezium on Kubernetes
+## Cloud-Native
 
 Create the following files for installing Debezium.
 
@@ -396,7 +407,7 @@ Create the following files for installing Debezium.
 #service.yml
 ```
 
-### Apply Kube Files
+### Deploy
 
 Execute the following commands to install the tools on Kubernetes.
 
@@ -545,6 +556,7 @@ spring:
 ### Dependencies
 
 ```xml
+
 <dependencies>
     <!--test-->
     <dependency>
@@ -601,17 +613,31 @@ test:
 
 run:
 	mvn spring-boot:run
-	
-docker-compose-deploy:
-	docker compose --file docker-compose.yml --project-name cdc-debezium up --build -d
 
-docker-compose-down:
-	docker compose --file docker-compose.yml --project-name cdc-debezium down
+DockerComposeDeploy:
+	docker compose --file docker-compose.yml --project-name dev-env up --build -d
 
-docker-remove-image:
-	docker image rm samanalishiri/cdcdebezium:last
+DockerComposeDown:
+	docker compose --file docker-compose.yml --project-name dev-env down
+
+DockerRemoveImage:
+	docker image rm samanalishiri/application:last
+
+LocalPipeline:
+	mvn clean package -DskipTests=true
+	mvn test
+	mvn spring-boot:run
+
+DockerizedPipeline:
+	mvn clean package -DskipTests=true
+	mvn test
+	docker compose --file docker-compose.yml --project-name dev-env up --build -d
+
+e2e-test:
+	docker cp example_data.sql mysql:/example_data.sql
+	docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
 
 ##
 
-**<p align="center"> [Top](#title) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-debezium) </p>**

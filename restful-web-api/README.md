@@ -471,13 +471,13 @@ docker-deploy:
 	-e APP_PORT=8080 \
 	-itd samanalishiri/restfulwebapi:latest
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file ./docker-compose.yml --project-name restfulwebapi up --build -d
 
 docker-remove-container:
 	docker rm restfulwebapi --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm samanalishiri/restfulwebapi:latest
 
 kube-deploy:

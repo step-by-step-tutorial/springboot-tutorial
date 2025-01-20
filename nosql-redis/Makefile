@@ -7,7 +7,7 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name redis up --build -d
 
 docker-remove-container:
@@ -15,7 +15,7 @@ docker-remove-container:
 	docker rm redisinsight --force
 	docker rm commander --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm redis:latest
 	docker image rm redislabs/redisinsight:latest
 	docker image rm rediscommander/redis-commander:latest

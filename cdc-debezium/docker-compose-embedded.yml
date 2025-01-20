@@ -124,7 +124,7 @@ services:
     environment:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
-      APP_PROFILES: mysql,redis,kafka,debezium
+      APP_PROFILES: mysql,redis,kafka,embedded-debezium
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
       DATABASE_HOST: mysql
@@ -135,9 +135,8 @@ services:
       KAFKA_TOPIC_NAME: cdc.tutorial_db.example_table
       KAFKA_GROUP_ID: cdc.tutorial_db.main-group
       KAFKA_URL: kafka:9093
-      DEBEZIUM_URL: http://debezium:8083
-      DEBEZIUM_REGISTER_PATH: /connectors
-      DEBEZIUM_CONNECTORS_FILE: connectors.json
+      TOPIC_PREFIX: cdc
+      TABLES: tutorial_db.example_table
     depends_on:
       redis:
         condition: service_healthy

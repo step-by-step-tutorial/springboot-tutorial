@@ -453,7 +453,7 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name kafka up --build -d
 
 docker-remove-container:
@@ -461,7 +461,7 @@ docker-remove-container:
 	docker rm kafka --force
 	docker rm kafdrop --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm docker.io/bitnami/zookeeper
 	docker image rm docker.io/bitnami/kafka
 	docker image rm obsidiandynamics/kafdrop:latest

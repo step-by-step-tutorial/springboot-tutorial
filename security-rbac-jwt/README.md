@@ -1037,7 +1037,7 @@ docker-deploy:
 	-e APP_PROFILES=h2 \
 	-itd samanalishiri/securityrbacjwt:latest
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file ./docker-compose.yml --project-name securityrbacjwt up --build -d
 
 docker-remove-container:
@@ -1045,7 +1045,7 @@ docker-remove-container:
 	docker rm pgadmin --force
 	docker rm postgres --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm samanalishiri/securityrbacjwt:latest
 	docker image rm dpage/pgadmin4
 	docker image rm postgres:13.9-alpine

@@ -327,13 +327,13 @@ docker-deploy:
 	-e APP_PORT=8080 \
 	-itd samanalishiri/securityauthenticationinmemory:latest
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file ./docker-compose.yml --project-name securityauthenticationinmemory up --build -d
 
 docker-remove-container:
 	docker rm securityauthenticationinmemory --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm samanalishiri/securityauthenticationinmemory:latest
 
 kube-deploy:

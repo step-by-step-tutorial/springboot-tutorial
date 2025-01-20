@@ -328,13 +328,13 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name artemis up --build -d
 
 docker-remove-container:
 	docker rm artemis --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm apache/activemq-artemis:latest
 
 kube-deploy:

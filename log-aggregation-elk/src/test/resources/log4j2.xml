@@ -4,9 +4,6 @@
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Property>
         <Property name="LOG_LEVEL">INFO</Property>
         <Property name="LOG_PATH">./target/logs/</Property>
-        <Property name="TCP_LOGGER_HOST">${env:TCP_LOGGER_HOST:-localhost}</Property>
-        <Property name="TCP_LOGGER_PORT">${env:TCP_LOGGER_PORT:-5044}</Property>
-        <Property name="TCP_LOGGER_RECONNECT_DELAY">${env:TCP_LOGGER_RECONNECT_DELAY:-5000}</Property>
     </Properties>
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
@@ -21,22 +18,15 @@
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-        <Socket name="SocketAppender" host="${TCP_LOGGER_HOST}" port="${TCP_LOGGER_PORT}">
-            <PatternLayout pattern="${LOG_PATTERN}" />
-            <ConnectTimeoutMillis>${TCP_LOGGER_RECONNECT_DELAY}</ConnectTimeoutMillis>
-            <ReconnectDelayMillis>${TCP_LOGGER_RECONNECT_DELAY}</ReconnectDelayMillis>
-        </Socket>
     </Appenders>
     <Loggers>
         <Root level="${LOG_LEVEL}">
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="FileAppender"/>
-            <AppenderRef ref="SocketAppender"/>
         </Root>
         <Logger name="com.tutorial.springboot" level="${LOG_LEVEL}" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="FileAppender"/>
-            <AppenderRef ref="SocketAppender"/>
         </Logger>
     </Loggers>
 </Configuration>

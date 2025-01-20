@@ -26,6 +26,5 @@ DockerizedPipeline:
 	mvn test
 	docker compose --file docker-compose.yml --project-name dev-env up --build -d
 
-e2e-test:
-	docker cp example_data.sql mysql:/example_data.sql
-	docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
+E2eTest:
+	curl http://localhost:8080

@@ -7,14 +7,14 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name oracle up --build -d
 
 docker-remove-container:
 	docker rm oracle --force
 	docker rm ords --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm container-registry.oracle.com/database/express:21.3.0-xe
 	docker image rm container-registry.oracle.com/database/ords:latest
 

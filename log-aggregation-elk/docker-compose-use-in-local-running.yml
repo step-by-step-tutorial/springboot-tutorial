@@ -6,7 +6,7 @@ services:
     container_name: elasticsearch
     hostname: elasticsearch
     environment:
-      ELASTIC_PASSWORD: password
+#      ELASTIC_PASSWORD: password
       discovery.type: single-node
     ports:
       - "9200:9200"
@@ -23,8 +23,8 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-      ELASTICSEARCH_USERNAME: logstash_system
-      ELASTICSEARCH_PASSWORD: password
+#      ELASTICSEARCH_USERNAME: logstash_system
+#      ELASTICSEARCH_PASSWORD: password
     ports:
       - "5044:5044"
       - "9600:9600"
@@ -39,31 +39,11 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-      ELASTICSEARCH_USERNAME: kibana_system
-      ELASTICSEARCH_PASSWORD: password
+#      ELASTICSEARCH_USERNAME: kibana_system
+#      ELASTICSEARCH_PASSWORD: password
     ports:
       - "5601:5601"
     volumes:
       - "./elk/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml"
     depends_on:
       - elasticsearch
-  application:
-    image: samanalishiri/application:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: application
-    hostname: application
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      APP_HOST: "0.0.0.0"
-      APP_PORT: "8080"
-      APP_PROFILES: default
-      TCP_LOGGER_HOST: logstash
-      TCP_LOGGER_PORT: 5044
-      TCP_LOGGER_RECONNECT_DELAY: 5000
-    depends_on:
-      - elasticsearch
-      - logstash

@@ -7,15 +7,13 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file ./docker-compose.yml --project-name mysql up --build -d
 
-docker-remove-container:
-	docker rm mysql --force
-	docker rm mysql-workbench- --force
-	docker rm adminer --force
+DockerComposeDown:
+	docker compose --file ./docker-compose.yml --project-name mysql down
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm mysql:8.0
 	docker image rm lscr.io/linuxserver/mysql-workbench:latest
 	docker image rm adminer

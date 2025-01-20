@@ -630,7 +630,7 @@ docker-build:
 	docker build -t samanalishiri/securityoauth2client:latest -f security-oauth2-server/Dockerfile .
 	docker build -t samanalishiri/securityoauth2client:latest -f security-oauth2-client/Dockerfile .
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	mvn -f security-oauth2-server/pom.xml clean package -DskipTests=true
 	mvn -f security-oauth2-client/pom.xml clean package -DskipTests=true
 	mvn -f security-oauth2-server/pom.xml test
@@ -644,7 +644,7 @@ docker-remove-container:
 	docker rm pgadmin --force
 	docker rm postgres --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm samanalishiri/securityoauth2server:latest
 	docker image rm samanalishiri/securityoauth2client:latest
 

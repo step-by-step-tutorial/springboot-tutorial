@@ -553,14 +553,14 @@ class SampleRepositoryTest {
 ### Makefile
 
 ```shell
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name mongo up --build -d
 
 docker-remove-container:
 	docker rm mongo --force
 	docker rm mongo-express --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm mongo
 	docker image rm mongo-express
 

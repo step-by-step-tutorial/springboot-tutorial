@@ -7,7 +7,7 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name postgres up --build -d
 
 docker-remove-container:
@@ -15,7 +15,7 @@ docker-remove-container:
 	docker rm pgadmin --force
 	docker rm adminer --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm postgres:13.9-alpine
 	docker image rm dpage/pgadmin4
 	docker image rm adminer

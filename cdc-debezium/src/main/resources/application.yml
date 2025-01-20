@@ -3,7 +3,7 @@ server:
   port: ${APP_PORT:8080}
 spring:
   profiles:
-    active: ${APP_PROFILES:mysql,redis,kafka,debezium,docker}
+    active: ${APP_PROFILES:mysql,redis,kafka,debezium,local}
   docker:
     compose:
       enabled: false

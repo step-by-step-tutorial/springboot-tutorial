@@ -328,13 +328,13 @@ test:
 run:
 	mvn spring-boot:run
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name rabbitmq up --build -d
 
 docker-remove-container:
 	docker rm rabbitmq --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm rabbitmq:management
 
 kube-deploy:

@@ -10,9 +10,8 @@ This tutorial is about integration of Spring Boot and TOOLS_NAME.
 
 * [Getting Started](#getting-started)
 * [TOOLS_NAME](#tools_name)
-* [TOOLS_NAME Use Cases](#tools_name-use-cases)
-* [Install TOOLS_NAME on Docker](#install-tools_name-on-docker)
-* [Install TOOLS_NAME on Kubernetes](#install-tools_name-on-kubernetes)
+* [Dockerized](#dockerized)
+* [Cloud-Native](#cloud-native)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [License](#license)
@@ -27,24 +26,36 @@ This tutorial is about integration of Spring Boot and TOOLS_NAME.
 * [Docker](https://www.docker.com/)
 * [Kubernetes](https://kubernetes.io/)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
 mvn clean package -DskipTests=true 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Run
 
 ```shell
 mvn  spring-boot:run
+```
+
+### Pipeline
+
+```shell
+make LocalPipeline
+```
+
+```shell
+make DockerizedPipeline
+```
+
+```shell
+make e2e-test
 ```
 
 ## TOOLS_NAME
@@ -55,9 +66,9 @@ For more information about TOOLS_NAME see the []().
 
 </p>
 
-## TOOLS_NAME Use Cases
+### Use Cases
 
-## Install TOOLS_NAME on Docker
+## Dockerized
 
 Create a file named `docker-compose.yml` with the following configuration.
 
@@ -69,7 +80,7 @@ Create a file named `docker-compose.yml` with the following configuration.
 #docker-compose.yml
 ```
 
-### Apply Docker Compose
+### Deploy
 
 Execute the following command to install TOOLS_NAME.
 
@@ -77,7 +88,15 @@ Execute the following command to install TOOLS_NAME.
 docker compose --file ./docker-compose.yml --project-name tools_name up --build -d
 ```
 
-## Install TOOLS_NAME on Kubernetes
+### Down
+
+Execute the following command to install TOOLS_NAME.
+
+```shell
+docker compose --file ./docker-compose.yml --project-name tools_name down
+```
+
+## Cloud-Native
 
 Create the following files for installing TOOLS_NAME.
 
@@ -95,7 +114,7 @@ Create the following files for installing TOOLS_NAME.
 #service.yml
 ```
 
-### Apply Kube Files
+### Deploy
 
 Execute the following commands to install the tools on Kubernetes.
 
@@ -163,13 +182,13 @@ test:
 run:
 	mvn spring-boot:run
 	
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name tools-name up --build -d
 
 docker-remove-container:
 	docker rm tools-name --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm image-name
 
 kube-deploy:

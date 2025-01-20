@@ -212,13 +212,13 @@ test:
 run:
 	mvn spring-boot:run
 	
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file docker-compose.yml --project-name tools-name up --build -d
 
 docker-remove-container:
 	docker rm tools-name --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm image-name
 
 kube-deploy:

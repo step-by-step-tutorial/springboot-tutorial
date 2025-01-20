@@ -20,13 +20,13 @@ docker-deploy:
 	-e TRACING_HOST=http://jaeger:4318/v1/traces \
 	-itd samanalishiri/observabilityjaeger:latest
 
-docker-compose-deploy:
+DockerComposeDeploy:
 	docker compose --file ./docker-compose.yml --project-name observabilityjaeger up --build -d
 
 docker-remove-container:
 	docker rm observabilityjaeger --force
 
-docker-remove-image:
+DockerRemoveImage:
 	docker image rm samanalishiri/observabilityjaeger:latest
 
 kube-deploy:
