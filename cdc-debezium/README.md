@@ -2,7 +2,8 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and Debezium.
+This tutorial is about integration of Spring Boot and Debezium to capture changed data.
+In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 
 </p>
 
@@ -54,11 +55,26 @@ make DockerizedPipeline
 ```
 
 ```shell
-make e2e-test
+make CloudNativePipeline
+```
+```shell
+kubectl exec -it mysql-6dd5c5fdbb-flbsb -n default -c mysql -- mysql -u user -ppassword -h localhost
+```
+
+```shell
+make E2eTest
 ```
 
 ```shell
 docker compose --file ./docker-compose.yml --project-name dev-env down
+```
+
+```shell
+make CloudNativeDown
+```
+
+```shell
+kubectl port-forward service/debeziumui 8082:8082
 ```
 
 ## Debezium
@@ -150,6 +166,7 @@ Create a file named `docker-compose.yml` with the following configuration.
 ```yaml
 #docker-compose.yml
 version: '3.9'
+name: dev-env
 services:
   redis:
     image: redis:latest
@@ -265,13 +282,15 @@ services:
 
 ### Deploy
 
-Execute the following command to install Debezium.
+Execute the following command to install Debezium stack.
 
 ```shell
 docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
 ```
 
 ### DOWN
+
+Execute the following command to stop and remove Debezium stack.
 
 ```shell
 docker compose --file ./docker-compose.yml --project-name dev-env down
@@ -308,7 +327,7 @@ curl -i -X POST http://localhost:8083/connectors \
 }'
 ```
 
-Example of the request for MySQL.
+Example of the request for MySQL and Kafka.
 
 ```shell
 curl -i -X POST http://localhost:8083/connectors \
@@ -368,23 +387,22 @@ curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
 ### Test
 
 #### Solution 1
-
+Connect to containerized MySQL.
 ```shell
 docker exec -it mysql mysql -u root -proot -h localhost
 ```
-
+Execute the following query. Then see the logs.
 ```mysql
 USE tutorial_db;
-INSERT INTO example_table (id, code, name, datetime)
-VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);
+INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);
 ```
 
 #### Solution 2
-
+Copy SQL file to MySQL container.
 ```shell
 docker cp example_data.sql mysql:/example_data.sql
 ```
-
+Execute the SQL file. Then see the logs.
 ```shell
 docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
@@ -395,16 +413,87 @@ Create the following files for installing Debezium.
 
 ### Kube Files
 
-[debezium-deployment.yml](/kube/debezium-deployment.yml)
+[debezium.yml](/kube/debezium.yml)
 
 ```yaml
-#deployment.yml
-```
-
-[debezium-service.yml](/kube/debezium-service.yml)
-
-```yaml
-#service.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debezium
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debezium
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: debezium
+    spec:
+      containers:
+        - name: debezium
+          image: debezium/connect:3.0.0.Final
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GROUP_ID
+              value: "1"
+            - name: CONFIG_STORAGE_TOPIC
+              value: debezium-config
+            - name: OFFSET_STORAGE_TOPIC
+              value: debezium-offset
+            - name: STATUS_STORAGE_TOPIC
+              value: debezium-status
+            - name: BOOTSTRAP_SERVERS
+              value: kafka:9093
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: debezium
+spec:
+  selector:
+    app: debezium
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debeziumui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debeziumui
+  template:
+    metadata:
+      labels:
+        app: debeziumui
+    spec:
+      containers:
+        - name: debeziumui
+          image: debezium/debezium-ui:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KAFKA_CONNECT_URIS
+              value: http://debezium:8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: debeziumui
+spec:
+  selector:
+    app: debeziumui
+  ports:
+    - port: 8080
+      targetPort: 8080
 ```
 
 ### Deploy
@@ -412,8 +501,10 @@ Create the following files for installing Debezium.
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
-kubectl apply -f ./kube/debezium-deployment.yml
-kubectl apply -f ./kube/debezium-service.yml
+kubectl apply -f ./kube/mysql.yml
+kubectl apply -f ./kube/kafka.yml
+kubectl apply -f ./kube/debezium.yml
+kubectl apply -f ./kube/application.yml
 ```
 
 ### Check Status
