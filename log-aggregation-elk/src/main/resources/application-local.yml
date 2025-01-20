@@ -2,4 +2,4 @@ spring:
   docker:
     compose:
       enabled: true
-      file: ./docker-compose-use-in-local-running.yml
+      file: ./docker-compose-tools-stack.yml.yml

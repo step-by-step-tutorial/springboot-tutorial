@@ -4,12 +4,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static com.tutorial.springboot.logger_log4j2.JdbcUtils.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class ApplicationTest {
 
     static final String LOGGER_NAME = "TEST_DATABASE_APPENDER_LOGGER";
@@ -19,7 +21,6 @@ class ApplicationTest {
     void shouldBeWrittenMessageOnTheFile() {
         var givenLogger = LoggerFactory.getLogger(LOGGER_NAME);
 
-        //When
         givenLogger.error("errors");
         givenLogger.warn("errors, warns");
         givenLogger.info("errors, warns, info");

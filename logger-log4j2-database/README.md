@@ -23,33 +23,43 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 * [MySQL](https://www.mysql.com)
 * [Docker](https://www.docker.com)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
 mvn clean package -DskipTests=true 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Run
 
 ```shell
 mvn  spring-boot:run
 ```
 
-After running tests successfully then connect to MySQL database and execute the following queries to see the result.
+### Pipeline
 
 ```shell
-docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE test_db; SELECT * FROM LOG_TABLE;"
+make LocalPipeline
 ```
 
-## Install MySQL on Docker
+```shell
+make DockerizedPipeline
+```
+
+```shell
+make e2e-test
+```
+
+```shell
+docker compose --file ./docker-compose.yml --project-name dev-env down
+```
+
+## Dockerize
 
 Create a docker compose file named `docker-compose.yml` then copy and paste the following script. There are two clients
 to help you for interacting with MySQL therefore you can select one of
@@ -80,7 +90,7 @@ services:
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=test_db
+      - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
@@ -122,7 +132,7 @@ services:
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=test_db
+      - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
@@ -136,12 +146,20 @@ services:
       - "8080:8080"
 ```
 
-### Apply Docker Compose
+### Deploy
 
 Execute the following command to install MySQL.
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name mysql up --build -d
+docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
+```
+
+### Down
+
+Execute the following command to stop and remove MySQL.
+
+```shell
+docker compose --file ./docker-compose.yml --project-name dev-env down
 ```
 
 ### Init MySQL
@@ -167,8 +185,8 @@ Execute following queries.
 ```mysql
 # init.db
 CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
-CREATE DATABASE IF NOT EXISTS test_db;
-USE test_db;
+CREATE DATABASE IF NOT EXISTS tutorial_db;
+USE tutorial_db;
 
 CREATE TABLE LOG_TABLE
 (
@@ -240,7 +258,7 @@ MySQL properties.
 ```properties
 #log4j2_en.properties
 driver=com.mysql.cj.jdbc.Driver
-url=jdbc:mysql://localhost:3306/test_db
+url=jdbc:mysql://localhost:3306/tutorial_db
 table_name=LOG_TABLE
 username=user
 password=password

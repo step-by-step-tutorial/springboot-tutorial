@@ -3,20 +3,26 @@
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Property>
         <Property name="LOG_LEVEL">INFO</Property>
+        <Property name="LOG_TABLE">${env:LOG_TABLE:-LOG_TABLE}</Property>
+        <Property name="DATABASE_URL">${env:DATABASE_URL:-jdbc:mysql://localhost:3306/tutorial_db}</Property>
+        <Property name="DATABASE_USER">${env:DATABASE_USER:-user}</Property>
+        <Property name="DATABASE_PASSWORD">${env:DATABASE_PASSWORD:-password}</Property>
+        <Property name="DATABASE_RECONNECT_DELAY">${env:DATABASE_RECONNECT_DELAY:-8000}</Property>
+
     </Properties>
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
 
-        <JDBC name="databaseAppender" tableName="LOG_TABLE" bufferSize="1" ignoreExceptions="true">
+        <JDBC name="DatabaseAppender" tableName="${LOG_TABLE}" bufferSize="1" ignoreExceptions="true">
             <DriverManager
                     driverClassName="com.mysql.cj.jdbc.Driver"
-                    connectionString="jdbc:mysql://localhost:3306/test_db"
-                    userName="user"
-                    password="password"
+                    connectionString="${DATABASE_URL}"
+                    userName="${DATABASE_USER}"
+                    password="${DATABASE_PASSWORD}"
             />
-            <ReconnectIntervalMillis>8000</ReconnectIntervalMillis>
+            <ReconnectIntervalMillis>${DATABASE_RECONNECT_DELAY}</ReconnectIntervalMillis>
             <Column name="EVENT_DATE" isEventTimestamp="true"/>
             <Column name="LEVEL" pattern="%level"/>
             <Column name="LOGGER" pattern="%logger"/>
@@ -27,11 +33,11 @@
     <Loggers>
         <Root level="${LOG_LEVEL}">
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="databaseAppender"/>
+            <AppenderRef ref="DatabaseAppender"/>
         </Root>
         <Logger name="com.tutorial.springboot" level="${LOG_LEVEL}" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="databaseAppender"/>
+            <AppenderRef ref="DatabaseAppender"/>
         </Logger>
     </Loggers>
 </Configuration>

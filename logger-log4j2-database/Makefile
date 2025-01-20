@@ -8,12 +8,19 @@ run:
 	mvn spring-boot:run
 
 DockerComposeDeploy:
-	docker compose --file ./docker-compose.yml --project-name mysql up --build -d
+	docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
 
 DockerComposeDown:
-	docker compose --file ./docker-compose.yml --project-name mysql down
+	docker compose --file ./docker-compose.yml --project-name dev-env down
 
-DockerRemoveImage:
-	docker image rm mysql:8.0
-	docker image rm lscr.io/linuxserver/mysql-workbench:latest
-	docker image rm adminer
+LocalPipeline:
+	mvn clean package -DskipTests=true
+	mvn test
+	mvn spring-boot:run
+
+DockerizedPipeline:
+	mvn clean package -DskipTests=true
+	docker compose --file docker-compose.yml --project-name dev-env up --build -d
+
+e2e-test:
+	docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE tutorial_db; SELECT * FROM LOG_TABLE;"

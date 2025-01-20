@@ -13,9 +13,6 @@ DockerComposeDeploy:
 DockerComposeDown:
 	docker compose --file docker-compose.yml --project-name dev-env down
 
-DockerRemoveImage:
-	docker image rm samanalishiri/application:last
-
 LocalPipeline:
 	mvn clean package -DskipTests=true
 	mvn test

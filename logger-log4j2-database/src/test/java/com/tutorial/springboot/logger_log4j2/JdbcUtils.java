@@ -10,7 +10,7 @@ public final class JdbcUtils {
     }
 
     public static <E> Optional<E> executeQuery(Throwable<Statement, E> query) {
-        try (var connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/test_db", "user", "password");
+        try (var connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/tutorial_db", "user", "password");
              var statement = connection.createStatement()) {
             return Optional.of(query.accept(statement));
         } catch (Exception e) {

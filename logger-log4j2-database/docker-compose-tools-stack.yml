@@ -39,23 +39,3 @@ services:
     restart: always
     ports:
       - "8081:8080"
-  application:
-    image: samanalishiri/application:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: application
-    hostname: application
-    restart: no
-    ports:
-      - "8080:8080"
-    environment:
-      APP_HOST: "0.0.0.0"
-      APP_PORT: "8080"
-      APP_PROFILES: default
-      DATABASE_USER: user
-      DATABASE_PASSWORD: password
-      LOG_TABLE: LOG_TABLE
-      DATABASE_RECONNECT_DELAY: 8000
-
-

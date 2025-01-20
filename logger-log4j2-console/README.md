@@ -21,21 +21,19 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
 mvn clean package -DskipTests=true 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Run
 
 ```shell
 mvn  spring-boot:run
