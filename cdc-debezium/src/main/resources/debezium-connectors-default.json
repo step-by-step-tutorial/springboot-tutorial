@@ -1,0 +1,23 @@
+[
+  {
+    "name": "spring-boot-tutorial",
+    "config": {
+      "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+      "tasks.max": "1",
+      "database.hostname": "mysql",
+      "database.port": "3306",
+      "database.user": "user",
+      "database.password": "password",
+      "database.server.id": "1",
+      "database.server.name": "mysql",
+      "database.whitelist": "tutorial_db",
+      "table.include.list": "tutorial_db.example_table",
+      "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
+      "schema.history.internal.kafka.topic": "schema-changes.db",
+      "topic.prefix": "cdc",
+      "include.schema.changes": "true",
+      "transforms": "unwrap",
+      "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+    }
+  }
+]

@@ -13,18 +13,16 @@ In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 * [Debezium](#debezium)
 * [Dockerized](#dockerized)
 * [Cloud-Native](#cloud-native)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [Appendix](#appendix )
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-* [Kubernetes](https://kubernetes.io/)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
 
 ### Build
 
@@ -38,43 +36,74 @@ mvn clean package -DskipTests=true
 mvn test
 ```
 
-### Run
+### Run Locally
 
 ```shell
 mvn  spring-boot:run
 ```
 
-### Pipeline
+### Deploy Embedded Debezium to Docker
 
 ```shell
-make LocalPipeline
+docker compose --file docker-compose-embedded.yml --project-name dev-env up --build -d
+```
+
+### Deploy External Debezium to Docker
+
+```shell
+docker compose --file docker-compose.yml --project-name dev-env up --build -d
+```
+
+### E2eTest for Docker
+
+```shell
+docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
 
 ```shell
-make DockerizedPipeline
+docker cp example_data.sql mysql:/example_data.sql
+docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
+```
+
+### Down Docker
+
+```shell
+docker compose --file docker-compose.yml --project-name dev-env down
+```
+
+### Deploy External Debezium to Kubernetes
+
+```shell
+docker build -t samanalishiri/application:latest .
+kubectl apply -f ./kube/mysql.yml
+kubectl apply -f ./kube/kafka.yml
+kubectl apply -f ./kube/debezium.yml
+kubectl apply -f ./kube/redis.yml
+kubectl apply -f ./kube/application.yml
 ```
 
 ```shell
-make CloudNativePipeline
-```
-```shell
-kubectl exec -it mysql-6dd5c5fdbb-flbsb -n default -c mysql -- mysql -u user -ppassword -h localhost
+make CloudNativeDeploy
 ```
 
-```shell
-make E2eTest
-```
+### E2eTest for Kubernetes
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name dev-env down
+# Use this command `kubectl get pods` to see the mysql pod-id
+kubectl exec -it mysql-??? -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
 
+### Down Kubernetes
+
+```shell
+kubectl delete all --all
+kubectl delete secrets mysql-secrets
+kubectl delete configMap mysql-configmap
+kubectl delete persistentvolumeclaim mysql-pvc
+docker image rm samanalishiri/application:latest
+```
 ```shell
 make CloudNativeDown
-```
-
-```shell
-kubectl port-forward service/debeziumui 8082:8082
 ```
 
 ## Debezium
@@ -288,6 +317,15 @@ Execute the following command to install Debezium stack.
 docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
 ```
 
+### Debezium UI
+
+<p align="justify">
+
+In order to connect to Debezium from localhost through the web browser use the following command and dashboard of
+Debezium is available on [http://localhost:8082](http://localhost:8082) URL.
+
+</p>
+
 ### DOWN
 
 Execute the following command to stop and remove Debezium stack.
@@ -387,22 +425,31 @@ curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
 ### Test
 
 #### Solution 1
+
 Connect to containerized MySQL.
+
 ```shell
 docker exec -it mysql mysql -u root -proot -h localhost
 ```
+
 Execute the following query. Then see the logs.
+
 ```mysql
 USE tutorial_db;
-INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);
+INSERT INTO example_table (id, code, name, datetime)
+VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);
 ```
 
 #### Solution 2
+
 Copy SQL file to MySQL container.
+
 ```shell
 docker cp example_data.sql mysql:/example_data.sql
 ```
+
 Execute the SQL file. Then see the logs.
+
 ```shell
 docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
@@ -435,9 +482,9 @@ spec:
       containers:
         - name: debezium
           image: debezium/connect:3.0.0.Final
-          imagePullPolicy: Never
+          imagePullPolicy: "IfNotPresent"
           ports:
-            - containerPort: 8080
+            - containerPort: 8083
           env:
             - name: GROUP_ID
               value: "1"
@@ -448,7 +495,7 @@ spec:
             - name: STATUS_STORAGE_TOPIC
               value: debezium-status
             - name: BOOTSTRAP_SERVERS
-              value: kafka:9093
+              value: "kafka-service:9093"
 ---
 apiVersion: v1
 kind: Service
@@ -458,8 +505,8 @@ spec:
   selector:
     app: debezium
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 8083
+      targetPort: 8083
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -482,7 +529,7 @@ spec:
             - containerPort: 8080
           env:
             - name: KAFKA_CONNECT_URIS
-              value: http://debezium:8080
+              value: http://debezium:8083
 ---
 apiVersion: v1
 kind: Service
@@ -492,7 +539,7 @@ spec:
   selector:
     app: debeziumui
   ports:
-    - port: 8080
+    - port: 8082
       targetPort: 8080
 ```
 
@@ -501,9 +548,11 @@ spec:
 Execute the following commands to install the tools on Kubernetes.
 
 ```shell
+docker build -t samanalishiri/application:latest .
 kubectl apply -f ./kube/mysql.yml
 kubectl apply -f ./kube/kafka.yml
 kubectl apply -f ./kube/debezium.yml
+kubectl apply -f ./kube/redis.yml
 kubectl apply -f ./kube/application.yml
 ```
 
@@ -513,183 +562,18 @@ kubectl apply -f ./kube/application.yml
 kubectl get all
 ```
 
-### Port Forwarding
+### Debezium UI
+
+```shell
+kubectl port-forward service/debeziumui 8082:8082
+```
 
 <p align="justify">
 
 In order to connect to Debezium from localhost through the web browser use the following command and dashboard of
-Debezium is available on [http://localhost:port](http://localhost:port) URL.
+Debezium is available on [http://localhost:8082](http://localhost:8082) URL.
 
 </p>
-
-```shell
-kubectl port-forward service/debezium port:port
-```
-
-## How To Set up Spring Boot
-
-You need to set up a database like MySQL, Kafka and Debzium.
-
-### Dependencies
-
-```xml
-
-<dependencies>
-    <!--spring-->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-webflux</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-redis</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.kafka</groupId>
-        <artifactId>spring-kafka</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-cache</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-docker-compose</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <!--spring-->
-    <!--drivers-->
-    <dependency>
-        <groupId>com.mysql</groupId>
-        <artifactId>mysql-connector-j</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>redis.clients</groupId>
-        <artifactId>jedis</artifactId>
-    </dependency>
-    <!--drivers-->
-    <!--embedded debezium-->
-    <dependency>
-        <groupId>io.debezium</groupId>
-        <artifactId>debezium-api</artifactId>
-        <version>2.6.0.Final</version>
-    </dependency>
-    <dependency>
-        <groupId>io.debezium</groupId>
-        <artifactId>debezium-embedded</artifactId>
-        <version>2.6.0.Final</version>
-    </dependency>
-    <dependency>
-        <groupId>io.debezium</groupId>
-        <artifactId>debezium-connector-mysql</artifactId>
-        <version>2.6.0.Final</version>
-    </dependency>
-    <!--embedded debezium-->
-</dependencies>
-```
-
-### Application Properties
-
-```yaml
-# mysql
-spring:
-  datasource:
-    username: ${DATABASE_USERNAME:user}
-    password: ${DATABASE_PASSWORD:password}
-    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:tutorial_db}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  data:
-    jpa:
-      repositories:
-        enabled: true
-  jpa:
-    database: MYSQL
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    defer-datasource-initialization: true
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      javax:
-        persistence:
-          create-database-schemas: true
-      hibernate:
-        generate_statistics: true
-        format_sql: true
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-```
-
-```yaml
-# kafka
-spring:
-  kafka:
-    topic:
-      name: ${KAFKA_TOPIC_NAME:cdc.tutorial_db.example_table}
-    consumer:
-      group-id: ${KAFKA_GROUP_ID:cdc.tutorial_db.main-group}
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
-```
-
-## How To Set up Spring Boot Test
-
-### Dependencies
-
-```xml
-
-<dependencies>
-    <!--test-->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.kafka</groupId>
-        <artifactId>spring-kafka-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>mysql</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>com.redis</groupId>
-        <artifactId>testcontainers-redis</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <!--test-->
-</dependencies>
-```
-
-### Application Properties
-
-```yaml
-spring:
-  kafka:
-    topic:
-      name: cdc.tutorial_db.example_table
-    consumer:
-      group-id: cdc.tutorial_db.main-group
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
-```
 
 ## Appendix
 
@@ -711,22 +595,20 @@ DockerComposeDeploy:
 DockerComposeDown:
 	docker compose --file docker-compose.yml --project-name dev-env down
 
-DockerRemoveImage:
-	docker image rm samanalishiri/application:last
+CloudNativeDeploy:
+	docker build -t samanalishiri/application:latest .
+	kubectl apply -f ./kube/mysql.yml
+	kubectl apply -f ./kube/kafka.yml
+	kubectl apply -f ./kube/debezium.yml
+	kubectl apply -f ./kube/redis.yml
+	kubectl apply -f ./kube/application.yml
 
-LocalPipeline:
-	mvn clean package -DskipTests=true
-	mvn test
-	mvn spring-boot:run
-
-DockerizedPipeline:
-	mvn clean package -DskipTests=true
-	mvn test
-	docker compose --file docker-compose.yml --project-name dev-env up --build -d
-
-e2e-test:
-	docker cp example_data.sql mysql:/example_data.sql
-	docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
+CloudNativeDown:
+	kubectl delete all --all
+	kubectl delete secrets mysql-secrets
+	kubectl delete configMap mysql-configmap
+	kubectl delete persistentvolumeclaim mysql-pvc
+	docker image rm samanalishiri/application:latest
 ```
 
 ##

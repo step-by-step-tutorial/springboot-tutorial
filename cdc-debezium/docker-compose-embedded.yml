@@ -82,35 +82,6 @@ services:
     environment:
       KAFKA_BROKERCONNECT: kafka:9093
       JVM_OPTS: "-Xms32M -Xmx64M"
-  debezium:
-    image: debezium/connect:3.0.0.Final
-    container_name: debezium
-    hostname: debezium
-    ports:
-      - "8083:8083"
-    depends_on:
-      - kafka
-      - mysql
-    environment:
-      GROUP_ID: 1
-      CONFIG_STORAGE_TOPIC: debezium-config
-      OFFSET_STORAGE_TOPIC: debezium-offset
-      STATUS_STORAGE_TOPIC: debezium-status
-      BOOTSTRAP_SERVERS: kafka:9093
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8083" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  debeziumui:
-    image: debezium/debezium-ui:latest
-    container_name: debeziumui
-    hostname: debeziumui
-    ports:
-      - "8082:8080"
-    environment:
-      - KAFKA_CONNECT_URIS=http://debezium:8083
-    restart: always
   application:
     image: samanalishiri/application:latest
     build:
@@ -141,6 +112,4 @@ services:
       redis:
         condition: service_healthy
       mysql:
-        condition: service_healthy
-      debezium:
         condition: service_healthy

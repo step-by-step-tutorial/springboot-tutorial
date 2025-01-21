@@ -137,7 +137,7 @@ services:
       KAFKA_URL: kafka:9093
       DEBEZIUM_URL: http://debezium:8083
       DEBEZIUM_REGISTER_PATH: /connectors
-      DEBEZIUM_CONNECTORS_FILE: connectors.json
+      DEBEZIUM_CONNECTORS_FILE: debezium-connectors-default.json
     depends_on:
       redis:
         condition: service_healthy

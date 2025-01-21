@@ -52,7 +52,7 @@ spec:
             - name: DEBEZIUM_REGISTER_PATH
               value: /connectors
             - name: DEBEZIUM_CONNECTORS_FILE
-              value: connectors.json
+              value: debezium-connectors-kube.json
 
 ---
 apiVersion: v1
