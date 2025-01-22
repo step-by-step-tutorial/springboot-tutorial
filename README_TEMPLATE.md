@@ -11,7 +11,7 @@ This tutorial is about integration of Spring Boot and TOOLS_NAME.
 * [Getting Started](#getting-started)
 * [TOOLS_NAME](#tools_name)
 * [Dockerized](#dockerized)
-* [Cloud-Native](#cloud-native)
+* [Kubernetes](#kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [License](#license)
@@ -96,7 +96,7 @@ Execute the following command to install TOOLS_NAME.
 docker compose --file ./docker-compose.yml --project-name tools_name down
 ```
 
-## Cloud-Native
+## Kubernetes
 
 Create the following files for installing TOOLS_NAME.
 

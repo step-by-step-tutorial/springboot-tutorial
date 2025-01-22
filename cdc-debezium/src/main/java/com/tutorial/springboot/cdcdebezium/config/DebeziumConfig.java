@@ -16,7 +16,6 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 
 @Configuration
-@Profile("debezium")
 public class DebeziumConfig {
 
     @Value("${debezium.url}")

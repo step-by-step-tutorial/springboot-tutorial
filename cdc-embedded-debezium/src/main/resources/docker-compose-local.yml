@@ -14,7 +14,7 @@ services:
       - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
+      - "./users.sql:/docker-entrypoint-initdb.d/users.sql"
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root" ]
       interval: 10s
@@ -92,33 +92,3 @@ services:
     environment:
       - KAFKA_CONNECT_URIS=http://debezium:8083
     restart: always
-  application:
-    image: samanalishiri/application:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: application
-    hostname: application
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      APP_HOST: "0.0.0.0"
-      APP_PORT: "8080"
-      APP_PROFILES: mysql,kafka,debezium
-      DATABASE_USERNAME: user
-      DATABASE_PASSWORD: password
-      DATABASE_HOST: mysql
-      DATABASE_PORT: 3306
-      DATABASE_NAME: tutorial_db
-      KAFKA_TOPIC_NAME: cdc.tutorial_db.example_table
-      KAFKA_GROUP_ID: cdc.tutorial_db.main-group
-      KAFKA_URL: kafka:9093
-      DEBEZIUM_URL: http://debezium:8083
-      DEBEZIUM_REGISTER_PATH: /connectors
-      DEBEZIUM_CONNECTORS_FILE: debezium-connectors-default.json
-    depends_on:
-      mysql:
-        condition: service_healthy
-      debezium:
-        condition: service_healthy

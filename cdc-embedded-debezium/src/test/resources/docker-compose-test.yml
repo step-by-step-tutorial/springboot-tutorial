@@ -1,9 +1,7 @@
 version: '3.9'
-name: dev-env
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql
     hostname: mysql
     restart: always
     ports:
@@ -14,22 +12,14 @@ services:
       - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
+      - "./users.sql:/docker-entrypoint-initdb.d/users.sql"
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root" ]
       interval: 10s
       timeout: 5s
       retries: 5
-  adminer:
-    image: adminer
-    container_name: adminer
-    hostname: adminer
-    restart: always
-    ports:
-      - "8084:8080"
   zookeeper:
     image: docker.io/bitnami/zookeeper
-    container_name: zookeeper
     hostname: zookeeper
     restart: always
     ports:
@@ -38,7 +28,6 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
     image: docker.io/bitnami/kafka
-    container_name: kafka
     hostname: kafka
     restart: always
     ports:
@@ -53,19 +42,8 @@ services:
       KAFKA_CFG_ADVERTISED_LISTENERS: LOCALHOST://localhost:9092,CONTAINER://kafka:9093
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LOCALHOST
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    container_name: kafdrop
-    hostname: kafdrop
-    restart: always
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: kafka:9093
-      JVM_OPTS: "-Xms32M -Xmx64M"
   debezium:
     image: debezium/connect:3.0.0.Final
-    container_name: debezium
     hostname: debezium
     ports:
       - "8083:8083"
@@ -83,42 +61,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  debeziumui:
-    image: debezium/debezium-ui:latest
-    container_name: debeziumui
-    hostname: debeziumui
-    ports:
-      - "8082:8080"
-    environment:
-      - KAFKA_CONNECT_URIS=http://debezium:8083
-    restart: always
-  application:
-    image: samanalishiri/application:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: application
-    hostname: application
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      APP_HOST: "0.0.0.0"
-      APP_PORT: "8080"
-      APP_PROFILES: mysql,kafka,debezium
-      DATABASE_USERNAME: user
-      DATABASE_PASSWORD: password
-      DATABASE_HOST: mysql
-      DATABASE_PORT: 3306
-      DATABASE_NAME: tutorial_db
-      KAFKA_TOPIC_NAME: cdc.tutorial_db.example_table
-      KAFKA_GROUP_ID: cdc.tutorial_db.main-group
-      KAFKA_URL: kafka:9093
-      DEBEZIUM_URL: http://debezium:8083
-      DEBEZIUM_REGISTER_PATH: /connectors
-      DEBEZIUM_CONNECTORS_FILE: debezium-connectors-default.json
-    depends_on:
-      mysql:
-        condition: service_healthy
-      debezium:
-        condition: service_healthy

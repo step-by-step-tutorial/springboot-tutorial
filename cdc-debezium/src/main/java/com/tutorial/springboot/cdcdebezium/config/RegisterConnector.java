@@ -16,7 +16,6 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 @Component
-@Profile("debezium")
 public class RegisterConnector {
 
     private final Logger logger = LoggerFactory.getLogger(RegisterConnector.class);

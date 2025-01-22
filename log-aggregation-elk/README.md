@@ -11,7 +11,7 @@ This tutorial is about integration of Spring Boot and ELK (Elasticsearch, Logsta
 * [Getting Started](#getting-started)
 * [ELK](#elk)
 * [Dockerized](#dockerized)
-* [Cloud-Native](#cloud-native)
+* [Kubernetes](#kubernetes)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
 * [Appendix](#appendix )
@@ -254,7 +254,7 @@ Check if Elasticsearch is available from Logstach container.
 docker exec logstash curl -u elastic:password http://elasticsearch:9200
 ```
 
-## Cloud-Native
+## Kubernetes
 
 Create the following files for installing ELK.
 

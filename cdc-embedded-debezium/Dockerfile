@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jdk-alpine
 
 ARG JAR_PATH=./target
-ARG JAR_NAME=cdc-debezium
+ARG JAR_NAME=cdc-embedded-debezium
 ARG JAR_VERSION=0.0.1-SNAPSHOT
 ARG TARGET_PATH=/app
 
@@ -19,9 +19,8 @@ ENV DATABASE_NAME=tutorial_db
 ENV KAFKA_TOPIC_NAME=cdc.tutorial_db.example_table
 ENV KAFKA_GROUP_ID=cdc.tutorial_db.main-group
 ENV KAFKA_URL=kafka:9093
-ENV DEBEZIUM_URL=http://debezium:8083
-ENV DEBEZIUM_REGISTER_PATH=/connectors
-ENV DEBEZIUM_CONNECTORS_FILE=debezium-connectors-default.json
+ENV TOPIC_PREFIX=cdc
+ENV TABLES=tutorial_db.example_table
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 

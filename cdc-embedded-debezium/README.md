@@ -65,7 +65,7 @@ docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data
 docker compose --file docker-compose.yml --project-name dev-env down
 ```
 
-### Deploy Kubernetes
+### Deploy to Kubernetes
 
 ```shell
 docker build -t samanalishiri/application:latest .
@@ -81,14 +81,14 @@ make KubernetesDeploy
 
 ### E2eTest for Kubernetes
 
-Use this command `kubectl get pods` to see the mysql pod-id.
+Use this command `kubectl get pods` to see the mysql pod-id
 
 ```shell
 kubectl get pods
 ```
 
 ```shell
-kubectl exec -it mysql-??? -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+kubectl exec -it mysql-6dd5c5fdbb-v7hk4 -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
 
 ### Down Kubernetes

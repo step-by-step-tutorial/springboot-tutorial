@@ -26,7 +26,7 @@ spec:
             - name: APP_PORT
               value: "8080"
             - name: APP_PROFILES
-              value: mysql,kafka,debezium
+              value: mysql,kafka,embedded-debezium
             - name: DATABASE_USERNAME
               value: user
             - name: DATABASE_PASSWORD
@@ -43,12 +43,10 @@ spec:
               value: cdc.tutorial_db.main-group
             - name: KAFKA_URL
               value: "kafka-service:9093"
-            - name: DEBEZIUM_URL
-              value: "http://debezium:8083"
-            - name: DEBEZIUM_REGISTER_PATH
-              value: /connectors
-            - name: DEBEZIUM_CONNECTORS_FILE
-              value: debezium-connectors-kube.json
+            - name: TOPIC_PREFIX
+              value: cdc
+            - name: TABLES
+              value: tutorial_db.example_table
 
 ---
 apiVersion: v1

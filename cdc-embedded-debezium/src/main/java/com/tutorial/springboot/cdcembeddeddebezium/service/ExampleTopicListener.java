@@ -1,4 +1,4 @@
-package com.tutorial.springboot.cdcdebezium.service;
+package com.tutorial.springboot.cdcembeddeddebezium.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
