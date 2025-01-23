@@ -13,7 +13,7 @@ In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 * [Debezium](#debezium)
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
-* [Appendix](#appendix )
+* [UI](#ui )
 
 ## Getting Started
 
@@ -81,6 +81,19 @@ mvn verify -DskipTests=true
 Debezium is an open source distributed platform for change data capture (CDC). For more information about Debezium see
 the [https://debezium.io](https://debezium.io).
 
+### Use Cases
+
+* Real-Time Data Integration
+* Event-Driven Architectures
+* Microservices Synchronization
+* Data Replication
+* Data Migration
+* Audit Logging and Compliance
+* Real-Time Analytics and Monitoring
+* Data Synchronization for Caching
+* CDC for Legacy Systems
+* Data Recovery and Backup
+
 ### Connector
 
 Connectors use for establish a connection between Debezium, Kafka and a database.
@@ -137,20 +150,91 @@ Connectors use for establish a connection between Debezium, Kafka and a database
 }
 ```
 
-</p>
+#### Add Connectors
 
-### Use Cases
+```shell
+curl -i -X POST http://localhost:8083/connectors \
+-H "Accept:application/json" \
+-H 'Content-Type: application/json' \
+-d '{
+  "name": "connectorname",
+  "config": {
+    "connector.class": "io.debezium.connector....",
+    "tasks.max": "1",
+    "database.hostname": "hostname",
+    "database.port": "port",
+    "database.user": "username",
+    "database.password": "password",
+    "database.server.id": "a number",
+    "database.server.name": "servername",
+    "database.whitelist": "databases name",
+    "table.include.list": "a comma separate list of tables name include schema name like schemaname.tablename, ...",
+    "schema.history.internal.kafka.bootstrap.servers": "kafkaurl",
+    "schema.history.internal.kafka.topic": "a name like schema-changes.db",
+    "topic.prefix": "a word use as prefix",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}'
+```
 
-* Real-Time Data Integration
-* Event-Driven Architectures
-* Microservices Synchronization
-* Data Replication
-* Data Migration
-* Audit Logging and Compliance
-* Real-Time Analytics and Monitoring
-* Data Synchronization for Caching
-* CDC for Legacy Systems
-* Data Recovery and Backup
+Example of the request for MySQL and Kafka.
+
+```shell
+curl -i -X POST http://localhost:8083/connectors \
+-H "Accept:application/json" \
+-H 'Content-Type: application/json' \
+-d '{
+  "name": "spring-boot-tutorial",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "mysql",
+    "database.port": "3306",
+    "database.user": "username",
+    "database.password": "password",
+    "database.server.id": "1",
+    "database.server.name": "mysql",
+    "database.whitelist": "tutorial_db",
+    "table.include.list": "tutorial_db.example_table",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
+    "schema.history.internal.kafka.topic": "schema-changes.db",
+    "topic.prefix": "cdc",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}'
+```
+
+#### List of Connectors
+
+```shell
+curl -i -X GET http://localhost:8083/connectors -H "Accept:application/json"
+```
+
+#### Get Connector
+
+```shell
+curl -i -X GET http://localhost:8083/connectors/connectorname -H "Accept:application/json"
+```
+
+```shell
+# example
+curl -i -X GET http://localhost:8083/connectors/spring-boot-tutorial -H "Accept:application/json"
+```
+
+#### Delete Connector
+
+```shell
+curl -i -X DELETE http://localhost:8083/connectors/connectorname
+```
+
+```shell
+# example
+curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
+```
 
 ## Dockerized
 
@@ -455,7 +539,7 @@ kubectl port-forward service/debezium 8083:8083
 kubectl port-forward service/application 8080:8080
 ```
 
-### Down Kubernetes
+### Down
 
 ```shell
 kubectl delete all --all
@@ -477,109 +561,12 @@ kubectl delete persistentvolumeclaim database-pvc
 docker image rm samanalishiri/application:latest
 ```
 
-## Debezium Set Up
-
-<p align="justify">
-
-In order to connect to Debezium from localhost through the web browser use the following command and dashboard of
-Debezium is available on [http://localhost:8082](http://localhost:8082) URL.
-
-</p>
-
-### Connectors
-
-#### Add Debezium Connectors Via Restful Web service
-
-```shell
-curl -i -X POST http://localhost:8083/connectors \
--H "Accept:application/json" \
--H 'Content-Type: application/json' \
--d '{
-  "name": "connectorname",
-  "config": {
-    "connector.class": "io.debezium.connector....",
-    "tasks.max": "1",
-    "database.hostname": "hostname",
-    "database.port": "port",
-    "database.user": "username",
-    "database.password": "password",
-    "database.server.id": "a number",
-    "database.server.name": "servername",
-    "database.whitelist": "databases name",
-    "table.include.list": "a comma separate list of tables name include schema name like schemaname.tablename, ...",
-    "schema.history.internal.kafka.bootstrap.servers": "kafkaurl",
-    "schema.history.internal.kafka.topic": "a name like schema-changes.db",
-    "topic.prefix": "a word use as prefix",
-    "include.schema.changes": "true",
-    "transforms": "unwrap",
-    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
-  }
-}'
-```
-
-Example of the request for MySQL and Kafka.
-
-```shell
-curl -i -X POST http://localhost:8083/connectors \
--H "Accept:application/json" \
--H 'Content-Type: application/json' \
--d '{
-  "name": "spring-boot-tutorial",
-  "config": {
-    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-    "tasks.max": "1",
-    "database.hostname": "mysql",
-    "database.port": "3306",
-    "database.user": "username",
-    "database.password": "password",
-    "database.server.id": "1",
-    "database.server.name": "mysql",
-    "database.whitelist": "tutorial_db",
-    "table.include.list": "tutorial_db.example_table",
-    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
-    "schema.history.internal.kafka.topic": "schema-changes.db",
-    "topic.prefix": "cdc",
-    "include.schema.changes": "true",
-    "transforms": "unwrap",
-    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
-  }
-}'
-```
-
-#### List of Debezium Connectors
-
-```shell
-curl -i -X GET http://localhost:8083/connectors -H "Accept:application/json"
-```
-
-#### Get Debezium Connector
-
-```shell
-curl -i -X GET http://localhost:8083/connectors/connectorname -H "Accept:application/json"
-```
-
-```shell
-# example
-curl -i -X GET http://localhost:8083/connectors/spring-boot-tutorial -H "Accept:application/json"
-```
-
-#### Delete Debezium Connector
-
-```shell
-curl -i -X DELETE http://localhost:8083/connectors/connectorname
-```
-
-```shell
-# example
-curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
-```
-
 ## UI
 
-Application: [http://localhost:8080](http://localhost:8080)
-MySQL (Adminer): [http://localhost:8084](http://localhost:8084)
-Kafka (kafkadrop): [http://localhost:9000](http://localhost:9000)
-Debezium: [http://localhost:8082](http://localhost:8082)
+* Application: [http://localhost:8080](http://localhost:8080)
+* MySQL (Adminer): [http://localhost:8084](http://localhost:8084)
+* Kafka (kafkadrop): [http://localhost:9000](http://localhost:9000)
+* Debezium: [http://localhost:8082](http://localhost:8082)
 
 ##
 
