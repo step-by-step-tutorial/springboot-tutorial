@@ -54,6 +54,14 @@ mvn  spring-boot:start
 docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
 
+```shell
+docker cp example_data.sql mysql:/example_data.sql
+```
+
+```shell
+docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
+```
+
 ### Stop
 
 ```shell
@@ -64,72 +72,6 @@ mvn  spring-boot:stop
 
 ```shell
 mvn verify -DskipTests=true
-```
-
-### Deploy to Docker
-
-```shell
-docker compose --file docker-compose.yml --project-name dev-env up --build -d
-```
-
-### E2eTest for Docker
-
-```shell
-docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
-```
-
-```shell
-docker cp example_data.sql mysql:/example_data.sql
-```
-
-```shell
-docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
-```
-
-### Down Docker
-
-```shell
-docker compose --file docker-compose.yml --project-name dev-env down
-```
-
-### Deploy Kubernetes
-
-```shell
-docker build -t samanalishiri/application:latest .
-kubectl apply -f ./kube/mysql.yml
-kubectl apply -f ./kube/kafka.yml
-kubectl apply -f ./kube/debezium.yml
-kubectl apply -f ./kube/application.yml
-```
-
-```shell
-make KubernetesDeploy
-```
-
-### E2eTest for Kubernetes
-
-Use this command `kubectl get pods` to see the mysql pod-id.
-
-```shell
-kubectl get pods
-```
-
-```shell
-kubectl exec -it mysql-??? -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
-```
-
-### Down Kubernetes
-
-```shell
-kubectl delete all --all
-kubectl delete secrets mysql-secrets
-kubectl delete configMap mysql-configmap
-kubectl delete persistentvolumeclaim mysql-pvc
-docker image rm samanalishiri/application:latest
-```
-
-```shell
-make KubernetesDown
 ```
 
 ## Debezium
@@ -330,147 +272,32 @@ services:
 
 ### Deploy
 
-Execute the following command to install Debezium stack.
-
 ```shell
-docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
-```
-
-### Debezium UI
-
-<p align="justify">
-
-In order to connect to Debezium from localhost through the web browser use the following command and dashboard of
-Debezium is available on [http://localhost:8082](http://localhost:8082) URL.
-
-</p>
-
-### DOWN
-
-Execute the following command to stop and remove Debezium stack.
-
-```shell
-docker compose --file ./docker-compose.yml --project-name dev-env down
-```
-
-### Set up Connectors
-
-#### Add Debezium Connectors Via Restful Web service
-
-```shell
-curl -i -X POST http://localhost:8083/connectors \
--H "Accept:application/json" \
--H 'Content-Type: application/json' \
--d '{
-  "name": "connectorname",
-  "config": {
-    "connector.class": "io.debezium.connector....",
-    "tasks.max": "1",
-    "database.hostname": "hostname",
-    "database.port": "port",
-    "database.user": "username",
-    "database.password": "password",
-    "database.server.id": "a number",
-    "database.server.name": "servername",
-    "database.whitelist": "databases name",
-    "table.include.list": "a comma separate list of tables name include schema name like schemaname.tablename, ...",
-    "schema.history.internal.kafka.bootstrap.servers": "kafkaurl",
-    "schema.history.internal.kafka.topic": "a name like schema-changes.db",
-    "topic.prefix": "a word use as prefix",
-    "include.schema.changes": "true",
-    "transforms": "unwrap",
-    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
-  }
-}'
-```
-
-Example of the request for MySQL and Kafka.
-
-```shell
-curl -i -X POST http://localhost:8083/connectors \
--H "Accept:application/json" \
--H 'Content-Type: application/json' \
--d '{
-  "name": "spring-boot-tutorial",
-  "config": {
-    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-    "tasks.max": "1",
-    "database.hostname": "mysql",
-    "database.port": "3306",
-    "database.user": "username",
-    "database.password": "password",
-    "database.server.id": "1",
-    "database.server.name": "mysql",
-    "database.whitelist": "tutorial_db",
-    "table.include.list": "tutorial_db.example_table",
-    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
-    "schema.history.internal.kafka.topic": "schema-changes.db",
-    "topic.prefix": "cdc",
-    "include.schema.changes": "true",
-    "transforms": "unwrap",
-    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
-  }
-}'
-```
-
-#### List of Debezium Connectors
-
-```shell
-curl -i -X GET http://localhost:8083/connectors -H "Accept:application/json"
-```
-
-#### Get Debezium Connector
-
-```shell
-curl -i -X GET http://localhost:8083/connectors/connectorname -H "Accept:application/json"
+mvn clean package verify -DskipTests=true
 ```
 
 ```shell
-# example
-curl -i -X GET http://localhost:8083/connectors/spring-boot-tutorial -H "Accept:application/json"
+docker compose --file docker-compose.yml --project-name dev-env up --build -d
 ```
 
-#### Delete Debezium Connector
+### E2eTest
 
 ```shell
-curl -i -X DELETE http://localhost:8083/connectors/connectorname
+docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
-
-```shell
-# example
-curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
-```
-
-### Test
-
-#### Solution 1
-
-Connect to containerized MySQL.
-
-```shell
-docker exec -it mysql mysql -u root -proot -h localhost
-```
-
-Execute the following query. Then see the logs.
-
-```mysql
-USE tutorial_db;
-INSERT INTO example_table (id, code, name, datetime)
-VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);
-```
-
-#### Solution 2
-
-Copy SQL file to MySQL container.
 
 ```shell
 docker cp example_data.sql mysql:/example_data.sql
 ```
 
-Execute the SQL file. Then see the logs.
-
 ```shell
 docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
+```
+
+### Down
+
+```shell
+docker compose --file docker-compose.yml --project-name dev-env down
 ```
 
 ## Kubernetes
@@ -564,13 +391,27 @@ spec:
 
 ### Deploy
 
-Execute the following commands to install the tools on Kubernetes.
+```shell
+mvn clean package verify -DskipTests=true
+```
 
 ```shell
 docker build -t samanalishiri/application:latest .
+```
+
+```shell
 kubectl apply -f ./kube/mysql.yml
+```
+
+```shell
 kubectl apply -f ./kube/kafka.yml
+```
+
+```shell
 kubectl apply -f ./kube/debezium.yml
+```
+
+```shell
 kubectl apply -f ./kube/application.yml
 ```
 
@@ -580,11 +421,63 @@ kubectl apply -f ./kube/application.yml
 kubectl get all
 ```
 
-### Debezium UI
+### E2eTest
+
+Use this command `kubectl get pods` to see the mysql pod-id.
+
+```shell
+kubectl get pods
+```
+
+```shell
+kubectl exec -it mysql-584b54cf6c-twlmp -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+```
+
+### Port-Forwarding
+
+```shell
+kubectl port-forward service/adminer 8084:8084
+```
+
+```shell
+kubectl port-forward service/kafdrop-service 9000:9000
+```
 
 ```shell
 kubectl port-forward service/debeziumui 8082:8082
 ```
+
+```shell
+kubectl port-forward service/debezium 8083:8083
+```
+
+```shell
+kubectl port-forward service/application 8080:8080
+```
+
+### Down Kubernetes
+
+```shell
+kubectl delete all --all
+```
+
+```shell
+kubectl delete secrets database-secrets
+```
+
+```shell
+kubectl delete configMap database-configmap
+```
+
+```shell
+kubectl delete persistentvolumeclaim database-pvc
+```
+
+```shell
+docker image rm samanalishiri/application:latest
+```
+
+## Debezium Set Up
 
 <p align="justify">
 
@@ -593,40 +486,100 @@ Debezium is available on [http://localhost:8082](http://localhost:8082) URL.
 
 </p>
 
-## Appendix
+### Connectors
 
-### Makefile
+#### Add Debezium Connectors Via Restful Web service
 
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-
-DockerComposeDeploy:
-	docker compose --file docker-compose.yml --project-name dev-env up --build -d
-
-DockerComposeDown:
-	docker compose --file docker-compose.yml --project-name dev-env down
-
-KubernetesDeploy:
-	docker build -t samanalishiri/application:latest .
-	kubectl apply -f ./kube/mysql.yml
-	kubectl apply -f ./kube/kafka.yml
-	kubectl apply -f ./kube/debezium.yml
-	kubectl apply -f ./kube/application.yml
-
-KubernetesDown:
-	kubectl delete all --all
-	kubectl delete secrets mysql-secrets
-	kubectl delete configMap mysql-configmap
-	kubectl delete persistentvolumeclaim mysql-pvc
-	docker image rm samanalishiri/application:latest
+```shell
+curl -i -X POST http://localhost:8083/connectors \
+-H "Accept:application/json" \
+-H 'Content-Type: application/json' \
+-d '{
+  "name": "connectorname",
+  "config": {
+    "connector.class": "io.debezium.connector....",
+    "tasks.max": "1",
+    "database.hostname": "hostname",
+    "database.port": "port",
+    "database.user": "username",
+    "database.password": "password",
+    "database.server.id": "a number",
+    "database.server.name": "servername",
+    "database.whitelist": "databases name",
+    "table.include.list": "a comma separate list of tables name include schema name like schemaname.tablename, ...",
+    "schema.history.internal.kafka.bootstrap.servers": "kafkaurl",
+    "schema.history.internal.kafka.topic": "a name like schema-changes.db",
+    "topic.prefix": "a word use as prefix",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}'
 ```
+
+Example of the request for MySQL and Kafka.
+
+```shell
+curl -i -X POST http://localhost:8083/connectors \
+-H "Accept:application/json" \
+-H 'Content-Type: application/json' \
+-d '{
+  "name": "spring-boot-tutorial",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+    "database.hostname": "mysql",
+    "database.port": "3306",
+    "database.user": "username",
+    "database.password": "password",
+    "database.server.id": "1",
+    "database.server.name": "mysql",
+    "database.whitelist": "tutorial_db",
+    "table.include.list": "tutorial_db.example_table",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
+    "schema.history.internal.kafka.topic": "schema-changes.db",
+    "topic.prefix": "cdc",
+    "include.schema.changes": "true",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+  }
+}'
+```
+
+#### List of Debezium Connectors
+
+```shell
+curl -i -X GET http://localhost:8083/connectors -H "Accept:application/json"
+```
+
+#### Get Debezium Connector
+
+```shell
+curl -i -X GET http://localhost:8083/connectors/connectorname -H "Accept:application/json"
+```
+
+```shell
+# example
+curl -i -X GET http://localhost:8083/connectors/spring-boot-tutorial -H "Accept:application/json"
+```
+
+#### Delete Debezium Connector
+
+```shell
+curl -i -X DELETE http://localhost:8083/connectors/connectorname
+```
+
+```shell
+# example
+curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
+```
+
+## UI
+
+Application: [http://localhost:8080](http://localhost:8080)
+MySQL (Adminer): [http://localhost:8084](http://localhost:8084)
+Kafka (kafkadrop): [http://localhost:9000](http://localhost:9000)
+Debezium: [http://localhost:8082](http://localhost:8082)
 
 ##
 
