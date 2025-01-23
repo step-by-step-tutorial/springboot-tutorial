@@ -27,7 +27,7 @@ In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 ### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
 ### Test
@@ -36,10 +36,34 @@ mvn clean package -DskipTests=true
 mvn test
 ```
 
-### Run Locally
+### Package
 
 ```shell
-mvn  spring-boot:run
+mvn package -DskipTests=true
+```
+
+### Run
+
+```shell
+mvn  spring-boot:start
+```
+
+### E2eTest
+
+```shell
+docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+```
+
+### Stop
+
+```shell
+mvn  spring-boot:stop
+```
+
+### Verify
+
+```shell
+mvn verify -DskipTests=true
 ```
 
 ### Deploy to Docker
@@ -56,6 +80,9 @@ docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INS
 
 ```shell
 docker cp example_data.sql mysql:/example_data.sql
+```
+
+```shell
 docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
 
@@ -193,7 +220,6 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ```yaml
 #docker-compose.yml
-version: '3.9'
 name: dev-env
 services:
   mysql:
@@ -209,7 +235,7 @@ services:
       - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
+      - "./users.sql:/docker-entrypoint-initdb.d/users.sql"
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root" ]
       interval: 10s
@@ -222,6 +248,8 @@ services:
     restart: always
     ports:
       - "8084:8080"
+    depends_on:
+      - mysql
   zookeeper:
     image: docker.io/bitnami/zookeeper
     container_name: zookeeper
@@ -238,8 +266,6 @@ services:
     restart: always
     ports:
       - "9092:9092"
-    depends_on:
-      - zookeeper
     environment:
       KAFKA_CFG_BROKER_ID: 1
       ALLOW_PLAINTEXT_LISTENER: yes
@@ -248,6 +274,13 @@ services:
       KAFKA_CFG_ADVERTISED_LISTENERS: LOCALHOST://localhost:9092,CONTAINER://kafka:9093
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LOCALHOST
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
@@ -258,21 +291,25 @@ services:
     environment:
       KAFKA_BROKERCONNECT: kafka:9093
       JVM_OPTS: "-Xms32M -Xmx64M"
+    depends_on:
+      - kafka
   debezium:
     image: debezium/connect:3.0.0.Final
     container_name: debezium
     hostname: debezium
     ports:
       - "8083:8083"
-    depends_on:
-      - kafka
-      - mysql
     environment:
       GROUP_ID: 1
       CONFIG_STORAGE_TOPIC: debezium-config
       OFFSET_STORAGE_TOPIC: debezium-offset
       STATUS_STORAGE_TOPIC: debezium-status
       BOOTSTRAP_SERVERS: kafka:9093
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8083" ]
       interval: 10s
@@ -287,6 +324,8 @@ services:
     environment:
       - KAFKA_CONNECT_URIS=http://debezium:8083
     restart: always
+    depends_on:
+      - debezium
 ```
 
 ### Deploy
