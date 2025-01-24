@@ -10,7 +10,7 @@ spring:
         enabled: true
   jpa:
     database: MYSQL
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.MySQLDialect
     defer-datasource-initialization: true
     show-sql: true
     hibernate:

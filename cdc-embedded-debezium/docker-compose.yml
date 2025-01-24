@@ -14,7 +14,7 @@ services:
       - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./src/main/resources/users.sql:/docker-entrypoint-initdb.d/users.sql"
+      - "./users.sql:/docker-entrypoint-initdb.d/users.sql"
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root" ]
       interval: 10s

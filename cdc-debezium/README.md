@@ -514,7 +514,7 @@ kubectl get pods
 ```
 
 ```shell
-kubectl exec -it mysql-584b54cf6c-twlmp -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+kubectl exec -it mysql-??? -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
 
 ### Port-Forwarding
