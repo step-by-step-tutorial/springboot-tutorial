@@ -4,7 +4,4 @@ server:
 
 spring:
   profiles:
-    active: ${APP_PROFILES:local}
-  docker:
-    compose:
-      enabled: false
+    active: ${APP_PROFILES:default}

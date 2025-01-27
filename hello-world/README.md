@@ -9,21 +9,20 @@ This is the first step of the Spring Boot tutorial. The result is printing `Hell
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-### Pipeline
 
-#### Build
+### Build
 
 ```bash
 mvn clean package -DskipTests=true
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn  test
 ```
 
-#### Run
+### Run
 
 ```shell
 mvn  spring-boot:run
@@ -52,6 +51,7 @@ mvn  spring-boot:run
 ### Implementation
 
 ```java
+package com.tutorial.springboot.helloworld;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -68,21 +68,6 @@ public class Application {
 
 ```
 
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-```
-
-#
+##
 
 **<p align="center">[Top](#hello-world)</p>**

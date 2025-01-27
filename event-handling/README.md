@@ -16,7 +16,6 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
         * [Event](#event)
         * [Listener](#listener)
         * [Publisher](#publisher)
-* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -25,21 +24,20 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-### Pipeline
 
-#### Build
+### Build
 
 ```shell
 mvn clean package -DskipTests=true
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Run
 
 ```shell
 mvn spring-boot:run
@@ -175,21 +173,6 @@ public class EventPublisher {
         publisher.publishEvent(event);
     }
 }
-```
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
 ```
 
 ##
