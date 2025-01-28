@@ -518,11 +518,11 @@ kubectl delete all --all
 ```
 
 ```shell
-kubectl delete secrets database-secrets
+kubectl delete secrets mysql-credentials
 ```
 
 ```shell
-kubectl delete configMap database-configmap
+kubectl delete configMap mysql-config
 ```
 
 ```shell
