@@ -11,7 +11,6 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 
 * [Getting Started](#getting-started)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-* [Appendix](#appendix)
 
 ## Getting Started
 
@@ -20,21 +19,27 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-### Pipeline
 
-#### Build
+### Build
 
 ```shell
-mvn clean package -DskipTests=true
+mvn clean compile
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Package
+
+```shell
+mvn package -DskipTests=true
+```
+
+
+### Run
 
 ```shell
 mvn spring-boot:run
@@ -72,9 +77,9 @@ Create `log4j2.xml` in the resources and add the following configuration.
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
+        <Property name="LOG_PATH">./target/logs/</Property>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Property>
         <Property name="LOG_LEVEL">INFO</Property>
-        <Property name="LOG_PATH">./logs/</Property>
     </Properties>
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
@@ -95,27 +100,12 @@ Create `log4j2.xml` in the resources and add the following configuration.
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="FileAppender"/>
         </Root>
-        <Logger name="package-name" level="${LOG_LEVEL}" additivity="false">
+        <Logger name="com.tutorial.springboot" level="${LOG_LEVEL}" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
             <AppenderRef ref="FileAppender"/>
         </Logger>
     </Loggers>
 </Configuration>
-```
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
 ```
 
 ##
