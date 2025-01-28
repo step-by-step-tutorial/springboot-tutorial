@@ -1,10 +1,3 @@
-server:
-  address: ${APP_HOST:0.0.0.0}
-  port: ${APP_PORT:8080}
-
 spring:
   profiles:
-    active: ${APP_PROFILES:local}
-  docker:
-    compose:
-      enabled: false
+    active: ${APP_PROFILES:default}

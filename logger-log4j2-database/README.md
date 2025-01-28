@@ -20,13 +20,12 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-* [MySQL](https://www.mysql.com)
 * [Docker](https://www.docker.com)
 
 ### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
 ### Test
@@ -35,37 +34,39 @@ mvn clean package -DskipTests=true
 mvn test
 ```
 
+### Package
+
+```shell
+mvn package -DskipTests=true
+```
+
 ### Run
 
 ```shell
-mvn  spring-boot:run
+mvn  spring-boot:start
 ```
 
-### Pipeline
+### E2eTest
 
 ```shell
-make LocalPipeline
+docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE tutorial_db; SELECT * FROM LOG_TABLE;"
 ```
 
-```shell
-make DockerizedPipeline
-```
+### Stop
 
 ```shell
-make e2e-test
+mvn  spring-boot:stop
 ```
 
+### Verify
+
 ```shell
-docker compose --file ./docker-compose.yml --project-name dev-env down
+mvn verify -DskipTests=true
 ```
 
 ## Dockerize
 
-Create a docker compose file named `docker-compose.yml` then copy and paste the following script. There are two clients
-to help you for interacting with MySQL therefore you can select one of
-them, [MySQL workbench](https://www.mysql.com/products/workbench) or [Adminer](https://www.adminer.org/). If you install
-MySQL via docker compose script mentioned below then database will be initialized and configured and, you don't need to
-initialize it manually.
+Create a docker compose file named `docker-compose.yml` then copy and paste the following script.
 
 ### Docker Compose
 
@@ -77,8 +78,7 @@ There are two options in order to connect to MySQL to management, MySQL Workbenc
 
 ```yaml
 #docker-compose.yml
-version: "3.8"
-
+name: dev-env
 services:
   mysql:
     image: mysql:8.0
@@ -93,8 +93,7 @@ services:
       - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
   mysql-workbench:
     image: lscr.io/linuxserver/mysql-workbench:latest
     container_name: mysql-workbench
@@ -107,43 +106,15 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-    volumes:
-      - "./target/mysql-workbench/config:/config"
     cap_add:
       - IPC_LOCK
-```
-
-#### With Adminer
-
-[docker-compose.yml](docker-compose.yml)
-
-```yaml
-#docker-compose.yml
-version: "3.8"
-
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    hostname: mysql
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=tutorial_db
-      - MYSQL_ROOT_PASSWORD=root
-    volumes:
-      - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
   adminer:
     image: adminer
     container_name: adminer
     hostname: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "8081:8080"
 ```
 
 ### Deploy
@@ -152,6 +123,12 @@ Execute the following command to install MySQL.
 
 ```shell
 docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
+```
+
+### E2eTest
+
+```shell
+docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE tutorial_db; SELECT * FROM LOG_TABLE;"
 ```
 
 ### Down
@@ -164,8 +141,14 @@ docker compose --file ./docker-compose.yml --project-name dev-env down
 
 ### Init MySQL
 
+This session already done in deploy time, therefore the description is only for more information.
+
+<p>
+
 After installation a MySQL database, create new user, database and create the `LOG_TABLE` table. This step apply
 automatically in this tutorial.
+
+</p>
 
 Connect to MySQL with following command.
 
@@ -252,18 +235,6 @@ Password: password
 
 ### Log4j Properties
 
-Create a bundle named `log4j2_en.properties` include the following properties in the resources. In this case I am using
-MySQL properties.
-
-```properties
-#log4j2_en.properties
-driver=com.mysql.cj.jdbc.Driver
-url=jdbc:mysql://localhost:3306/tutorial_db
-table_name=LOG_TABLE
-username=user
-password=password
-```
-
 Create `log4j2.xml` in the resources with proper configuration for the database.
 
 ```xml
@@ -272,78 +243,45 @@ Create `log4j2.xml` in the resources with proper configuration for the database.
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Property>
         <Property name="LOG_LEVEL">INFO</Property>
+        <Property name="LOG_TABLE">${env:LOG_TABLE:-LOG_TABLE}</Property>
+        <Property name="DATABASE_URL">${env:DATABASE_URL:-jdbc:mysql://localhost:3306/tutorial_db}</Property>
+        <Property name="DATABASE_USER">${env:DATABASE_USER:-user}</Property>
+        <Property name="DATABASE_PASSWORD">${env:DATABASE_PASSWORD:-password}</Property>
+        <Property name="DATABASE_RECONNECT_DELAY">${env:DATABASE_RECONNECT_DELAY:-8000}</Property>
+
     </Properties>
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
-        <JDBC name="databaseAppender" tableName="${bundle:log4j2:table_name}" bufferSize="1" ignoreExceptions="false">
+
+        <JDBC name="DatabaseAppender" tableName="${LOG_TABLE}" bufferSize="1" ignoreExceptions="true">
             <DriverManager
-                    driverClassName="${bundle:log4j2:driver}"
-                    connectionString="${bundle:log4j2:url}"
-                    userName="${bundle:log4j2:username}"
-                    password="${bundle:log4j2:password}"/>
+                    driverClassName="com.mysql.cj.jdbc.Driver"
+                    connectionString="${DATABASE_URL}"
+                    userName="${DATABASE_USER}"
+                    password="${DATABASE_PASSWORD}"
+            />
+            <ReconnectIntervalMillis>${DATABASE_RECONNECT_DELAY}</ReconnectIntervalMillis>
             <Column name="EVENT_DATE" isEventTimestamp="true"/>
             <Column name="LEVEL" pattern="%level"/>
             <Column name="LOGGER" pattern="%logger"/>
             <Column name="MESSAGE" pattern="%message"/>
         </JDBC>
+
     </Appenders>
     <Loggers>
         <Root level="${LOG_LEVEL}">
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="databaseAppender"/>
+            <AppenderRef ref="DatabaseAppender"/>
         </Root>
-        <Logger name="package-name" level="${LOG_LEVEL}" additivity="false">
+        <Logger name="com.tutorial.springboot" level="${LOG_LEVEL}" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="databaseAppender"/>
+            <AppenderRef ref="DatabaseAppender"/>
         </Logger>
     </Loggers>
 </Configuration>
-```
 
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-
-DockerComposeDeploy:
-	docker compose --file ./docker-compose.yml --project-name mysql up --build -d
-
-docker-remove-container:
-	docker rm mysql --force
-	docker rm mysql-workbench- --force
-	docker rm adminer --force
-
-DockerRemoveImage:
-	docker image rm mysql:8.0
-	docker image rm lscr.io/linuxserver/mysql-workbench:latest
-	docker image rm adminer
-
-```
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
 ```
 
 ##

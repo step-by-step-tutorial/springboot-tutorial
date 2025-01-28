@@ -1,4 +1,3 @@
-version: "3.8"
 name: dev-env
 services:
   mysql:
@@ -14,8 +13,7 @@ services:
       - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - "./target/mysql:/etc/mysql/conf.d"
-      - "./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
   mysql-workbench:
     image: lscr.io/linuxserver/mysql-workbench:latest
     container_name: mysql-workbench
@@ -28,8 +26,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-    volumes:
-      - "./target/mysql-workbench/config:/config"
     cap_add:
       - IPC_LOCK
   adminer:
