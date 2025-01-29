@@ -1,0 +1,10 @@
+name: dev-env
+services:
+  artemis:
+    image: apache/activemq-artemis:latest
+    container_name: artemis
+    hostname: artemis
+    restart: always
+    ports:
+      - "6161:61616"
+      - "8161:8161"

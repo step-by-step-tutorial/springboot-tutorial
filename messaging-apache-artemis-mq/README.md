@@ -10,41 +10,61 @@ This tutorial is about integration of Spring Boot and Apache Active MQ (Artemis)
 
 * [Getting Started](#getting-started)
 * [Apache Active MQ Artemis](#apache-active-mq-artemis)
-* [Apache Active MQ Artemis Use Cases](#apache-active-mq-artemis-use-cases)
-* [Install Active MQ Artemis on Docker](#install-active-mq-artemis-on-docker)
-* [Install Active MQ Artemis on Kubernetes](#install-active-mq-artemis-on-kubernetes)
+* [Dockerized](#dockerized)
+* [Kubernetes](#kubernetes)
+* [UI](#ui )
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 * [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
-* [Appendix](#appendix )
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Apache Active MQ (Artemis)](https://activemq.apache.org/components/artemis/)
-* [Docker](https://www.docker.com/)
-* [Kubernetes](https://kubernetes.io/)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Package
 
 ```shell
-mvn  spring-boot:run
+mvn package -DskipTests=true
+```
+
+### Run
+
+```shell
+mvn  spring-boot:start
+```
+
+### E2eTest
+
+```shell
+curl -X GET http://localhost:8080/api/v1/health-check
+```
+
+### Stop
+
+```shell
+mvn  spring-boot:stop
+```
+
+### Verify
+
+```shell
+mvn verify -DskipTests=true
 ```
 
 ## Apache Active MQ Artemis
@@ -61,7 +81,7 @@ the [https://activemq.apache.org/components/artemis](https://activemq.apache.org
 
 </p>
 
-## Apache Active MQ Artemis Use Cases
+### Apache Active MQ Artemis Use Cases
 
 * Enterprise Application Integration (EAI)
 * Microservices Architecture
@@ -69,7 +89,7 @@ the [https://activemq.apache.org/components/artemis](https://activemq.apache.org
 * Monitoring and Alerts
 * Data Streaming and Processing
 
-## Install Active MQ Artemis on Docker
+## Dockerized
 
 ### Docker Compose
 
@@ -95,20 +115,27 @@ services:
       - "./target/broker:/opt/artemis"
 ```
 
-### Apply Docker Compose
-
-Execute the following command to install Apache Active MQ Artemis.
+### Deploy
 
 ```shell
-docker compose --file docker-compose.yml --project-name artemis up --build -d
+mvn clean package verify -DskipTests=true
+```
 
+```shell
+docker compose --file docker-compose.yml --project-name dev-env up --build -d
 ```
 
 ### Web Console
 
 In order to access Artemis web console open [http://localhost:8161](http://localhost:8161/) in the browser.
 
-## Install Active MQ Artemis on Kubernetes
+### Down
+
+```shell
+docker compose --file docker-compose.yml --project-name dev-env down
+```
+
+## Kubernetes
 
 Create the following files for installing Apache Active MQ Artemis.
 
@@ -117,7 +144,8 @@ Create the following files for installing Apache Active MQ Artemis.
 [artemis-deployment.yml](/kube/artemis-deployment.yml)
 
 ```yaml
-# artemis-deployment.yml
+# artemis.yml
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -140,12 +168,7 @@ spec:
           ports:
             - containerPort: 6161
             - containerPort: 8161
-```
-
-[artemis-service.yml](/kube/artemis-service.yml)
-
-```yaml
-# artemis-service.yml
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -160,15 +183,25 @@ spec:
     - name: management-ui-port
       port: 8161
       targetPort: 8161
+
 ```
 
-### Apply Kube Files
-
-Execute the following commands to install the tools on Kubernetes.
+### Deploy
 
 ```shell
-kubectl apply -f ./kube/artemis-deployment.yml
-kubectl apply -f ./kube/artemis-service.yml
+mvn clean package verify -DskipTests=true
+```
+
+```shell
+docker build -t samanalishiri/application:latest .
+```
+
+```shell
+kubectl apply -f ./kube/artemis.yml
+```
+
+```shell
+kubectl apply -f ./kube/application.yml
 ```
 
 ### Check Status
@@ -177,18 +210,39 @@ kubectl apply -f ./kube/artemis-service.yml
 kubectl get all
 ```
 
+### E2eTest
+
+```shell
+kubectl port-forward service/application 8080:8080
+```
+
+```shell
+```
+
 ### Port Forwarding
-
-<p align="justify">
-
-In order to connect to Artemis from localhost through the web browser use the following command and dashboard of
-Artemis is available on [http://localhost:8161](http://localhost:8161) URL.
-
-</p>
 
 ```shell
 kubectl port-forward service/artemis 8161:8161
 ```
+
+```shell
+kubectl port-forward service/artemis 8080:8080
+```
+
+### Down
+
+```shell
+kubectl delete all --all
+```
+
+```shell
+docker image rm samanalishiri/application:latest
+```
+
+## UI
+
+* Artemis: [http://localhost:8161](http://localhost:8161)
+* Application: [http://localhost:8080](http://localhost:8080)
 
 ## How To Set up Spring Boot
 
@@ -312,40 +366,6 @@ class TestClass {
 
 }
 
-```
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-
-DockerComposeDeploy:
-	docker compose --file docker-compose.yml --project-name artemis up --build -d
-
-docker-remove-container:
-	docker rm artemis --force
-
-DockerRemoveImage:
-	docker image rm apache/activemq-artemis:latest
-
-kube-deploy:
-	kubectl apply -f ./kube/artemis-deployment.yml
-	kubectl apply -f ./kube/artemis-service.yml
-
-kube-remove:
-	kubectl delete all --all
-
-kube-port-forward-artemis:
-	kubectl port-forward service/artemis 8161:8161
 ```
 
 ##

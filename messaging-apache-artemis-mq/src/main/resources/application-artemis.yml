@@ -1,0 +1,13 @@
+spring:
+  artemis:
+    mode: native
+    user: ${ACTIVE_MQ_USER:artemis}
+    password: ${ACTIVE_MQ_PASS:artemis}
+    broker-url: ${ACTIVE_MQ_HOST:tcp://localhost}:${ACTIVE_MQ_PORT:6161}
+  jms:
+    pub-sub-domain: true
+
+# defined by user
+queue:
+  main: mainQueue
+  status: statusQueue

@@ -2,34 +2,32 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and TOOLS_NAME.
+This tutorial is about integration of Spring Boot and TOOL_NAME.
 
 </p>
 
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [TOOLS_NAME](#tools_name)
+* [TOOL_NAME](#tool_name)
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
+* [UI](#ui )
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
-* [License](#license)
-* [Appendix](#appendix )
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-* [Kubernetes](https://kubernetes.io/)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
 
 ### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
 ### Test
@@ -38,31 +36,40 @@ mvn clean package -DskipTests=true
 mvn test
 ```
 
+### Package
+
+```shell
+mvn package -DskipTests=true
+```
+
 ### Run
 
 ```shell
-mvn  spring-boot:run
+mvn  spring-boot:start
 ```
 
-### Pipeline
+### E2eTest
 
 ```shell
-make LocalPipeline
 ```
+
+### Stop
 
 ```shell
-make DockerizedPipeline
+mvn  spring-boot:stop
 ```
+
+### Verify
 
 ```shell
-make e2e-test
+mvn verify -DskipTests=true
 ```
 
-## TOOLS_NAME
+## TOOL_NAME
 
 <p align="justify">
 
-For more information about TOOLS_NAME see the []().
+For more information about ELK see the [https://www.tool_name](https://www.tool_name).
 
 </p>
 
@@ -78,49 +85,54 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ```yaml
 #docker-compose.yml
+name: dev-env
 ```
 
 ### Deploy
 
-Execute the following command to install TOOLS_NAME.
+```shell
+mvn clean package verify -DskipTests=true
+```
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name tools_name up --build -d
+docker compose --file docker-compose.yml --project-name dev-env up --build -d
+```
+
+### E2eTest
+
+```shell
 ```
 
 ### Down
 
-Execute the following command to install TOOLS_NAME.
-
 ```shell
-docker compose --file ./docker-compose.yml --project-name tools_name down
+docker compose --file docker-compose.yml --project-name dev-env down
 ```
 
 ## Kubernetes
 
-Create the following files for installing TOOLS_NAME.
+Create the following files for installing ELK.
 
 ### Kube Files
 
-[tools_name-deployment.yml](/kube/tools_name-deployment.yml)
+[application.yml](/kube/application.yml)
 
 ```yaml
-#deployment.yml
-```
 
-[tools_name-service.yml](/kube/tools_name-service.yml)
-
-```yaml
-#service.yml
 ```
 
 ### Deploy
 
-Execute the following commands to install the tools on Kubernetes.
+```shell
+mvn clean package verify -DskipTests=true
+```
 
 ```shell
-kubectl apply -f ./kube/tools_name-deployment.yml
-kubectl apply -f ./kube/tools_name-service.yml
+docker build -t samanalishiri/application:latest .
+```
+
+```shell
+kubectl apply -f ./kube/application.yml
 ```
 
 ### Check Status
@@ -129,77 +141,57 @@ kubectl apply -f ./kube/tools_name-service.yml
 kubectl get all
 ```
 
-### Port Forwarding
-
-<p align="justify">
-
-In order to connect to TOOLS_NAME from localhost through the web browser use the following command and dashboard of
-TOOLS_NAME is available on [http://localhost:port](http://localhost:port) URL.
-
-</p>
+### E2eTest
 
 ```shell
-kubectl port-forward service/tools_name port:port
+kubectl port-forward service/application 8080:8080
 ```
+
+```shell
+```
+
+### Port-Forwarding
+
+```shell
+kubectl port-forward service/application 8080:8080
+```
+
+### Down
+
+```shell
+kubectl delete all --all
+```
+
+```shell
+kubectl delete secrets ???
+```
+
+```shell
+kubectl delete configMap ???
+```
+
+```shell
+docker image rm samanalishiri/application:latest
+```
+
+## UI
+
+* Application: [http://localhost:8080](http://localhost:8080)
 
 ## How To Set up Spring Boot
 
 ### Dependencies
 
 ```xml
+
+<dependencies>
+</dependencies>
 ```
 
-### Application Properties
+### Properties
 
 ```yaml
-```
 
-## How To Set up Spring Boot Test
-
-### Dependencies
-
-```xml
-```
-
-### Application Properties
-
-```yaml
-```
-
-## License
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-	
-DockerComposeDeploy:
-	docker compose --file docker-compose.yml --project-name tools-name up --build -d
-
-docker-remove-container:
-	docker rm tools-name --force
-
-DockerRemoveImage:
-	docker image rm image-name
-
-kube-deploy:
-	kubectl apply -f ./kube/tools-name-deployment.yml
-	kubectl apply -f ./kube/tools-name-service.yml
-
-kube-delete:
-	kubectl delete all --all
-
-kube-port-forward-db:
-	kubectl port-forward service/tools-name port:port
 ```
 
 ##

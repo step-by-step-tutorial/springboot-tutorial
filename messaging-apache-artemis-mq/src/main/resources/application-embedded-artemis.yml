@@ -1,0 +1,13 @@
+spring:
+  artemis:
+    mode: embedded
+    embedded:
+      enabled: true
+    # localhost:61616
+    # vm://embeddedartemis
+    broker-url: localhost:6161
+
+# defined by user
+queue:
+  main: mainQueue
+  status: statusQueue

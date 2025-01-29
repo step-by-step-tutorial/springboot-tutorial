@@ -32,6 +32,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-artemis</artifactId>
         </dependency>
         <!--embedded active mq artemis server-->
@@ -40,6 +44,8 @@
             <artifactId>artemis-jms-server</artifactId>
             <version>2.35.0</version>
         </dependency>
+        <!--embedded active mq artemis server-->
+        <!--json-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -48,17 +54,65 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <!--json-->
+        <!--test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--test-->
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>start-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose-tools.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>dev-env</argument>
+                                <argument>up</argument>
+                                <argument>--build</argument>
+                                <argument>-d</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose-tools.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>dev-env</argument>
+                                <argument>down</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

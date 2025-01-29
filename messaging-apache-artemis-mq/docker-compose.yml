@@ -1,5 +1,4 @@
-version: '3.8'
-
+name: dev-env
 services:
   artemis:
     image: apache/activemq-artemis:latest
@@ -9,7 +8,18 @@ services:
     ports:
       - "6161:61616"
       - "8161:8161"
-    volumes:
-      - "./target/broker:/opt/broker"
-      - "./target/broker:/opt/artemis"
-
+  application:
+    image: samanalishiri/application:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: application
+    hostname: application
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      ACTIVE_MQ_USER: artemis
+      ACTIVE_MQ_PASS: artemis
+      ACTIVE_MQ_HOST: localhost
+      ACTIVE_MQ_PORT: 6161
