@@ -55,6 +55,8 @@ mvn  spring-boot:start
 curl -X GET http://localhost:8080/api/v1/health-check
 ```
 
+Check application console log.
+
 ### Stop
 
 ```shell
@@ -99,8 +101,7 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ```yaml
 #docker-compose.yml
-version: '3.8'
-
+name: dev-env
 services:
   artemis:
     image: apache/activemq-artemis:latest
@@ -108,11 +109,8 @@ services:
     hostname: artemis
     restart: always
     ports:
-      - "6161:61616"
+      - "61616:61616"
       - "8161:8161"
-    volumes:
-      - "./target/broker:/opt/broker"
-      - "./target/broker:/opt/artemis"
 ```
 
 ### Deploy
@@ -125,14 +123,22 @@ mvn clean package verify -DskipTests=true
 docker compose --file docker-compose.yml --project-name dev-env up --build -d
 ```
 
-### Web Console
+### E2eTest
 
-In order to access Artemis web console open [http://localhost:8161](http://localhost:8161/) in the browser.
+```shell
+curl -X GET http://localhost:8080/api/v1/health-check
+```
+
+Check application console log.
 
 ### Down
 
 ```shell
 docker compose --file docker-compose.yml --project-name dev-env down
+```
+
+```shell
+docker image rm samanalishiri/application:latest
 ```
 
 ## Kubernetes
@@ -166,7 +172,7 @@ spec:
         - name: artemis
           image: apache/activemq-artemis:latest
           ports:
-            - containerPort: 6161
+            - containerPort: 61616
             - containerPort: 8161
 ---
 apiVersion: v1
@@ -178,12 +184,11 @@ spec:
     app: artemis
   ports:
     - name: queue-port
-      port: 6161
-      targetPort: 6161
+      port: 61616
+      targetPort: 61616
     - name: management-ui-port
       port: 8161
       targetPort: 8161
-
 ```
 
 ### Deploy
@@ -217,6 +222,7 @@ kubectl port-forward service/application 8080:8080
 ```
 
 ```shell
+curl -X GET http://localhost:8080/api/v1/health-check
 ```
 
 ### Port Forwarding
@@ -264,11 +270,9 @@ spring:
     mode: native
     user: ${ACTIVE_MQ_USER:artemis}
     password: ${ACTIVE_MQ_PASS:artemis}
-    broker-url: ${ACTIVE_MQ_HOST:localhost}:${ACTIVE_MQ_PORT:6161}
+    broker-url: ${BROKER_URL:tcp://localhost:61616}
   jms:
     pub-sub-domain: true
-
-
 ```
 
 ### Java Config
@@ -300,11 +304,14 @@ The embedded Active-MQ used for unit tests.
 
 ### Application Properties
 
+Broker URL for embedded Apache Active MQ Artemis is one of the followings.
+
+* localhost:61616
+* vm://embeddedartemis
+
 ```yaml
+# application-embedded-artemis.yml
 spring:
-  config:
-    activate:
-      on-profile: embedded-artemis
   artemis:
     mode: embedded
     embedded:
@@ -356,7 +363,7 @@ public class EmbeddedActiveMqServer implements DisposableBean {
 }
 ```
 
-Use `embedded-artemis` for active profile.
+Use `embedded-artemis` as active profile.
 
 ```java
 

@@ -1,10 +1,11 @@
+# Broker URL for embedded Apache Active MQ Artemis is one of the followings.
+# localhost:61616
+# vm://embeddedartemis
 spring:
   artemis:
     mode: embedded
     embedded:
       enabled: true
-    # localhost:61616
-    # vm://embeddedartemis
     broker-url: localhost:6161
 
 # defined by user

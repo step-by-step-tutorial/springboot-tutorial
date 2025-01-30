@@ -6,5 +6,5 @@ services:
     hostname: artemis
     restart: always
     ports:
-      - "6161:61616"
+      - "61616:61616"
       - "8161:8161"

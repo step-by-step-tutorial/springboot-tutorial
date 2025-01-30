@@ -61,6 +61,7 @@ docker cp example_data.sql mysql:/example_data.sql
 ```shell
 docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
+Check the application console log.
 
 ### Stop
 
