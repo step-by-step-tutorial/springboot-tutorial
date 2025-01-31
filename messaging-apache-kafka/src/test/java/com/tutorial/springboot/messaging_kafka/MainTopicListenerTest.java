@@ -1,5 +1,6 @@
 package com.tutorial.springboot.messaging_kafka;
 
+import com.tutorial.springboot.messaging_kafka.listener.MainTopicListener;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package com.tutorial.springboot.messaging_kafka;
+package com.tutorial.springboot.messaging_kafka.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,6 @@ public class MainTopicListener {
         requireNonNull(message, "message should not be null");
         requireNonNull(correlationId, "correlation Id should not be null");
 
-        logger.info("message received from {}: {}", correlationId, message);
+        logger.info("Message received {}: {}", correlationId, message);
     }
 }

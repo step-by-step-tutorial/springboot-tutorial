@@ -1,4 +1,4 @@
-package com.tutorial.springboot.messaging_kafka;
+package com.tutorial.springboot.messaging_kafka.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +39,6 @@ public class MainTopicService {
                 .build();
 
         template.send(kafkaMessage);
-        logger.info("message sent: {}", message);
+        logger.info("Message sent: {}", message);
     }
 }

@@ -1,5 +1,6 @@
 package com.tutorial.springboot.messaging_kafka;
 
+import com.tutorial.springboot.messaging_kafka.service.MainTopicService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,6 @@
 package com.tutorial.springboot.messaging_kafka;
 
+import com.tutorial.springboot.messaging_kafka.service.MainTopicService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles({"embedded-kafka"})
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9094", "port=9094"})
 @DisplayName("unit tests of kafka[embedded] main topic service")
 class MainTopicServiceWithEmbeddedKafkaTest {
 
