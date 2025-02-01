@@ -1,14 +1,13 @@
-version: '3.9'
-
+name: dev-env
 services:
-  pulsar:
+  broker:
     image: apachepulsar/pulsar:latest
     container_name: broker
     hostname: broker
     restart: on-failure
     ports:
       - "6650:6650"
-      - "8080:8080"
+      - "8081:8080"
     command: bash -c "exec bin/pulsar standalone"
   dashboard:
     image: apachepulsar/pulsar-manager:latest
@@ -19,8 +18,24 @@ services:
       - "9527:9527"
       - "7750:7750"
     depends_on:
-      - pulsar
+      - broker
     links:
-      - pulsar
+      - broker
     environment:
       SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
+  application:
+    image: samanalishiri/application:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: application
+    hostname: application
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      APP_PROFILES: pulsar
+      APACHE_PULSAR_ADMIN_URL: http://broker:8081
+      APACHE_PULSAR_URL: pulsar://broker:6650

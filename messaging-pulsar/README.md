@@ -2,63 +2,91 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and TOOLS_NAME.
+This tutorial is about integration of Spring Boot and Pulsar.
 
 </p>
 
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [TOOLS_NAME](#tools_name)
-* [TOOLS_NAME Use Cases](#tools_name-use-cases)
-* [Install TOOLS_NAME on Docker](#install-tools_name-on-docker)
-* [Install TOOLS_NAME on Kubernetes](#install-tools_name-on-kubernetes)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
-* [License](#license)
-* [Appendix](#appendix )
+* [Pulsar](#pulsar)
+* [Dockerized](#dockerized)
+* [Kubernetes](#kubernetes)
+* [UI](#ui )
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/)
-* [Kubernetes](https://kubernetes.io/)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Package
 
 ```shell
-mvn  spring-boot:run
+mvn package -DskipTests=true
 ```
 
-## TOOLS_NAME
+### Run
+
+```shell
+mvn  spring-boot:start
+```
+
+### E2eTest
+
+```shell
+curl -X GET http://localhost:8080/api/v1/health-check
+```
+
+### Stop
+
+```shell
+mvn  spring-boot:stop
+```
+
+### Verify
+
+```shell
+mvn verify -DskipTests=true
+```
+
+## Pulsar
 
 <p align="justify">
 
-For more information about TOOLS_NAME see
-the [https://pulsar.apache.org/docs/4.0.x/](https://pulsar.apache.org/docs/4.0.x/).
+For more information about Pulsar see the [https://pulsar.apache.org/docs](https://pulsar.apache.org/docs).
 
 </p>
 
-## TOOLS_NAME Use Cases
+### Use Cases
 
-## Install TOOLS_NAME on Docker
+* Real-Time Data Streaming and Analytics
+* Event-Driven Architectures
+* Messaging System (Pub/Sub & Queueing)
+* Multi-Tenant Cloud-Native Applications
+* Log and Event Aggregation
+* IoT Data Processing
+* Video and Media Streaming
+* Edge Computing & 5G Applications
+* Machine Learning Pipelines
+* Hybrid Cloud and Multi-Cloud Messaging
+
+## Dockerized
 
 Create a file named `docker-compose.yml` with the following configuration.
 
@@ -68,45 +96,141 @@ Create a file named `docker-compose.yml` with the following configuration.
 
 ```yaml
 #docker-compose.yml
+name: dev-env
+networks:
+  pulsar:
+    driver: bridge
+services:
+  zookeeper:
+    image: apachepulsar/pulsar:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    restart: on-failure
+    ports:
+      - "2181:2181"
+    networks:
+      - pulsar
+    volumes:
+      - ./data/zookeeper:/pulsar/data/zookeeper
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+             bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
+             exec bin/pulsar zookeeper"
+    healthcheck:
+      test: [ "CMD", "bin/pulsar-zookeeper-ruok.sh" ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+  pulsar-init:
+    container_name: pulsar-init
+    hostname: pulsar-init
+    image: apachepulsar/pulsar:latest
+    networks:
+      - pulsar
+    command: >
+      bash -c "bin/pulsar initialize-cluster-metadata \
+      --cluster cluster-a \
+      --zookeeper zookeeper:2181 \
+      --configuration-store zookeeper:2181 \
+      --web-service-url http://broker:8080 \
+      --broker-service-url pulsar://broker:6650"
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+  bookie:
+    image: apachepulsar/pulsar:latest
+    container_name: bookie
+    hostname: bookie
+    restart: on-failure
+    ports:
+      - "3181:3181"
+    networks:
+      - pulsar
+    environment:
+      - clusterName=cluster-a
+      - zkServers=zookeeper:2181
+      - metadataServiceUri=metadata-store:zk:zookeeper:2181
+      # otherwise every time we run docker compose uo or down we fail to start due to Cookie
+      # See: https://github.com/apache/bookkeeper/blob/405e72acf42bb1104296447ea8840d805094c787/bookkeeper-server/src/main/java/org/apache/bookkeeper/bookie/Cookie.java#L57-68
+      - advertisedAddress=bookie
+      - BOOKIE_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      pulsar-init:
+        condition: service_completed_successfully
+    # Map the local directory to the container to avoid bookie startup failure due to insufficient container disks.
+    volumes:
+      - ./data/bookkeeper:/pulsar/data/bookkeeper
+    command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
+
+  broker:
+    image: apachepulsar/pulsar:latest
+    container_name: broker
+    hostname: broker
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - zookeeperServers=zookeeper:2181
+      - clusterName=cluster-a
+      - managedLedgerDefaultEnsembleSize=1
+      - managedLedgerDefaultWriteQuorum=1
+      - managedLedgerDefaultAckQuorum=1
+      - advertisedAddress=broker
+      - advertisedListeners=external:pulsar://127.0.0.1:6650
+      - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      bookie:
+        condition: service_started
+    ports:
+      - "6650:6650"
+      - "8081:8080"
+    command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+  dashboard:
+    image: apachepulsar/pulsar-manager:latest
+    container_name: dashboard
+    hostname: dashboard
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    networks:
+      - pulsar
+    depends_on:
+      - broker
+    links:
+      - broker
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
 ```
 
-### Apply Docker Compose
+### Deploy
 
-Execute the following command to install TOOLS_NAME.
+Execute the following command to install Pulsar.
+
+```shell
+mvn clean package verify -DskipTests=true
+```
 
 #### Cluster Mode
+
 ```shell
-docker compose --file ./docker-compose.yml --project-name pulsar up --build -d
+docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
 ```
 
 #### Standalone Mode
-```shell
-docker compose --file ./docker-compose-standalone.yml --project-name pulsar up --build -d
-```
 
 ```shell
-curl -X PUT http://localhost:8080/admin/v2/persistent/public/default/test-topic-2/partitions -H 'Content-Type: application/json' -d "4"
+docker compose --file ./docker-compose-standalone.yml --project-name dev-env up --build -d
 ```
 
-```shell
-curl -X POST http://localhost:8080/admin/v2/persistent/public/default/test-topic-2/partitions -H 'Content-Type: application/json' -d "5"
-```
-
-```shell
-curl -X GET http://localhost:8080/admin/v2/persistent/public/default/test-topic-2/partitioned-internalStats
-```
-
-```shell
-curl -X GET http://localhost:8080/admin/v2/persistent/public/default
-```
-
-```shell
-curl -X DELETE http://localhost:8080/admin/v2/persistent/public/default/test-topic-2/partitions
-```
-
-```shell
-curl http://localhost:7750/pulsar-manager/csrf-token
-```
+### New Environment
 
 ```shell
 CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
@@ -117,18 +241,56 @@ curl -X PUT http://localhost:7750/pulsar-manager/users/superuser \
    -d '{"name": "admin", "password": "password", "description": "administrator", "email": "admin@email.com"}'
 ```
 
-#### New Environment
+Pulsar Dashboard: [http://localhost:9527](http://localhost:9527)
+
 ```yaml
-web-ui: http://localhost:9527
 environment-name: docker.local
 broker-url: http://broker:8080
 bookie-url: http://bookie:3181
 ```
 
+### API
 
-## Install TOOLS_NAME on Kubernetes
+```shell
+curl -X PUT http://localhost:8081/admin/v2/persistent/public/default/test-topic-2/partitions -H 'Content-Type: application/json' -d "4"
+```
 
-Create the following files for installing TOOLS_NAME.
+```shell
+curl -X POST http://localhost:8081/admin/v2/persistent/public/default/test-topic-2/partitions -H 'Content-Type: application/json' -d "5"
+```
+
+```shell
+curl -X GET http://localhost:8081/admin/v2/persistent/public/default/test-topic-2/partitioned-internalStats | jq
+```
+
+```shell
+curl -X GET http://localhost:8081/admin/v2/persistent/public/default | jq
+```
+
+```shell
+curl -X DELETE http://localhost:8081/admin/v2/persistent/public/default/test-topic-2/partitions
+```
+
+```shell
+CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
+echo $CSRF_TOKEN
+```
+
+### E2eTest
+
+```shell
+curl -X GET http://localhost:8080/api/v1/health-check
+```
+
+### Down
+
+```shell
+docker compose --file docker-compose.yml --project-name dev-env down
+```
+
+## Kubernetes
+
+Create the following files for installing Pulsar.
 
 ### Kube Files
 
@@ -144,7 +306,7 @@ Create the following files for installing TOOLS_NAME.
 #service.yml
 ```
 
-### Apply Kube Files
+### Deploy
 
 Execute the following commands to install the tools on Kubernetes.
 
@@ -163,8 +325,8 @@ kubectl get all
 
 <p align="justify">
 
-In order to connect to TOOLS_NAME from localhost through the web browser use the following command and dashboard of
-TOOLS_NAME is available on [http://localhost:port](http://localhost:port) URL.
+In order to connect to Pulsar from localhost through the web browser use the following command and dashboard of
+Pulsar is available on [http://localhost:port](http://localhost:port) URL.
 
 </p>
 
@@ -172,65 +334,38 @@ TOOLS_NAME is available on [http://localhost:port](http://localhost:port) URL.
 kubectl port-forward service/tools_name port:port
 ```
 
-## How To Set up Spring Boot
+### E2eTest
 
-### Dependencies
-
-```xml
+```shell
+kubectl port-forward service/application 8080:8080
 ```
 
-### Application Properties
-
-```yaml
+```shell
 ```
 
-## How To Set up Spring Boot Test
+### Down
 
-### Dependencies
-
-```xml
+```shell
+kubectl delete all --all
 ```
 
-### Application Properties
-
-```yaml
+```shell
+kubectl delete secrets ???
 ```
 
-## License
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-	
-DockerComposeDeploy:
-	docker compose --file docker-compose.yml --project-name tools-name up --build -d
-
-docker-remove-container:
-	docker rm tools-name --force
-
-DockerRemoveImage:
-	docker image rm image-name
-
-kube-deploy:
-	kubectl apply -f ./kube/tools-name-deployment.yml
-	kubectl apply -f ./kube/tools-name-service.yml
-
-kube-delete:
-	kubectl delete all --all
-
-kube-port-forward-db:
-	kubectl port-forward service/tools-name port:port
+```shell
+kubectl delete configMap ???
 ```
+
+```shell
+docker image rm samanalishiri/application:latest
+```
+
+## UI
+
+* Application: [http://localhost:8080](http://localhost:8080)
+* Pulsar Admin Dashboard: [http://localhost:8081](http://localhost:8081)
+* Pulsar Dashboard: [http://localhost:9527](http://localhost:9527)
 
 ##
 

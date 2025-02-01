@@ -1,0 +1,25 @@
+name: dev-env
+services:
+  pulsar:
+    image: apachepulsar/pulsar:latest
+    container_name: pulsar
+    hostname: pulsar
+    restart: on-failure
+    ports:
+      - "6650:6650"
+      - "8081:8080"
+    command: bash -c "exec bin/pulsar standalone"
+  dashboard:
+    image: apachepulsar/pulsar-manager:latest
+    container_name: dashboard
+    hostname: dashboard
+    restart: on-failure
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    depends_on:
+      - pulsar
+    links:
+      - pulsar
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties

@@ -1,9 +1,8 @@
-version: '3.9'
+name: dev-env
 networks:
   pulsar:
     driver: bridge
 services:
-  # Start zookeeper
   zookeeper:
     image: apachepulsar/pulsar:latest
     container_name: zookeeper
@@ -27,8 +26,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 30
-
-  # Init cluster metadata
   pulsar-init:
     container_name: pulsar-init
     hostname: pulsar-init
@@ -45,8 +42,6 @@ services:
     depends_on:
       zookeeper:
         condition: service_healthy
-
-  # Start bookie
   bookie:
     image: apachepulsar/pulsar:latest
     container_name: bookie
@@ -73,8 +68,6 @@ services:
     volumes:
       - ./data/bookkeeper:/pulsar/data/bookkeeper
     command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
-
-  # Start broker
   broker:
     image: apachepulsar/pulsar:latest
     container_name: broker
@@ -90,7 +83,7 @@ services:
       - managedLedgerDefaultWriteQuorum=1
       - managedLedgerDefaultAckQuorum=1
       - advertisedAddress=broker
-      - advertisedListeners=external:pulsar://127.0.0.1:6650
+      - advertisedListeners=external:pulsar://broker:6650
       - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
     depends_on:
       zookeeper:
@@ -99,9 +92,8 @@ services:
         condition: service_started
     ports:
       - "6650:6650"
-      - "8080:8080"
+      - "8081:8080"
     command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
-
   dashboard:
     image: apachepulsar/pulsar-manager:latest
     container_name: dashboard
@@ -117,3 +109,26 @@ services:
       - broker
     environment:
       SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
+  application:
+    image: samanalishiri/application:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: application
+    hostname: application
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      APP_PROFILES: pulsar
+      APACHE_PULSAR_ADMIN_URL: http://broker:8081
+      APACHE_PULSAR_URL: pulsar://broker:6650
+    networks:
+      - pulsar
+    depends_on:
+      - broker
+    links:
+      - broker
+

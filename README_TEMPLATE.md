@@ -13,7 +13,6 @@ This tutorial is about integration of Spring Boot and TOOL_NAME.
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
 
 ## Getting Started
 
@@ -77,8 +76,6 @@ For more information about ELK see the [https://www.tool_name](https://www.tool_
 
 ## Dockerized
 
-Create a file named `docker-compose.yml` with the following configuration.
-
 ### Docker Compose
 
 [docker-compose.yml](docker-compose.yml)
@@ -111,8 +108,6 @@ docker compose --file docker-compose.yml --project-name dev-env down
 
 ## Kubernetes
 
-Create the following files for installing ELK.
-
 ### Kube Files
 
 [application.yml](/kube/application.yml)
@@ -141,6 +136,12 @@ kubectl apply -f ./kube/application.yml
 kubectl get all
 ```
 
+### Port-Forwarding
+
+```shell
+kubectl port-forward service/application 8080:8080
+```
+
 ### E2eTest
 
 ```shell
@@ -148,12 +149,6 @@ kubectl port-forward service/application 8080:8080
 ```
 
 ```shell
-```
-
-### Port-Forwarding
-
-```shell
-kubectl port-forward service/application 8080:8080
 ```
 
 ### Down
@@ -177,22 +172,6 @@ docker image rm samanalishiri/application:latest
 ## UI
 
 * Application: [http://localhost:8080](http://localhost:8080)
-
-## How To Set up Spring Boot
-
-### Dependencies
-
-```xml
-
-<dependencies>
-</dependencies>
-```
-
-### Properties
-
-```yaml
-
-```
 
 ##
 
