@@ -1,7 +1,4 @@
 name: dev-env
-networks:
-  pulsar:
-    driver: bridge
 services:
   zookeeper:
     image: apachepulsar/pulsar:latest
@@ -10,10 +7,8 @@ services:
     restart: on-failure
     ports:
       - "2181:2181"
-    networks:
-      - pulsar
     volumes:
-      - ./data/zookeeper:/pulsar/data/zookeeper
+      - ./target/zookeeper:/pulsar/data/zookeeper
     environment:
       - metadataStoreUrl=zk:zookeeper:2181
       - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
@@ -30,8 +25,6 @@ services:
     container_name: pulsar-init
     hostname: pulsar-init
     image: apachepulsar/pulsar:latest
-    networks:
-      - pulsar
     command: >
       bash -c "bin/pulsar initialize-cluster-metadata \
       --cluster cluster-a \
@@ -49,8 +42,6 @@ services:
     restart: on-failure
     ports:
       - "3181:3181"
-    networks:
-      - pulsar
     environment:
       - clusterName=cluster-a
       - zkServers=zookeeper:2181
@@ -66,15 +57,13 @@ services:
         condition: service_completed_successfully
     # Map the local directory to the container to avoid bookie startup failure due to insufficient container disks.
     volumes:
-      - ./data/bookkeeper:/pulsar/data/bookkeeper
+      - ./target/bookkeeper:/pulsar/data/bookkeeper
     command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
   broker:
     image: apachepulsar/pulsar:latest
     container_name: broker
     hostname: broker
     restart: on-failure
-    networks:
-      - pulsar
     environment:
       - metadataStoreUrl=zk:zookeeper:2181
       - zookeeperServers=zookeeper:2181
@@ -101,8 +90,6 @@ services:
     ports:
       - "9527:9527"
       - "7750:7750"
-    networks:
-      - pulsar
     depends_on:
       - broker
     links:
@@ -125,8 +112,6 @@ services:
       APP_PROFILES: pulsar
       APACHE_PULSAR_ADMIN_URL: http://broker:8081
       APACHE_PULSAR_URL: pulsar://broker:6650
-    networks:
-      - pulsar
     depends_on:
       - broker
     links:

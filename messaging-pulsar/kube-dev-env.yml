@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev-env
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-config
+  namespace: dev-env
+data:
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: "pulsar"
+  APACHE_PULSAR_ADMIN_URL: "http://broker:8081"
+  APACHE_PULSAR_URL: "pulsar://broker:6650"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+  namespace: dev-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+        - name: broker
+          image: apachepulsar/pulsar:latest
+          args:
+            - "bash"
+            - "-c"
+            - "exec bin/pulsar standalone"
+          ports:
+            - containerPort: 6650
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker
+  namespace: dev-env
+spec:
+  selector:
+    app: broker
+  ports:
+    - name: pulsar
+      protocol: TCP
+      port: 6650
+      targetPort: 6650
+    - name: admin
+      protocol: TCP
+      port: 8081
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+  namespace: dev-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: apachepulsar/pulsar-manager:latest
+          ports:
+            - containerPort: 9527
+            - containerPort: 7750
+          env:
+            - name: SPRING_CONFIGURATION_FILE
+              value: "/pulsar-manager/pulsar-manager/application.properties"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+  namespace: dev-env
+spec:
+  selector:
+    app: dashboard
+  ports:
+    - name: web
+      protocol: TCP
+      port: 9527
+      targetPort: 9527
+    - name: api
+      protocol: TCP
+      port: 7750
+      targetPort: 7750
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application
+  namespace: dev-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: application
+    spec:
+      containers:
+        - name: application
+          image: samanalishiri/application:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: dev-config
+          volumeMounts:
+             - name: config
+               mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: dev-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application
+  namespace: dev-env
+spec:
+  selector:
+    app: application
+  ports:
+    - name: app
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
