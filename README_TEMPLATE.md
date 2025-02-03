@@ -1,15 +1,8 @@
 # <p align="center">Title</p>
 
-<p align="justify">
-
-This tutorial is about integration of Spring Boot and TOOL_NAME.
-
-</p>
-
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [TOOL_NAME](#tool_name)
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
@@ -50,6 +43,7 @@ mvn  spring-boot:start
 ### E2eTest
 
 ```shell
+curl -X GET http://localhost:8080/api/v1/health-check
 ```
 
 ### Stop
@@ -64,26 +58,11 @@ mvn  spring-boot:stop
 mvn verify -DskipTests=true
 ```
 
-## TOOL_NAME
-
-<p align="justify">
-
-For more information about ELK see the [https://www.tool_name](https://www.tool_name).
-
-</p>
-
-### Use Cases
-
 ## Dockerized
 
 ### Docker Compose
 
-[docker-compose.yml](docker-compose.yml)
-
-```yaml
-#docker-compose.yml
-name: dev-env
-```
+[Docker Compose](docker-compose.yml)
 
 ### Deploy
 
@@ -92,12 +71,13 @@ mvn clean package verify -DskipTests=true
 ```
 
 ```shell
-docker compose --file docker-compose.yml --project-name dev-env up --build -d
+docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
 ```
 
 ### E2eTest
 
 ```shell
+curl -X GET http://localhost:8080/api/v1/health-check
 ```
 
 ### Down
@@ -110,11 +90,7 @@ docker compose --file docker-compose.yml --project-name dev-env down
 
 ### Kube Files
 
-[application.yml](/kube/application.yml)
-
-```yaml
-
-```
+[Cloud Native Development Environment](kube-dev-env.yml)
 
 ### Deploy
 
@@ -123,55 +99,44 @@ mvn clean package verify -DskipTests=true
 ```
 
 ```shell
-docker build -t samanalishiri/application:latest .
+docker build -t samanalishiri/application:latest .  --no-cache
 ```
 
 ```shell
-kubectl apply -f ./kube/application.yml
+kubectl apply -f kube-dev-env.yml
 ```
 
 ### Check Status
 
 ```shell
-kubectl get all
+kubectl get all -n dev-env
 ```
 
-### Port-Forwarding
+### Port Forwarding
 
 ```shell
-kubectl port-forward service/application 8080:8080
+kubectl port-forward service/application 8080:8080 -n dev-env
 ```
 
 ### E2eTest
 
 ```shell
-kubectl port-forward service/application 8080:8080
-```
-
-```shell
+curl -X GET http://localhost:8080/api/v1/health-check
 ```
 
 ### Down
 
 ```shell
-kubectl delete all --all
-```
-
-```shell
-kubectl delete secrets ???
-```
-
-```shell
-kubectl delete configMap ???
-```
-
-```shell
+kubectl delete all --all -n dev-env
+kubectl delete secrets dev-secrets -n dev-env
+kubectl delete configMap dev-config -n dev-env
 docker image rm samanalishiri/application:latest
 ```
 
 ## UI
 
 * Application: [http://localhost:8080](http://localhost:8080)
+
 
 ##
 

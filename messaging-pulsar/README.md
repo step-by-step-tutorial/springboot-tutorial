@@ -6,6 +6,7 @@
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
+* [Apache Pulsar](#apache-pulsar)
 
 ## Getting Started
 
@@ -119,11 +120,15 @@ kubectl port-forward service/application 8080:8080 -n dev-env
 ```
 
 ```shell
-kubectl port-forward service/application 8018:8018 -n dev-env
+kubectl port-forward service/broker 8081:8081 -n dev-env
 ```
 
 ```shell
-kubectl port-forward service/application 9527:9527 -n dev-env
+kubectl port-forward service/dashboard 9527:9527 -n dev-env
+```
+
+```shell
+kubectl port-forward service/dashboard 7750:7750 -n dev-env
 ```
 
 ### E2eTest
@@ -144,21 +149,18 @@ docker image rm samanalishiri/application:latest
 ## UI
 
 * Application: [http://localhost:8080](http://localhost:8080)
-* Pulsar Admin Dashboard: [http://localhost:8081](http://localhost:8081)
-* Pulsar Dashboard: [http://localhost:9527](http://localhost:9527)
+* Pulsar Admin: [http://localhost:8081](http://localhost:8081)
 
-## Pulsar
+### Pulsar Manager
 
-### API
-
-**Get CSRF token from Apache Pulsar**
+**Get CSRF Token from Apache Pulsar**
 
 ```shell
 CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
 echo $CSRF_TOKEN
 ```
 
-**Create user**
+**Create User**
 
 ```shell
 CSRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
@@ -169,46 +171,49 @@ curl -X PUT http://localhost:7750/pulsar-manager/users/superuser \
    -d '{"name": "admin", "password": "password", "description": "administrator", "email": "admin@email.com"}'
 ```
 
-**Create topic**
+**Pulsar Dashboard**
+
+Link: [http://localhost:9527](http://localhost:9527)
+
+```yaml
+environment-name: dev-env
+broker-url:
+  docker: http://broker:8080
+  kubernetes: http://broker:8081
+bookie-url: http://bookie:3181
+```
+
+## Apache Pulsar API
+
+**Create Topic**
 
 ```shell
 curl -X PUT http://localhost:8081/admin/v2/persistent/public/default/test-topic/partitions -H 'Content-Type: application/json' -d "4"
 ```
 
-**Update topic**
+**Update Topic**
 
 ```shell
 curl -X POST http://localhost:8081/admin/v2/persistent/public/default/test-topic/partitions -H 'Content-Type: application/json' -d "5"
 ```
 
-**Get topic info**
+**Get topic Info**
 
 ```shell
 curl -X GET http://localhost:8081/admin/v2/persistent/public/default/test-topic/partitioned-internalStats | jq
 ```
 
-**Get namespace info**
+**Get namespace Info**
 
 ```shell
 curl -X GET http://localhost:8081/admin/v2/persistent/public/default | jq
 ```
 
-**Delete topic**
+**Delete Topic**
 
 ```shell
 curl -X DELETE http://localhost:8081/admin/v2/persistent/public/default/test-topic/partitions
 ```
-
-### New Environment
-
-Pulsar Dashboard: [http://localhost:9527](http://localhost:9527)
-
-```yaml
-environment-name: dev-env
-broker-url: http://broker:8080
-bookie-url: http://bookie:3181
-```
-
 
 ##
 

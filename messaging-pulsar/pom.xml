@@ -77,7 +77,7 @@
                             <arguments>
                                 <argument>compose</argument>
                                 <argument>--file</argument>
-                                <argument>${project.basedir}/docker-compose-tools.yml</argument>
+                                <argument>${project.basedir}/docker-compose-test.yml</argument>
                                 <argument>--project-name</argument>
                                 <argument>dev-env</argument>
                                 <argument>up</argument>
@@ -97,7 +97,7 @@
                             <arguments>
                                 <argument>compose</argument>
                                 <argument>--file</argument>
-                                <argument>${project.basedir}/docker-compose-tools.yml</argument>
+                                <argument>${project.basedir}/docker-compose-test.yml</argument>
                                 <argument>--project-name</argument>
                                 <argument>dev-env</argument>
                                 <argument>down</argument>

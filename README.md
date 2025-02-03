@@ -36,6 +36,7 @@ This tutorial provides many best practises and examples include documentation.
 * step: rest-hateoas
 * step: webflux
 * [step: cdc-debezium](cdc-debezium)
+* [step: cdc-embedded-debezium](cdc-embedded-debezium)
 * [step: log-aggregation-elk](log-aggregation-elk)
 * [step: observability-grafana-stack](observability-grafana-stack)
 * [step: observability-Jaeger](observability-jaeger)
@@ -68,9 +69,7 @@ This tutorial provides many best practises and examples include documentation.
 * [Docker](https://www.docker.com)
 * [Kubernetes](https://kubernetes.io)
 
-### Pipeline
-
-#### Clean Repository
+### Clean Repository
 
 [clean-all.sh](clean-all.sh)
 
@@ -93,16 +92,20 @@ mvn -f nosql-mongodb-reactive/pom.xml clean
 mvn -f messaging-apache-artemis-mq/pom.xml clean
 mvn -f messaging-rabbit-mq/pom.xml clean
 mvn -f messaging-apache-kafka/pom.xml clean
+mvn -f messaging-redis/pom.xml clean
+mvn -f messaging-pulsar/pom.xml clean
 mvn -f streaming-apache-kafka/pom.xml clean
-mvn -f streaming-pulsar/pom.xml clean
 mvn -f streaming-redis/pom.xml clean
+mvn -f cdc-debezium/pom.xml clean
+mvn -f cdc-embedded-debezium/pom.xml clean
+mvn -f log-aggregation-elk/pom.xml clean
 mvn -f observability-grafana-stack/pom.xml clean
 mvn -f observability-jaeger/pom.xml clean
 mvn -f security-rbac-inmemory/pom.xml clean
 mvn -f security-rbac-jwt/pom.xml clean
 ```
 
-#### Clean Docker
+### Clean Docker
 
 [docker-clean.sh](docker-clean.sh)
 
@@ -118,7 +121,7 @@ docker system prune -a --volumes
 
 [build-all.sh](build-all.sh)
 
-#### Build and Test
+### Build and Test
 
 ```shell
 mvn -f hello-world/pom.xml clean package
@@ -142,114 +145,14 @@ mvn -f messaging-apache-kafka/pom.xml clean package
 mvn -f messaging-pulsar/pom.xml clean package
 mvn -f messaging-redis/pom.xml clean package
 mvn -f streaming-apache-kafka/pom.xml clean package
+mvn -f cdc-debezium/pom.xml clean package
+mvn -f cdc-embedded-debezium/pom.xml clean package
+mvn -f log-aggregation-elk/pom.xml clean package
 mvn -f observability-grafana-stack/pom.xml clean package
 mvn -f observability-jaeger/pom.xml clean package
 mvn -f restful-web-api/pom.xml clean package
 mvn -f security-rbac-inmemory/pom.xml clean package
 mvn -f security-rbac-jwt/pom.xml clean package
-```
-
-## Install Tools on Docker
-
-### Docker Compose
-
-[docker-compose.yml](docker-compose.yml)
-
-### Apply Docker Compose
-
-Execute the following command to install tools.
-
-```shell
-docker compose --file .\docker-compose.yml --project-name springboot_tutorial up -d
-
-```
-
-### Remove Docker Compose
-
-Execute the following command to remove containers and images.
-
-#### Remove Docker Containers
-
-[docker-rm-containers](docker-rm-containers.sh)
-
-```shell
-# remove containers
-# remove containers
-docker rm -f \
-  mysql \
-  mysql-workbench \
-  postgresql \
-  pgadmin \
-  oracle \
-  ords \
-  adminer \
-  phpmyadmin \
-  redis \
-  redisinsight \
-  commander \
-  mongo \
-  mongo-express \
-  rabbitmq \
-  artemis \
-  zookeeper \
-  kafka \
-  kafdrop \
-  pulsar \
-  pulsardashboard \
-  jaeger \
-  loki \
-  tempo \
-  prometheus \
-  pyroscope \
-  grafana
-```
-
-#### Remove Docker Images
-
-[docker-rm-images](docker-rm-images.sh)
-
-```shell
-# remove images
-# remove images
-docker rmi \
-  mysql:8.0 \
-  lscr.io/linuxserver/mysql-workbench:latest \
-  postgres:13.9-alpine \
-  dpage/pgadmin4 \
-  container-registry.oracle.com/database/express:21.3.0-xe \
-  container-registry.oracle.com/database/ords:latest \
-  adminer \
-  phpmyadmin \
-  redis:latest \
-  redislabs/redisinsight:latest \
-  rediscommander/redis-commander:latest \
-  mongo \
-  mongo-express \
-  rabbitmq:management \
-  apache/activemq-artemis:latest \
-  docker.io/bitnami/zookeeper \
-  docker.io/bitnami/kafka \
-  obsidiandynamics/kafdrop:latest \
-  apachepulsar/pulsar:latest \
-  apachepulsar/pulsar-manager:latest \
-  jaegertracing/all-in-one:latest \
-  grafana/loki \
-  grafana/tempo \
-  prom/prometheus:v2.46.0 \
-  grafana/pyroscope \
-  grafana/grafana
-```
-
-#### Remove Docker Volumes
-
-```shell
-docker volume rm ords_config oracle_config
-```
-
-#### Remove Docker Network
-
-```shell
-docker network rm springboot_tutorial_default
 ```
 
 ##
