@@ -10,10 +10,10 @@ In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [Debezium](#debezium)
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
+* [Debezium](#debezium)
 
 ## Getting Started
 
@@ -56,9 +56,6 @@ docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INS
 
 ```shell
 docker cp example_data.sql mysql:/example_data.sql
-```
-
-```shell
 docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
 ```
 Check the application console log.
@@ -74,6 +71,119 @@ mvn  spring-boot:stop
 ```shell
 mvn verify -DskipTests=true
 ```
+
+## Dockerized
+
+Create a file named `docker-compose.yml` with the following configuration.
+
+### Docker Compose
+
+[docker-compose.yml](docker-compose.yml)
+
+### Deploy
+
+```shell
+mvn clean package verify -DskipTests=true
+```
+```shell
+docker compose --file docker-compose.yml --project-name dev-env up --build -d
+```
+
+### E2eTest
+
+```shell
+docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+```
+
+```shell
+docker cp example_data.sql mysql:/example_data.sql
+docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
+```
+
+### Down
+
+```shell
+docker compose --file docker-compose.yml --project-name dev-env down
+```
+
+## Kubernetes
+
+Create the following files for installing Debezium.
+
+### Kube Files
+
+[debezium.yml](/kube/debezium.yml)
+
+### Deploy
+
+```shell
+mvn clean package verify -DskipTests=true
+docker build -t samanalishiri/application:latest .
+```
+
+```shell
+kubectl apply -f ./kube/mysql.yml
+kubectl apply -f ./kube/kafka.yml
+kubectl apply -f ./kube/debezium.yml
+kubectl apply -f ./kube/application.yml
+```
+
+### Check Status
+
+```shell
+kubectl get all
+```
+
+### E2eTest
+
+Use this command `kubectl get pods` to see the mysql pod-id.
+
+```shell
+kubectl get pods
+```
+
+```shell
+kubectl exec -it mysql-??? -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+```
+
+### Port-Forwarding
+
+```shell
+kubectl port-forward service/adminer 8084:8084
+```
+
+```shell
+kubectl port-forward service/kafdrop-service 9000:9000
+```
+
+```shell
+kubectl port-forward service/debeziumui 8082:8082
+```
+
+```shell
+kubectl port-forward service/debezium 8083:8083
+```
+
+```shell
+kubectl port-forward service/application 8080:8080
+```
+
+### Down
+
+```shell
+kubectl delete all --all
+kubectl delete secrets mysql-credentials
+kubectl delete configMap mysql-config
+kubectl delete persistentvolumeclaim database-pvc
+docker image rm samanalishiri/application:latest
+```
+
+## UI
+
+* Application: [http://localhost:8080](http://localhost:8080)
+* MySQL (Adminer): [http://localhost:8084](http://localhost:8084)
+* Kafka (kafkadrop): [http://localhost:9000](http://localhost:9000)
+* Debezium: [http://localhost:8082](http://localhost:8082)
 
 ## Debezium
 
@@ -236,338 +346,6 @@ curl -i -X DELETE http://localhost:8083/connectors/connectorname
 # example
 curl -i -X DELETE http://localhost:8083/connectors/spring-boot-tutorial
 ```
-
-## Dockerized
-
-Create a file named `docker-compose.yml` with the following configuration.
-
-### Docker Compose
-
-[docker-compose.yml](docker-compose.yml)
-
-```yaml
-#docker-compose.yml
-name: dev-env
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    hostname: mysql
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=tutorial_db
-      - MYSQL_ROOT_PASSWORD=root
-    volumes:
-      - "./users.sql:/docker-entrypoint-initdb.d/users.sql"
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  adminer:
-    image: adminer
-    container_name: adminer
-    hostname: adminer
-    restart: always
-    ports:
-      - "8084:8080"
-    depends_on:
-      - mysql
-  zookeeper:
-    image: docker.io/bitnami/zookeeper
-    container_name: zookeeper
-    hostname: zookeeper
-    restart: always
-    ports:
-      - "2181:2181"
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-  kafka:
-    image: docker.io/bitnami/kafka
-    container_name: kafka
-    hostname: kafka
-    restart: always
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_CFG_BROKER_ID: 1
-      ALLOW_PLAINTEXT_LISTENER: yes
-      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CFG_LISTENERS: LOCALHOST://:9092,CONTAINER://:9093
-      KAFKA_CFG_ADVERTISED_LISTENERS: LOCALHOST://localhost:9092,CONTAINER://kafka:9093
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT
-      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: LOCALHOST
-    depends_on:
-      - zookeeper
-    healthcheck:
-      test: [ "CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    container_name: kafdrop
-    hostname: kafdrop
-    restart: always
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: kafka:9093
-      JVM_OPTS: "-Xms32M -Xmx64M"
-    depends_on:
-      - kafka
-  debezium:
-    image: debezium/connect:3.0.0.Final
-    container_name: debezium
-    hostname: debezium
-    ports:
-      - "8083:8083"
-    environment:
-      GROUP_ID: 1
-      CONFIG_STORAGE_TOPIC: debezium-config
-      OFFSET_STORAGE_TOPIC: debezium-offset
-      STATUS_STORAGE_TOPIC: debezium-status
-      BOOTSTRAP_SERVERS: kafka:9093
-    depends_on:
-      mysql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8083" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-  debeziumui:
-    image: debezium/debezium-ui:latest
-    container_name: debeziumui
-    hostname: debeziumui
-    ports:
-      - "8082:8080"
-    environment:
-      - KAFKA_CONNECT_URIS=http://debezium:8083
-    restart: always
-    depends_on:
-      - debezium
-```
-
-### Deploy
-
-```shell
-mvn clean package verify -DskipTests=true
-```
-
-```shell
-docker compose --file docker-compose.yml --project-name dev-env up --build -d
-```
-
-### E2eTest
-
-```shell
-docker exec -it mysql mysql -u root -proot -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
-```
-
-```shell
-docker cp example_data.sql mysql:/example_data.sql
-```
-
-```shell
-docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data.sql"
-```
-
-### Down
-
-```shell
-docker compose --file docker-compose.yml --project-name dev-env down
-```
-
-## Kubernetes
-
-Create the following files for installing Debezium.
-
-### Kube Files
-
-[debezium.yml](/kube/debezium.yml)
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: debezium
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: debezium
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: debezium
-    spec:
-      containers:
-        - name: debezium
-          image: debezium/connect:3.0.0.Final
-          imagePullPolicy: "IfNotPresent"
-          ports:
-            - containerPort: 8083
-          env:
-            - name: GROUP_ID
-              value: "1"
-            - name: CONFIG_STORAGE_TOPIC
-              value: debezium-config
-            - name: OFFSET_STORAGE_TOPIC
-              value: debezium-offset
-            - name: STATUS_STORAGE_TOPIC
-              value: debezium-status
-            - name: BOOTSTRAP_SERVERS
-              value: "kafka-service:9093"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: debezium
-spec:
-  selector:
-    app: debezium
-  ports:
-    - port: 8083
-      targetPort: 8083
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: debeziumui
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: debeziumui
-  template:
-    metadata:
-      labels:
-        app: debeziumui
-    spec:
-      containers:
-        - name: debeziumui
-          image: debezium/debezium-ui:latest
-          ports:
-            - containerPort: 8080
-          env:
-            - name: KAFKA_CONNECT_URIS
-              value: http://debezium:8083
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: debeziumui
-spec:
-  selector:
-    app: debeziumui
-  ports:
-    - port: 8082
-      targetPort: 8080
-```
-
-### Deploy
-
-```shell
-mvn clean package verify -DskipTests=true
-```
-
-```shell
-docker build -t samanalishiri/application:latest .
-```
-
-```shell
-kubectl apply -f ./kube/mysql.yml
-```
-
-```shell
-kubectl apply -f ./kube/kafka.yml
-```
-
-```shell
-kubectl apply -f ./kube/debezium.yml
-```
-
-```shell
-kubectl apply -f ./kube/application.yml
-```
-
-### Check Status
-
-```shell
-kubectl get all
-```
-
-### E2eTest
-
-Use this command `kubectl get pods` to see the mysql pod-id.
-
-```shell
-kubectl get pods
-```
-
-```shell
-kubectl exec -it mysql-??? -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
-```
-
-### Port-Forwarding
-
-```shell
-kubectl port-forward service/adminer 8084:8084
-```
-
-```shell
-kubectl port-forward service/kafdrop-service 9000:9000
-```
-
-```shell
-kubectl port-forward service/debeziumui 8082:8082
-```
-
-```shell
-kubectl port-forward service/debezium 8083:8083
-```
-
-```shell
-kubectl port-forward service/application 8080:8080
-```
-
-### Down
-
-```shell
-kubectl delete all --all
-```
-
-```shell
-kubectl delete secrets mysql-credentials
-```
-
-```shell
-kubectl delete configMap mysql-config
-```
-
-```shell
-kubectl delete persistentvolumeclaim database-pvc
-```
-
-```shell
-docker image rm samanalishiri/application:latest
-```
-
-## UI
-
-* Application: [http://localhost:8080](http://localhost:8080)
-* MySQL (Adminer): [http://localhost:8084](http://localhost:8084)
-* Kafka (kafkadrop): [http://localhost:9000](http://localhost:9000)
-* Debezium: [http://localhost:8082](http://localhost:8082)
 
 ##
 

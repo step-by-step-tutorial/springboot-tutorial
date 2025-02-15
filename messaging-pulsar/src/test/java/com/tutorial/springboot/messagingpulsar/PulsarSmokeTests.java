@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class PulsarConfigurationTests {
+class PulsarSmokeTests {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -23,12 +23,13 @@ class PulsarConfigurationTests {
     private PulsarClient pulsarClient;
 
     @Autowired
-    PulsarTemplate<String> template;
+    private PulsarTemplate<String> template;
 
     @Test
     void sendAndReceiveWorksAsExpected() {
         var givenTopicName = "test-topic";
         var givenMessage = "test message";
+        var givenSubscriptionName = "test-subscription";
 
         try {
             pulsarClient.newProducer(Schema.STRING)
@@ -38,7 +39,7 @@ class PulsarConfigurationTests {
 
             var consumer = pulsarClient.newConsumer(Schema.STRING)
                     .topic(givenTopicName)
-                    .subscriptionName("test-subscription")
+                    .subscriptionName(givenSubscriptionName)
                     .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
                     .subscribe();
             logger.info("Consumer subscribed to topic: {}", givenTopicName);

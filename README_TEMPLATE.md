@@ -96,9 +96,6 @@ docker compose --file docker-compose.yml --project-name dev-env down
 
 ```shell
 mvn clean package verify -DskipTests=true
-```
-
-```shell
 docker build -t samanalishiri/application:latest .  --no-cache
 ```
 

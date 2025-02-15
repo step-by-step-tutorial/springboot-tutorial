@@ -6,7 +6,7 @@
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
-* [Apache Pulsar](#apache-pulsar)
+* [Apache Pulsar](#apache-pulsar-api)
 
 ## Getting Started
 
@@ -72,7 +72,7 @@ mvn clean package verify -DskipTests=true
 ```
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
+docker compose --file ./docker-compose.yml --project-name dev up --build -d
 ```
 
 ### E2eTest
@@ -84,51 +84,48 @@ curl -X GET http://localhost:8080/api/v1/health-check
 ### Down
 
 ```shell
-docker compose --file docker-compose.yml --project-name dev-env down
+docker compose --file docker-compose.yml --project-name dev down
 ```
 
 ## Kubernetes
 
 ### Kube Files
 
-[Cloud Native Development Environment](kube-dev-env.yml)
+[Cloud Native Development Environment](kube-dev.yml)
 
 ### Deploy
 
 ```shell
 mvn clean package verify -DskipTests=true
-```
-
-```shell
 docker build -t samanalishiri/application:latest .  --no-cache
 ```
 
 ```shell
-kubectl apply -f kube-dev-env.yml
+kubectl apply -f kube-dev.yml
 ```
 
 ### Check Status
 
 ```shell
-kubectl get all -n dev-env
+kubectl get all -n dev
 ```
 
 ### Port Forwarding
 
 ```shell
-kubectl port-forward service/application 8080:8080 -n dev-env
+kubectl port-forward service/application 8080:8080 -n dev
 ```
 
 ```shell
-kubectl port-forward service/broker 8081:8081 -n dev-env
+kubectl port-forward service/broker 8081:8081 -n dev
 ```
 
 ```shell
-kubectl port-forward service/dashboard 9527:9527 -n dev-env
+kubectl port-forward service/dashboard 9527:9527 -n dev
 ```
 
 ```shell
-kubectl port-forward service/dashboard 7750:7750 -n dev-env
+kubectl port-forward service/dashboard 7750:7750 -n dev
 ```
 
 ### E2eTest
@@ -140,9 +137,9 @@ curl -X GET http://localhost:8080/api/v1/health-check
 ### Down
 
 ```shell
-kubectl delete all --all -n dev-env
-kubectl delete secrets dev-secrets -n dev-env
-kubectl delete configMap dev-config -n dev-env
+kubectl delete all --all -n dev
+kubectl delete secrets dev-secrets -n dev
+kubectl delete configMap dev-config -n dev
 docker image rm samanalishiri/application:latest
 ```
 
@@ -176,7 +173,7 @@ curl -X PUT http://localhost:7750/pulsar-manager/users/superuser \
 Link: [http://localhost:9527](http://localhost:9527)
 
 ```yaml
-environment-name: dev-env
+environment-name: dev
 broker-url:
   docker: http://broker:8080
   kubernetes: http://broker:8081
