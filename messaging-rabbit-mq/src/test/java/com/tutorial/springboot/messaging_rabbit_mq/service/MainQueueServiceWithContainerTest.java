@@ -54,7 +54,7 @@ class MainQueueServiceWithContainerTest {
         final var expectedException = NullPointerException.class;
         final var expectedExceptionMessage = "model should not be null";
 
-        final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenModel));
+        final var actual = assertThrows(expectedException, () -> systemUnderTest.publish(givenModel));
 
         assertNotNull(actual);
         assertEquals(expectedExceptionMessage, actual.getMessage());
@@ -65,7 +65,7 @@ class MainQueueServiceWithContainerTest {
     void messageShouldBePushedToTheQueue() {
         final var givenModel = new MessageModel(UUID.randomUUID().toString(), "test text");
 
-        assertDoesNotThrow(() -> systemUnderTest.push(givenModel));
+        assertDoesNotThrow(() -> systemUnderTest.publish(givenModel));
     }
 
 }

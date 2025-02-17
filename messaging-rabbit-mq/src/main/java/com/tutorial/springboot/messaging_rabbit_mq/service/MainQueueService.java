@@ -11,21 +11,21 @@ import static java.util.Objects.requireNonNull;
 
 @Component
 public class MainQueueService {
+
     private final Logger logger = LoggerFactory.getLogger(MainQueueService.class);
 
     private final String queue;
+
     private final RabbitTemplate rabbitTemplate;
 
-    public MainQueueService(
-            @Value("${queue.main}") final String queue,
-            final RabbitTemplate rabbitTemplate) {
+    public MainQueueService(@Value("${queue.main}") final String queue, final RabbitTemplate rabbitTemplate) {
         this.queue = queue;
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void push(Object model) {
-        requireNonNull(model, "model should not be null");
+    public void publish(Object model) {
+        requireNonNull(model, "Model should not be null");
         rabbitTemplate.send(queue, requireNonNull(createMessage(model), "message should not be null"));
-        logger.info("message sent to {}: {}", queue, model);
+        logger.info("Message sent to {}: {}", queue, model);
     }
 }

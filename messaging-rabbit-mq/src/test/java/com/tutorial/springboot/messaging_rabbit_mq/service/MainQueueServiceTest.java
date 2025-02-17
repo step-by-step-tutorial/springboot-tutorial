@@ -51,7 +51,7 @@ class MainQueueServiceTest {
         final var expectedException = NullPointerException.class;
         final var expectedExceptionMessage = "model should not be null";
 
-        final var actual = assertThrows(expectedException, () -> systemUnderTest.push(givenMessage));
+        final var actual = assertThrows(expectedException, () -> systemUnderTest.publish(givenMessage));
 
         assertNotNull(actual);
         assertEquals(expectedExceptionMessage, actual.getMessage());
@@ -68,7 +68,7 @@ class MainQueueServiceTest {
         messageUtils.when(() -> createMessage(any())).thenReturn(fakeByteMessage);
         doNothing().when(rabbitTemplate).send(fakeDestination, fakeByteMessage);
 
-        assertDoesNotThrow(() -> systemUnderTest.push(givenMessage));
+        assertDoesNotThrow(() -> systemUnderTest.publish(givenMessage));
 
         verify(rabbitTemplate, times(1)).send(fakeDestination, fakeByteMessage);
         messageUtils.verify(() -> createMessage(any()), times(1));

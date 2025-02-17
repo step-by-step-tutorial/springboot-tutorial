@@ -18,13 +18,10 @@ public class MainQueueListener {
     private final Logger logger = LoggerFactory.getLogger(MainQueueListener.class);
 
     @RabbitListener(queues = "${queue.main}")
-    public void onMessage(
-            final Message message,
-            @Header(AmqpHeaders.CORRELATION_ID) final String correlationId
-    ) {
-        requireNonNull(message, "message should not be null");
-        requireNonNull(correlationId, "correlation Id should not be null");
+    public void onMessage(final Message message, @Header(AmqpHeaders.CORRELATION_ID) final String correlationId) {
+        requireNonNull(message, "Message should not be null");
+        requireNonNull(correlationId, "Correlation Id should not be null");
 
-        logger.info("message received: {}, {}", extractBody(message, MessageModel.class), correlationId);
+        logger.info("Message received: {}, {}", extractBody(message, MessageModel.class), correlationId);
     }
 }
