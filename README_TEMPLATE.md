@@ -60,17 +60,10 @@ mvn verify -DskipTests=true
 
 ## Dockerized
 
-### Docker Compose
-
-[Docker Compose](docker-compose.yml)
-
 ### Deploy
 
 ```shell
 mvn clean package verify -DskipTests=true
-```
-
-```shell
 docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
 ```
 
@@ -88,18 +81,11 @@ docker compose --file docker-compose.yml --project-name dev-env down
 
 ## Kubernetes
 
-### Kube Files
-
-[Cloud Native Development Environment](kube-dev-env.yml)
-
 ### Deploy
 
 ```shell
 mvn clean package verify -DskipTests=true
 docker build -t samanalishiri/application:latest .  --no-cache
-```
-
-```shell
 kubectl apply -f kube-dev-env.yml
 ```
 
@@ -125,8 +111,9 @@ curl -X GET http://localhost:8080/api/v1/health-check
 
 ```shell
 kubectl delete all --all -n dev-env
-kubectl delete secrets dev-secrets -n dev-env
+kubectl delete secrets dev-credentials -n dev-env
 kubectl delete configMap dev-config -n dev-env
+kubectl delete persistentvolumeclaim database-pvc -n dev-env
 docker image rm samanalishiri/application:latest
 ```
 

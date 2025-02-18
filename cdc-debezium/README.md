@@ -74,19 +74,11 @@ mvn verify -DskipTests=true
 
 ## Dockerized
 
-Create a file named `docker-compose.yml` with the following configuration.
-
-### Docker Compose
-
-[docker-compose.yml](docker-compose.yml)
-
 ### Deploy
 
 ```shell
 mvn clean package verify -DskipTests=true
-```
-```shell
-docker compose --file docker-compose.yml --project-name dev-env up --build -d
+docker compose --file docker-compose.yml --project-name dev up --build -d
 ```
 
 ### E2eTest
@@ -103,78 +95,63 @@ docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data
 ### Down
 
 ```shell
-docker compose --file docker-compose.yml --project-name dev-env down
+docker compose --file docker-compose.yml --project-name dev down
+docker image rm samanalishiri/application:latest
 ```
 
 ## Kubernetes
-
-Create the following files for installing Debezium.
-
-### Kube Files
-
-[debezium.yml](/kube/debezium.yml)
 
 ### Deploy
 
 ```shell
 mvn clean package verify -DskipTests=true
 docker build -t samanalishiri/application:latest .
-```
-
-```shell
-kubectl apply -f ./kube/mysql.yml
-kubectl apply -f ./kube/kafka.yml
-kubectl apply -f ./kube/debezium.yml
-kubectl apply -f ./kube/application.yml
+kubectl apply -f ./kube-dev.yml
 ```
 
 ### Check Status
 
 ```shell
-kubectl get all
+kubectl get all -n dev
 ```
 
 ### E2eTest
 
-Use this command `kubectl get pods` to see the mysql pod-id.
-
 ```shell
-kubectl get pods
-```
-
-```shell
-kubectl exec -it mysql-??? -n default -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+POD_NAME=mysql
+POD_FULL_NAME=$(kubectl get pods -n dev | grep $POD_NAME | awk '{print $1}')
+kubectl exec -it $POD_FULL_NAME  -n dev -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
 
 ### Port-Forwarding
 
 ```shell
-kubectl port-forward service/adminer 8084:8084
+kubectl port-forward service/adminer 8084:8084 -n dev
 ```
 
 ```shell
-kubectl port-forward service/kafdrop-service 9000:9000
+kubectl port-forward service/kafdrop-service 9000:9000 -n dev
 ```
 
 ```shell
-kubectl port-forward service/debeziumui 8082:8082
+kubectl port-forward service/debeziumui 8082:8082 -n dev
 ```
 
 ```shell
-kubectl port-forward service/debezium 8083:8083
+kubectl port-forward service/debezium 8083:8083 -n dev
 ```
 
 ```shell
-kubectl port-forward service/application 8080:8080
+kubectl port-forward service/application 8080:8080 -n dev
 ```
 
 ### Down
 
 ```shell
-kubectl delete all --all
-kubectl delete secrets mysql-credentials
-kubectl delete configMap mysql-config
-kubectl delete persistentvolumeclaim database-pvc
+kubectl delete all --all -n dev
+kubectl delete secrets dev-credentials -n dev
+kubectl delete configMap dev-config -n dev
+kubectl delete persistentvolumeclaim database-pvc -n dev
 docker image rm samanalishiri/application:latest
 ```
 
