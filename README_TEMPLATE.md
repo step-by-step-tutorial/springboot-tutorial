@@ -56,6 +56,7 @@ mvn  spring-boot:stop
 
 ```shell
 mvn verify -DskipTests=true
+docker volume prune -f
 ```
 
 ## Dockerized
@@ -64,7 +65,7 @@ mvn verify -DskipTests=true
 
 ```shell
 mvn clean package verify -DskipTests=true
-docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
+docker compose --file ./docker-compose.yml --project-name dev up --build -d
 ```
 
 ### E2eTest
@@ -76,7 +77,8 @@ curl -X GET http://localhost:8080/api/v1/health-check
 ### Down
 
 ```shell
-docker compose --file docker-compose.yml --project-name dev-env down
+docker compose --file docker-compose.yml --project-name dev down
+docker volume prune -f
 ```
 
 ## Kubernetes
@@ -92,13 +94,13 @@ kubectl apply -f kube-dev-env.yml
 ### Check Status
 
 ```shell
-kubectl get all -n dev-env
+kubectl get all -n dev
 ```
 
 ### Port Forwarding
 
 ```shell
-kubectl port-forward service/application 8080:8080 -n dev-env
+kubectl port-forward service/application 8080:8080 -n dev
 ```
 
 ### E2eTest
@@ -110,11 +112,12 @@ curl -X GET http://localhost:8080/api/v1/health-check
 ### Down
 
 ```shell
-kubectl delete all --all -n dev-env
-kubectl delete secrets dev-credentials -n dev-env
-kubectl delete configMap dev-config -n dev-env
-kubectl delete persistentvolumeclaim database-pvc -n dev-env
+kubectl delete all --all -n dev
+kubectl delete secrets dev-credentials -n dev
+kubectl delete configMap dev-config -n dev
+kubectl delete persistentvolumeclaim database-pvc -n dev
 docker image rm samanalishiri/application:latest
+docker volume prune -f
 ```
 
 ## UI

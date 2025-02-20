@@ -1,5 +1,4 @@
-version: '3.9'
-name: dev-env
+name: dev
 services:
   mysql:
     image: mysql:8.0

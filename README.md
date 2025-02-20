@@ -112,7 +112,7 @@ mvn -f security-rbac-jwt/pom.xml clean
 ```shell
 docker container prune
 docker image prune
-docker volume prune
+docker volume prune -f
 docker network prune
 docker system prune
 docker system prune -a

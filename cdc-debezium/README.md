@@ -70,6 +70,7 @@ mvn  spring-boot:stop
 
 ```shell
 mvn verify -DskipTests=true
+docker volume prune -f
 ```
 
 ## Dockerized
@@ -97,6 +98,7 @@ docker exec -it mysql mysql -u root -proot -h localhost -e "SOURCE /example_data
 ```shell
 docker compose --file docker-compose.yml --project-name dev down
 docker image rm samanalishiri/application:latest
+docker volume prune -f
 ```
 
 ## Kubernetes
@@ -153,6 +155,7 @@ kubectl delete secrets dev-credentials -n dev
 kubectl delete configMap dev-config -n dev
 kubectl delete persistentvolumeclaim database-pvc -n dev
 docker image rm samanalishiri/application:latest
+docker volume prune -f
 ```
 
 ## UI
@@ -184,7 +187,7 @@ the [https://debezium.io](https://debezium.io).
 
 ### Connector
 
-Connectors use for establish a connection between Debezium, Kafka and a database.
+Connectors are used for establishing a connection between Debezium, Kafka and a database.
 
 **General Format**
 
