@@ -4,9 +4,9 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.Optional;
 
-public final class JdbcUtils {
+public final class TestJdbcUtils {
 
-    private JdbcUtils() {
+    private TestJdbcUtils() {
     }
 
     public static <E> Optional<E> executeQuery(Throwable<Statement, E> query) {
@@ -22,6 +22,5 @@ public final class JdbcUtils {
     @FunctionalInterface
     public interface Throwable<T, E> {
         E accept(T t) throws Exception;
-
     }
 }

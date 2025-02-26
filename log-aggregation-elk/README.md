@@ -182,7 +182,7 @@ docker volume prune -f
 </dependencies>
 ```
 
-### Apache Log4j2
+### Apache Log4j2 (log4j2.xml)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.tutorial.springboot.logger_log4j2.JdbcUtils.executeQuery;
+import static com.tutorial.springboot.logger_log4j2.TestJdbcUtils.executeQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

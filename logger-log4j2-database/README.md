@@ -10,9 +10,8 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [Install MySQL on Docker](#install-mysql-on-docker)
-* [How To Set up Spring Boot](#how-to-config-application)
-* [Appendix](#appendix)
+* [Dockerized](#dockerized)
+* [Application Config](#application-config)
 
 ## Getting Started
 
@@ -62,67 +61,16 @@ mvn  spring-boot:stop
 
 ```shell
 mvn verify -DskipTests=true
+docker volume prune -f
 ```
 
-## Dockerize
-
-Create a docker compose file named `docker-compose.yml` then copy and paste the following script.
-
-### Docker Compose
-
-There are two options in order to connect to MySQL to management, MySQL Workbench, Adminer.
-
-#### With MySQL Workbench
-
-[docker-compose.yml](docker-compose.yml)
-
-```yaml
-#docker-compose.yml
-name: dev-env
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    hostname: mysql
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=tutorial_db
-      - MYSQL_ROOT_PASSWORD=root
-    volumes:
-      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
-  mysql-workbench:
-    image: lscr.io/linuxserver/mysql-workbench:latest
-    container_name: mysql-workbench
-    hostname: mysql-workbench
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-      - "3001:3001"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    cap_add:
-      - IPC_LOCK
-  adminer:
-    image: adminer
-    container_name: adminer
-    hostname: adminer
-    restart: always
-    ports:
-      - "8081:8080"
-```
+## Dockerized
 
 ### Deploy
 
-Execute the following command to install MySQL.
-
 ```shell
-docker compose --file ./docker-compose.yml --project-name dev-env up --build -d
+mvn clean package verify -DskipTests=true
+docker compose --file docker-compose.yml --project-name dev up --build -d
 ```
 
 ### E2eTest
@@ -133,57 +81,15 @@ docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE tutorial_db; 
 
 ### Down
 
-Execute the following command to stop and remove MySQL.
-
 ```shell
-docker compose --file ./docker-compose.yml --project-name dev-env down
+docker compose --file docker-compose.yml --project-name dev down
+docker image rm samanalishiri/application:latest
+docker volume prune -f
 ```
 
-### Init MySQL
+## UI
 
-This session already done in deploy time, therefore the description is only for more information.
-
-<p>
-
-After installation a MySQL database, create new user, database and create the `LOG_TABLE` table. This step apply
-automatically in this tutorial.
-
-</p>
-
-Connect to MySQL with following command.
-
-```shell
-# try to connect to docker container
-docker exec -it mysql mysql -h hostname -u user -p
-
-# Example
-#   user:     user
-#   password: password 
-#   hostname: localhost
-docker exec -it mysql mysql -h localhost -u user -p
-```
-
-Execute following queries.
-
-```mysql
-# init.db
-CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
-CREATE DATABASE IF NOT EXISTS tutorial_db;
-USE tutorial_db;
-
-CREATE TABLE LOG_TABLE
-(
-    ID         INT PRIMARY KEY AUTO_INCREMENT,
-    EVENT_DATE TIMESTAMP,
-    LEVEL      VARCHAR(10),
-    LOGGER     VARCHAR(255),
-    MESSAGE    VARCHAR(4000)
-);
-```
-
-### Web Console
-
-#### MySQL Workbench
+### MySQL Workbench
 
 Open [http://localhost:3000](http://localhost:3000) in the browser to access MySQL Workbench dashboard.
 
@@ -194,7 +100,7 @@ Username: user
 Password: password
 ```
 
-#### Adminer
+### Adminer
 
 Open [http://localhost:8080](http://localhost:8080) in the browser to access MySQL Workbench dashboard.
 
@@ -204,12 +110,11 @@ Username: user
 Password: password
 ```
 
-## How To Set up Spring Boot
+## Application Config
 
 ### Dependencies
 
 ```xml
-
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -233,9 +138,7 @@ Password: password
 </dependencies>
 ```
 
-### Log4j Properties
-
-Create `log4j2.xml` in the resources with proper configuration for the database.
+### Apache Log4j2 (log4j2.xml)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -282,6 +185,48 @@ Create `log4j2.xml` in the resources with proper configuration for the database.
     </Loggers>
 </Configuration>
 
+```
+
+### Init MySQL
+
+This session already done in deploy time, therefore the description is only for more information.
+
+<p>
+
+After installation a MySQL database, create new user, database and create the `LOG_TABLE` table. This step apply
+automatically in this tutorial.
+
+</p>
+
+Connect to MySQL with following command.
+
+```shell
+# try to connect to docker container
+docker exec -it mysql mysql -h hostname -u user -p
+
+# Example
+#   user:     user
+#   password: password 
+#   hostname: localhost
+docker exec -it mysql mysql -h localhost -u user -p
+```
+
+Execute following queries.
+
+```mysql
+# init.db
+CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
+CREATE DATABASE IF NOT EXISTS tutorial_db;
+USE tutorial_db;
+
+CREATE TABLE LOG_TABLE
+(
+    ID         INT PRIMARY KEY AUTO_INCREMENT,
+    EVENT_DATE TIMESTAMP,
+    LEVEL      VARCHAR(10),
+    LOGGER     VARCHAR(255),
+    MESSAGE    VARCHAR(4000)
+);
 ```
 
 ##

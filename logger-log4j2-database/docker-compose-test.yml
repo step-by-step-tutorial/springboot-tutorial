@@ -1,4 +1,4 @@
-name: dev-env
+name: test
 services:
   mysql:
     image: mysql:8.0
@@ -14,20 +14,6 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
-  mysql-workbench:
-    image: lscr.io/linuxserver/mysql-workbench:latest
-    container_name: mysql-workbench
-    hostname: mysql-workbench
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-      - "3001:3001"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    cap_add:
-      - IPC_LOCK
   adminer:
     image: adminer
     container_name: adminer

@@ -11,7 +11,7 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 
 * [Getting Started](#getting-started)
 * [Log Level](#log-level)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [Application Config](#application-config)
 
 ## Getting Started
 
@@ -52,7 +52,7 @@ To filter log messages according to their importance or severity.
  If log level is ALL    =>  log everything such as errors, warns, etc
 ```
 
-## How To Set up Spring Boot
+## Application Config
 
 ### Dependencies
 
