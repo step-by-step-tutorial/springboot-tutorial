@@ -107,8 +107,8 @@ docker volume prune -f
 
 ```shell
 mvn clean package verify -DskipTests=true
-docker build -t samanalishiri/application:latest .
-kubectl apply -f ./kube-dev.yml
+docker build -t samanalishiri/application:latest . --no-cache
+kubectl apply -f kube-dev.yml
 ```
 
 ### Check Status

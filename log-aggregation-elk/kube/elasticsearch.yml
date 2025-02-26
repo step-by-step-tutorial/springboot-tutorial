@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: elasticsearch-credentials
+  name: dev-credentials
   labels:
     app: elasticsearch
 type: Opaque
@@ -34,7 +34,7 @@ spec:
             - name: ELASTIC_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: elasticsearch-credentials
+                  name: dev-credentials
                   key: ELASTIC_PASSWORD
             - name: discovery.type
               value: "single-node"

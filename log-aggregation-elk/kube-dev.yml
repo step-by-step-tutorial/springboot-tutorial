@@ -1,0 +1,272 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dev-credentials
+  namespace: dev
+  labels:
+    app: dev
+type: Opaque
+data:
+  # Elasticsearch password: "password"
+  ELASTIC_PASSWORD: cGFzc3dvcmQ=
+  # Kibana username: "kibana_system"
+  # Kibana password: "password"
+  ELASTICSEARCH_USERNAME: a2liYW5hX3N5c3RlbQ==
+  ELASTICSEARCH_PASSWORD: cGFzc3dvcmQ=
+  # Logstash username: "logstash_system"
+  # Logstash password: "password"
+  LOGSTASH_USERNAME: bG9nc3Rhc2hfc3lzdGVt
+  LOGSTASH_PASSWORD: cGFzc3dvcmQ=
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-config
+  namespace: dev
+  labels:
+    app: dev
+data:
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: "default"
+  TCP_LOGGER_HOST: "logstash"
+  TCP_LOGGER_PORT: "5044"
+  TCP_LOGGER_RECONNECT_DELAY: "5000"
+  DISCOVERY_TYPE: "single-node"
+  ELASTICSEARCH_URL: "http://elasticsearch:9200"
+  ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+  kibana.yml: |
+    server.host: "0.0.0.0"
+    elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+  logstash.conf: |
+    input {
+      tcp {
+        port => 5044
+        codec => json_lines
+      }
+    }
+    
+    output {
+      stdout {
+        codec => rubydebug
+      }    
+      elasticsearch {
+        hosts => ["http://elasticsearch:9200"]
+        user => "logstash_system"
+        password => "password"
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: application
+    spec:
+      containers:
+        - name: application
+          image: samanalishiri/application:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: dev-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application
+  namespace: dev
+spec:
+  selector:
+    app: application
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
+          ports:
+            - containerPort: 9200
+            - containerPort: 9300
+          env:
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: ELASTIC_PASSWORD
+            - name: discovery.type
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: DISCOVERY_TYPE
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: dev
+spec:
+  ports:
+    - name: http
+      port: 9200
+      targetPort: 9200
+    - name: transport
+      port: 9300
+      targetPort: 9300
+  selector:
+    app: elasticsearch
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana-oss:7.10.2
+          ports:
+            - containerPort: 5601
+          env:
+            - name: ELASTICSEARCH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: ELASTICSEARCH_USERNAME
+            - name: ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: ELASTICSEARCH_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: dev-config
+          volumeMounts:
+            - name: dev-config
+              mountPath: /usr/share/kibana/config/kibana.yml
+              subPath: kibana.yml
+      volumes:
+        - name: dev-config
+          configMap:
+            name: dev-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: dev
+spec:
+  ports:
+    - port: 5601
+      targetPort: 5601
+  selector:
+    app: kibana
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+        - name: logstash
+          image: docker.elastic.co/logstash/logstash:7.10.2
+          ports:
+            - containerPort: 5044
+            - containerPort: 9600
+          env:
+            - name: ELASTICSEARCH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: LOGSTASH_USERNAME
+            - name: ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: LOGSTASH_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: dev-config
+          volumeMounts:
+            - name: logstash-pipeline
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
+              subPath: logstash.conf
+          readinessProbe:
+            tcpSocket:
+              port: 5044
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 10
+      volumes:
+        - name: logstash-pipeline
+          configMap:
+            name: dev-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: dev
+spec:
+  ports:
+    - name: defaultbeat
+      port: 5044
+      targetPort: 5044
+    - name: webapi
+      port: 9600
+      targetPort: 9600
+  selector:
+    app: logstash

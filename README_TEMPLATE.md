@@ -78,6 +78,7 @@ curl -X GET http://localhost:8080/api/v1/health-check
 
 ```shell
 docker compose --file docker-compose.yml --project-name dev down
+docker image rm samanalishiri/application:latest
 docker volume prune -f
 ```
 
@@ -87,8 +88,8 @@ docker volume prune -f
 
 ```shell
 mvn clean package verify -DskipTests=true
-docker build -t samanalishiri/application:latest .  --no-cache
-kubectl apply -f kube-dev-env.yml
+docker build -t samanalishiri/application:latest . --no-cache
+kubectl apply -f kube-dev.yml
 ```
 
 ### Check Status
