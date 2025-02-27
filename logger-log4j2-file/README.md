@@ -10,7 +10,7 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
+* [Application Config](#application-config)
 
 ## Getting Started
 
@@ -18,7 +18,6 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-
 
 ### Build
 
@@ -38,14 +37,18 @@ mvn test
 mvn package -DskipTests=true
 ```
 
-
 ### Run
 
 ```shell
 mvn spring-boot:run
 ```
+### Stop
 
-## How To Set up Spring Boot
+```shell
+mvn spring-boot:stop
+```
+
+## Application Config
 
 ### Dependencies
 
@@ -69,9 +72,7 @@ mvn spring-boot:run
 </dependencies>
 ```
 
-### Application Properties
-
-Create `log4j2.xml` in the resources and add the following configuration.
+### Apache Log4j2 (log4j2.xml)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
