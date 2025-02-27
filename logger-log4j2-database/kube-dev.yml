@@ -1,0 +1,248 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dev-credentials
+  namespace: dev
+type: Opaque
+data:
+  # value: root
+  MYSQL_ROOT_PASSWORD: cm9vdA==
+  # value: user
+  MYSQL_USERNAME: dXNlcg==
+  # value: password
+  MYSQL_PASSWORD: cGFzc3dvcmQ=
+  # value: user
+  DATABASE_USER: dXNlcg==
+  # value: password
+  DATABASE_PASSWORD: cGFzc3dvcmQ=
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-config
+  namespace: dev
+data:
+  MYSQL_DATABASE: "tutorial_db"
+  LOG_TABLE: "LOG_TABLE"
+  DATABASE_RECONNECT_DELAY: "8000"
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: "default"
+  initdb.sql: |-
+    CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'password';
+    CREATE DATABASE IF NOT EXISTS tutorial_db;
+    USE tutorial_db;
+    
+    CREATE TABLE LOG_TABLE
+    (
+        ID         INT PRIMARY KEY AUTO_INCREMENT,
+        EVENT_DATE TIMESTAMP,
+        LEVEL      VARCHAR(10),
+        LOGGER     VARCHAR(255),
+        MESSAGE    VARCHAR(4000)
+    );
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-pvc
+  namespace: dev
+  labels:
+    app: mysql
+    tier: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: dev
+  labels:
+    app: mysql
+    tier: database
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+        tier: database
+    spec:
+      containers:
+        - image: mysql:8.0
+          name: mysql
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: MYSQL_USERNAME
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: MYSQL_DATABASE
+          ports:
+            - name: mysql
+              containerPort: 3306
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+            - name: database-initdb
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: database-pvc
+        - name: database-initdb
+          configMap:
+            name: dev-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: dev
+  labels:
+    app: mysql
+    tier: database
+spec:
+  selector:
+    app: mysql
+    tier: database
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+        - name: adminer
+          image: adminer:latest
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer
+  namespace: dev
+spec:
+  selector:
+    app: adminer
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: application
+    spec:
+      containers:
+        - name: application
+          image: samanalishiri/application:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: APP_HOST
+            - name: APP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: APP_PORT
+            - name: APP_PROFILES
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: APP_PROFILES
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: DATABASE_USER
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-credentials
+                  key: DATABASE_PASSWORD
+            - name: LOG_TABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: LOG_TABLE
+            - name: DATABASE_RECONNECT_DELAY
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: DATABASE_RECONNECT_DELAY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application
+  namespace: dev
+spec:
+  selector:
+    app: application
+  ports:
+    - port: 8080
+      targetPort: 8080

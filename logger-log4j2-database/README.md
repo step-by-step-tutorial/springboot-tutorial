@@ -87,6 +87,47 @@ docker image rm samanalishiri/application:latest
 docker volume prune -f
 ```
 
+## Kubernetes
+
+### Deploy
+
+```shell
+mvn clean package verify -DskipTests=true
+docker build -t samanalishiri/application:latest . --no-cache
+kubectl apply -f kube-dev.yml
+```
+
+### Check Status
+
+```shell
+kubectl get all -n dev
+```
+
+### E2eTest
+
+```shell
+POD_NAME=mysql
+POD_FULL_NAME=$(kubectl get pods -n dev | grep $POD_NAME | awk '{print $1}')
+kubectl exec -it $POD_FULL_NAME  -n dev -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; SELECT * FROM LOG_TABLE;"
+```
+
+### Port Forwarding
+
+```shell
+kubectl port-forward service/adminer 8081:8081 -n dev
+```
+
+### Down
+
+```shell
+kubectl delete all --all -n dev
+kubectl delete secrets dev-credentials -n dev
+kubectl delete configMap dev-config -n dev
+kubectl delete persistentvolumeclaim database-pvc -n dev
+docker image rm samanalishiri/application:latest
+docker volume prune -f
+```
+
 ## UI
 
 ### MySQL Workbench
@@ -102,7 +143,7 @@ Password: password
 
 ### Adminer
 
-Open [http://localhost:8080](http://localhost:8080) in the browser to access MySQL Workbench dashboard.
+Open [http://localhost:8081](http://localhost:8081) in the browser to access MySQL Workbench dashboard.
 
 ```yaml
 Server: mysql:3306
@@ -115,6 +156,7 @@ Password: password
 ### Dependencies
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
