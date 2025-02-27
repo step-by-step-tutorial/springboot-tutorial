@@ -1,4 +1,4 @@
-name: dev-env
+name: test
 services:
   artemis:
     image: apache/activemq-artemis:latest

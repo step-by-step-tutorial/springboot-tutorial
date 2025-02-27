@@ -1,4 +1,4 @@
-name: dev-env
+name: dev
 services:
   artemis:
     image: apache/activemq-artemis:latest
@@ -25,3 +25,5 @@ services:
       ACTIVE_MQ_USER: artemis
       ACTIVE_MQ_PASS: artemis
       BROKER_URL: tcp://artemis:61616
+    depends_on:
+      - artemis
