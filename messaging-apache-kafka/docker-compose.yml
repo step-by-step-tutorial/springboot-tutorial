@@ -1,4 +1,4 @@
-name: dev-env
+name: dev
 services:
   zookeeper:
     image: docker.io/bitnami/zookeeper
