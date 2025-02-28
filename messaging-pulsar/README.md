@@ -57,22 +57,16 @@ mvn  spring-boot:stop
 
 ```shell
 mvn verify -DskipTests=true
+docker volume prune -f
 ```
 
 ## Dockerized
-
-### Docker Compose
-
-[Docker Compose](docker-compose.yml)
 
 ### Deploy
 
 ```shell
 mvn clean package verify -DskipTests=true
-```
-
-```shell
-docker compose --file ./docker-compose.yml --project-name dev up --build -d
+docker compose --file docker-compose.yml --project-name dev up --build -d
 ```
 
 ### E2eTest
@@ -85,22 +79,17 @@ curl -X GET http://localhost:8080/api/v1/health-check
 
 ```shell
 docker compose --file docker-compose.yml --project-name dev down
+docker image rm samanalishiri/application:latest
+docker volume prune -f
 ```
 
 ## Kubernetes
-
-### Kube Files
-
-[Cloud Native Development Environment](kube-dev.yml)
 
 ### Deploy
 
 ```shell
 mvn clean package verify -DskipTests=true
-docker build -t samanalishiri/application:latest .  --no-cache
-```
-
-```shell
+docker build -t samanalishiri/application:latest . --no-cache
 kubectl apply -f kube-dev.yml
 ```
 
@@ -138,9 +127,11 @@ curl -X GET http://localhost:8080/api/v1/health-check
 
 ```shell
 kubectl delete all --all -n dev
-kubectl delete secrets dev-secrets -n dev
+kubectl delete secrets dev-credentials -n dev
 kubectl delete configMap dev-config -n dev
+kubectl delete persistentvolumeclaim database-pvc -n dev
 docker image rm samanalishiri/application:latest
+docker volume prune -f
 ```
 
 ## UI

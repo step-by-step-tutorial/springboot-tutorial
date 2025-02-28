@@ -1,4 +1,4 @@
-name: dev
+name: test
 services:
   pulsar:
     image: apachepulsar/pulsar:latest

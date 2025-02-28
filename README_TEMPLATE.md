@@ -65,7 +65,7 @@ docker volume prune -f
 
 ```shell
 mvn clean package verify -DskipTests=true
-docker compose --file ./docker-compose.yml --project-name dev up --build -d
+docker compose --file docker-compose.yml --project-name dev up --build -d
 ```
 
 ### E2eTest
