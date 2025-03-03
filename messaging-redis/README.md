@@ -121,6 +121,12 @@ kubectl get all -n dev
 ```shell
 kubectl port-forward service/application 8080:8080 -n dev
 ```
+```shell
+kubectl port-forward service/redisinsight 5540:5540 -n dev
+```
+```shell
+kubectl port-forward service/commander 8081:8081 -n dev
+```
 
 ### E2eTest
 
