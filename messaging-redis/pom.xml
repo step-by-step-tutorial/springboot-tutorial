@@ -32,6 +32,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <dependency>
@@ -55,12 +59,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.kstyrc</groupId>
-            <artifactId>embedded-redis</artifactId>
-            <version>0.6</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -68,6 +66,51 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>start-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose-test.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>test</argument>
+                                <argument>up</argument>
+                                <argument>--build</argument>
+                                <argument>-d</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose-test.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>test</argument>
+                                <argument>down</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

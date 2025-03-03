@@ -11,3 +11,21 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=root
       - RABBITMQ_DEFAULT_PASS=root
+  application:
+    image: samanalishiri/application:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: application
+    hostname: application
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      APP_PROFILES: rabbitmq
+      BROKER_HOST: rabbitmq
+      BROKER_PORT: 5672
+      BROKER_USERNAME: root
+      BROKER_PASSWORD: root

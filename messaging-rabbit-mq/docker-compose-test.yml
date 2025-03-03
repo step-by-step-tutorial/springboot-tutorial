@@ -1,4 +1,4 @@
-name: dev
+name: test
 services:
   rabbitmq:
     image: rabbitmq:management
