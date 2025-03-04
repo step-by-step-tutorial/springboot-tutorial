@@ -2,47 +2,26 @@ package com.tutorial.springboot.nosql_mongodb;
 
 import com.tutorial.springboot.nosql_mongodb.document.SampleDocument;
 import com.tutorial.springboot.nosql_mongodb.repository.SampleRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Testcontainers
 @DataMongoTest
 @ActiveProfiles("test")
 @DisplayName("unit tests of mongodb sample repository")
 class SampleRepositoryTest {
 
-    @Container
-    static final MongoDBContainer MONGODB = new MongoDBContainer("mongo:5.0.16");
-
     @Autowired
     SampleRepository systemUnderTest;
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", MONGODB::getReplicaSetUrl);
-    }
-
-    @BeforeAll
-    static void setUp() {
-        MONGODB.start();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        MONGODB.stop();
-    }
 
     /**
      * This class includes Stubs data.

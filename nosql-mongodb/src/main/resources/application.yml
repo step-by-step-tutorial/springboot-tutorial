@@ -1,17 +1,8 @@
+server:
+  address: ${APP_HOST:0.0.0.0}
+  port: ${APP_PORT:8080}
 spring:
-  data:
-    mongodb:
-      username: ${MONGO_DB_USER:root}
-      password: ${MONGO_DB_PASS:root}
-      host: ${MONGO_DB_HOST:localhost}
-      port: ${MONGO_DB_PORT:27017}
-      database: ${MONGO_DB_NAME:springboot_tutorial}
-      authentication-database: admin
+  profiles:
+    active: ${APP_PROFILES:mongo}
 
----
-spring:
-  config:
-    activate:
-      on-profile: test
 
----

@@ -125,7 +125,6 @@ docker volume prune -f
 
 * Application: [http://localhost:8080](http://localhost:8080)
 
-
 ##
 
 **<p align="center"> [Top](#title) </p>**
