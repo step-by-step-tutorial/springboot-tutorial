@@ -12,23 +12,38 @@ data:
   APP_HOST: "0.0.0.0"
   APP_PORT: "8080"
   APP_PROFILES: "mongo"
-  MONGO_DB_HOST: "localhost"
+  MONGO_DB_HOST: "mongo"
   MONGO_DB_PORT: "27017"
   MONGO_DB_NAME: "springboot_tutorial"
+  ME_CONFIG_OPTIONS_EDITORTHEME: "ambiance"
+  ME_CONFIG_BASICAUTH: "false"
   mongod.conf: |
+    # for documentation of all options, see:
+    #   http://docs.mongodb.org/manual/reference/configuration-options/
+    # Where and how to store data.
     storage:
       dbPath: /var/lib/mongodb
+    #  engine:
+    #  wiredTiger:
+    # where to write logging data.
     systemLog:
       destination: file
       logAppend: true
       path: /var/log/mongodb/mongod.log
+    # network interfaces
     net:
       port: 27017
       bindIp: 127.0.0.1
+    # how the process runs
     processManagement:
       timeZoneInfo: /usr/share/zoneinfo
     security:
       authorization: enabled
+    #operationProfiling:
+    #replication:
+    #sharding:
+    ## Enterprise-Only Options:
+    #auditLog:
 ---
 apiVersion: v1
 kind: Secret
@@ -37,13 +52,20 @@ metadata:
   namespace: dev
 type: Opaque
 data:
-  MONGO_INITDB_ROOT_USERNAME: cm9vdA== # root
-  MONGO_INITDB_ROOT_PASSWORD: cm9vdA== # root
-  ME_CONFIG_MONGODB_ADMINUSERNAME: cm9vdA== # root
-  ME_CONFIG_MONGODB_ADMINPASSWORD: cm9vdA== # root
-  MONGO_DB_USER: cm9vdA== # root
-  MONGO_DB_PASS: cm9vdA== # root
-  ME_CONFIG_MONGODB_URL: bW9uZ29kYjovL3Jvb3Q6cm9vdEBtb25nbzoyNzAxNw== # mongodb://root:root@mongo:27017
+  #root
+  MONGO_INITDB_ROOT_USERNAME: cm9vdA==
+  #root
+  MONGO_INITDB_ROOT_PASSWORD: cm9vdA==
+  #root
+  ME_CONFIG_MONGODB_ADMINUSERNAME: cm9vdA==
+  #root
+  ME_CONFIG_MONGODB_ADMINPASSWORD: cm9vdA==
+  #root
+  MONGO_DB_USER: cm9vdA==
+  #root
+  MONGO_DB_PASS: cm9vdA==
+  #mongodb://root:root@mongo:27017
+  ME_CONFIG_MONGODB_URL: bW9uZ29kYjovL3Jvb3Q6cm9vdEBtb25nbzoyNzAxNw==
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -129,6 +151,8 @@ spec:
           envFrom:
             - secretRef:
                 name: dev-credentials
+            - configMapRef:
+                name: dev-config
 ---
 apiVersion: v1
 kind: Service
