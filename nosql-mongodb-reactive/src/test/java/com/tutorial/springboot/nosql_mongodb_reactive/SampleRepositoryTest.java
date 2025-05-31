@@ -2,47 +2,24 @@ package com.tutorial.springboot.nosql_mongodb_reactive;
 
 import com.tutorial.springboot.nosql_mongodb_reactive.document.SampleDocument;
 import com.tutorial.springboot.nosql_mongodb_reactive.repository.SampleRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Testcontainers
 @DataMongoTest
 @ActiveProfiles("test")
-@DisplayName("unit tests of reactive mongodb sample repository")
 class SampleRepositoryTest {
-
-    @Container
-    static final MongoDBContainer MONGODB = new MongoDBContainer("mongo:5.0.16");
 
     @Autowired
     SampleRepository systemUnderTest;
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", MONGODB::getReplicaSetUrl);
-    }
-
-    @BeforeAll
-    static void setUp() {
-        MONGODB.start();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        MONGODB.stop();
-    }
 
     /**
      * This class includes Stubs data.
@@ -60,7 +37,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of save")
     class SaveTest {
 
         @BeforeEach
@@ -69,7 +45,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("save a document when there is no exception")
         void shouldReturnDocumentWithIdBySuccessfulSave() {
             final var givenDocument = StubFixturesFactory.SAMPLE_DOCUMENT;
 
@@ -83,7 +58,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of find")
     class FindTest {
 
         String id;
@@ -97,7 +71,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("find one document by given Id")
         void shouldReturnModelByGivenId() {
             final var givenId = id;
 

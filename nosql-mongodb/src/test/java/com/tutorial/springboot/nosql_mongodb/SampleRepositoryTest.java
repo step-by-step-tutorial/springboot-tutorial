@@ -3,7 +3,6 @@ package com.tutorial.springboot.nosql_mongodb;
 import com.tutorial.springboot.nosql_mongodb.document.SampleDocument;
 import com.tutorial.springboot.nosql_mongodb.repository.SampleRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataMongoTest
 @ActiveProfiles("test")
-@DisplayName("unit tests of mongodb sample repository")
 class SampleRepositoryTest {
 
     @Autowired
@@ -39,7 +37,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of save")
     class SaveTest {
 
         @BeforeEach
@@ -48,7 +45,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("save a document when there is no exception")
         void shouldReturnDocumentWithIdBySuccessfulSave() {
             final var givenDocument = StubFixturesFactory.SAMPLE_DOCUMENT;
 
@@ -60,7 +56,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of find")
     class FindTest {
 
         String id;
@@ -72,7 +67,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("find one document by given Id")
         void shouldReturnModelByGivenId() {
             final var givenId = id;
 

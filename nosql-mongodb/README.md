@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and MongoDB.
+This tutorial is about the integration of Spring Boot and MongoDB.
 
 </p>
 
@@ -109,8 +109,13 @@ kubectl get all -n dev
 ```shell
 kubectl port-forward service/application 8080:8080 -n dev
 ```
+
 ```shell
 kubectl port-forward service/mongo-express 8081:8081 -n dev
+```
+
+```shell
+kubectl port-forward service/mongo 27017:27017 -n dev
 ```
 
 ### E2eTest

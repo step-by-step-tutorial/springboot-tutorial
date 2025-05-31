@@ -2,15 +2,15 @@ package com.tutorial.springboot.nosql_redis;
 
 import com.tutorial.springboot.nosql_redis.model.SampleModel;
 import com.tutorial.springboot.nosql_redis.repository.SampleRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import redis.embedded.RedisServer;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,37 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("jedis")
-@DisplayName("unit tests of redis sample repository")
 class SampleRepositoryTest {
 
     static final Logger LOGGER = LoggerFactory.getLogger(SampleRepositoryTest.class);
 
-    static RedisServer redisServer;
-
     @Autowired
     SampleRepository systemUnderTest;
-
-    static {
-        try {
-            redisServer = new RedisServer(6379);
-        } catch (IOException exception) {
-            LOGGER.error("construction of the Redis server failed due to: {}", exception.getMessage());
-        }
-    }
-
-    @BeforeAll
-    static void setUp() {
-        redisServer.start();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        try {
-            redisServer.stop();
-        } catch (Exception exception) {
-            LOGGER.error("stopping embedded Redis server failed due to: {}", exception.getMessage());
-        }
-    }
 
     /**
      * This class includes Stub data.
@@ -65,7 +40,6 @@ class SampleRepositoryTest {
 
 
     @Nested
-    @DisplayName("nested unit tests of save")
     class SaveTest {
 
         @BeforeEach
@@ -74,7 +48,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("save a model when there is no exception")
         void shouldReturnIdBySuccessfulSave() {
             final var givenModel = StubFixturesFactory.SAMPLE_MODEL;
 
@@ -90,7 +63,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of find")
     class FindTest {
 
         String id = "";
@@ -102,7 +74,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("find one model by given Key")
         void shouldReturnModelByGivenKey() {
             final var givenId = id;
 
@@ -123,7 +94,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of update")
     class UpdateTest {
         String id = "";
 
@@ -134,7 +104,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("update one model by given new values")
         void shouldUpdateModelInDatabaseByGivenNewValues() {
             final var givenId = id;
             final var givenNewName = "updated name";
@@ -167,7 +136,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of delete")
     class DeleteTest {
         String id = "";
 
@@ -178,7 +146,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("delete one model by given Id")
         void shouldDeleteModelFromDatabaseByGivenId() {
             final var givenId = id;
 
