@@ -2,14 +2,13 @@ package com.tutorial.springboot.nosql_redis_reactive;
 
 import com.tutorial.springboot.nosql_redis_reactive.entity.SampleModel;
 import com.tutorial.springboot.nosql_redis_reactive.repository.SampleRepository;
-import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import redis.embedded.RedisServer;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,18 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DisplayName("unit tests of reactive redis sample repository")
 class SampleRepositoryTest {
-
-    static final Logger LOGGER = LoggerFactory.getLogger(SampleRepositoryTest.class);
-
-    static RedisServer redisServer;
-
-    static {
-        try {
-            redisServer = new RedisServer(6379);
-        } catch (IOException exception) {
-            LOGGER.error("construction of the Redis server failed due to: {}", exception.getMessage());
-        }
-    }
 
     @Autowired
     SampleRepository systemUnderTest;
@@ -44,20 +31,6 @@ class SampleRepositoryTest {
                 .setName("name")
                 .setCode(1)
                 .setDatetime(NOW);
-    }
-
-    @BeforeAll
-    static void setUp() {
-        redisServer.start();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        try {
-            redisServer.stop();
-        } catch (Exception exception) {
-            LOGGER.error("stopping embedded Redis server failed due to: {}", exception.getMessage());
-        }
     }
 
     @Nested

@@ -148,8 +148,7 @@ docker volume prune -f
 
 ### Redisinsight
 
-In order to connect to redis by Redisinsight through the web browser
-open [http://localhost:5540](http://localhost:5540).
+To connect to redis by Redisinsight through the web browser, open [http://localhost:5540](http://localhost:5540).
 
 <p align="center">
 
@@ -158,11 +157,11 @@ open [http://localhost:5540](http://localhost:5540).
 </p>
 
 Then select "Add connection details manually" and enter redis as host and 6379 for port. Also, you can enter an alias
-for database.
+for a database.
 
 ### Commander
 
-In order to connect to redis by Commander through the web browser, open [http://localhost:8081](http://localhost:8081).
+To connect to redis by Commander through the web browser, open [http://localhost:8081](http://localhost:8081).
 
 ##
 
