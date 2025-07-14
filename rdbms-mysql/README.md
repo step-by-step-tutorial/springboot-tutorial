@@ -167,7 +167,8 @@ There are a few parameters included in the connection string of MySQL as follows
 
 After installing MySQL, you can work with the MySQL service from the command line.
 
-Use `mysql -u root -p -h localhost` to connect to the MySQL database in `localhost` (you will need the password for user `root`).
+Use `mysql -u root -p -h localhost` to connect to the MySQL database in `localhost` (you will need the password for user
+`root`).
 
 ```shell
 # try to connect

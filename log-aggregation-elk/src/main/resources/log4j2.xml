@@ -21,8 +21,9 @@
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-        <Socket name="SocketAppender" host="${TCP_LOGGER_HOST}" port="${TCP_LOGGER_PORT}" bufferSize="1" ignoreExceptions="true">
-            <PatternLayout pattern="${LOG_PATTERN}" />
+        <Socket name="SocketAppender" host="${TCP_LOGGER_HOST}" port="${TCP_LOGGER_PORT}" bufferSize="1"
+                ignoreExceptions="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
             <ConnectTimeoutMillis>${TCP_LOGGER_RECONNECT_DELAY}</ConnectTimeoutMillis>
             <ReconnectDelayMillis>${TCP_LOGGER_RECONNECT_DELAY}</ReconnectDelayMillis>
         </Socket>

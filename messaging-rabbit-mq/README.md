@@ -130,7 +130,6 @@ docker volume prune -f
 * Application: [http://localhost:8080](http://localhost:8080)
 * RabbitMQ: [http://localhost:5672](http://localhost:5672)
 
-
 ##
 
 **<p align="center"> [Top](#integration-of-spring-boot-and-rabbitmq) </p>**

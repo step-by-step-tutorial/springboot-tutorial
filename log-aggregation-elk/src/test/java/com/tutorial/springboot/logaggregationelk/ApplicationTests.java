@@ -1,7 +1,6 @@
 package com.tutorial.springboot.logaggregationelk;
 
 import io.restassured.RestAssured;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;

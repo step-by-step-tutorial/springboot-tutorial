@@ -24,7 +24,6 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-
 ### Build
 
 ```shell

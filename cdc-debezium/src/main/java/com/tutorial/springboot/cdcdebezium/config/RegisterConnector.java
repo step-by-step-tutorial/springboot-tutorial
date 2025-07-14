@@ -60,7 +60,7 @@ public class RegisterConnector {
                             .block();
                     if (registrationResponse != null && registrationResponse.contains(connectorName)) {
                         logger.info("The connector {} registered already.", connectorName);
-                    }else {
+                    } else {
                         webClient.post()
                                 .uri(registerPath)
                                 .bodyValue(connector.toString())

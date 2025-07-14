@@ -10,7 +10,7 @@ metadata:
   name: dev-credentials
   namespace: dev
 type: Opaque
-data: {}
+data: { }
 ---
 apiVersion: v1
 kind: ConfigMap

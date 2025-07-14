@@ -3,7 +3,6 @@ package com.tutorial.springboot.artemismq.api;
 import com.tutorial.springboot.artemismq.model.MessageModel;
 import com.tutorial.springboot.artemismq.service.MainQueueService;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

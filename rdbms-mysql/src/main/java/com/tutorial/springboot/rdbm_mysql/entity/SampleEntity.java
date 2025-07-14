@@ -84,10 +84,10 @@ public class SampleEntity {
     @Override
     public String toString() {
         return "Sample Entity: {"
-                + "id:" + id
-                + ", username:" + name
-                + ", code:" + code
-                + ", date:" + datetime
-                + "}";
+               + "id:" + id
+               + ", username:" + name
+               + ", code:" + code
+               + ", date:" + datetime
+               + "}";
     }
 }

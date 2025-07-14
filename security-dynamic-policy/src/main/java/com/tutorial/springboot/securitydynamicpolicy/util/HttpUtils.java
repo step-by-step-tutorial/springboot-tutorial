@@ -1,6 +1,5 @@
 package com.tutorial.springboot.securitydynamicpolicy.util;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;

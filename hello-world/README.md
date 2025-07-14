@@ -9,7 +9,6 @@ This is the first step of the Spring Boot tutorial. The result is printing `Hell
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-
 ### Build
 
 ```bash

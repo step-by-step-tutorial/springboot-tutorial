@@ -101,6 +101,7 @@ docker compose --file docker-compose.yml --project-name dev down
 docker image rm samanalishiri/application:latest
 docker volume prune -f
 ```
+
 ## Kubernetes
 
 ### Deploy
@@ -110,9 +111,11 @@ mvn clean package verify -DskipTests=true
 docker build -t samanalishiri/application:latest .  --no-cache
 kubectl apply -f kube-dev.yml
 ```
+
 ```shell
 kubectl apply -f kube-dev.yml
 ```
+
 ### Check Status
 
 ```shell

@@ -9,7 +9,7 @@ metadata:
   name: dev-credentials
   namespace: dev
 type: Opaque
-data: {}
+data: { }
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -40,7 +40,7 @@ spec:
           image: redis:latest
           ports:
             - containerPort: 6379
-          env: []
+          env: [ ]
 ---
 apiVersion: v1
 kind: Service
@@ -123,7 +123,7 @@ spec:
           image: redislabs/redisinsight:latest
           ports:
             - containerPort: 5540
-          env: []
+          env: [ ]
 ---
 apiVersion: v1
 kind: Service
