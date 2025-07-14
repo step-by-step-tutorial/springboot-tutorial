@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    username: ${ORACLE_USER:system}
+    password: ${ORACLE_PASSWORD:password}
+    url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${ORACLE_DATABASE:xepdb1}
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: ORACLE
+    database-platform: org.hibernate.dialect.OracleDialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      javax:
+        persistence:
+          create-database-schemas: true
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        default_schema: ${spring.datasource.username} 
