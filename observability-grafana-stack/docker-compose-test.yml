@@ -1,4 +1,4 @@
-name: dev
+name: test
 services:
   loki:
     image: grafana/loki
@@ -48,21 +48,3 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "3000:3000"
-  application:
-    image: samanalishiri/application:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: application
-    hostname: application
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      APP_HOST: "0.0.0.0"
-      APP_PORT: "8080"
-      APP_PROFILES: grafana
-      TEMPO_ZIPKIN: http://localhost:9411/api/v2/spans
-      TEMPO_HTTP: http://localhost:4318/v1/metrics
-    depends_on:
-      - loki

@@ -1,0 +1,284 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dev-credentials
+  namespace: dev
+type: Opaque
+data: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-config
+  namespace: dev
+data:
+  GF_AUTH_ANONYMOUS_ENABLED: "true"
+  GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+  GF_AUTH_DISABLE_LOGIN_FORM: "true"
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: grafana
+  TEMPO_ZIPKIN: "http://localhost:9411/api/v2/spans"
+  TEMPO_HTTP: "http://localhost:4318/v1/metrics"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+  template:
+    metadata:
+      labels:
+        app: loki
+    spec:
+      containers:
+        - name: loki
+          image: grafana/loki
+          command:
+            - -config.file=/etc/loki/local-config.yaml
+          ports:
+            - containerPort: 3100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+  namespace: dev
+spec:
+  selector:
+    app: loki
+  ports:
+    - port: 3100
+      targetPort: 3100
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempo
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tempo
+  template:
+    metadata:
+      labels:
+        app: tempo
+    spec:
+      containers:
+        - name: tempo
+          image: grafana/tempo
+          command:
+            - -config.file=/etc/tempo.yaml
+          ports:
+            - containerPort: 3200
+            - containerPort: 4317
+            - containerPort: 4318
+            - containerPort: 9411
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempo
+  namespace: dev
+spec:
+  selector:
+    app: tempo
+  ports:
+    - port: 3200
+      targetPort: 3200
+    - port: 4317
+      targetPort: 4317
+    - port: 4318
+      targetPort: 4318
+    - port: 9411
+      targetPort: 9411
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.46.0
+          command:
+            - --enable-feature=exemplar-storage
+            - --config.file=/etc/prometheus/prometheus.yml
+          ports:
+            - containerPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: dev
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pyroscope
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pyroscope
+  template:
+    metadata:
+      labels:
+        app: pyroscope
+    spec:
+      containers:
+        - name: pyroscope
+          image: grafana/pyroscope
+          ports:
+            - containerPort: 4040
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyroscope
+  namespace: dev
+spec:
+  selector:
+    app: pyroscope
+  ports:
+    - port: 4040
+      targetPort: 4040
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana
+          env:
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: GF_AUTH_ANONYMOUS_ENABLED
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: GF_AUTH_ANONYMOUS_ORG_ROLE
+            - name: GF_AUTH_DISABLE_LOGIN_FORM
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: GF_AUTH_DISABLE_LOGIN_FORM
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: dev
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application
+  template:
+    metadata:
+      labels:
+        app: application
+    spec:
+      containers:
+        - name: application
+          image: samanalishiri/application:latest
+          env:
+            - name: APP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: APP_HOST
+            - name: APP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: APP_PORT
+            - name: APP_PROFILES
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: APP_PROFILES
+            - name: TEMPO_ZIPKIN
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: TEMPO_ZIPKIN
+            - name: TEMPO_HTTP
+              valueFrom:
+                configMapKeyRef:
+                  name: dev-config
+                  key: TEMPO_HTTP
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application
+  namespace: dev
+spec:
+  selector:
+    app: application
+  ports:
+    - port: 8080
+      targetPort: 8080

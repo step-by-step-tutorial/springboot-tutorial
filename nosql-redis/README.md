@@ -18,6 +18,13 @@ For more information about Redis see the [https://redis.io](https://redis.io).
 
 </p>
 
+## <p align="center"> Table of Content </p>
+
+* [Getting Started](#getting-started)
+* [Dockerized](#dockerized)
+* [Kubernetes](#install-redis-on-kubernetes)
+* [UI](#ui)
+
 ## Getting Started
 
 ### Prerequisites
