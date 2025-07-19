@@ -11,12 +11,18 @@ metadata:
   namespace: dev
 type: Opaque
 data:
+  # value: database
   # value: root
   MYSQL_ROOT_PASSWORD: cm9vdA==
   # value: user
   MYSQL_USERNAME: dXNlcg==
   # value: password
   MYSQL_PASSWORD: cGFzc3dvcmQ=
+  # application
+  # value: user
+  DATABASE_USERNAME: dXNlcg==
+  # value: password
+  DATABASE_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -24,12 +30,47 @@ metadata:
   name: dev-config
   namespace: dev
 data:
+  # database
   MYSQL_DATABASE: "tutorial_db"
   initdb.sql: |-
     CREATE USER IF NOT EXISTS 'user' IDENTIFIED BY 'password';
     GRANT REPLICATION CLIENT, RELOAD, REPLICATION SLAVE ON *.* TO 'user'@'%';
     GRANT ALL ON `tutorial_db`.* TO 'user'@'%';
     FLUSH PRIVILEGES;
+  # Zookeeper configs
+  ALLOW_ANONYMOUS_LOGIN: "yes"
+  # Kafka configs
+  KAFKA_CFG_BROKER_ID: "1"
+  KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper-service:2181"
+  KAFKA_CFG_LISTENERS: "LOCALHOST://:9092,CONTAINER://:9093"
+  KAFKA_CFG_ADVERTISED_LISTENERS: "LOCALHOST://localhost:9092,CONTAINER://kafka-service:9093"
+  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT"
+  KAFKA_CFG_INTER_BROKER_LISTENER_NAME: "LOCALHOST"
+  ALLOW_PLAINTEXT_LISTENER: "yes"
+  # Kafdrop configs
+  KAFKA_BROKERCONNECT: "kafka-service:9093"
+  JVM_OPTS: "-Xms32M -Xmx64M"
+  # Debezium configs
+  GROUP_ID: "1"
+  CONFIG_STORAGE_TOPIC: "debezium-config"
+  OFFSET_STORAGE_TOPIC: "debezium-offset"
+  STATUS_STORAGE_TOPIC: "debezium-status"
+  BOOTSTRAP_SERVERS: "kafka-service:9093"
+  # Debezium UI configs
+  KAFKA_CONNECT_URIS: "http://debezium:8083"
+  # Application configs
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: "mysql,kafka,debezium"
+  DATABASE_HOST: "mysql"
+  DATABASE_PORT: "3306"
+  DATABASE_NAME: "tutorial_db"
+  KAFKA_TOPIC_NAME: "cdc.tutorial_db.example_table"
+  KAFKA_GROUP_ID: "cdc.tutorial_db.main-group"
+  KAFKA_URL: "kafka-service:9093"
+  DEBEZIUM_URL: "http://debezium:8083"
+  DEBEZIUM_REGISTER_PATH: "/connectors"
+  DEBEZIUM_CONNECTORS_FILE: "debezium-connectors-kube.json"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -71,28 +112,11 @@ spec:
         - image: mysql:8.0
           name: mysql
           imagePullPolicy: "IfNotPresent"
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_ROOT_PASSWORD
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_USERNAME
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_PASSWORD
-            - name: MYSQL_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: MYSQL_DATABASE
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
           ports:
             - name: mysql
               containerPort: 3306
@@ -101,11 +125,16 @@ spec:
               mountPath: /var/lib/mysql
             - name: database-initdb
               mountPath: /docker-entrypoint-initdb.d
+            - name: config
+              mountPath: /config
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: database-pvc
         - name: database-initdb
+          configMap:
+            name: dev-config
+        - name: config
           configMap:
             name: dev-config
 ---
@@ -179,15 +208,20 @@ spec:
           image: bitnami/zookeeper:3.9.0
           ports:
             - containerPort: 2181
-          env:
-            - name: ALLOW_ANONYMOUS_LOGIN
-              value: "yes"
+          envFrom:
+            - configMapRef:
+                name: dev-config
           volumeMounts:
             - name: zookeeper-data
               mountPath: /bitnami
+            - name: config
+              mountPath: /config
       volumes:
         - name: zookeeper-data
           emptyDir: { }
+        - name: config
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -222,27 +256,20 @@ spec:
           ports:
             - containerPort: 9092
             - containerPort: 9093
-          env:
-            - name: KAFKA_CFG_BROKER_ID
-              value: "1"
-            - name: ALLOW_PLAINTEXT_LISTENER
-              value: "yes"
-            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
-              value: "zookeeper-service:2181"
-            - name: KAFKA_CFG_LISTENERS
-              value: "LOCALHOST://:9092,CONTAINER://:9093"
-            - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: "LOCALHOST://localhost:9092,CONTAINER://kafka-service:9093"
-            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
-              value: "LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT"
-            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
-              value: "LOCALHOST"
+          envFrom:
+            - configMapRef:
+                name: dev-config
           volumeMounts:
             - name: kafka-data
               mountPath: /bitnami
+            - name: config
+              mountPath: /config
       volumes:
         - name: kafka-data
           emptyDir: { }
+        - name: config
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -280,11 +307,16 @@ spec:
           image: obsidiandynamics/kafdrop:latest
           ports:
             - containerPort: 9000
-          env:
-            - name: KAFKA_BROKERCONNECT
-              value: "kafka-service:9093"
-            - name: JVM_OPTS
-              value: "-Xms32M -Xmx64M"
+          envFrom:
+            - configMapRef:
+                name: dev-config
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -321,17 +353,16 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 8083
-          env:
-            - name: GROUP_ID
-              value: "1"
-            - name: CONFIG_STORAGE_TOPIC
-              value: debezium-config
-            - name: OFFSET_STORAGE_TOPIC
-              value: debezium-offset
-            - name: STATUS_STORAGE_TOPIC
-              value: debezium-status
-            - name: BOOTSTRAP_SERVERS
-              value: "kafka-service:9093"
+          envFrom:
+            - configMapRef:
+                name: dev-config
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -365,9 +396,16 @@ spec:
           image: debezium/debezium-ui:latest
           ports:
             - containerPort: 8080
-          env:
-            - name: KAFKA_CONNECT_URIS
-              value: http://debezium:8083
+          envFrom:
+            - configMapRef:
+                name: dev-config
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -404,35 +442,18 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 8080
-          env:
-            - name: APP_HOST
-              value: "0.0.0.0"
-            - name: APP_PORT
-              value: "8080"
-            - name: APP_PROFILES
-              value: mysql,kafka,debezium
-            - name: DATABASE_USERNAME
-              value: user
-            - name: DATABASE_PASSWORD
-              value: password
-            - name: DATABASE_HOST
-              value: mysql
-            - name: DATABASE_PORT
-              value: "3306"
-            - name: DATABASE_NAME
-              value: tutorial_db
-            - name: KAFKA_TOPIC_NAME
-              value: cdc.tutorial_db.example_table
-            - name: KAFKA_GROUP_ID
-              value: cdc.tutorial_db.main-group
-            - name: KAFKA_URL
-              value: "kafka-service:9093"
-            - name: DEBEZIUM_URL
-              value: "http://debezium:8083"
-            - name: DEBEZIUM_REGISTER_PATH
-              value: /connectors
-            - name: DEBEZIUM_CONNECTORS_FILE
-              value: debezium-connectors-kube.json
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: dev-config
 
 ---
 apiVersion: v1
