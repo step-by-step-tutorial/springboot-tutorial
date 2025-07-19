@@ -1,8 +1,9 @@
+# <p align="center">CDC</p>
 # <p align="center">Integration of Spring Boot and Debezium</p>
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and Debezium to capture changed data.
+This tutorial is about the integration of Spring Boot and Debezium to capture changed data.
 In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 
 </p>
@@ -123,7 +124,7 @@ kubectl get all -n dev
 ```shell
 POD_NAME=mysql
 POD_FULL_NAME=$(kubectl get pods -n dev | grep $POD_NAME | awk '{print $1}')
-kubectl exec -it $POD_FULL_NAME  -n dev -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
+kubectl exec -it $POD_FULL_NAME -n dev -c mysql -- mysql -u user -ppassword -h localhost -e "USE tutorial_db; INSERT INTO example_table (id, code, name, datetime) VALUES (100, 100, 'example name 100', CURRENT_TIMESTAMP);"
 ```
 
 ### Port-Forwarding

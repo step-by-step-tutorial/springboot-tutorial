@@ -17,7 +17,7 @@ class DebeziumTest {
     @Test
     void whenInsertIntoDatabase_thenReceivedMessageFromKafkaTopic() {
 
-        var givenId = runMysqlNextId(CONTAINER_NAME, USERNAME, PASSWORD, DATABASE_NAME, SEQUENCE_NAME);
+        var givenId = fetchMysqlNextId(CONTAINER_NAME, USERNAME, PASSWORD, DATABASE_NAME, SEQUENCE_NAME);
         var givenCode = fixture.number().randomDigit();
         var givenName = fixture.name().fullName();
 

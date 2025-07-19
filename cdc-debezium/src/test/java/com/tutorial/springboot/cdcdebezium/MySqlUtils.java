@@ -42,7 +42,7 @@ public final class MySqlUtils {
         }
     }
 
-    public static long runMysqlNextId(String containerName, String username, String password, String databaseName, String sequenceName) {
+    public static long fetchMysqlNextId(String containerName, String username, String password, String databaseName, String sequenceName) {
 
         var currentId = currentId(containerName, username, password, databaseName, sequenceName);
         var nextId = incrementId(containerName, username, password, databaseName, sequenceName, currentId);
