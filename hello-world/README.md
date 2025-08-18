@@ -11,60 +11,20 @@ This is the first step of the Spring Boot tutorial. The result is printing `Hell
 
 ### Build
 
-```bash
-mvn clean package -DskipTests=true
+```shell
+mvn validate clean compile 
 ```
 
 ### Test
 
 ```shell
-mvn  test
+mvn test
 ```
 
-### Run
+### Package
 
 ```shell
-mvn  spring-boot:run
-```
-
-## How To Set up Spring Boot
-
-### Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-
-```
-
-### Implementation
-
-```java
-package com.tutorial.springboot.helloworld;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class Application {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-        System.out.println("Hello World!");
-    }
-
-}
-
+mvn package -DskipTests=true
 ```
 
 ##
