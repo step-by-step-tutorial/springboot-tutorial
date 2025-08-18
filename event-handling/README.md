@@ -10,12 +10,10 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-    * [Dependencies](#dependencies)
-    * [Implementation](#implementation)
-        * [Event](#event)
-        * [Listener](#listener)
-        * [Publisher](#publisher)
+* [spring Boot](#spring-boot)
+    * [Event](#event)
+    * [Listener](#listener)
+    * [Publisher](#publisher)
 
 ## Getting Started
 
@@ -27,7 +25,7 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 ### Build
 
 ```shell
-mvn clean package -DskipTests=true
+mvn validate clean compile 
 ```
 
 ### Test
@@ -36,48 +34,27 @@ mvn clean package -DskipTests=true
 mvn test
 ```
 
-### Run
+### Package
 
 ```shell
-mvn spring-boot:run
+mvn package -DskipTests=true
 ```
 
-## How To Set up Spring Boot
+## Spring Boot
 
-### Dependencies
-
-Add the following dependencies to the POM file of Maven project.
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-```
-
-### Implementation
-
-#### Event
+### Event
 
 There are two mechanisms in the Spring Boot to define an event. One solution is, create a java bean and another one is,
 create a class extended from `ApplicationEvent`.
 
-##### _Java Bean_
+#### _Java Bean_
 
 ```java
 public record EventModel(String text) {
 }
 ```
 
-##### _ApplicationEvent_
+#### _ApplicationEvent_
 
 ```java
 import org.springframework.context.ApplicationEvent;
@@ -90,7 +67,7 @@ public class EventModel extends ApplicationEvent {
 }
 ```
 
-#### Listener
+### Listener
 
 <p align="justify">
 
@@ -99,7 +76,7 @@ async listener with using `@Async`.
 
 </p>
 
-##### _Annotation Driven_
+#### _Annotation Driven_
 
 ```java
 //Sync listener
@@ -133,7 +110,7 @@ public class EventHandler {
 }
 ```
 
-##### _Programmatically_
+#### _Programmatically_
 
 ```java
 import org.springframework.context.ApplicationListener;
@@ -149,7 +126,7 @@ class EventHandler implements ApplicationListener<EventModel> {
 }
 ```
 
-#### Publisher
+### Publisher
 
 Publisher is used to publish/dispatch events and, the Spring Boot has a class named `ApplicationEventPublisher` to do
 that.

@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class EventSubscriberTest {
 
     @Autowired
-    ApplicationEventPublisher publisher;
+    ApplicationEventPublisher testEventPublisherAssistant;
 
     @Autowired
-    private TestLogRepository testLogRepository;
+    TestLogRepository testLogRepositoryAssistant;
 
     @Test
     @DisplayName("should receive an event")
@@ -30,8 +30,8 @@ class EventSubscriberTest {
 
         final var actual = assertDoesNotThrow(() ->
                 {
-                    publisher.publishEvent(givenEvent);
-                    return testLogRepository.getMessages();
+                    testEventPublisherAssistant.publishEvent(givenEvent);
+                    return testLogRepositoryAssistant.getMessages();
                 }
         );
 

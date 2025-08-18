@@ -17,7 +17,7 @@ class EventPublisherServiceTest {
     EventPublisherService systemUnderTest;
 
     @Autowired
-    ApplicationEvents applicationEvents;
+    ApplicationEvents testAssistant;
 
     @Test
     void shouldThrowNullPointExceptionIfEventIsNull() {
@@ -34,7 +34,7 @@ class EventPublisherServiceTest {
         final var actual = assertDoesNotThrow(
                 () -> {
                     systemUnderTest.publish(givenEvent);
-                    return applicationEvents.stream(EventModel.class).toList();
+                    return testAssistant.stream(EventModel.class).toList();
                 }
         );
 
