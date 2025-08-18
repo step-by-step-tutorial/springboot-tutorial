@@ -59,7 +59,7 @@ public class RegisterConnector {
                             .onErrorReturn("")
                             .block();
                     if (registrationResponse != null && registrationResponse.contains(connectorName)) {
-                        logger.info("The connector {} registered already.", connectorName);
+                        logger.info("The connector {} is already registered.", connectorName);
                     } else {
                         webClient.post()
                                 .uri(registerPath)

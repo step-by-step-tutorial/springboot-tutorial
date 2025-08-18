@@ -176,7 +176,7 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: docker.io/bitnami/zookeeper
+          image: bitnami/zookeeper:3.9.0
           ports:
             - containerPort: 2181
           env:
@@ -218,7 +218,7 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: docker.io/bitnami/kafka
+          image: bitnami/kafka:3.9.0
           ports:
             - containerPort: 9092
             - containerPort: 9093
