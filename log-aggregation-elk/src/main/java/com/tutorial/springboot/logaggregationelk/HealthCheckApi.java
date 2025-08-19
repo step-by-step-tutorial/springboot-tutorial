@@ -1,6 +1,7 @@
 package com.tutorial.springboot.logaggregationelk;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/health-check")
 public class HealthCheckApi {
 
-    private final Logger logger = org.slf4j.LoggerFactory.getLogger(HealthCheckApi.class);
+    private final Logger logger = LoggerFactory.getLogger(HealthCheckApi.class);
 
     @GetMapping
     public ResponseEntity<String> checkStatus() {

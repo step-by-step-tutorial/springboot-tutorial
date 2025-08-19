@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and ELK (Elasticsearch, Logstash, Kibana). For more information about
+This tutorial is about the integration of Spring Boot and ELK (Elasticsearch, Logstash, Kibana). For more information about
 ELK see the [https://www.elastic.co](https://www.elastic.co).
 
 </p>
@@ -129,6 +129,10 @@ kubectl port-forward service/elasticsearch 9200:9200 -n dev
 ```
 
 ```shell
+kubectl port-forward service/logstash 9600:9600 -n dev
+```
+
+```shell
 kubectl port-forward service/kibana 5601:5601 -n dev
 ```
 
@@ -155,6 +159,7 @@ docker volume prune -f
 ## UI
 
 * Elasticsearch: [http://localhost:9200](http://localhost:9200)
+* Logstash: [http://localhost:9600](http://localhost:9600)
 * Kibana: [http://localhost:5601](http://localhost:5601)
 * Application: [http://localhost:8080](http://localhost:8080)
 

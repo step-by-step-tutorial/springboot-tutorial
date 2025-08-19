@@ -88,6 +88,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: dev-config
+            - secretRef:
+                name: dev-credentials
 ---
 apiVersion: v1
 kind: Service
@@ -170,20 +172,11 @@ spec:
           image: docker.elastic.co/kibana/kibana-oss:7.10.2
           ports:
             - containerPort: 5601
-          env:
-            - name: ELASTICSEARCH_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: ELASTICSEARCH_USERNAME
-            - name: ELASTICSEARCH_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: ELASTICSEARCH_PASSWORD
           envFrom:
             - configMapRef:
                 name: dev-config
+            - secretRef:
+                name: dev-credentials
           volumeMounts:
             - name: dev-config
               mountPath: /usr/share/kibana/config/kibana.yml
@@ -226,22 +219,13 @@ spec:
           ports:
             - containerPort: 5044
             - containerPort: 9600
-          env:
-            - name: ELASTICSEARCH_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: LOGSTASH_USERNAME
-            - name: ELASTICSEARCH_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: LOGSTASH_PASSWORD
           envFrom:
             - configMapRef:
                 name: dev-config
+            - secretRef:
+                name: dev-credentials
           volumeMounts:
-            - name: logstash-pipeline
+            - name: dev-config
               mountPath: /usr/share/logstash/pipeline/logstash.conf
               subPath: logstash.conf
           readinessProbe:
@@ -251,7 +235,7 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 10
       volumes:
-        - name: logstash-pipeline
+        - name: dev-config
           configMap:
             name: dev-config
 ---
