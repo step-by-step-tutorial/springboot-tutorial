@@ -11,7 +11,7 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 
 * [Getting Started](#getting-started)
 * [Log Level](#log-level)
-* [Log4j](#log4j)
+* [Apache Log4j2](#apache-log4j2)
 
 ## Getting Started
 
@@ -52,7 +52,7 @@ To filter log messages according to their importance or severity.
  If log level is ALL    =>  log everything such as errors, warns, etc
 ```
 
-## Log4j
+## Apache Log4j2
 
 ### Dependencies
 
@@ -78,7 +78,7 @@ The default logger must be excluded.
 </dependencies>
 ```
 
-### Log4j Properties
+### Configs (log4j2.xml)
 
 Add `log4j2.xml` to the **resources** directory.
 

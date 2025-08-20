@@ -2,7 +2,8 @@
 
 <p align="justify">
 
-Log4j is a log framework and this tutorial shows how should be integrated Spring Boot 3 and Log4j2 to send logs to a
+Log4j is a log framework, and this tutorial shows how it should be integrated with Spring Boot 3 and Log4j2 to send logs
+to a
 database. For more information see [https://logging.apache.org/log4j/2.x](https://logging.apache.org/log4j/2.x).
 
 </p>
@@ -11,7 +12,9 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
-* [Application Config](#application-config)
+* [Kubernetes](#kubernetes)
+* [UI](#ui)
+* [Apache Log4j2](#apache-log4j2)
 
 ## Getting Started
 
@@ -20,6 +23,7 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 * [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 * [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
 
 ### Build
 
@@ -55,6 +59,10 @@ docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE tutorial_db; 
 
 ```shell
 mvn  spring-boot:stop
+```
+
+```shell
+docker exec -i mysql mysql -h localhost -u user -ppassword -e "USE tutorial_db; TRUNCATE TABLE LOG_TABLE;"
 ```
 
 ### Verify
@@ -114,6 +122,10 @@ kubectl exec -it $POD_FULL_NAME  -n dev -c mysql -- mysql -u user -ppassword -h 
 ### Port Forwarding
 
 ```shell
+kubectl port-forward service/mysql 3306:3306 -n dev
+```
+
+```shell
 kubectl port-forward service/adminer 8081:8081 -n dev
 ```
 
@@ -130,20 +142,7 @@ docker volume prune -f
 
 ## UI
 
-### MySQL Workbench
-
-Open [http://localhost:3000](http://localhost:3000) in the browser to access MySQL Workbench dashboard.
-
-```yaml
-Hostname: mysql
-Port: 3306
-Username: user
-Password: password
-```
-
-### Adminer
-
-Open [http://localhost:8081](http://localhost:8081) in the browser to access MySQL Workbench dashboard.
+Adminer: [http://localhost:8081](http://localhost:8081)
 
 ```yaml
 Server: mysql:3306
@@ -151,7 +150,7 @@ Username: user
 Password: password
 ```
 
-## Application Config
+## Apache Log4j2
 
 ### Dependencies
 
@@ -180,7 +179,7 @@ Password: password
 </dependencies>
 ```
 
-### Apache Log4j2 (log4j2.xml)
+### Apache Log4j2 (log4j2.xml) and Database Appender
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -231,16 +230,16 @@ Password: password
 
 ### Init MySQL
 
-This session already done in deploy time, therefore the description is only for more information.
+This session is already done in deployment time. Therefore, the description is only for more information.
 
 <p>
 
-After installation a MySQL database, create new user, database and create the `LOG_TABLE` table. This step apply
+After installation a MySQL database, create a new user, database and create the `LOG_TABLE` table. This step applies
 automatically in this tutorial.
 
 </p>
 
-Connect to MySQL with following command.
+Connect to MySQL with the following command.
 
 ```shell
 # try to connect to docker container

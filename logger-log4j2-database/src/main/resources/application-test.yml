@@ -1,0 +1,6 @@
+mysql:
+  host: localhost
+  port: 3306
+  database: tutorial_db
+  user: user
+  password: password

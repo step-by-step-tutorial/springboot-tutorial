@@ -14,7 +14,7 @@ data:
   # value: root
   MYSQL_ROOT_PASSWORD: cm9vdA==
   # value: user
-  MYSQL_USERNAME: dXNlcg==
+  MYSQL_USER: dXNlcg==
   # value: password
   MYSQL_PASSWORD: cGFzc3dvcmQ=
   # value: user
@@ -89,40 +89,25 @@ spec:
         - image: mysql:8.0
           name: mysql
           imagePullPolicy: "IfNotPresent"
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_ROOT_PASSWORD
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_USERNAME
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_PASSWORD
-            - name: MYSQL_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: MYSQL_DATABASE
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
           ports:
             - name: mysql
               containerPort: 3306
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-            - name: database-initdb
-              mountPath: /docker-entrypoint-initdb.d
+            - name: dev-config
+              mountPath: /docker-entrypoint-initdb.d/initdb.sql
+              subPath: initdb.sql
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: database-pvc
-        - name: database-initdb
+        - name: dev-config
           configMap:
             name: dev-config
 ---
@@ -172,7 +157,8 @@ spec:
   selector:
     app: adminer
   ports:
-    - protocol: TCP
+    - name: adminer
+      protocol: TCP
       port: 8081
       targetPort: 8080
 ---
@@ -199,42 +185,11 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 8080
-          env:
-            - name: APP_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_HOST
-            - name: APP_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PORT
-            - name: APP_PROFILES
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PROFILES
-            - name: DATABASE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: DATABASE_USER
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: DATABASE_PASSWORD
-            - name: LOG_TABLE
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: LOG_TABLE
-            - name: DATABASE_RECONNECT_DELAY
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: DATABASE_RECONNECT_DELAY
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
 ---
 apiVersion: v1
 kind: Service
