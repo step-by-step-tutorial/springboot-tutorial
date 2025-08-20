@@ -13,7 +13,7 @@ ELK see the [https://www.elastic.co](https://www.elastic.co).
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
-* [Application Config](#application-config)
+* [ELK](#elk)
 
 ## Getting Started
 
@@ -163,7 +163,7 @@ docker volume prune -f
 * Kibana: [http://localhost:5601](http://localhost:5601)
 * Application: [http://localhost:8080](http://localhost:8080)
 
-## Application Configs
+## ELK
 
 ### Apache Log4j2 (log4j2.xml) and Socket Appender
 

@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-Log4j is a log framework and this tutorial shows how should be integrated Spring Boot 3 and Log4j2 to print logs on the
+Log4j is a log framework, and this tutorial shows how it should be integrated with Spring Boot 3 and Log4j2 to print logs on the
 console. For more information see [https://logging.apache.org/log4j/2.x](https://logging.apache.org/log4j/2.x).
 
 </p>
@@ -11,7 +11,7 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 
 * [Getting Started](#getting-started)
 * [Log Level](#log-level)
-* [Application Config](#application-config)
+* [Log4j](#log4j)
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 ### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
 ### Test
@@ -32,10 +32,10 @@ mvn clean package -DskipTests=true
 mvn test
 ```
 
-### Run
+### Package
 
 ```shell
-mvn  spring-boot:run
+mvn package -DskipTests=true
 ```
 
 ## Log Level
@@ -52,7 +52,7 @@ To filter log messages according to their importance or severity.
  If log level is ALL    =>  log everything such as errors, warns, etc
 ```
 
-## Application Config
+## Log4j
 
 ### Dependencies
 
