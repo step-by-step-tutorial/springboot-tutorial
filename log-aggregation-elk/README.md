@@ -163,31 +163,9 @@ docker volume prune -f
 * Kibana: [http://localhost:5601](http://localhost:5601)
 * Application: [http://localhost:8080](http://localhost:8080)
 
-## Application Config
+## Application Configs
 
-### Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-        <exclusions>
-            <exclusion>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-logging</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-</dependencies>
-```
-
-### Apache Log4j2 (log4j2.xml)
+### Apache Log4j2 (log4j2.xml) and Socket Appender
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -238,6 +216,8 @@ docker volume prune -f
 ### Kibana
 
 ```yaml
+# kibana.yml
+server.name: kibana
 server.host: "0.0.0.0"
 elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 ```
@@ -245,6 +225,7 @@ elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 ### Logstash
 
 ```conf
+# logstash.conf
 input {
   tcp {
       port => 5044
