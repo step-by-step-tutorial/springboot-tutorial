@@ -3,6 +3,7 @@ package com.tutorial.springboot.artemismq.api;
 import com.tutorial.springboot.artemismq.model.MessageModel;
 import com.tutorial.springboot.artemismq.service.MainQueueService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/health-check")
 public class HealthCheckApi {
 
-    private final Logger logger = org.slf4j.LoggerFactory.getLogger(HealthCheckApi.class);
+    private final Logger logger = LoggerFactory.getLogger(HealthCheckApi.class);
 
     private final MainQueueService mainQueueService;
 

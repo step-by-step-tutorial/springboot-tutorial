@@ -2,19 +2,7 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and Apache Active MQ (Artemis).
-
-</p>
-
-<p align="justify">
-
-There are two distribution of Apache Active MQ, [Classic](https://activemq.apache.org/components/classic/) and the other
-one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial used Artemis distribution. For more
-information
-see [documentation](https://activemq.apache.org/components/artemis/documentation/latest/spring-integration.html)
-
-For more information about Apache Active MQ (Artemis)  see
-the [https://activemq.apache.org/components/artemis](https://activemq.apache.org/components/artemis).
+This tutorial is about the integration of Spring Boot and Apache Active MQ (Artemis).
 
 </p>
 
@@ -24,8 +12,7 @@ the [https://activemq.apache.org/components/artemis](https://activemq.apache.org
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
-* [Application Config](#application-config)
-* [Application Config Test](#application-config-test)
+* [Artemis](#Artemis)
 
 ## Getting Started
 
@@ -149,6 +136,21 @@ docker volume prune -f
 
 * Artemis: [http://localhost:8161](http://localhost:8161)
 * Application: [http://localhost:8080](http://localhost:8080)
+
+## Artemis
+
+<p align="justify">
+
+There are two distributions of Apache Active MQ, [Classic,](https://activemq.apache.org/components/classic/) and the
+other
+one is [Artemis](https://activemq.apache.org/components/artemis/). This tutorial used Artemis distribution. For more
+information
+see the [documentation](https://activemq.apache.org/components/artemis/documentation/latest/spring-integration.html)
+
+For more information about Apache Active MQ (Artemis) see
+the [https://activemq.apache.org/components/artemis](https://activemq.apache.org/components/artemis).
+
+</p>
 
 ##
 

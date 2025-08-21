@@ -10,8 +10,8 @@ metadata:
   namespace: dev
 type: Opaque
 data:
-  ACTIVE_MQ_USER: YXJ0ZW1pcw==  # base64 encoded 'artemis'
-  ACTIVE_MQ_PASS: YXJ0ZW1pcw==  # base64 encoded 'artemis'
+  ARTEMIS_MQ_USER: YXJ0ZW1pcw==  # base64 encoded 'artemis'
+  ARTEMIS_MQ_PASS: YXJ0ZW1pcw==  # base64 encoded 'artemis'
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -87,37 +87,11 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 8080
-          env:
-            - name: APP_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_HOST
-            - name: APP_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PORT
-            - name: APP_PROFILES
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PROFILES
-            - name: ACTIVE_MQ_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: ACTIVE_MQ_USER
-            - name: ACTIVE_MQ_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: ACTIVE_MQ_PASS
-            - name: BROKER_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: BROKER_URL
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
 ---
 apiVersion: v1
 kind: Service

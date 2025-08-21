@@ -22,8 +22,8 @@ services:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
       APP_PROFILES: artemis
-      ACTIVE_MQ_USER: artemis
-      ACTIVE_MQ_PASS: artemis
+      ARTEMIS_MQ_USER: artemis
+      ARTEMIS_MQ_PASS: artemis
       BROKER_URL: tcp://artemis:61616
     depends_on:
       - artemis

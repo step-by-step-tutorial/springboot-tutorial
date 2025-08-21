@@ -1,8 +1,8 @@
 spring:
   artemis:
     mode: native
-    user: ${ACTIVE_MQ_USER:artemis}
-    password: ${ACTIVE_MQ_PASS:artemis}
+    user: ${ARTEMIS_MQ_USER:artemis}
+    password: ${ARTEMIS_MQ_PASS:artemis}
     broker-url: ${BROKER_URL:tcp://localhost:61616}
   jms:
     pub-sub-domain: true

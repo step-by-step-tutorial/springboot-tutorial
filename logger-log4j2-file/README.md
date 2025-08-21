@@ -10,7 +10,7 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [Application Config](#application-config)
+* [Apache Log4j2](#apache-log4j2)
 
 ## Getting Started
 
@@ -22,7 +22,7 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 ### Build
 
 ```shell
-mvn clean compile
+mvn validate clean compile 
 ```
 
 ### Test
@@ -40,7 +40,7 @@ mvn package -DskipTests=true
 ### Run
 
 ```shell
-mvn spring-boot:run
+mvn  spring-boot:start
 ```
 
 ### Stop
@@ -49,7 +49,7 @@ mvn spring-boot:run
 mvn spring-boot:stop
 ```
 
-## Application Config
+## Apache Log4j2
 
 ### Dependencies
 
@@ -73,7 +73,7 @@ mvn spring-boot:stop
 </dependencies>
 ```
 
-### Apache Log4j2 (log4j2.xml)
+### Apache Log4j2 (log4j2.xml) and File Appender
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
