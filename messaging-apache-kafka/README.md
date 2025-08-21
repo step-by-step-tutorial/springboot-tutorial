@@ -142,7 +142,7 @@ docker volume prune -f
 Apache Kafka is an event streaming platform. It follows a publish / subscribe pattern around streams of events. The
 Kafka
 supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
-many producer and many consumers it means there is many-to-many relation between producer and consumer based on Topic.
+many producers and many consumers it means there is many-to-many relation between producer and consumer based on Topic.
 
 For more information see the [https://kafka.apache.org](https://kafka.apache.org).
 
