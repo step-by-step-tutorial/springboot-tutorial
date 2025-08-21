@@ -9,9 +9,6 @@ metadata:
   name: dev-credentials
   namespace: dev
 type: Opaque
-data:
-  ACTIVE_MQ_USER: YXJ0ZW1pcw==  # base64 encoded 'artemis'
-  ACTIVE_MQ_PASS: YXJ0ZW1pcw==  # base64 encoded 'artemis'
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -19,20 +16,26 @@ metadata:
   name: dev-config
   namespace: dev
 data:
-  APP_HOST: "0.0.0.0"
-  APP_PORT: "8080"
-  APP_PROFILES: "kafka"
-  BROKER_URL: "tcp://artemis:61616"
-  KAFKA_TOPIC_NAME: "main-topic"
-  KAFKA_GROUP_ID: "main-group"
-  KAFKA_URL: "kafka-service:9093"
+  # Zookeeper configs
+  ALLOW_ANONYMOUS_LOGIN: "yes"
+  # Kafka configs
   KAFKA_CFG_BROKER_ID: "1"
-  ALLOW_PLAINTEXT_LISTENER: "yes"
   KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper-service:2181"
   KAFKA_CFG_LISTENERS: "LOCALHOST://:9092,CONTAINER://:9093"
   KAFKA_CFG_ADVERTISED_LISTENERS: "LOCALHOST://localhost:9092,CONTAINER://kafka-service:9093"
   KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT"
   KAFKA_CFG_INTER_BROKER_LISTENER_NAME: "LOCALHOST"
+  ALLOW_PLAINTEXT_LISTENER: "yes"
+  # Kafdrop configs
+  KAFKA_BROKERCONNECT: "kafka-service:9093"
+  JVM_OPTS: "-Xms32M -Xmx64M"
+  # Application configs
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: "kafka"
+  KAFKA_URL: "kafka-service:9093"
+  KAFKA_GROUP_ID: "main-group"
+  KAFKA_TOPIC_NAME: "main-topic"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -51,12 +54,12 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: docker.io/bitnami/zookeeper
+          image: bitnami/zookeeper:3.9.0
           ports:
             - containerPort: 2181
-          env:
-            - name: ALLOW_ANONYMOUS_LOGIN
-              value: "yes"
+          envFrom:
+            - configMapRef:
+                name: dev-config
           volumeMounts:
             - name: zookeeper-data
               mountPath: /bitnami
@@ -93,7 +96,7 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: docker.io/bitnami/kafka
+          image: bitnami/kafka:3.9.0
           ports:
             - containerPort: 9092
             - containerPort: 9093
@@ -103,9 +106,14 @@ spec:
           volumeMounts:
             - name: kafka-data
               mountPath: /bitnami
+            - name: config
+              mountPath: /config
       volumes:
         - name: kafka-data
           emptyDir: { }
+        - name: config
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -143,14 +151,9 @@ spec:
           image: obsidiandynamics/kafdrop:latest
           ports:
             - containerPort: 9000
-          env:
-            - name: KAFKA_BROKERCONNECT
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: KAFKA_URL
-            - name: JVM_OPTS
-              value: "-Xms32M -Xmx64M"
+          envFrom:
+            - configMapRef:
+                name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -187,37 +190,9 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 8080
-          env:
-            - name: APP_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_HOST
-            - name: APP_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PORT
-            - name: APP_PROFILES
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PROFILES
-            - name: KAFKA_TOPIC_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: KAFKA_TOPIC_NAME
-            - name: KAFKA_GROUP_ID
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: KAFKA_GROUP_ID
-            - name: KAFKA_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: KAFKA_URL
+          envFrom:
+            - configMapRef:
+                name: dev-config
 ---
 apiVersion: v1
 kind: Service

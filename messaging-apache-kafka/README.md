@@ -4,28 +4,13 @@
 This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 </p>
 
-<p align="justify">
-
-Apache Kafka is an event streaming platform. It follows publish/subscriber pattern around streams of events. The Kafka
-supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
-many producer and many consumer it means there is many-to-many relation between producer and consumer based on Topic.
-
-For more information see the [https://kafka.apache.org](https://kafka.apache.org).
-
-</p>
-
-<p align="center">
-
-<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/messaging-apache-kafka/doc/kafka-solution.gif" width="426" height="240">
-
-</p>
-
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui)
+* [Kafka](#kafka)
 
 ## Getting Started
 
@@ -112,10 +97,6 @@ docker build -t samanalishiri/application:latest .  --no-cache
 kubectl apply -f kube-dev.yml
 ```
 
-```shell
-kubectl apply -f kube-dev.yml
-```
-
 ### Check Status
 
 ```shell
@@ -153,6 +134,25 @@ docker volume prune -f
 
 * Kafdrop: [http://localhost:9000](http://localhost:9000)
 * Application: [http://localhost:8080](http://localhost:8080)
+
+## Kafka
+
+<p align="justify">
+
+Apache Kafka is an event streaming platform. It follows a publish / subscribe pattern around streams of events. The
+Kafka
+supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
+many producer and many consumers it means there is many-to-many relation between producer and consumer based on Topic.
+
+For more information see the [https://kafka.apache.org](https://kafka.apache.org).
+
+</p>
+
+<p align="center">
+
+<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/messaging-apache-kafka/doc/kafka-solution.gif" width="426" height="240">
+
+</p>
 
 ##
 
