@@ -6,7 +6,7 @@
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui )
-* [Apache Pulsar](#apache-pulsar-api)
+* [Apache Pulsar](#apache-pulsar)
 
 ## Getting Started
 
@@ -137,9 +137,12 @@ docker volume prune -f
 ## UI
 
 * Application: [http://localhost:8080](http://localhost:8080)
-* Pulsar Admin: [http://localhost:8081](http://localhost:8081)
+* Pulsar Manager: [http://localhost:7750](http://localhost:7750)
+* Pulsar Admin UI: [http://localhost:9527](http://localhost:9527)
 
-### Pulsar Manager
+## Apache Pulsar
+
+### Manager
 
 **Get CSRF Token from Apache Pulsar**
 
@@ -171,7 +174,7 @@ broker-url:
 bookie-url: http://bookie:3181
 ```
 
-## Apache Pulsar API
+### API
 
 **Create Topic**
 

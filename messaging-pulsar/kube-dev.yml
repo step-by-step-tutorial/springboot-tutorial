@@ -15,6 +15,7 @@ data:
   APP_PROFILES: "pulsar"
   APACHE_PULSAR_ADMIN_URL: "http://broker:8081"
   APACHE_PULSAR_URL: "pulsar://broker:6650"
+  SPRING_CONFIGURATION_FILE: "/pulsar-manager/pulsar-manager/application.properties"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -81,9 +82,9 @@ spec:
           ports:
             - containerPort: 9527
             - containerPort: 7750
-          env:
-            - name: SPRING_CONFIGURATION_FILE
-              value: "/pulsar-manager/pulsar-manager/application.properties"
+          envFrom:
+            - configMapRef:
+                name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -130,10 +131,10 @@ spec:
             - configMapRef:
                 name: dev-config
           volumeMounts:
-            - name: config
-              mountPath: /config
+            - name: dev-config
+              mountPath: /dev-config
       volumes:
-        - name: config
+        - name: dev-config
           configMap:
             name: dev-config
 ---
