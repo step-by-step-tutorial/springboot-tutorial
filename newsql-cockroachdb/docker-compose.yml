@@ -1,0 +1,13 @@
+version: "3.9"
+name: test
+services:
+  cockroachdb:
+    image: cockroachdb/cockroach:v25.3.0
+    container_name: cockroachdb
+    hostname: cockroachdb
+    ports:
+      - "26257:26257"
+      - "8081:8080"
+    command: start-single-node --insecure
+#    volumes:
+#      - "${PWD}/cockroach-data:/cockroach/cockroach-data"

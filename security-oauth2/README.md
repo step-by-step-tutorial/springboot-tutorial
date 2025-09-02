@@ -71,7 +71,7 @@ mvn -f security-oauth2-server/pom.xml spring-boot:run
 
 #### Register the Client
 
-For single server version.
+For a single server version.
 
 ```shell
 curl -v -X POST "http://localhost:8080/api/v1/clients" \
