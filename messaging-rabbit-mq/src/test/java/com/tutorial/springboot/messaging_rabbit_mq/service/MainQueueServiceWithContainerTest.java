@@ -11,19 +11,17 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@DisplayName("unit tests of rabbitmq main queue service")
 class MainQueueServiceWithContainerTest {
 
     @Autowired
     MainQueueService systemUnderTest;
 
     @Test
-    @DisplayName("should throw a NullPointerException when given message is null")
     void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final MessageModel givenModel = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "model should not be null";
+        final var expectedExceptionMessage = "Model should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.publish(givenModel));
 
@@ -32,7 +30,6 @@ class MainQueueServiceWithContainerTest {
     }
 
     @Test
-    @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
         final var givenModel = new MessageModel(UUID.randomUUID().toString(), "test text");
 

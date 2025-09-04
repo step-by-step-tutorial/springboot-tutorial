@@ -1,5 +1,6 @@
 package com.tutorial.springboot.messaging_rabbit_mq.api;
 
+import com.tutorial.springboot.messaging_rabbit_mq.model.MessageModel;
 import com.tutorial.springboot.messaging_rabbit_mq.service.MainQueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/health-check")
@@ -22,8 +25,8 @@ public class HealthCheckApi {
 
     @GetMapping
     public ResponseEntity<String> checkStatus() {
-        logger.info("Application is up.");
-        mainQueueService.publish("Application is up.");
+        logger.info("Application is up");
+        mainQueueService.publish(new MessageModel(UUID.randomUUID().toString(), "Application is up"));
         return ResponseEntity.ok("UP");
     }
 }

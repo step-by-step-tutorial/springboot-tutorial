@@ -25,50 +25,47 @@ type: Opaque
 data:
   BROKER_USERNAME: cm9vdA==  # base64-encoded 'root'
   BROKER_PASSWORD: cm9vdA==  # base64-encoded 'root'
+  RABBITMQ_DEFAULT_USER: cm9vdA==  # base64-encoded 'root'
+  RABBITMQ_DEFAULT_PASS: cm9vdA==  # base64-encoded 'root'
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq
+  name: broker
   namespace: dev
   labels:
-    app: rabbitmq
+    app: broker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rabbitmq
+      app: broker
   template:
     metadata:
       labels:
-        app: rabbitmq
+        app: broker
     spec:
       containers:
-        - name: rabbitmq
+        - name: broker
           image: rabbitmq:management
           ports:
             - containerPort: 5672
             - containerPort: 15672
-          env:
-            - name: RABBITMQ_DEFAULT_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: BROKER_USERNAME
-            - name: RABBITMQ_DEFAULT_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: BROKER_PASSWORD
+          envFrom:
+            - secretRef:
+                name: dev-credentials
+            - configMapRef:
+                name: dev-config
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq
+  name: broker
   namespace: dev
 spec:
   selector:
-    app: rabbitmq
+    app: broker
   ports:
     - name: queue-port
       port: 5672
@@ -105,18 +102,6 @@ spec:
                 name: dev-config
             - secretRef:
                 name: dev-credentials
-          volumeMounts:
-            - name: config
-              mountPath: /config
-            - name: credentials
-              mountPath: /credentials
-      volumes:
-        - name: config
-          configMap:
-            name: dev-config
-        - name: credentials
-          secret:
-            secretName: dev-credentials
 ---
 apiVersion: v1
 kind: Service

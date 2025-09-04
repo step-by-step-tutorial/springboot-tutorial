@@ -1,0 +1,18 @@
+spring:
+  rabbitmq:
+    host: ${BROKER_HOST:localhost}
+    port: ${BROKER_PORT:5672}
+    username: ${BROKER_USERNAME:root}
+    password: ${BROKER_PASSWORD:root}
+
+# defined by user
+queue:
+  main: mainQueue
+
+
+
+
+
+
+
+

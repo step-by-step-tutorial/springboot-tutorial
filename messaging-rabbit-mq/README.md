@@ -105,7 +105,11 @@ kubectl port-forward service/application 8080:8080 -n dev
 ```
 
 ```shell
-kubectl port-forward service/rabbitmq 5672:5672 -n dev
+kubectl port-forward service/broker 5672:5672 -n dev
+```
+
+```shell
+kubectl port-forward service/broker 15672:15672 -n dev
 ```
 
 ### E2eTest

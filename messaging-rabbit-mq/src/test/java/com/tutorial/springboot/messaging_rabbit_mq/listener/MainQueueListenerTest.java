@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of rabbitmq main queue listener")
 class MainQueueListenerTest {
 
     @InjectMocks
@@ -41,13 +40,12 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException when given message is null")
     void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final Message givenMessage = null;
         final var givenCorrelationId = "fake correlation Id";
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "message should not be null";
+        final var expectedExceptionMessage = "Message should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.onMessage(givenMessage, givenCorrelationId));
 
@@ -56,13 +54,12 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException when given correlation is null")
     void shouldThrowNullPointerExceptionWhenCorrelationIdIsNull() {
         final var givenMessage = new Message("fake body".getBytes());
         final String givenCorrelationId = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "correlation Id should not be null";
+        final var expectedExceptionMessage = "Correlation Id should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.onMessage(givenMessage, givenCorrelationId));
 
@@ -71,7 +68,6 @@ class MainQueueListenerTest {
     }
 
     @Test
-    @DisplayName("should processes message successful")
     void shouldSendAcceptedStatusWhenTheMessageWasProcessedSuccessful() {
         final var givenMessage = mock(Message.class);
         final var givenCorrelationId = "fake correlation Id";

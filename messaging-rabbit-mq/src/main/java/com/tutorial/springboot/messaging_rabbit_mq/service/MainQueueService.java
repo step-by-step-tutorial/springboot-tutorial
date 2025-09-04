@@ -25,7 +25,7 @@ public class MainQueueService {
 
     public void publish(Object model) {
         requireNonNull(model, "Model should not be null");
-        rabbitTemplate.send(queue, requireNonNull(createMessage(model), "message should not be null"));
+        rabbitTemplate.send(queue, requireNonNull(createMessage(model), "Message should not be null"));
         logger.info("Message sent to {}: {}", queue, model);
     }
 }

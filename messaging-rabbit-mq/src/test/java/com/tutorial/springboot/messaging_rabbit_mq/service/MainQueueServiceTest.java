@@ -21,7 +21,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of rabbitmq main queue service")
 class MainQueueServiceTest {
 
     @InjectMocks
@@ -44,12 +43,11 @@ class MainQueueServiceTest {
     }
 
     @Test
-    @DisplayName("should throw NullPointerException when given message is null")
     void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final Object givenMessage = null;
 
         final var expectedException = NullPointerException.class;
-        final var expectedExceptionMessage = "model should not be null";
+        final var expectedExceptionMessage = "Model should not be null";
 
         final var actual = assertThrows(expectedException, () -> systemUnderTest.publish(givenMessage));
 
@@ -59,7 +57,6 @@ class MainQueueServiceTest {
     }
 
     @Test
-    @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
         final var givenMessage = "fake message";
 
