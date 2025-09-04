@@ -2,19 +2,7 @@
 
 <p align="justify">
 
-This tutorial is about integration of Spring Boot and Redis.
-
-</p>
-
-<p align="justify">
-
-This tutorial is included [Redis](https://redis.io) configuration for test and none test environment. There are two
-libraries to create connection factories for making connection to the Redis.
-
-* [Jedis](https://redis.io/docs/clients/java/)
-* [Lettuce](https://lettuce.io/)
-
-For more information about Redis see the [https://redis.io](https://redis.io).
+This tutorial is about the integration of Spring Boot and Redis.
 
 </p>
 
@@ -24,6 +12,7 @@ For more information about Redis see the [https://redis.io](https://redis.io).
 * [Dockerized](#dockerized)
 * [Kubernetes](#install-redis-on-kubernetes)
 * [UI](#ui)
+* [Redis](#redis)
 
 ## Getting Started
 
@@ -163,6 +152,20 @@ port: 6379
 </p>
 
 * Commander: [http://localhost:8081](http://localhost:8081).
+
+## Redis
+
+<p align="justify">
+
+This tutorial is included [Redis](https://redis.io) configuration for test and none test environment. There are two
+libraries to create connection factories for making connection to the Redis.
+
+* [Jedis](https://redis.io/docs/clients/java/)
+* [Lettuce](https://lettuce.io/)
+
+For more information about Redis see the [https://redis.io](https://redis.io).
+
+</p>
 
 ##
 

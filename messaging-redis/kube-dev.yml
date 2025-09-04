@@ -149,13 +149,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: dev-config
-          volumeMounts:
-            - name: config
-              mountPath: /config
-      volumes:
-        - name: config
-          configMap:
-            name: dev-config
 ---
 apiVersion: v1
 kind: Service

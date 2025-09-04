@@ -16,7 +16,6 @@ public class MessageListenerImpl implements MessageListener {
     @Autowired
     private MessageStorage messageStorage;
 
-
     public void onMessage(Message message, byte[] pattern) {
         var content = message.toString();
         logger.info("Message received: {}", content);
