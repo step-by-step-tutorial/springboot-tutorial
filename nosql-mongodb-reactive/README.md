@@ -6,19 +6,13 @@ This tutorial is about the integration of Spring Boot and MongoDB.
 
 </p>
 
-<p align="justify">
-
-MongoDB is a document database in NoSQL topic. For more information about MongoDB
-see [https://www.mongodb.com](https://www.mongodb.com).
-
-</p>
-
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
 * [Kubernetes](#install-redis-on-kubernetes)
 * [UI](#ui)
+* [MongoDB](#mongodb)
 
 ## Getting Started
 
@@ -145,6 +139,16 @@ docker volume prune -f
 ## UI
 
 * Mongo Express: [http://localhost:8081](http://localhost:8081)
+* Application: [http://localhost:8080](http://localhost:8080)
+
+## MongoDB
+
+<p align="justify">
+
+MongoDB is a document database in NoSQL topic. For more information about MongoDB
+see [https://www.mongodb.com](https://www.mongodb.com).
+
+</p>
 
 ##
 

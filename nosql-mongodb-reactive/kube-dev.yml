@@ -194,13 +194,6 @@ spec:
                 name: dev-config
             - secretRef:
                 name: dev-credentials
-          volumeMounts:
-            - name: config
-              mountPath: /config
-      volumes:
-        - name: config
-          configMap:
-            name: dev-config
 ---
 apiVersion: v1
 kind: Service
