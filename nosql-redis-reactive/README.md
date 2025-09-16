@@ -1,20 +1,8 @@
-# <p align="center">Integration of Spring Boot And Redis Reactive</p>
+# <p align="center">Integration of Spring Boot And Redis</p>
 
 <p align="justify">
 
-This tutorial is about the integration of Spring Boot and reactive Redis.
-
-</p>
-
-<p align="justify">
-
-This tutorial is included [Redis](https://redis.io) configuration for test and none test environment. There are two
-libraries to create connection factories for making connection to the Redis.
-
-* [Jedis](https://redis.io/docs/clients/java/)
-* [Lettuce](https://lettuce.io/)
-
-For more information about Redis see the [https://redis.io](https://redis.io).
+This tutorial is about the integration of Spring Boot and Redis.
 
 </p>
 
@@ -24,6 +12,7 @@ For more information about Redis see the [https://redis.io](https://redis.io).
 * [Dockerized](#dockerized)
 * [Kubernetes](#install-redis-on-kubernetes)
 * [UI](#ui)
+* [Redis](#redis)
 
 ## Getting Started
 
@@ -123,15 +112,11 @@ kubectl port-forward service/application 8080:8080 -n dev
 ```
 
 ```shell
-kubectl port-forward service/commander 8081:8081 -n dev
-```
-
-```shell
 kubectl port-forward service/redisinsight 5540:5540 -n dev
 ```
 
 ```shell
-kubectl port-forward service/redis 6379:6379 -n dev
+kubectl port-forward service/commander 8081:8081 -n dev
 ```
 
 ### E2eTest
@@ -153,9 +138,12 @@ docker volume prune -f
 
 ## UI
 
-### Redisinsight
+* Redisinsight: [http://localhost:5540](http://localhost:5540).
 
-To connect to redis by Redisinsight through the web browser, open [http://localhost:5540](http://localhost:5540).
+```yaml
+host: redis
+port: 6379
+```
 
 <p align="center">
 
@@ -163,13 +151,22 @@ To connect to redis by Redisinsight through the web browser, open [http://localh
 
 </p>
 
-Then select "Add connection details manually" and enter redis as host and 6379 for port. Also, you can enter an alias
-for a database.
+* Commander: [http://localhost:8081](http://localhost:8081).
 
-### Commander
+## Redis
 
-To connect to redis by Commander through the web browser, open [http://localhost:8081](http://localhost:8081).
+<p align="justify">
+
+This tutorial is included [Redis](https://redis.io) configuration for test and none test environment. There are two
+libraries to create connection factories for making connection to the Redis.
+
+* [Jedis](https://redis.io/docs/clients/java/)
+* [Lettuce](https://lettuce.io/)
+
+For more information about Redis see the [https://redis.io](https://redis.io).
+
+</p>
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-redis-reactive) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-redis) </p>**
