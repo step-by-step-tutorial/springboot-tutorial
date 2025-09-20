@@ -27,6 +27,93 @@ data:
   TRACE_URL: "http://tempo:4318/v1/traces"
   METRICS_URL: "http://tempo:4318/v1/metrics"
   LOKI_URL: "http://loki:3100/loki/api/v1/push"
+  tempo.yaml: |
+    server:
+      http_listen_port: 3200
+
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            http:
+              endpoint: 0.0.0.0:4318
+            grpc:
+              endpoint: 0.0.0.0:4317
+        zipkin:
+          endpoint: 0.0.0.0:9411
+
+    storage:
+      trace:
+        backend: local
+        local:
+          path: /tmp/tempo/blocks
+  prometheus.yml: |
+    global:
+      scrape_interval: 2s
+      evaluation_interval: 2s
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: [ 'prometheus:9090' ]
+      - job_name: 'observability-grafana-stack'
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets: [ 'application:8080' ]
+      - job_name: 'tempo'
+        static_configs:
+          - targets: [ 'tempo:3200' ]
+      - job_name: 'loki'
+        static_configs:
+          - targets: [ 'loki:3100' ]
+  datasource.yml: |
+    apiVersion: 1
+
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+        editable: false
+        jsonData:
+          httpMethod: POST
+          exemplarTraceIdDestinations:
+            - name: trace_id
+              datasourceUid: tempo
+      - name: Tempo
+        type: tempo
+        access: proxy
+        orgId: 1
+        url: http://tempo:3200
+        basicAuth: false
+        isDefault: true
+        version: 1
+        editable: false
+        apiVersion: 1
+        uid: tempo
+        jsonData:
+          httpMethod: GET
+          tracesToLogs:
+            datasourceUid: 'loki'
+          nodeGraph:
+            enabled: true
+      - name: Loki
+        type: loki
+        uid: loki
+        access: proxy
+        orgId: 1
+        url: http://loki:3100
+        basicAuth: false
+        isDefault: false
+        version: 1
+        editable: false
+        apiVersion: 1
+        jsonData:
+          derivedFields:
+            - datasourceUid: tempo
+              matcherRegex: \[.+,(.+?),
+              name: TraceID
+              url: $${__value.raw}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,7 +133,7 @@ spec:
       containers:
         - name: loki
           image: grafana/loki
-          command:
+          args:
             - -config.file=/etc/loki/local-config.yaml
           ports:
             - containerPort: 3100
@@ -81,13 +168,22 @@ spec:
       containers:
         - name: tempo
           image: grafana/tempo
-          command:
+          args:
             - -config.file=/etc/tempo.yaml
           ports:
             - containerPort: 3200
             - containerPort: 4317
             - containerPort: 4318
             - containerPort: 9411
+          volumeMounts:
+            - name: tempo-config-volume
+              mountPath: /etc/tempo.yaml
+              subPath: tempo.yaml
+              readOnly: true
+      volumes:
+        - name: tempo-config-volume
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -129,11 +225,20 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus:v2.46.0
-          command:
+          args:
             - --enable-feature=exemplar-storage
             - --config.file=/etc/prometheus/prometheus.yml
           ports:
             - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
+              readOnly: true
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -203,6 +308,15 @@ spec:
                 name: dev-config
           ports:
             - containerPort: 3000
+          volumeMounts:
+            - name: grafana-datasource-volume
+              mountPath: /etc/grafana/provisioning/datasources/datasource.yml
+              subPath: datasource.yml
+              readOnly: true
+      volumes:
+        - name: grafana-datasource-volume
+          configMap:
+            name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -234,6 +348,7 @@ spec:
       containers:
         - name: application
           image: samanalishiri/application:latest
+          imagePullPolicy: "IfNotPresent"
           envFrom:
             - configMapRef:
                 name: dev-config

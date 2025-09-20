@@ -112,21 +112,29 @@ kubectl port-forward service/application 8080:8080 -n dev
 ```
 
 ```shell
-kubectl port-forward service/commander 8081:8081 -n dev
+kubectl port-forward service/grafana 3000:3000 -n dev
 ```
 
 ```shell
-kubectl port-forward service/redisinsight 5540:5540 -n dev
+kubectl port-forward service/loki 3100:3100 -n dev
 ```
 
 ```shell
-kubectl port-forward service/redis 6379:6379 -n dev
+kubectl port-forward service/prometheus 9090:9090 -n dev
+```
+
+```shell
+kubectl port-forward service/tempo 4318:4318 -n dev
+```
+
+```shell
+kubectl port-forward service/pyroscope 4040:4040 -n dev
 ```
 
 ### E2eTest
 
 ```shell
-curl -X GET http://localhost:8080/api/v1/health-check
+curl -X GET http://localhost:8080/api/v1/application/status
 ```
 
 ### Down

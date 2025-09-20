@@ -13,7 +13,7 @@ services:
     hostname: tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
+      - ./docker/tempo/tempo.yaml:/etc/tempo.yaml:ro
     ports:
       - "3200:3200" # Tempo
       - "4317:4317" # grpc
