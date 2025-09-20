@@ -3,6 +3,4 @@ server:
   port: ${APP_PORT:8080}
 spring:
   profiles:
-    active: ${APP_PROFILES:grafana}
-
-
+    active: ${APP_PROFILES:grafana,debug}

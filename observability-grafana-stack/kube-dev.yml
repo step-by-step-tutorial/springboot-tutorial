@@ -24,8 +24,9 @@ data:
   APP_HOST: "0.0.0.0"
   APP_PORT: "8080"
   APP_PROFILES: grafana
-  TEMPO_ZIPKIN: "http://localhost:9411/api/v2/spans"
-  TEMPO_HTTP: "http://localhost:4318/v1/metrics"
+  TRACE_URL: "http://tempo:4318/v1/traces"
+  METRICS_URL: "http://tempo:4318/v1/metrics"
+  LOKI_URL: "http://loki:3100/loki/api/v1/push"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -97,13 +98,17 @@ spec:
   selector:
     app: tempo
   ports:
-    - port: 3200
+    - name: tempo
+      port: 3200
       targetPort: 3200
-    - port: 4317
+    - name: grpc
+      port: 4317
       targetPort: 4317
-    - port: 4318
+    - name: http
+      port: 4318
       targetPort: 4318
-    - port: 9411
+    - name: zipkin
+      port: 9411
       targetPort: 9411
 ---
 apiVersion: apps/v1
@@ -193,22 +198,9 @@ spec:
       containers:
         - name: grafana
           image: grafana/grafana
-          env:
-            - name: GF_AUTH_ANONYMOUS_ENABLED
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: GF_AUTH_ANONYMOUS_ENABLED
-            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: GF_AUTH_ANONYMOUS_ORG_ROLE
-            - name: GF_AUTH_DISABLE_LOGIN_FORM
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: GF_AUTH_DISABLE_LOGIN_FORM
+          envFrom:
+            - configMapRef:
+                name: dev-config
           ports:
             - containerPort: 3000
 ---
@@ -242,32 +234,9 @@ spec:
       containers:
         - name: application
           image: samanalishiri/application:latest
-          env:
-            - name: APP_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_HOST
-            - name: APP_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PORT
-            - name: APP_PROFILES
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: APP_PROFILES
-            - name: TEMPO_ZIPKIN
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: TEMPO_ZIPKIN
-            - name: TEMPO_HTTP
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: TEMPO_HTTP
+          envFrom:
+            - configMapRef:
+                name: dev-config
           ports:
             - containerPort: 8080
 ---

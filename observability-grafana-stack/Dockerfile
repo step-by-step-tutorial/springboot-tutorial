@@ -11,8 +11,9 @@ ENV APPLICATION=${TARGET_PATH}/application.jar
 ENV APP_HOST=0.0.0.0
 ENV APP_PORT=8080
 ENV APP_PROFILES=grafana
-ENV TEMPO_ZIPKIN=http://localhost:9411/api/v2/spans
-ENV TEMPO_HTTP=http://localhost:4318/v1/metrics
+ENV TRACE_URL=http://tempo:4318/v1/traces
+ENV METRICS_URL=http://tempo:4318/v1/metrics
+ENV LOKI_URL=http://loki:3100/loki/api/v1/push
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 

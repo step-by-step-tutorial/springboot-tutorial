@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: observability-grafana-stack
   output:
     ansi:
       enabled: always
@@ -25,7 +23,13 @@ management:
       probability: 1.0
   otlp:
     tracing:
-      endpoint: ${TEMPO_ZIPKIN:http://localhost:9411/api/v2/spans}
-    metrics:
-      export:
-        url: ${TEMPO_HTTP:http://localhost:4318/v1/metrics}
+      endpoint: ${TRACE_URL:http://localhost:4318/v1/traces}
+#    metrics:
+#      export:
+#        url: ${METRICS_URL:http://localhost:4318/v1/metrics}
+#  zipkin:
+#    tracing:
+#      endpoint: ${TEMPO_ZIPKIN:http://localhost:9411/api/v2/spans}
+
+# Added by developer
+LOKI_URL: ${LOKI_URL:http://localhost:3100/loki/api/v1/push}

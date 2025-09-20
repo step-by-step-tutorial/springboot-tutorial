@@ -6,29 +6,13 @@ This tutorial is about the integration of Spring Boot and Grafana.
 
 </p>
 
-## Grafana Stack
-
-* k6 service running a load test against the above application.
-* Tempo service for storing and querying trace information.
-* Loki service for storing and querying log information.
-* Mimir service for storing and querying metric information.
-* Pyroscope service for storing and querying profiling information.
-* Beyla services for watching the four-service application and automatically generating signals.
-* Grafana service for visualising observability data.
-* Grafana Alloy service for receiving traces and producing metrics and logs based on these traces.
-
-Observe the Spring Boot application with three pillars of observability on Grafana:
-
-* Traces with Tempo and OpenTelemetry Instrumentation for Java
-* Metrics with Prometheus, Spring Boot Actuator, and Micrometer
-* Logs with Loki and Logback
-
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
 * [Kubernetes](#install-redis-on-kubernetes)
 * [UI](#ui)
+* [Grafana Stack](#grafana-stack)
 
 ## Getting Started
 
@@ -66,7 +50,7 @@ mvn  spring-boot:start
 ### E2eTest
 
 ```shell
-curl -X GET http://localhost:8080/api/v1/health-check
+curl -X GET http://localhost:8080/api/v1/application/status
 ```
 
 ### Stop
@@ -94,7 +78,7 @@ docker compose --file docker-compose.yml --project-name dev up --build -d
 ### E2eTest
 
 ```shell
-curl -X GET http://localhost:8080/api/v1/health-check
+curl -X GET http://localhost:8080/api/v1/application/status
 ```
 
 ### Down
@@ -164,6 +148,25 @@ docker volume prune -f
 * Tempo: [http://localhost:3200](http://localhost:3200)
 * Loki: [http://localhost:3100](http://localhost:3100)
 * Pyroscope: [http://localhost:4040](http://localhost:4040)
+
+## Grafana Stack
+
+## Grafana Stack
+
+* k6 service running a load test against the above application.
+* Tempo service for storing and querying trace information.
+* Loki service for storing and querying log information.
+* Mimir service for storing and querying metric information.
+* Pyroscope service for storing and querying profiling information.
+* Beyla services for watching the four-service application and automatically generating signals.
+* Grafana service for visualising observability data.
+* Grafana Alloy service for receiving traces and producing metrics and logs based on these traces.
+
+Observe the Spring Boot application with three pillars of observability on Grafana:
+
+* Traces with Tempo and OpenTelemetry Instrumentation for Java
+* Metrics with Prometheus, Spring Boot Actuator, and Micrometer
+* Logs with Loki and Logback
 
 ##
 

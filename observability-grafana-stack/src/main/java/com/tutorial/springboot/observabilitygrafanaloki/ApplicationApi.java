@@ -25,7 +25,7 @@ public class ApplicationApi {
 
     @GetMapping("/status")
     public ResponseEntity<String> checkStatus() {
-        logger.info("Received an inbound request to test trace and Span of Jaeger");
+        logger.info("Received an inbound request to test trace and Span of Grafana Stack");
         statusCounter.increment();
         logger.info("Incremented the counter {}", statusCounter.count());
 
