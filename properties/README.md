@@ -2,7 +2,7 @@
 
 <p align="justify">
 
-This sample is about working with yaml and properties file in Spring Boot. Also, the sample is using java `record` class
+This sample is about working with YAML and properties file in Spring Boot. Also, the sample is using java `record` class
 for using externalized properties.
 
 </p>
@@ -10,64 +10,40 @@ for using externalized properties.
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-    * [Dependencies](#dependencies)
-    * [Implementation](#implementation)
-        * [Based on Properties File](#based-on-properties-file)
-        * [Based on YAML File](#based-on-yaml-file)
-* [Appendix](#appendix)
+* [Implementation](#implementation)
+  * [Properties](#properties)
+  * [Java Code](#java-code)
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Package
 
 ```shell
-mvn  spring-boot:run
-```
-
-## How To Set up Spring Boot
-
-## Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
+mvn package -DskipTests=true
 ```
 
 ## Implementation
 
-There are two formats for properties, properties file and yaml file.
+There are two formats for properties, properties file and YAML file.
 
-### Based on Properties File
+### Properties
 
 ```properties
 prefix.number=1
@@ -77,41 +53,6 @@ prefix.array[0]=element 1
 prefix.array[1]=element 2
 prefix.array[2]=element 3
 ```
-
-```java
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-
-@SpringBootApplication
-@ConfigurationPropertiesScan({"package of properties bean"})
-public class Application {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
-}
-```
-
-```java
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
-
-@PropertySource(value = "classpath:file.properties")
-@ConfigurationProperties(prefix = "prefix")
-@EnableConfigurationProperties
-public record SampleProperties(int number, String string, String dateTime, String[] array) {
-}
-
-```
-
-### Based on YAML File
-
-For yml file you have to define a source factory.
 
 ```yaml
 prefix:
@@ -124,14 +65,17 @@ prefix:
     - element 3
 ```
 
+### Java Code
+
 ```java
+package com.tutorial.springboot.properties;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
-@ConfigurationPropertiesScan({"package of properties bean"})
+@ConfigurationPropertiesScan({"com.tutorial.springboot.properties;"})
 public class Application {
 
     public static void main(String[] args) {
@@ -142,6 +86,38 @@ public class Application {
 ```
 
 ```java
+// for using externalized properties
+package com.tutorial.springboot.properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
+
+@PropertySource(value = "classpath:file.properties)
+@ConfigurationProperties(prefix = "prefix")
+@EnableConfigurationProperties
+public record SampleProperties(int number, String string, String dateTime, String[] array) {
+}
+```
+
+```java
+// for using externalized properties with YAML file
+package com.tutorial.springboot.properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
+
+@PropertySource(value = "classpath:file.yml", encoding = "UTF-8", factory = YamlPropertySourceFactory.class)
+@ConfigurationProperties(prefix = "prefix")
+@EnableConfigurationProperties
+public record SampleProperties(int number, String string, String dateTime, String[] array) {
+}
+```
+
+```java
+// for using externalized properties with YAML file
+package com.tutorial.springboot.properties;
 
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -166,35 +142,6 @@ public class YamlPropertySourceFactory implements PropertySourceFactory {
         );
     }
 }
-```
-
-```java
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
-
-@PropertySource(value = "classpath:file.yml", factory = YamlPropertySourceFactory.class)
-@ConfigurationProperties(prefix = "prefix")
-@EnableConfigurationProperties
-public record SampleYaml(int number, String string, String dateTime, String[] array) {
-
-}
-```
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
 ```
 
 ##

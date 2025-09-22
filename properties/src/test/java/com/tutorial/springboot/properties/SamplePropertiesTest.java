@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@DisplayName("unit tests of properties")
 class SamplePropertiesTest {
 
     @Autowired

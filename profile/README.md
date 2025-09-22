@@ -2,56 +2,53 @@
 
 <p align="justify">
 
-This tutorial is about working with profiles in the Spring Boot. The Profiles provide a possibility to categorized
-classes in order to use for specific goals, for example define specific classes only for test environment, etc.
+This tutorial is about working with profiles in the Spring Boot. The Profiles provide a possibility to categorize
+classes to use for specific goals, for example, define specific classes only for test environment, etc.
 
 </p>
 
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [Apply Profiling](#apply-profiling)
-* [Active Profile](#active-profile)
-* [Scenario](#scenario)
-* [Appendix](#appendix)
+* [Define Profile](#define-profile)
+    * [Active Profile](#active-profile)
+    * [Test Environment](#test-environment)
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
 
-### Pipeline
-
-#### Build
+### Build
 
 ```shell
-mvn clean package -DskipTests=true 
+mvn validate clean compile 
 ```
 
-#### Test
+### Test
 
 ```shell
 mvn test
 ```
 
-#### Run
+### Package
 
 ```shell
-mvn  spring-boot:run
+mvn package -DskipTests=true
 ```
 
-## Apply Profiling
+## Define Profile
 
 <p align="justify">
 
-In order to apply profiling:
+To apply profiling:
 
 * For classes it uses `@Profile` annotation
 * In `application.yml` file there are two solutions
-    * Use `---` and `spring.config.activate.on-profile=profile-name` property in yaml format
-    * The `application.yml` should be included profile name with hyphen as separator, for
+    * Use `---` and `spring.config.activate.on-profile=profile-name` property in YAML format
+    * The `application.yml` should be included profile name with hyphen as the separator, for
       example `application-test.yml`.
 * In `application.properties` file there are two solutions
     * Use `spring.config.activate.on-profile=profile-name` property as separator
@@ -60,11 +57,11 @@ In order to apply profiling:
 
 </p>
 
-## Active Profile
+### Active Profile
 
 There are a few solutions for that as follows.
 
-### JVM
+#### JVM
 
 Execute the following command.
 
@@ -72,7 +69,7 @@ Execute the following command.
 java -jar application.jar -Dspring.profiles.active=profile-name
 ```
 
-### ENV
+#### ENV
 
 Add the following variable as an environment variable.
 
@@ -80,7 +77,7 @@ Add the following variable as an environment variable.
 SPRING_PROFILES_ACTIVE=profile-name
 ```
 
-### Properties
+#### Properties
 
 Add the following properties in `application.yml/properties`.
 
@@ -88,7 +85,7 @@ Add the following properties in `application.yml/properties`.
 spring.profiles.active=profile-name
 ```
 
-### Maven
+#### Maven
 
 Add a profile as follows in the pom.xml file.
 
@@ -102,7 +99,7 @@ Add a profile as follows in the pom.xml file.
 </profile>
 ```
 
-Execute Maven command include the name of profile.
+Execute Maven command includes the name of the profile.
 
 ```shell
 mvn lifecycle -P profile-name
@@ -110,7 +107,8 @@ mvn lifecycle -P profile-name
 
 ### Test Environment
 
-In order to activate a profile in test environment it uses `@ActiveProfiles("profile-name")` on top of test class.
+To activate a profile in test environment it uses `@ActiveProfiles("profile-name")` on top of test class and the profile
+must be already defined.
 
 ```java
 
@@ -118,48 +116,6 @@ In order to activate a profile in test environment it uses `@ActiveProfiles("pro
 class Test {
 
 }
-```
-
-## Scenario
-
-In this sample there are two profiles named **dev** and **test**.
-
-* if, do not set active profile, spring container scans all classes do not use `@Profile`
-* if active profile set to **dev**, spring container scans all decorated classes with `@Profile("dev")` and classes do
-  not use `@Profile`
-* if active profile set to **test**, spring container scans all decorated classes with `@Profile("test")` and classes do
-  not use `@Profile`
-
-### Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-```
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
 ```
 
 ##
