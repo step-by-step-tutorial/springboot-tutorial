@@ -21,8 +21,6 @@ public class ApplicationApiTests {
 
     static final String ROOT_URI = "/api/v1/application";
 
-    static final Logger LOGGER = LoggerFactory.getLogger(ApplicationApiTests.class.getSimpleName());
-
     @LocalServerPort
     int port;
 

@@ -5,15 +5,15 @@ services:
     hostname: jaeger
     image: jaegertracing/all-in-one:latest
     ports:
-      - "16686:16686"
-      - "4318:4318"
-  observabilityjaeger:
-    image: samanalishiri/observabilityjaeger:latest
+      - "16686:16686" # Jaeger UI
+      - "4318:4318"   # OTLP HTTP
+  application:
+    image: samanalishiri/application:latest
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: observabilityjaeger
-    hostname: observabilityjaeger
+    container_name: application
+    hostname: application
     restart: always
     ports:
       - "8080:8080"

@@ -78,7 +78,7 @@ spec:
     spec:
       containers:
         - name: application
-          image: samanalishiri/observability-jaeger:latest
+          image: samanalishiri/application:latest
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
