@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@DisplayName("unit tests of h2 sample repository")
 class SampleRepositoryTest {
 
     @Autowired
@@ -28,21 +27,20 @@ class SampleRepositoryTest {
     static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
-        static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
-                .setName("name")
-                .setCode(1)
-                .setDatetime(NOW);
-
+        static SampleEntity newSample(){
+            return SampleEntity.create()
+                    .setName("name")
+                    .setCode(1)
+                    .setDatetime(NOW);
+        }
     }
 
     @Nested
-    @DisplayName("nested unit tests of save")
     class SaveTest {
 
         @Test
-        @DisplayName("save an entity when there is not exception")
         void shouldReturnEntityWithIdBySuccessfulSave() {
-            final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
+            final var givenEntity = StubFixturesFactory.newSample();
 
             final var expectedId = 1L;
             final var expectedName = "name";
@@ -60,16 +58,14 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of find")
     class FindTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test
-        @DisplayName("find one entity by given Id")
         void shouldReturnEntityByGivenId() {
             final var givenId = 1L;
 
@@ -91,16 +87,14 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of update")
     class UpdateTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test
-        @DisplayName("update one entity by given new values")
         void shouldUpdateTupleInDatabaseByGivenNewValues() {
             final var givenId = 1L;
             final var givenNewName = "updated name";
@@ -132,12 +126,11 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of delete")
     class DeleteTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test

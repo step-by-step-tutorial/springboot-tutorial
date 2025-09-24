@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    username: sa
+    password: ''
+    url: jdbc:h2:mem:${DATABASE_NAME:tutorial_db}
+    driver-class-name: org.h2.Driver
+  data:
+    jpa:
+      repositories:
+        enabled: true
+  jpa:
+    database: H2
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+  h2:
+    console:
+      enabled: true
+      path: ${H2_CONSOLE:/h2-console}
