@@ -10,7 +10,7 @@ services:
     environment:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=test_db
+      - MYSQL_DATABASE=tutorial_db
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - "./target/mysql:/etc/mysql/conf.d"
@@ -20,7 +20,7 @@ services:
     hostname: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "8082:8080"
   phpmyadmin:
     image: phpmyadmin
     container_name: phpmyadmin

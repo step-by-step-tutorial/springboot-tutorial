@@ -23,10 +23,10 @@ metadata:
   name: dev-config
   namespace: dev
 data:
-  mysql-database: test_db
+  mysql-database: tutorial_db
   MYSQL_HOST: mysql
   MYSQL_PORT: '3306'
-  MYSQL_DATABASE: test_db
+  MYSQL_DATABASE: tutorial_db
   MYSQL_USER: user
   MYSQL_PASSWORD: password
   MYSQL_ROOT_PASSWORD: root
@@ -261,7 +261,7 @@ spec:
   ports:
     - name: phpmyadmin
       protocol: TCP
-      port: 8081
+      port: 80
       targetPort: 80
 ---
 apiVersion: apps/v1

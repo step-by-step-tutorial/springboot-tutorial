@@ -2,48 +2,29 @@ package com.tutorial.springboot.rdbm_mysql;
 
 import com.tutorial.springboot.rdbm_mysql.entity.SampleEntity;
 import com.tutorial.springboot.rdbm_mysql.repository.SampleRepository;
-import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
 @DisplayName("unit tests of mysql sample repository")
 class SampleRepositoryTest {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(SampleRepositoryTest.class.getSimpleName());
-    @Container
-    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0");
-
     @Autowired
     SampleRepository systemUnderTest;
-
-    static {
-        try {
-            MYSQL.withDatabaseName("test_db")
-                    .withUsername("user")
-                    .withPassword("password");
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-    }
 
     /**
      * This class includes STUB data.
@@ -51,30 +32,14 @@ class SampleRepositoryTest {
     static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
-        static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
-                .setName("name")
-                .setCode(1)
-                .setDatetime(NOW);
 
-    }
+        static SampleEntity newSample() {
+            return SampleEntity.create()
+                    .setName("name")
+                    .setCode(1)
+                    .setDatetime(NOW);
+        }
 
-    @SuppressWarnings({"unused"})
-    @DynamicPropertySource
-    static void registerMySQLProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", MYSQL::getJdbcUrl);
-        registry.add("spring.datasource.username", MYSQL::getUsername);
-        registry.add("spring.datasource.password", MYSQL::getPassword);
-        registry.add("spring.datasource.driver-class-name", MYSQL::getDriverClassName);
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        MYSQL.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        MYSQL.stop();
     }
 
     @Nested
@@ -84,7 +49,7 @@ class SampleRepositoryTest {
         @Test
         @DisplayName("save an entity when there is not exception")
         void shouldReturnEntityWithIdBySuccessfulSave() {
-            final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
+            final var givenEntity = StubFixturesFactory.newSample();
 
             final var expectedId = 1L;
             final var expectedName = "name";
@@ -107,7 +72,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test
@@ -138,7 +103,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test
@@ -179,7 +144,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test

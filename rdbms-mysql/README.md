@@ -108,16 +108,30 @@ kubectl get all -n dev
 ```shell
 # MySQL
 kubectl port-forward service/mysql 3306:3306 -n dev
+```
 
+```shell
 # MySQL Workbench
 kubectl port-forward service/mysql-workbench 3000:3000 -n dev
+```
+
+```shell
 kubectl port-forward service/mysql-workbench 3001:3001 -n dev
+```
 
+```shell
 # Adminer
-kubectl port-forward service/adminer 8080:8080 -n dev
+kubectl port-forward service/adminer 8082:8080 -n dev
+```
 
+```shell
 # phpMyAdmin
 kubectl port-forward service/phpmyadmin 8081:80 -n dev
+```
+
+```shell
+# Application
+kubectl port-forward service/application 8080:8080 -n dev
 ```
 
 ### E2eTest
@@ -140,7 +154,7 @@ docker volume prune -f
 ## UI
 
 * MySQL Workbench: [http://localhost:3000](http://localhost:3000)
-* Adminer: [http://localhost:8080](http://localhost:8080)
+* Adminer: [http://localhost:8082](http://localhost:8080)
 * phpMyAdmin: [http://localhost:8081](http://localhost:8081)
 
 ---
@@ -208,7 +222,7 @@ FLUSH PRIVILEGES;
 # example, assign grant to a user for executing XA transactions 
 GRANT BINLOG_ADMIN, SYSTEM_VARIABLES_ADMIN ON *.* TO 'user'@'%';
 GRANT XA_RECOVER_ADMIN ON *.* TO 'user'@'%';
-GRANT ALL ON `test_db`.* TO 'user'@'%';
+GRANT ALL ON `tutorial_db`.* TO 'user'@'%';
 FLUSH PRIVILEGES;
 ```
 
