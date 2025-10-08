@@ -14,7 +14,7 @@ data:
   APP_PROFILES: "mongo"
   MONGO_DB_HOST: "mongo"
   MONGO_DB_PORT: "27017"
-  MONGO_DB_NAME: "springboot_tutorial"
+  MONGO_DB_NAME: "tutorial_db"
   ME_CONFIG_OPTIONS_EDITORTHEME: "ambiance"
   ME_CONFIG_BASICAUTH: "false"
   mongod.conf: |

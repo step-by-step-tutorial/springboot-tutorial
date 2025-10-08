@@ -15,7 +15,7 @@ ENV MONGO_DB_USER=root
 ENV MONGO_DB_PASS=root
 ENV MONGO_DB_HOST=localhost
 ENV MONGO_DB_PORT=27017
-ENV MONGO_DB_NAME=springboot_tutorial
+ENV MONGO_DB_NAME=tutorial_db
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 
