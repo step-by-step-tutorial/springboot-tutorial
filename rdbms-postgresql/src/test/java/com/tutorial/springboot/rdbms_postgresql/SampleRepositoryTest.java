@@ -38,7 +38,7 @@ class SampleRepositoryTest {
 
     static {
         try {
-            POSTGRESQL.withDatabaseName("test_db")
+            POSTGRESQL.withDatabaseName("tutorial_db")
                     .withUsername("user")
                     .withPassword("password");
         } catch (Exception e) {

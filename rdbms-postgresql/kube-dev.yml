@@ -23,7 +23,7 @@ metadata:
 data:
   POSTGRES_HOST: postgresql
   POSTGRES_PORT: '5432'
-  POSTGRES_DB: test_db
+  POSTGRES_DB: tutorial_db
   POSTGRES_USER: user
   POSTGRES_PASSWORD: password
 ---

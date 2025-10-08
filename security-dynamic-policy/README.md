@@ -77,7 +77,7 @@ spring:
   datasource:
     username: ${DATABASE_USERNAME:sa}
     password: ${DATABASE_PASSWORD:}
-    url: jdbc:h2:mem:${DATABASE_NAME:test_db}
+    url: jdbc:h2:mem:${DATABASE_NAME:tutorial_db}
     driver-class-name: org.h2.Driver
   data:
     jdbc:

@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: test_db
+      POSTGRES_DB: tutorial_db
       PGDATA: /data/postgres
     volumes:
       - "./target/postgresql:/data/postgres"
@@ -50,7 +50,7 @@ services:
       APP_PROFILES: postgresql
       POSTGRES_HOST: postgresql
       POSTGRES_PORT: "5432"
-      POSTGRES_DB: test_db
+      POSTGRES_DB: tutorial_db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     depends_on:

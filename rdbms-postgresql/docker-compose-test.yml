@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: test_db
+      POSTGRES_DB: tutorial_db
       PGDATA: /data/postgres
     volumes:
       - "./target/postgresql:/data/postgres"

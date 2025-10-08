@@ -183,12 +183,12 @@ sudo -u postgres createuser -D -A -P test_user
 # how to create database?
 sudo -u postgres createdb -O user-name db-name
 # example
-sudo -u postgres createdb -O test_user test_db
+sudo -u postgres createdb -O test_user tutorial_db
 
 # how to run sql file?
 sudo -u user-name psql -d db-name -f file-name.sql
 # example
-sudo -u test_user psql -d test_db -f test_db_schema.sql
+sudo -u test_user psql -d tutorial_db -f tutorial_db_schema.sql
 ```
 
 </details>

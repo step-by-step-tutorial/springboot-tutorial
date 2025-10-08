@@ -303,7 +303,7 @@ services:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
       APP_PROFILES: h2,openapibasic
-      DATABASE_NAME: test_db
+      DATABASE_NAME: tutorial_db
 ```
 
 #### With Postgres Docker Compose
@@ -324,7 +324,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: test_db
+      POSTGRES_DB: tutorial_db
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -354,7 +354,7 @@ services:
       DATABASE_PASSWORD: password
       POSTGRESQL_HOST: postgres,openapibasic
       POSTGRESQL_PORT: 5432
-      DATABASE_NAME: test_db
+      DATABASE_NAME: tutorial_db
       DATABASE_SCHEMA: user_management
 ```
 
@@ -382,7 +382,7 @@ services:
       APP_PROFILES: h2server,openapibasic
       DATABASE_HOST: h2server
       DATABASE_PORT: 9092
-      DATABASE_NAME: test_db
+      DATABASE_NAME: tutorial_db
   h2server:
     image: samanalishiri/h2dbserver
     build:
@@ -454,7 +454,7 @@ spec:
             - name: DATABASE_PORT
               value: "5432"
             - name: DATABASE_NAME
-              value: test_db
+              value: tutorial_db
             - name: DATABASE_SCHEMA
               value: user_management
 ```
@@ -500,7 +500,7 @@ kind: ConfigMap
 metadata:
   name: postgres-configmap
 data:
-  postgres-database: "test_db"
+  postgres-database: "tutorial_db"
 ```
 
 [postgres-pvc.yml](/kube/postgres-pvc.yml)
@@ -869,7 +869,7 @@ spring:
   datasource:
     username: ${DATABASE_USERNAME:sa}
     password: ${DATABASE_PASSWORD:}
-    url: jdbc:h2:mem:${DATABASE_NAME:test_db}
+    url: jdbc:h2:mem:${DATABASE_NAME:tutorial_db}
     driver-class-name: org.h2.Driver
   data:
     jdbc:
@@ -911,7 +911,7 @@ spring:
   datasource:
     username: ${DATABASE_USERNAME:sa}
     password: ${DATABASE_PASSWORD:}
-    url: jdbc:h2:tcp://${DATABASE_HOST:localhost}:${DATABASE_PORT:9092}/mem:${DATABASE_NAME:test_db}
+    url: jdbc:h2:tcp://${DATABASE_HOST:localhost}:${DATABASE_PORT:9092}/mem:${DATABASE_NAME:tutorial_db}
     driver-class-name: org.h2.Driver
   data:
     jdbc:
@@ -951,7 +951,7 @@ spring:
   datasource:
     username: ${DATABASE_USERNAME:user}
     password: ${DATABASE_PASSWORD:password}
-    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:test_db}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:tutorial_db}
     driver-class-name: org.postgresql.Driver
   data:
     jpa:

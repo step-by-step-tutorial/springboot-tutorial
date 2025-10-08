@@ -11,7 +11,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: test_db
+      POSTGRES_DB: tutorial_db
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -53,7 +53,7 @@ services:
       DATABASE_PASSWORD: password
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      DATABASE_NAME: test_db
+      DATABASE_NAME: tutorial_db
       DATABASE_SCHEMA: user_management
   securityoauth2server:
     image: samanalishiri/securityoauth2server:latest
@@ -75,5 +75,5 @@ services:
       DATABASE_PASSWORD: password
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      DATABASE_NAME: test_db
+      DATABASE_NAME: tutorial_db
       DATABASE_SCHEMA: user_management

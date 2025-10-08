@@ -40,6 +40,6 @@ spec:
 #            - name: POSTGRESQL_PORT
 #              value: "5432"
 #            - name: DATABASE_NAME
-#              value: test_db
+#              value: tutorial_db
 #            - name: DATABASE_SCHEMA
 #              value: user_management
