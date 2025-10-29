@@ -93,6 +93,7 @@ docker build -t samanalishiri/application:latest . --no-cache
 kubectl apply -f kube-dev.yml
 ```
 
+
 ### Check Status
 
 ```shell
@@ -150,8 +151,15 @@ docker volume prune -f
 ## UI
 
 * MySQL Workbench: [http://localhost:3000](http://localhost:3000)
-* Adminer: [http://localhost:8082](http://localhost:8080)
+* Adminer: [http://localhost:8082](http://localhost:8082)
 * phpMyAdmin: [http://localhost:8081](http://localhost:8081)
+
+```yaml
+Server: mysql:3306
+Username: user
+Password: password
+Database: tutorial_db
+```
 
 ---
 
