@@ -1,9 +1,5 @@
 # <p align="center">Integration of Spring Boot And MySQL</p>
 
-<p align="justify">
-This tutorial demonstrates the integration of Spring Boot and [MySQL](https://www.mysql.com), including configuration for test and non-test environments.
-</p>
-
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
@@ -202,8 +198,6 @@ mysqldump mysql -u root -p [–no-data] db-name table-name1 table-name2 ... [–
 
 ### SQL Commands
 
-A few SQL commands to create schema (database), user, and grant privileges to the user.
-
 ```mysql
 # schema (database)
 SHOW DATABASES;
@@ -229,5 +223,7 @@ FLUSH PRIVILEGES;
 <p align="justify">
 For more information about MySQL see the [MySQL](https://www.mysql.com).
 </p>
+
+##
 
 **<p align="center"> [Top](#integration-of-spring-boot-and-mysql) </p>**

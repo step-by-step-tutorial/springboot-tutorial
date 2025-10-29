@@ -276,7 +276,7 @@ GRANT DBA TO testuser;
 @/tmp/ords_installer_privileges.sql testuser;
 ```
 
-Apply configuration to ORDS instance.
+Apply configuration to the ORDS instance.
 
 ```shell
 docker exec -it ords ords --config /etc/ords/config install
@@ -293,7 +293,7 @@ docker exec -it ords ords --config /etc/ords/config install
 docker restart ords
 ```
 
-Connect to Oracle database and execute the procedure.
+Connect to the Oracle database and execute the procedure.
 
 ```shell
 docker exec -it oracle sqlplus testuser/password@//localhost:1521/xepdb1
@@ -315,7 +315,7 @@ end;
 ```
 
 Open [http://localhost:8080/ords/sql-developer](http://localhost:8080/ords/sql-developer) in web browser, then use
-following credentials to log in to the `Sql Developer Web`.
+the following credentials to log in to the `Sql Developer Web`.
 
 ```yaml
 Username: testuser
