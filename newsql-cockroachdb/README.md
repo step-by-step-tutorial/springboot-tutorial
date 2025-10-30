@@ -161,7 +161,7 @@ docker volume prune -f
 
 <p align="justify">
 
-For more information about Debezium see the [www.cockroachlabs.com/docs](https://www.cockroachlabs.com/docs).
+For more information about CockroachDB see the [www.cockroachlabs.com/docs](https://www.cockroachlabs.com/docs).
 
 
 
