@@ -108,14 +108,17 @@ kubectl get all -n dev
 ```shell
 # Oracle Database
 kubectl port-forward service/oracle 1521:1521 -n dev
+```
+```shell
+# Oracle enterprise manager
 kubectl port-forward service/oracle 5500:5500 -n dev
-
+```
+```shell
 # ORDS (SQL Developer Web)
-kubectl port-forward service/ords 8080:8080 -n dev
+kubectl port-forward service/ords 8081:8080 -n dev
+```
 
-# Adminer
-kubectl port-forward service/adminer 8081:8081 -n dev
-
+```shell
 # Application
 kubectl port-forward service/application 8080:8080 -n dev
 ```
@@ -141,103 +144,23 @@ docker volume prune -f
 ## UI
 
 * Oracle Enterprise Manager: [https://localhost:5500/em](https://localhost:5500/em)
-* ORDS (SQL Developer Web): [http://localhost:8081/ords](http://localhost:8081/ords)
-* Adminer: [http://localhost:8082](http://localhost:8082)
 
+```yaml
+user: system
+password: password
+container name: xepdb1
+```
+
+* ORDS (SQL Developer Web): [http://localhost:8081/ords](http://localhost:8081/ords)
+  Configure ORDS before login.
+
+```yaml
+Username: testuser
+Password: password
+```
 ---
 
-# Oracle
-
-<details>
-<summary>Show Oracle Training and ORDS Configuration</summary>
-
-## Oracle
-
-<p align="justify">
-For more information about Oracle see the [Oracle](https://www.oracle.com).
-</p>
-
-### URL
-
-```yaml
-url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
-```
-
-### Sqlplus Command
-
-```oraclesqlplus
--- execute sql file
-@/tmp/ords_installer_privileges.sql testuser;
-```
-
-### SQL Command
-
-```oracle
-CREATE USER testuser IDENTIFIED BY password;
-GRANT DBA TO testuser;
-```
-
-## Install Oracle on Docker
-
-Create a file named `docker-compose.yml` with the following configuration.
-
-### Docker Compose
-
-[docker-compose.yml](docker-compose.yml)
-
-```yaml
-#docker-compose.yml
-version: "3.8"
-
-services:
-  oracle:
-    image: container-registry.oracle.com/database/express:21.3.0-xe
-    container_name: oracle
-    hostname: oracle
-    restart: always
-    ports:
-      - "1521:1521"
-      - "5500:5500"
-    environment:
-      ORACLE_PWD: password
-    volumes:
-      - "oracle_data:/opt/oracle/oradata"
-  ords:
-    image: container-registry.oracle.com/database/ords:latest
-    container_name: ords
-    hostname: ords
-    depends_on:
-      - oracle
-    ports:
-      - "8080:8080"
-    volumes:
-      - "ords_config:/etc/ords/config"
-    entrypoint: [ "ords", "serve" ]
-
-volumes:
-  ords_config:
-    driver: local
-  oracle_data:
-    driver: local
-```
-
-### Apply Docker Compose
-
-Execute the following command to install Oracle.
-
-```shell
-docker compose --file ./docker-compose.yml --project-name oracle up --build -d
-```
-
-### Enterprise Manager
-
-Open https://localhost:5500/em in web browser.
-
-* user: system
-* password: password
-* container name: xepdb1
-
-### Sqlplus
+## Sqlplus
 
 ```shell
 sqlplus username/password@//hostname:port/servicename
@@ -246,10 +169,7 @@ sqlplus username/password@//hostname:port/servicename
 sqlplus sys/password@//localhost:1521/xepdb1
 ```
 
-### ORDS (Sql Developer Web)
-
-Open [http://localhost:8080/ords](http://localhost:8080/ords/sql-developer) but, you cannot log in to SQL Developer
-before applying the following configuration.
+## ORDS (Sql Developer Web)
 
 Get `ords_installer_privileges.sql` file and then connect to the database.
 
@@ -268,7 +188,7 @@ docker cp ./ords_installer_privileges.sql oracle:/tmp
 docker exec -it oracle sqlplus sys/password@//localhost:1521/xepdb1 as sysdba
 ```
 
-You have to enable the ORDS schema for the target user.
+You have to enable the ORDS schema for the target user. **Run the following commands one by one**.
 
 ```oraclesqlplus
 CREATE USER testuser IDENTIFIED BY password;
@@ -293,35 +213,23 @@ docker exec -it ords ords --config /etc/ords/config install
 docker restart ords
 ```
 
-Connect to the Oracle database and execute the procedure.
-
 ```shell
 docker exec -it oracle sqlplus testuser/password@//localhost:1521/xepdb1
 
 ```
 
-```oracle-plsql
+```oraclesqlplus
  begin
     ords.enable_schema(
-        p_enabled => true,
-        p_schema => 'testuser',
-        p_url_mapping_type => 'BASE_PATH',
-        p_url_mapping_pattern => 'testuser',
-        p_auto_rest_auth => false
+            p_enabled => true,
+            p_schema => 'testuser',
+            p_url_mapping_type => 'BASE_PATH',
+            p_url_mapping_pattern => 'testuser',
+            p_auto_rest_auth => false
     );
     commit;
 end;
 /
 ```
-
-Open [http://localhost:8080/ords/sql-developer](http://localhost:8080/ords/sql-developer) in web browser, then use
-the following credentials to log in to the `Sql Developer Web`.
-
-```yaml
-Username: testuser
-Password: password
-```
-
-</details>
 
 **<p align="center"> [Top](#integration-of-spring-boot-and-oracle) </p>**

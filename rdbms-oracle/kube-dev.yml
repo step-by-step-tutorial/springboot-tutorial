@@ -14,6 +14,10 @@ data:
   oracle-user: c3lzdGVt
   # value: password
   oracle-password: cGFzc3dvcmQ=
+  # value: system
+  ORACLE_USER: c3lzdGVt
+  # value: password
+  ORACLE_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -24,8 +28,9 @@ data:
   ORACLE_HOST: oracle
   ORACLE_PORT: '1521'
   ORACLE_DATABASE: xepdb1
-  ORACLE_USER: system
-  ORACLE_PASSWORD: password
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: "oracle"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -42,7 +47,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ords-config-pvc
+  name: ords-pvc
   namespace: dev
 spec:
   accessModes:
@@ -74,12 +79,9 @@ spec:
           ports:
             - containerPort: 1521
             - containerPort: 5500
-          env:
-            - name: ORACLE_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: oracle-password
+          envFrom:
+            - secretRef:
+                name: dev-credentials
           volumeMounts:
             - mountPath: /opt/oracle/oradata
               name: oracle-data
@@ -133,7 +135,7 @@ spec:
       volumes:
         - name: ords-config
           persistentVolumeClaim:
-            claimName: ords-config-pvc
+            claimName: ords-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -147,42 +149,6 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: adminer
-  namespace: dev
-  labels:
-    app: adminer
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: adminer
-  template:
-    metadata:
-      labels:
-        app: adminer
-    spec:
-      containers:
-        - name: adminer
-          image: adminer:latest
-          ports:
-            - containerPort: 8081
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: adminer
-  namespace: dev
-spec:
-  selector:
-    app: adminer
-  ports:
-    - protocol: TCP
-      port: 8081
-      targetPort: 8081
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -210,20 +176,6 @@ spec:
                 name: dev-config
             - secretRef:
                 name: dev-credentials
-          env:
-            - name: APP_HOST
-              value: "0.0.0.0"
-            - name: APP_PORT
-              value: "8080"
-            - name: APP_PROFILES
-              value: "oracle"
-          volumeMounts:
-            - name: config
-              mountPath: /config
-      volumes:
-        - name: config
-          configMap:
-            name: dev-config
 ---
 apiVersion: v1
 kind: Service

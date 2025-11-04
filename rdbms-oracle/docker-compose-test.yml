@@ -23,13 +23,6 @@ services:
     volumes:
       - "ords_config:/etc/ords/config"
     entrypoint: [ "ords", "serve" ]
-  adminer:
-    image: adminer
-    container_name: adminer
-    hostname: adminer
-    restart: always
-    ports:
-      - "8082:8080"
 volumes:
   ords_config:
     driver: local
