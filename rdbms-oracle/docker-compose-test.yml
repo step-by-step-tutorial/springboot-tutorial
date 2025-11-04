@@ -19,7 +19,7 @@ services:
     depends_on:
       - oracle
     ports:
-      - "8080:8080"
+      - "8081:8080"
     volumes:
       - "ords_config:/etc/ords/config"
     entrypoint: [ "ords", "serve" ]
@@ -29,7 +29,7 @@ services:
     hostname: adminer
     restart: always
     ports:
-      - "8081:8080"
+      - "8082:8080"
 volumes:
   ords_config:
     driver: local

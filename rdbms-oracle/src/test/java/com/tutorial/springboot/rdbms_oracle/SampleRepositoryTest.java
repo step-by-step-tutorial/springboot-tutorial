@@ -2,38 +2,27 @@ package com.tutorial.springboot.rdbms_oracle;
 
 import com.tutorial.springboot.rdbms_oracle.entity.SampleEntity;
 import com.tutorial.springboot.rdbms_oracle.repository.SampleRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.OracleContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
 class SampleRepositoryTest {
 
-    @Container
-    static final OracleContainer ORACLE = new OracleContainer("gvenzl/oracle-xe:21-slim-faststart");
-
     @Autowired
     SampleRepository systemUnderTest;
-
-    static {
-        ORACLE.withPassword("password");
-    }
 
     /**
      * This class includes STUB data.
@@ -41,30 +30,14 @@ class SampleRepositoryTest {
     static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
-        static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
-                .setName("name")
-                .setCode(1)
-                .setDatetime(NOW);
 
-    }
+        static SampleEntity newSample() {
+            return SampleEntity.create()
+                    .setName("name")
+                    .setCode(1)
+                    .setDatetime(NOW);
+        }
 
-    @SuppressWarnings({"unused"})
-    @DynamicPropertySource
-    static void registerMySQLProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", ORACLE::getJdbcUrl);
-        registry.add("spring.datasource.username", ORACLE::getUsername);
-        registry.add("spring.datasource.password", ORACLE::getPassword);
-        registry.add("spring.datasource.driver-class-name", ORACLE::getDriverClassName);
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        ORACLE.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        ORACLE.stop();
     }
 
     @Nested
@@ -72,7 +45,7 @@ class SampleRepositoryTest {
 
         @Test
         void shouldReturnEntityWithIdBySuccessfulSave() {
-            final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
+            final var givenEntity = StubFixturesFactory.newSample();
 
             final var expectedId = 1L;
             final var expectedName = "name";
@@ -94,7 +67,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test
@@ -123,7 +96,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test
@@ -162,7 +135,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            systemUnderTest.save(StubFixturesFactory.newSample());
         }
 
         @Test

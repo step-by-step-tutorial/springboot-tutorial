@@ -3,7 +3,6 @@ package com.tutorial.springboot.rdbm_mysql;
 import com.tutorial.springboot.rdbm_mysql.entity.SampleEntity;
 import com.tutorial.springboot.rdbm_mysql.repository.SampleRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of mysql sample repository")
 class SampleRepositoryTest {
 
     @Autowired
@@ -43,11 +41,9 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of save")
     class SaveTest {
 
         @Test
-        @DisplayName("save an entity when there is not exception")
         void shouldReturnEntityWithIdBySuccessfulSave() {
             final var givenEntity = StubFixturesFactory.newSample();
 
@@ -67,7 +63,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of find")
     class FindTest {
 
         @BeforeEach
@@ -76,7 +71,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("find one entity by given Id")
         void shouldReturnEntityByGivenId() {
             final var givenId = 1L;
 
@@ -98,7 +92,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of update")
     class UpdateTest {
 
         @BeforeEach
@@ -107,7 +100,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("update one entity by given new values")
         void shouldUpdateTupleInDatabaseByGivenNewValues() {
             final var givenId = 1L;
             final var givenNewName = "updated name";
@@ -139,7 +131,6 @@ class SampleRepositoryTest {
     }
 
     @Nested
-    @DisplayName("nested unit tests of delete")
     class DeleteTest {
 
         @BeforeEach
@@ -148,7 +139,6 @@ class SampleRepositoryTest {
         }
 
         @Test
-        @DisplayName("delete one entity by given Id")
         void shouldDeleteTupleFromDatabaseByGivenId() {
             final var givenId = 1L;
 

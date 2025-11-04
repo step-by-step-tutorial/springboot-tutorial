@@ -141,8 +141,8 @@ docker volume prune -f
 ## UI
 
 * Oracle Enterprise Manager: [https://localhost:5500/em](https://localhost:5500/em)
-* ORDS (SQL Developer Web): [http://localhost:8080/ords](http://localhost:8080/ords)
-* Adminer: [http://localhost:8081](http://localhost:8081)
+* ORDS (SQL Developer Web): [http://localhost:8081/ords](http://localhost:8081/ords)
+* Adminer: [http://localhost:8082](http://localhost:8082)
 
 ---
 
