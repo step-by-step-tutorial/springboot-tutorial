@@ -30,6 +30,14 @@ data:
   MYSQL_USER: user
   MYSQL_PASSWORD: password
   MYSQL_ROOT_PASSWORD: root
+  APP_HOST: 0.0.0.0
+  APP_PORT: '8080'
+  APP_PROFILES: "mysql"
+  PUID: "1000"
+  PGID: "1000"
+  TZ: "Etc/UTC"
+  PMA_ARBITRARY: "1"
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -72,27 +80,11 @@ spec:
           ports:
             - name: mysql
               containerPort: 3306
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: mysql-root-password
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: mysql-user
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: mysql-password
-            - name: MYSQL_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: mysql-database
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
@@ -145,13 +137,9 @@ spec:
           ports:
             - containerPort: 3000
             - containerPort: 3001
-          env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-            - name: TZ
-              value: "Etc/UTC"
+          envFrom:
+            - configMapRef:
+                name: dev-config
           securityContext:
             capabilities:
               add:
@@ -244,9 +232,9 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 80
-          env:
-            - name: PMA_ARBITRARY
-              value: "1"
+          envFrom:
+            - configMapRef:
+                name: dev-config
 ---
 apiVersion: v1
 kind: Service
@@ -292,13 +280,6 @@ spec:
                 name: dev-config
             - secretRef:
                 name: dev-credentials
-          env:
-            - name: APP_HOST
-              value: "0.0.0.0"
-            - name: APP_PORT
-              value: "8080"
-            - name: APP_PROFILES
-              value: "mysql"
           volumeMounts:
             - name: config
               mountPath: /config
