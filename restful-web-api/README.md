@@ -1,8 +1,8 @@
-# <p align="center">RESTful Web Services</p>
+# <p style="text-align: center;">RESTful Web Services</p>
 
 This tutorial is about develop a RESTful web services includes API documentation based on Swagger.
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [API Design](#api-design)
@@ -330,7 +330,7 @@ kubectl get all
 
 ### Port Forwarding
 
-<p align="justify">
+<p style="text-align: justify;">
 
 In order to connect to Application from localhost through the web browser use the following
 URL [http://localhost:8080](http://localhost:8080).
@@ -493,4 +493,4 @@ kube-port-forward-app:
 
 ##
 
-**<p align="center">[Top](#restful-web-services)</p>**
+**<p style="text-align: center;">[Top](#restful-web-services)</p>**

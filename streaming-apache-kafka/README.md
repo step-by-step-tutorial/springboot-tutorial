@@ -1,10 +1,10 @@
-# <p align="center">Integration of Spring Boot And Apache Kafka Streaming</p>
+# <p style="text-align: center;"> Integration of Spring Boot And Apache Kafka Streaming</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Apache Kafka](#apache-kafka)
@@ -48,7 +48,7 @@ mvn  spring-boot:run
 
 ## Apache Kafka
 
-<p align="justify">
+<p style="text-align: justify;">
 
 Apache Kafka is an event streaming platform. It follows publish/subscriber pattern around streams of events. The Kafka
 supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
@@ -78,7 +78,7 @@ It is a processor that consume data from the input Topics.
 
 It is a processor that produce data for the output Topics.
 
-<p align="center">
+<p style="text-align: center;">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/streaming-apache-kafka/doc/kafka-streaming-processor-topology.png" width="426" height="240">
 
@@ -362,7 +362,7 @@ kubectl get all
 
 ### Port Forwarding
 
-<p align="justify">
+<p style="text-align: justify;">
 
 In order to connect to Kafdrop from localhost through the web browser use the following command and dashboard of Kafdrop
 is available on [http://localhost:9000](http://localhost:9000) URL.
@@ -483,4 +483,4 @@ kube-port-forward-kafkadrop:
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**

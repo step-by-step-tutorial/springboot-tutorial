@@ -1,13 +1,13 @@
-# <p align="center">Integration of Spring Boot And Apache Log4j2 With File</p>
+# <p style="text-align: center;"> Integration of Spring Boot And Apache Log4j2 With File</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 Log4j is a log framework and this tutorial shows how should be integrated Spring Boot 3 and Log4j2 to append logs to the
 file. For more information see [https://logging.apache.org/log4j/2.x](https://logging.apache.org/log4j/2.x).
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Apache Log4j2](#apache-log4j2)
@@ -112,4 +112,4 @@ mvn spring-boot:stop
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-file) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-file) </p>**

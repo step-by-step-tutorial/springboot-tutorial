@@ -1,13 +1,13 @@
-# <p align="center">Integration of Spring Boot and Embedded Debezium</p>
+# <p style="text-align: center;"> Integration of Spring Boot and Embedded Debezium</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is about integration of Spring Boot and Debezium to capture changed data.
 In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -159,7 +159,7 @@ docker volume prune -f
 
 ## Debezium
 
-<p align="justify">
+<p style="text-align: justify;">
 
 Debezium is an open source distributed platform for change data capture (CDC). For more information about Debezium see
 the [https://debezium.io](https://debezium.io).
@@ -210,4 +210,4 @@ Configuration config = Configuration.create()
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-embedded-debezium) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-embedded-debezium) </p>**

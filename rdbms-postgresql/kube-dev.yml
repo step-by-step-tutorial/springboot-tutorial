@@ -28,12 +28,12 @@ metadata:
   namespace: dev
 data:
   POSTGRES_HOST: postgresql
-  POSTGRES_PORT: '5432'
+  POSTGRES_PORT: "5432"
   POSTGRES_DB: tutorial_db
-  PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+  PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
   PGADMIN_CONFIG_SERVER_MODE: "False"
-  APP_HOST: 0.0.0.0
-  APP_PORT: 8080
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
   APP_PROFILES: postgresql
 ---
 apiVersion: v1
@@ -79,7 +79,7 @@ spec:
     spec:
       containers:
         - name: postgresql
-          image: postgres:13.9-alpine
+          image: postgres:13.20-alpine
           ports:
             - containerPort: 5432
           envFrom:
@@ -153,7 +153,7 @@ spec:
     app: pgadmin
   ports:
     - protocol: TCP
-      port: 8081
+      port: 80
       targetPort: 80
 ---
 apiVersion: apps/v1

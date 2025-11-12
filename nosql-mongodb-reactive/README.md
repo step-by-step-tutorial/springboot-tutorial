@@ -1,12 +1,12 @@
-# <p align="center">Integration of Spring Boot And MongoDB Reactive</p>
+# <p style="text-align: center;"> Integration of Spring Boot And MongoDB Reactive</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is about the integration of Spring Boot and MongoDB.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -143,7 +143,7 @@ docker volume prune -f
 
 ## MongoDB
 
-<p align="justify">
+<p style="text-align: justify;">
 
 MongoDB is a document database in NoSQL topic. For more information about MongoDB
 see [https://www.mongodb.com](https://www.mongodb.com).
@@ -152,4 +152,4 @@ see [https://www.mongodb.com](https://www.mongodb.com).
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-mongodb-reactive) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-mongodb-reactive) </p>**

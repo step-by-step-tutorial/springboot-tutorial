@@ -1,6 +1,6 @@
-# <p align="center">Integration of Spring Boot And H2</p>
+# <p style="text-align: center;"> Integration of Spring Boot And H2</p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -127,14 +127,14 @@ url: jdbc:h2:mem:tutorial_db
 
 ## H2
 
-<p align="justify">
+<p style="text-align: justify;">
 
 H2 is a light relational database implemented by java to use for embedded, in-memory and server mode. It is proper to
-use it as a test database for testing or cache for an application. Also, it is able to work with file instead of memory.
+use it as a test database for testing or cache for an application. Also, it is able to work with a file instead of memory.
 For more information about H2 go to the [website of H2](https://www.h2database.com/html/main.html).
 
 </p>
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-h2) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-h2) </p>**

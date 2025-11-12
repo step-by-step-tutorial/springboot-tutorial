@@ -1,6 +1,6 @@
-# <p align="center">Integration of Spring Boot And Apache Log4j2 With Relational Database Appender</p>
+# <p style="text-align: center;"> Integration of Spring Boot And Apache Log4j2 With Relational Database Appender</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 Log4j is a log framework, and this tutorial shows how it should be integrated with Spring Boot 3 and Log4j2 to send logs
 to a
@@ -8,7 +8,7 @@ database. For more information see [https://logging.apache.org/log4j/2.x](https:
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -272,4 +272,4 @@ CREATE TABLE LOG_TABLE
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-relational-database-appender) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-relational-database-appender) </p>**

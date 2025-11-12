@@ -1,6 +1,6 @@
-# <p align="center">Integration of Spring Boot And MySQL</p>
+# <p style="text-align: center;"> Integration of Spring Boot And MySQL</p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -165,7 +165,7 @@ Database: tutorial_db
 
 ## MySQL
 
-### URL
+### URL Format
 
 The URL follows the syntax below:
 
@@ -228,10 +228,10 @@ GRANT ALL ON `tutorial_db`.* TO 'user'@'%';
 FLUSH PRIVILEGES;
 ```
 
-<p align="justify">
+<p style="text-align: justify;">
 For more information about MySQL see the [MySQL](https://www.mysql.com).
 </p>
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-mysql) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-mysql) </p>**

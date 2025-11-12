@@ -1,13 +1,13 @@
-# <p align="center">Spring Boot Profiling</p>
+# <p style="text-align: center;">Spring Boot Profiling</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is about working with profiles in the Spring Boot. The Profiles provide a possibility to categorize
 classes to use for specific goals, for example, define specific classes only for test environment, etc.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Define Profile](#define-profile)
@@ -41,7 +41,7 @@ mvn package -DskipTests=true
 
 ## Define Profile
 
-<p align="justify">
+<p style="text-align: justify;">
 
 To apply profiling:
 
@@ -120,4 +120,4 @@ class Test {
 
 ##
 
-**<p align="center"> [Top](#spring-boot-profiling) </p>**
+**<p style="text-align: center;"> [Top](#spring-boot-profiling) </p>**

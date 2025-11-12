@@ -1,4 +1,4 @@
-# <p align="center">Hello World</p>
+# <p style="text-align: center;">Hello World</p>
 
 This is the first step of the Spring Boot tutorial. The result is printing `Hello World!` on the console.
 
@@ -29,4 +29,4 @@ mvn package -DskipTests=true
 
 ##
 
-**<p align="center">[Top](#hello-world)</p>**
+**<p style="text-align: center;">[Top](#hello-world)</p>**

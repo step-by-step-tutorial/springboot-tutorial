@@ -1,8 +1,8 @@
-# <p align="center">Authentication With In-memory Implementation</p>
+# <p style="text-align: center;">Authentication With In-memory Implementation</p>
 
 This tutorial is a quick setup for spring Security based on RBAC.
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
@@ -183,7 +183,7 @@ kubectl get all
 
 ### Port Forwarding
 
-<p align="justify">
+<p style="text-align: justify;">
 
 In order to connect to Application from localhost through the web browser use the following
 URL [http://localhost:8080](http://localhost:8080).
@@ -349,4 +349,4 @@ kube-port-forward-app:
 
 ##
 
-**<p align="center">[Top](#authentication-with-in-memory-implementation)</p>**
+**<p style="text-align: center;">[Top](#authentication-with-in-memory-implementation)</p>**

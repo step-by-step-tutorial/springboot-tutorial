@@ -1,6 +1,6 @@
-# <p align="center">Title</p>
+# <p style="text-align: center;">Title</p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -127,4 +127,4 @@ docker volume prune -f
 
 ##
 
-**<p align="center"> [Top](#title) </p>**
+**<p style="text-align: center;"> [Top](#title) </p>**

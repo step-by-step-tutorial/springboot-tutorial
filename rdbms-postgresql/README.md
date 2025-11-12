@@ -1,6 +1,6 @@
-# <p align="center">Integration of Spring Boot And PostgreSQL</p>
+# <p style="text-align: center;"> Integration of Spring Boot And PostgreSQL</p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -104,13 +104,19 @@ kubectl get all -n dev
 ```shell
 # PostgreSQL
 kubectl port-forward service/postgresql 5432:5432 -n dev
+```
 
+```shell
 # PgAdmin
 kubectl port-forward service/pgadmin 8081:80 -n dev
+```
 
+```shell
 # Adminer
-kubectl port-forward service/adminer 8080:8080 -n dev
+kubectl port-forward service/adminer 8082:8080 -n dev
+```
 
+```shell
 # Application
 kubectl port-forward service/application 8080:8080 -n dev
 ```
@@ -136,24 +142,19 @@ docker volume prune -f
 ## UI
 
 * PgAdmin: [http://localhost:8081](http://localhost:8081)
-* Adminer: [http://localhost:8080](http://localhost:8080)
+* Adminer: [http://localhost:8082](http://localhost:8082)
 
 ---
 
-# PostgreSQL
-
-<details>
-<summary>Show PostgreSQL Training</summary>
-
 ## PostgreSQL
 
-<p align="justify">
-For more information about PostgreSQL see the [PostgreSQL database](https://www.postgresql.org/).
+<p style="text-align: justify;">
+
+For more information about the PostgreSQL see the [PostgreSQL database](https://www.postgresql.org).
+
 </p>
 
-### URL
-
-The URL follows the syntax that mentioned below.
+### URL Format
 
 ```yaml
 url: jdbc:postgresql://host:port/database-name
@@ -187,6 +188,6 @@ sudo -u user-name psql -d db-name -f file-name.sql
 sudo -u test_user psql -d tutorial_db -f tutorial_db_schema.sql
 ```
 
-</details>
+##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-postgresql) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-postgresql) </p>**

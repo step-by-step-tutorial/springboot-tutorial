@@ -1,12 +1,12 @@
-# <p align="center">Implement OAuth 2.0 Server and Client</p>
+# <p style="text-align: center;"> Implement OAuth 2.0 Server and Client</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is about implementing OAuth 2.0 Server and Client with Springboot framework.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [OAuth 2.0](#oauth-20)
@@ -293,7 +293,7 @@ An application making protected resource requests on behalf of the resource owne
 
 #### Authorization-Code Flow
 
-<p align="justify">
+<p style="text-align: justify;">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-oauth2/doc/authorization-code-flow.png" alt="OAuth 2.0 Authorization-Code Flow" width="50%" height="50%">
 
@@ -341,7 +341,7 @@ As well as exist an extensibility mechanism for defining additional types.
 A grant is a method of acquiring an access token. Deciding which grants to implement depends on the type of client the
 end user will be using, and the experience you want for your users.
 
-<p align="justify">
+<p style="text-align: justify;">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-oauth2/doc/oauth2-usage.png" alt="OAuth 2.0 Usage" width="75%" height="75%">
 
@@ -568,7 +568,7 @@ kubectl get all
 
 ### Port Forwarding
 
-<p align="justify">
+<p style="text-align: justify;">
 
 In order to connect to Applications from localhost through the web browser use the following command and dashboard of
 Applications is available on:
@@ -685,4 +685,4 @@ kube-port-forward-pgadmin:
 
 ##
 
-**<p align="center"> [Top](#implement-oauth-20-server-and-client) </p>**
+**<p style="text-align: center;"> [Top](#implement-oauth-20-server-and-client) </p>**

@@ -1,12 +1,12 @@
-# <p align="center">Integration of Spring Boot And Redis</p>
+# <p style="text-align: center;"> Integration of Spring Boot And Redis</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is about the integration of Spring Boot and Redis.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -145,7 +145,7 @@ host: redis
 port: 6379
 ```
 
-<p align="center">
+<p style="text-align: center;">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/nosql-redis/doc/redisinsight-login.png" height="30%" width="30%">
 
@@ -155,7 +155,7 @@ port: 6379
 
 ## Redis
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is included [Redis](https://redis.io) configuration for test and none test environment. There are two
 libraries to create connection factories for making connection to the Redis.
@@ -169,4 +169,4 @@ For more information about Redis see the [https://redis.io](https://redis.io).
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-redis) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-redis) </p>**

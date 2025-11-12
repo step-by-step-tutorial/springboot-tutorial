@@ -1,6 +1,6 @@
-# <p align="center">Integration of Spring Boot and RabbitMQ</p>
+# <p style="text-align: center;"> Integration of Spring Boot and RabbitMQ</p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -136,4 +136,4 @@ docker volume prune -f
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-rabbitmq) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-rabbitmq) </p>**

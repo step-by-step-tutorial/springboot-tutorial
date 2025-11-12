@@ -1,12 +1,12 @@
-# <p align="center">Role-Based Access Control</p>
+# <p style="text-align: center;">Role-Based Access Control</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is about implementing RBAC by Spring Boot.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [RBAC](#rbac)
@@ -100,7 +100,7 @@ Helps ensure that access controls are aligned with regulatory requirements and i
 
 ### Model
 
-<p align="center">
+<p style="text-align: center;">
 
 ```plantuml
 @startuml
@@ -694,7 +694,7 @@ kubectl get all
 
 ### Port Forwarding
 
-<p align="justify">
+<p style="text-align: justify;">
 
 In order to connect to Application from localhost through the web browser use the following
 URL [http://localhost:8080](http://localhost:8080).
@@ -705,7 +705,7 @@ URL [http://localhost:8080](http://localhost:8080).
 kubectl port-forward service/securityrbacjwt 8080:8080
 ```
 
-<p align="justify">
+<p style="text-align: justify;">
 
 In order to connect to PostgreSQL from localhost use the following command.
 
@@ -715,7 +715,7 @@ In order to connect to PostgreSQL from localhost use the following command.
 kubectl port-forward service/postgres 5432:5432
 ```
 
-<p align="justify">
+<p style="text-align: justify;">
 
 In order to connect to PGAdmin from localhost through the web browser use the following command and dashboard of
 PGAdmin is available on [http://localhost:8081](http://localhost:8081) URL.
@@ -1083,4 +1083,4 @@ kube-port-forward-pgadmin:
 
 ##
 
-**<p align="center"> [Top](#role-based-access-control) </p>**
+**<p style="text-align: center;"> [Top](#role-based-access-control) </p>**

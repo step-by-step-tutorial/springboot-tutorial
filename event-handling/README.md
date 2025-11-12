@@ -1,13 +1,13 @@
-# <p align="center">Event Handling In Spring Boot</p>
+# <p style="text-align: center;">Event Handling In Spring Boot</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This sample is about working with event and event listener in Spring Boot. There are three concepts `event`, `listener`
 and `publish` for the event driven mechanism. This tutorial used builtin event handling solution of Spring Boot.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [spring Boot](#spring-boot)
@@ -69,7 +69,7 @@ public class EventModel extends ApplicationEvent {
 
 ### Listener
 
-<p align="justify">
+<p style="text-align: justify;">
 
 There are two methods to implement a listener, annotation driven and programmatically. Also, it is possible to have
 async listener with using `@Async`.
@@ -153,4 +153,4 @@ public class EventPublisher {
 
 ##
 
-**<p align="center"> [Top](#event-handling-in-spring-boot) </p>**
+**<p style="text-align: center;"> [Top](#event-handling-in-spring-boot) </p>**

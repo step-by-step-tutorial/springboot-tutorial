@@ -1,15 +1,17 @@
-# <p align="center">Integration of Spring Boot And Oracle</p>
+# <p style="text-align: center;"> Integration of Spring Boot And Oracle</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 This tutorial demonstrates the integration of Spring Boot and [Oracle](https://www.oracle.com), including configuration for test and non-test environments.
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui)
+* [Sqlplus](#sqlplus)
+* [ORDS](#ords-sql-developer-web)
 * [Oracle](#oracle)
 
 ## Getting Started
@@ -109,10 +111,12 @@ kubectl get all -n dev
 # Oracle Database
 kubectl port-forward service/oracle 1521:1521 -n dev
 ```
+
 ```shell
 # Oracle enterprise manager
 kubectl port-forward service/oracle 5500:5500 -n dev
 ```
+
 ```shell
 # ORDS (SQL Developer Web)
 kubectl port-forward service/ords 8081:8080 -n dev
@@ -158,6 +162,7 @@ container name: xepdb1
 Username: testuser
 Password: password
 ```
+
 ---
 
 ## Sqlplus
@@ -232,4 +237,14 @@ end;
 /
 ```
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-oracle) </p>**
+## Oracle
+
+### URL Format
+
+```yaml
+url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
+```
+
+##
+
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-oracle) </p>**

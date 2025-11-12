@@ -1,12 +1,12 @@
-# <p align="center">Integration of Spring Boot And Apache Active MQ (Artemis)</p>
+# <p style="text-align: center;"> Integration of Spring Boot And Apache Active MQ (Artemis)</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This tutorial is about the integration of Spring Boot and Apache Active MQ (Artemis).
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -139,7 +139,7 @@ docker volume prune -f
 
 ## Artemis
 
-<p align="justify">
+<p style="text-align: justify;">
 
 There are two distributions of Apache Active MQ, [Classic,](https://activemq.apache.org/components/classic/) and the
 other
@@ -154,4 +154,4 @@ the [https://activemq.apache.org/components/artemis](https://activemq.apache.org
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-apache-active-mq-artemis) </p>**
+**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-active-mq-artemis) </p>**

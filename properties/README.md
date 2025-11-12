@@ -1,13 +1,13 @@
-# <p align="center">Properties In Spring Boot</p>
+# <p style="text-align: center;">Properties In Spring Boot</p>
 
-<p align="justify">
+<p style="text-align: justify;">
 
 This sample is about working with YAML and properties file in Spring Boot. Also, the sample is using java `record` class
 for using externalized properties.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Implementation](#implementation)
@@ -146,4 +146,4 @@ public class YamlPropertySourceFactory implements PropertySourceFactory {
 
 ##
 
-**<p align="center"> [Top](#properties-in-spring-boot) </p>**
+**<p style="text-align: center;"> [Top](#properties-in-spring-boot) </p>**

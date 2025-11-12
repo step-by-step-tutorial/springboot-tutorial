@@ -1,4 +1,4 @@
-# <p align="center">Spring Boot Tutorial</p>
+# <p style="text-align: center;">Spring Boot Tutorial</p>
 
 Spring Boot is an agile framework to use modules of Spring framework in fast and easy configuration way. For
 more information refer to [Spring Boot documentation](https://spring.io/projects/spring-boot)
@@ -9,7 +9,7 @@ This tutorial provides many best practises and examples include documentation.
 
 * [Spring Boot Generator](https://start.spring.io)
 
-## <p align="center"> Steps </p>
+## <p style="text-align: center;"> Steps </p>
 
 * [step: hello-world](hello-world)
 * [step: profile](profile)
@@ -157,4 +157,4 @@ mvn -f security-rbac-jwt/pom.xml clean package
 
 ##
 
-**<p align="center"> [Top](#spring-boot-tutorial) </p>**
+**<p style="text-align: center;"> [Top](#spring-boot-tutorial) </p>**
