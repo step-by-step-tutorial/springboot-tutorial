@@ -14,6 +14,12 @@ data:
   postgres-user: dXNlcg==
   # value: password
   postgres-password: cGFzc3dvcmQ=
+  # value: user
+  POSTGRES_USER: dXNlcg==
+  # value: password
+  POSTGRES_PASSWORD: cGFzc3dvcmQ=
+  # value: password
+  PGADMIN_DEFAULT_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -24,8 +30,11 @@ data:
   POSTGRES_HOST: postgresql
   POSTGRES_PORT: '5432'
   POSTGRES_DB: tutorial_db
-  POSTGRES_USER: user
-  POSTGRES_PASSWORD: password
+  PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+  PGADMIN_CONFIG_SERVER_MODE: "False"
+  APP_HOST: 0.0.0.0
+  APP_PORT: 8080
+  APP_PROFILES: postgresql
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -73,24 +82,11 @@ spec:
           image: postgres:13.9-alpine
           ports:
             - containerPort: 5432
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: postgres-user
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: postgres-password
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: POSTGRES_DB
-            - name: PGDATA
-              value: /data/postgres
+          envFrom:
+            - secretRef:
+                name: dev-credentials
+            - configMapRef:
+                name: dev-config
           volumeMounts:
             - mountPath: /data/postgres
               name: postgres-data
@@ -134,13 +130,11 @@ spec:
           image: dpage/pgadmin4
           ports:
             - containerPort: 80
-          env:
-            - name: PGADMIN_DEFAULT_EMAIL
-              value: pgadmin4@pgadmin.org
-            - name: PGADMIN_DEFAULT_PASSWORD
-              value: password
-            - name: PGADMIN_CONFIG_SERVER_MODE
-              value: "False"
+          envFrom:
+            - secretRef:
+                name: dev-credentials
+            - configMapRef:
+                name: dev-config
           volumeMounts:
             - mountPath: /var/lib/pgadmin
               name: pgadmin-data
@@ -224,20 +218,6 @@ spec:
                 name: dev-config
             - secretRef:
                 name: dev-credentials
-          env:
-            - name: APP_HOST
-              value: "0.0.0.0"
-            - name: APP_PORT
-              value: "8080"
-            - name: APP_PROFILES
-              value: "postgresql"
-          volumeMounts:
-            - name: config
-              mountPath: /config
-      volumes:
-        - name: config
-          configMap:
-            name: dev-config
 ---
 apiVersion: v1
 kind: Service
