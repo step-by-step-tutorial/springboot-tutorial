@@ -1,7 +1,7 @@
 name: test
 services:
   postgresql:
-    image: postgres:13.9-alpine
+    image: postgres:13.20-alpine
     container_name: postgresql
     hostname: postgresql
     restart: always
@@ -11,9 +11,6 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: tutorial_db
-      PGDATA: /data/postgres
-    volumes:
-      - "./target/postgresql:/data/postgres"
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -26,11 +23,13 @@ services:
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
-      - "./target/pgadmin:/var/lib/pgadmin"
+      - "pgadmin-data:/var/lib/pgadmin"
   adminer:
     image: adminer
     container_name: adminer
     hostname: adminer
     restart: always
     ports:
-      - "8080:8080" 
+      - "8082:8080"
+volumes:
+  pgadmin-data:

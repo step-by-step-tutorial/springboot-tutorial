@@ -1,9 +1,5 @@
 # <p align="center">Integration of Spring Boot And PostgreSQL</p>
 
-<p align="justify">
-This tutorial demonstrates the integration of Spring Boot and [PostgreSQL](https://www.postgresql.org/), including configuration for test and non-test environments.
-</p>
-
 ## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)

@@ -2,49 +2,29 @@ package com.tutorial.springboot.rdbms_postgresql;
 
 import com.tutorial.springboot.rdbms_postgresql.entity.SampleEntity;
 import com.tutorial.springboot.rdbms_postgresql.repository.SampleRepository;
-import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
 @DisplayName("unit tests of postgresql sample repository")
 class SampleRepositoryTest {
-    static final Logger LOGGER = LoggerFactory.getLogger(SampleRepositoryTest.class.getSimpleName());
-
-    @Container
-    static final PostgreSQLContainer<?> POSTGRESQL = new PostgreSQLContainer<>("postgres:13.9-alpine");
 
     @Autowired
     SampleRepository systemUnderTest;
-
-
-    static {
-        try {
-            POSTGRESQL.withDatabaseName("tutorial_db")
-                    .withUsername("user")
-                    .withPassword("password");
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-    }
 
     /**
      * This class includes STUB data.
@@ -52,29 +32,13 @@ class SampleRepositoryTest {
     static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
-        static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
-                .setName("name")
-                .setCode(1)
-                .setDatetime(NOW);
-    }
 
-    @SuppressWarnings({"unused"})
-    @DynamicPropertySource
-    static void registerPostgreSQLProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRESQL::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRESQL::getUsername);
-        registry.add("spring.datasource.password", POSTGRESQL::getPassword);
-        registry.add("spring.datasource.driver-class-name", POSTGRESQL::getDriverClassName);
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        POSTGRESQL.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        POSTGRESQL.stop();
+        static SampleEntity newSample() {
+            return SampleEntity.create()
+                    .setName("name")
+                    .setCode(1)
+                    .setDatetime(NOW);
+        }
     }
 
     @Nested
@@ -84,7 +48,7 @@ class SampleRepositoryTest {
         @Test
         @DisplayName("save an entity when there is not exception")
         void shouldReturnEntityWithIdBySuccessfulSave() {
-            final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
+            final var givenEntity = StubFixturesFactory.newSample();
 
             final var expectedName = "name";
             final var expectedCode = 1;
@@ -107,7 +71,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            final var entity = systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            final var entity = systemUnderTest.save(StubFixturesFactory.newSample());
             id = entity.getId();
         }
 
@@ -139,7 +103,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            final var entity = systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            final var entity = systemUnderTest.save(StubFixturesFactory.newSample());
             id = entity.getId();
         }
 
@@ -183,7 +147,7 @@ class SampleRepositoryTest {
 
         @BeforeEach
         void initDatabase() {
-            final var entity = systemUnderTest.save(StubFixturesFactory.SAMPLE_ENTITY);
+            final var entity = systemUnderTest.save(StubFixturesFactory.newSample());
             id = entity.getId();
         }
 
