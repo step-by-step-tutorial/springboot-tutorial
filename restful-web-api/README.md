@@ -1,29 +1,28 @@
-# <p style="text-align: center;">RESTful Web Services</p>
-
-This tutorial is about develop a RESTful web services includes API documentation based on Swagger.
+# <p style="text-align: center;"> RESTful Web Services</p>
 
 ## <p style="text-align: center;"> Table of Content </p>
 
 * [Getting Started](#getting-started)
+* [Dockerized](#dockerized)
+* [Kubernetes](#kubernetes)
+* [UI](#ui)
 * [API Design](#api-design)
 * [Http Verbs](#http-verbs)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
-* [Appendix](#appendix )
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/) (Optional)
-* [Postman CLI](https://learning.postman.com/docs/postman-cli/postman-cli-installation/) (Optional)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
+* [Postman CLI](https://learning.postman.com/docs/postman-cli/postman-cli-installation/)
 
 ### Build
 
 ```shell
-mvn clean package -DskipTests=true
+mvn clean compile -DskipTests=true
 ```
 
 ### Test
@@ -32,13 +31,19 @@ mvn clean package -DskipTests=true
 mvn  test
 ```
 
+### Package
+
+```shell
+mvn package -DskipTests=true
+```
+
 ### Run
 
 ```shell
-mvn  spring-boot:run
+mvn  spring-boot:start
 ```
 
-### E2E Test
+### E2eTest
 
 #### Command Line
 
@@ -58,10 +63,118 @@ mvn  spring-boot:run
 postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_environment.json'
 ```
 
-* To access actuator [http://localhost:8080/actuator](http://localhost:8080/actuator).
-* To health check [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health).
-* To access **swagger** ui,
-  brows [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html).
+### Stop
+
+```shell
+mvn  spring-boot:stop
+```
+
+## Dockerized
+
+### Deploy
+
+```shell
+# docker command
+mvn clean package
+docker-deploy:
+	docker run \
+	--name restfulwebapi \
+	-p 8080:8080 \
+	-h restfulwebapi \
+	-e APP_HOST=0.0.0.0 \
+	-e APP_PORT=8080 \
+	-itd samanalishiri/restfulwebapi:latest
+```
+
+```shell
+# docker compose
+mvn clean package
+docker compose --file docker-compose.yml --project-name dev up --build -d
+```
+
+### E2eTest
+
+#### Command Line
+
+```shell
+# Unix/Linux
+./e2eTest/shell/e2etest.sh
+```
+
+```shell
+# Windows
+./e2eTest/shell/e2etest.bat
+```
+
+#### Postman CLI
+
+```shell
+postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_environment.json'
+```
+
+### Down
+
+```shell
+docker compose --file docker-compose.yml --project-name dev down
+docker image rm samanalishiri/application:latest
+docker volume prune -f
+```
+
+## Kubernetes
+
+### Deploy
+
+```shell
+mvn clean package
+docker build -t samanalishiri/application:latest . --no-cache
+kubectl apply -f kube-dev.yml
+```
+
+### Check Status
+
+```shell
+kubectl get all -n dev
+```
+
+### Port Forwarding
+
+```shell
+kubectl port-forward service/application 8080:8080 -n dev
+```
+
+### E2eTest
+
+#### Command Line
+
+```shell
+# Unix/Linux
+./e2eTest/shell/e2etest.sh
+```
+
+```shell
+# Windows
+./e2eTest/shell/e2etest.bat
+```
+
+#### Postman CLI
+
+```shell
+postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_collection.json' --environment './e2eTest/postman/spring Boot Tutorial- restful-web-api.postman_environment.json'
+```
+
+### Down
+
+```shell
+kubectl delete all --all -n dev
+docker image rm samanalishiri/application:latest
+docker volume prune -f
+```
+
+## UI
+
+* Actuator: [http://localhost:8080/actuator](http://localhost:8080/actuator).
+* Health check: [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health).
+* Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html).
 
 ## API Design
 
@@ -199,296 +312,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/uri", method = RequestMethod.OPTIONS)
 public ResponseEntity<String> options() {
 }
-```
-
-## Install Application on Docker
-
-Create a file named `docker-compose.yml` with the following configuration.
-
-### Docker Compose
-
-[Dockerfile](Dockerfile)
-
-```dockerfile
-FROM eclipse-temurin:21-jdk-alpine
-
-ARG JAR_PATH=./target
-ARG JAR_NAME=restful-web-api
-ARG JAR_VERSION=0.0.1-SNAPSHOT
-ARG TARGET_PATH=/app
-ENV APPLICATION=${TARGET_PATH}/application.jar
-ENV PORT=8080
-
-ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
-
-EXPOSE ${PORT}
-ENTRYPOINT java -jar ${APPLICATION}
-```
-
-[docker-compose.yml](docker-compose.yml)
-
-```yaml
-#docker-compose.yml
-version: "3.8"
-
-services:
-  restfulwebapi:
-    image: samanalishiri/restfulwebapi:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: restfulwebapi
-    hostname: restfulwebapi
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      APP_HOST: "0.0.0.0"
-      APP_PORT: "8080"
-
-```
-
-### Apply Docker Compose
-
-Execute the following command to install Application.
-
-```shell
-docker compose --file ./docker-compose.yml --project-name restfulwebapi up --build -d
-```
-
-## Install Application on Kubernetes
-
-Create the following files for installing Application.
-
-### Kube Files
-
-[app-deployment.yml](/kube/app-deployment.yml)
-
-```yaml
-#deployment.yml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: restfulwebapi
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: restfulwebapi
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: restfulwebapi
-    spec:
-      containers:
-        - name: restfulwebapi
-          image: samanalishiri/restfulwebapi:latest
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 8080
-          env:
-            - name: APP_HOST
-              value: "0.0.0.0"
-            - name: APP_PORT
-              value: "8080"
-
-```
-
-[app-service.yml](/kube/app-service.yml)
-
-```yaml
-#service.yml
-apiVersion: v1
-kind: Service
-metadata:
-  name: restfulwebapi
-spec:
-  selector:
-    app: restfulwebapi
-  ports:
-    - port: 8080
-      targetPort: 8080
-
-```
-
-### Apply Kube Files
-
-Execute the following commands to install the tools on Kubernetes.
-
-```shell
-kubectl apply -f ./kube/app-deployment.yml
-kubectl apply -f ./kube/app-service.yml
-```
-
-### Check Status
-
-```shell
-kubectl get all
-```
-
-### Port Forwarding
-
-<p style="text-align: justify;">
-
-In order to connect to Application from localhost through the web browser use the following
-URL [http://localhost:8080](http://localhost:8080).
-
-</p>
-
-```shell
-kubectl port-forward service/securityrbac 8080:8080
-```
-
-## How To Set up Spring Boot
-
-### Dependencies
-
-```xml
-
-<dependencies>
-    <!--spring-->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-        <exclusions>
-            <exclusion>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-logging</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-    <!--json-->
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-    </dependency>
-    <!--rest documentation-->
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-        <version>2.3.0</version>
-    </dependency>
-    <!--developer-->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-devtools</artifactId>
-        <scope>runtime</scope>
-        <optional>true</optional>
-    </dependency>
-</dependencies>
-```
-
-### Application Properties
-
-```yaml
-server:
-  address: ${APP_HOST:0.0.0.0}
-  port: ${APP_PORT:8080}
-```
-
-### Java Config
-
-```java
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.servers.Server;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@OpenAPIDefinition(
-        info = @Info(title = "Spring Boot Tutorial", description = "RESTful web service"),
-        servers = @Server(url = "http://localhost:8080")
-)
-public class OpenApiConfig {
-}
-```
-
-## How To Set up Spring Boot Test
-
-### Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>io.rest-assured</groupId>
-        <artifactId>rest-assured</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-```  
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-
-docker-build:
-	docker build -t samanalishiri/restfulwebapi:latest .
-
-docker-deploy:
-	docker run \
-	--name restfulwebapi \
-	-p 8080:8080 \
-	-h restfulwebapi \
-	-e APP_HOST=0.0.0.0 \
-	-e APP_PORT=8080 \
-	-itd samanalishiri/restfulwebapi:latest
-
-DockerComposeDeploy:
-	docker compose --file ./docker-compose.yml --project-name restfulwebapi up --build -d
-
-docker-remove-container:
-	docker rm restfulwebapi --force
-
-DockerRemoveImage:
-	docker image rm samanalishiri/restfulwebapi:latest
-
-kube-deploy:
-	kubectl apply -f ./kube/app-deployment.yml
-	kubectl apply -f ./kube/app-service.yml
-
-kube-delete:
-	kubectl delete all --all
-
-kube-port-forward-app:
-	kubectl port-forward service/restfulwebapi 8080:8080
 ```
 
 ##

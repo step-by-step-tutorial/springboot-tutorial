@@ -1,13 +1,12 @@
-version: "3.8"
-
+name: dev
 services:
-  restfulwebapi:
-    image: samanalishiri/restfulwebapi:latest
+  application:
+    image: samanalishiri/application:latest
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: restfulwebapi
-    hostname: restfulwebapi
+    container_name: application
+    hostname: application
     restart: always
     ports:
       - "8080:8080"
