@@ -1,4 +1,4 @@
-# <p align="center"> Integration of Spring Boot And MongoDB</p>
+# <p align="center">Integration of Spring Boot And MongoDB</p>
 
 <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about the integration of Spring Boot and MongoDB.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -153,4 +153,4 @@ see [https://www.mongodb.com](https://www.mongodb.com).
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-mongodb) </p>**
+**<p align="center">[Top](#integration-of-spring-boot-and-mongodb) </p>**

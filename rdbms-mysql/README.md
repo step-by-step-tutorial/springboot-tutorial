@@ -1,6 +1,6 @@
-# <p align="center"> Integration of Spring Boot And MySQL</p>
+# <p align="center">Integration of Spring Boot And MySQL</p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -234,4 +234,4 @@ For more information about MySQL see the [MySQL](https://www.mysql.com).
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-mysql) </p>**
+**<p align="center">[Top](#integration-of-spring-boot-and-mysql) </p>**

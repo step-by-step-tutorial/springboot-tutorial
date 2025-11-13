@@ -1,6 +1,6 @@
-# <p align="center"> Integration of Spring Boot And PostgreSQL</p>
+# <p align="center">Integration of Spring Boot And PostgreSQL</p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)

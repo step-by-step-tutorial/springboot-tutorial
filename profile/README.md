@@ -7,7 +7,7 @@ classes to use for specific goals, for example, define specific classes only for
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content</p>
 
 * [Getting Started](#getting-started)
 * [Define Profile](#define-profile)
@@ -120,4 +120,4 @@ class Test {
 
 ##
 
-**<p align="center"> [Top](#spring-boot-profiling) </p>**
+**<p align="center">[Top](#spring-boot-profiling)</p>**

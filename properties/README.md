@@ -7,7 +7,7 @@ for using externalized properties.
 
 </p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content</p>
 
 * [Getting Started](#getting-started)
 * [Implementation](#implementation)
@@ -146,4 +146,4 @@ public class YamlPropertySourceFactory implements PropertySourceFactory {
 
 ##
 
-**<p align="center"> [Top](#properties-in-spring-boot) </p>**
+**<p align="center">[Top](#properties-in-spring-boot)</p>**

@@ -1,4 +1,4 @@
-# <p align="center"> Integration of Spring Boot And Apache Log4j2 With File</p>
+# <p align="center">Integration of Spring Boot And Apache Log4j2 With File</p>
 
 <p style="text-align: justify;">
 

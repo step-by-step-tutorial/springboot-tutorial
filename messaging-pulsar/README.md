@@ -1,6 +1,6 @@
-# <p align="center"> Integration of Spring Boot And Apache Pulsar</p>
+# <p align="center">Integration of Spring Boot And Apache Pulsar</p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -208,4 +208,4 @@ curl -X DELETE http://localhost:8081/admin/v2/persistent/public/default/test-top
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-apache-pulsar) </p>**
+**<p align="center">[Top](#integration-of-spring-boot-and-apache-pulsar) </p>**

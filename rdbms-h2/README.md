@@ -1,6 +1,6 @@
-# <p align="center"> Integration of Spring Boot And H2</p>
+# <p align="center">Integration of Spring Boot And H2</p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content</p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -137,4 +137,4 @@ For more information about H2 go to the [website of H2](https://www.h2database.c
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-and-h2) </p>**
+**<p align="center">[Top](#integration-of-spring-boot-and-h2)</p>**

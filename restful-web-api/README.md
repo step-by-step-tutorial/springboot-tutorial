@@ -1,6 +1,6 @@
 # <p align="center">RESTful Web Services</p>
 
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
