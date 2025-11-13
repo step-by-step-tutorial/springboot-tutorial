@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Apache Log4j2 With File</p>
+# <p align="center"> Integration of Spring Boot And Apache Log4j2 With File</p>
 
 <p style="text-align: justify;">
 
@@ -7,7 +7,7 @@ file. For more information see [https://logging.apache.org/log4j/2.x](https://lo
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Apache Log4j2](#apache-log4j2)
@@ -112,4 +112,4 @@ mvn spring-boot:stop
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-file) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-file) </p>**

@@ -1,4 +1,4 @@
-# <p style="text-align: center;">Security Dynamic Policy</p>
+# <p align="center">Security Dynamic Policy</p>
 
 <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about implementing dynamic policy by Spring Boot.
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dynamic Policy](#dynamic-policy)
@@ -153,4 +153,4 @@ run:
 
 ##
 
-**<p style="text-align: center;"> [Top](#security-dynamic-policy) </p>**
+**<p align="center"> [Top](#security-dynamic-policy) </p>**

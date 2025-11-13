@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Apache Active MQ (Artemis)</p>
+# <p align="center"> Integration of Spring Boot And Apache Active MQ (Artemis)</p>
 
 <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about the integration of Spring Boot and Apache Active MQ (Arte
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -154,4 +154,4 @@ the [https://activemq.apache.org/components/artemis](https://activemq.apache.org
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-active-mq-artemis) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-active-mq-artemis) </p>**

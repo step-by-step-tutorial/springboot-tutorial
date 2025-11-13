@@ -1,10 +1,10 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Apache Kafka Messaging</p>
+# <p align="center"> Integration of Spring Boot And Apache Kafka Messaging</p>
 
 <p style="text-align: justify;">
 This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -148,7 +148,7 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 
 </p>
 
-<p style="text-align: center;">
+<p align="center">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/messaging-apache-kafka/doc/kafka-solution.gif" width="426" height="240">
 
@@ -156,4 +156,4 @@ For more information see the [https://kafka.apache.org](https://kafka.apache.org
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**

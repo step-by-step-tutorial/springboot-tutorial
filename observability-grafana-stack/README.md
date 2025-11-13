@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Grafana</p>
+# <p align="center"> Integration of Spring Boot And Grafana</p>
 
 <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about the integration of Spring Boot and Grafana.
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -178,4 +178,4 @@ Observe the Spring Boot application with three pillars of observability on Grafa
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-grafana) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-grafana) </p>**

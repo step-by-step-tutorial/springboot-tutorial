@@ -1,6 +1,6 @@
-# <p style="text-align: center;"> RESTful Web Services</p>
+# <p align="center"> RESTful Web Services</p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -316,4 +316,4 @@ public ResponseEntity<String> options() {
 
 ##
 
-**<p style="text-align: center;">[Top](#restful-web-services)</p>**
+**<p align="center">[Top](#restful-web-services)</p>**

@@ -1,8 +1,8 @@
-# <p style="text-align: center;">Authentication With In-memory Implementation</p>
+# <p align="center">Authentication With In-memory Implementation</p>
 
 This tutorial is a quick setup for spring Security based on RBAC.
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [How To Set up Spring Boot](#how-to-set-up-spring-boot)
@@ -349,4 +349,4 @@ kube-port-forward-app:
 
 ##
 
-**<p style="text-align: center;">[Top](#authentication-with-in-memory-implementation)</p>**
+**<p align="center">[Top](#authentication-with-in-memory-implementation)</p>**

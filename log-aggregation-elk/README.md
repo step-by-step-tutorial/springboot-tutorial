@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring boot with ELK Stack</p>
+# <p align="center"> Integration of Spring boot with ELK Stack</p>
 
 <p style="text-align: justify;">
 
@@ -7,7 +7,7 @@ ELK see the [https://www.elastic.co](https://www.elastic.co).
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -248,4 +248,4 @@ output {
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-with-elk-stack) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-with-elk-stack) </p>**

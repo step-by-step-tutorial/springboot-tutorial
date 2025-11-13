@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring Boot and Embedded Debezium</p>
+# <p align="center"> Integration of Spring Boot and Embedded Debezium </p>
 
 <p style="text-align: justify;">
 
@@ -7,7 +7,7 @@ In this tutorial I use Spring Boot, MySQL, Kafka and Debezium to CDC.
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -210,4 +210,4 @@ Configuration config = Configuration.create()
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-embedded-debezium) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-embedded-debezium) </p>**

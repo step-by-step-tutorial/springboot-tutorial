@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Jaeger</p>
+# <p align="center"> Integration of Spring Boot And Jaeger</p>
 
  <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about the integration of Spring Boot and Jaeger.
 
  </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -148,4 +148,4 @@ docker volume prune -f
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-jaeger) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-jaeger) </p>**

@@ -1,10 +1,10 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Apache Kafka Streaming</p>
+# <p align="center"> Integration of Spring Boot And Apache Kafka Streaming</p>
 
 <p style="text-align: justify;">
 This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Apache Kafka](#apache-kafka)
@@ -78,7 +78,7 @@ It is a processor that consume data from the input Topics.
 
 It is a processor that produce data for the output Topics.
 
-<p style="text-align: center;">
+<p align="center">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/streaming-apache-kafka/doc/kafka-streaming-processor-topology.png" width="426" height="240">
 
@@ -483,4 +483,4 @@ kube-port-forward-kafkadrop:
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-kafka) </p>**

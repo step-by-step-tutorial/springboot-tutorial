@@ -1,6 +1,6 @@
-# <p style="text-align: center;">NewSQL CockroachDB</p>
+# <p align="center">NewSQL CockroachDB</p>
 
-# <p style="text-align: center;"> Integration of Spring Boot and CockroachDB</p>
+# <p align="center"> Integration of Spring Boot and CockroachDB</p>
 
 <p style="text-align: justify;">
 
@@ -8,7 +8,7 @@ This tutorial is about the integration of Spring Boot and CockroachDB.
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -188,4 +188,4 @@ CREATE USER tutorial_user WITH PASSWORD 'tutorial_password';
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-cockroachdb) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-cockroachdb) </p>**

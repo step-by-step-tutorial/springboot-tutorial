@@ -1,4 +1,4 @@
-# <p style="text-align: center;">Role-Based Access Control</p>
+# <p align="center">Role-Based Access Control</p>
 
 <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about implementing RBAC by Spring Boot.
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [RBAC](#rbac)
@@ -100,7 +100,7 @@ Helps ensure that access controls are aligned with regulatory requirements and i
 
 ### Model
 
-<p style="text-align: center;">
+<p align="center">
 
 ```plantuml
 @startuml
@@ -1083,4 +1083,4 @@ kube-port-forward-pgadmin:
 
 ##
 
-**<p style="text-align: center;"> [Top](#role-based-access-control) </p>**
+**<p align="center"> [Top](#role-based-access-control) </p>**

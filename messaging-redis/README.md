@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Redis</p>
+# <p align="center"> Integration of Spring Boot And Redis</p>
 
 <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about the integration of Spring Boot and Redis.
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -145,7 +145,7 @@ host: redis
 port: 6379
 ```
 
-<p style="text-align: center;">
+<p align="center">
 
 <img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/nosql-redis/doc/redisinsight-login.png" height="30%" width="30%">
 
@@ -169,4 +169,4 @@ For more information about Redis see the [https://redis.io](https://redis.io).
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-redis) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-redis) </p>**

@@ -1,6 +1,6 @@
-# <p style="text-align: center;"> Integration of Spring Boot And PostgreSQL</p>
+# <p align="center"> Integration of Spring Boot And PostgreSQL</p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Dockerized](#dockerized)
@@ -190,4 +190,4 @@ sudo -u test_user psql -d tutorial_db -f tutorial_db_schema.sql
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-postgresql) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-postgresql) </p>**

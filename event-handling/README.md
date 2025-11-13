@@ -1,4 +1,4 @@
-# <p style="text-align: center;">Event Handling In Spring Boot</p>
+# <p align="center"> Event Handling In Spring Boot </p>
 
 <p style="text-align: justify;">
 
@@ -7,7 +7,7 @@ and `publish` for the event driven mechanism. This tutorial used builtin event h
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [spring Boot](#spring-boot)
@@ -153,4 +153,4 @@ public class EventPublisher {
 
 ##
 
-**<p style="text-align: center;"> [Top](#event-handling-in-spring-boot) </p>**
+**<p align="center"> [Top](#event-handling-in-spring-boot) </p>**

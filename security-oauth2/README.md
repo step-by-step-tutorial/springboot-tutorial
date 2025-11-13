@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Implement OAuth 2.0 Server and Client</p>
+# <p align="center"> Implement OAuth 2.0 Server and Client</p>
 
 <p style="text-align: justify;">
 
@@ -6,7 +6,7 @@ This tutorial is about implementing OAuth 2.0 Server and Client with Springboot 
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [OAuth 2.0](#oauth-20)
@@ -685,4 +685,4 @@ kube-port-forward-pgadmin:
 
 ##
 
-**<p style="text-align: center;"> [Top](#implement-oauth-20-server-and-client) </p>**
+**<p align="center"> [Top](#implement-oauth-20-server-and-client) </p>**

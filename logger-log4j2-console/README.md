@@ -1,4 +1,4 @@
-# <p style="text-align: center;"> Integration of Spring Boot And Apache Log4j2 With Console Appender</p>
+# <p align="center"> Integration of Spring Boot And Apache Log4j2 With Console Appender</p>
 
 <p style="text-align: justify;">
 
@@ -7,7 +7,7 @@ console. For more information see [https://logging.apache.org/log4j/2.x](https:/
 
 </p>
 
-## <p style="text-align: center;"> Table of Content </p>
+## <p align="center"> Table of Content </p>
 
 * [Getting Started](#getting-started)
 * [Log Level](#log-level)
@@ -107,4 +107,4 @@ Add `log4j2.xml` to the **resources** directory.
 
 ##
 
-**<p style="text-align: center;"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-console-appender) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-and-apache-log4j2-with-console-appender) </p>**
