@@ -1,13 +1,12 @@
-version: "3.8"
-
+name: dev
 services:
-  securityauthenticationinmemory:
-    image: samanalishiri/securityauthenticationinmemory:latest
+  application:
+    image: samanalishiri/application:latest
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: securityauthenticationinmemory
-    hostname: securityauthenticationinmemory
+    container_name: application
+    hostname: application
     restart: always
     ports:
       - "8080:8080"

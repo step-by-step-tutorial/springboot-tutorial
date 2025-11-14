@@ -76,14 +76,14 @@ mvn  spring-boot:stop
 ```shell
 # docker command
 mvn clean package
-docker-deploy:
-	docker run \
-	--name restfulwebapi \
+docker build -t samanalishiri/application:latest .:
+docker run \
+	--name application \
 	-p 8080:8080 \
-	-h restfulwebapi \
+	-h application \
 	-e APP_HOST=0.0.0.0 \
 	-e APP_PORT=8080 \
-	-itd samanalishiri/restfulwebapi:latest
+	-itd samanalishiri/application:latest
 ```
 
 ```shell
@@ -116,6 +116,7 @@ postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.
 
 ```shell
 docker compose --file docker-compose.yml --project-name dev down
+docker rm application --force
 docker image rm samanalishiri/application:latest
 docker volume prune -f
 ```

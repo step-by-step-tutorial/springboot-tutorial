@@ -1,26 +1,25 @@
 # <p align="center">Authentication With In-memory Implementation</p>
 
-This tutorial is a quick setup for spring Security based on RBAC.
-
-## <p align="center"> Table of Content </p>
+## <p align="center">Table of Content </p>
 
 * [Getting Started](#getting-started)
-* [How To Set up Spring Boot](#how-to-set-up-spring-boot)
-* [How To Set up Spring Boot Test](#how-to-set-up-spring-boot-test)
-* [Appendix](#appendix )
+* [Dockerized](#dockerized)
+* [Kubernetes](#kubernetes)
+* [UI](#ui)
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 21](https://www.oracle.com/java/technologies/downloads/)
+* [Java 21](https://www.oracle.com/java/technologies/downloads)
 * [Maven 3](https://maven.apache.org/index.html)
-* [Docker](https://www.docker.com/) (Optional)
+* [Docker](https://www.docker.com)
+* [Kubernetes](https://kubernetes.io)
 
 ### Build
 
 ```shell
-mvn clean package -DskipTests=true
+mvn clean compile -DskipTests=true
 ```
 
 ### Test
@@ -29,322 +28,121 @@ mvn clean package -DskipTests=true
 mvn  test
 ```
 
+### Package
+
+```shell
+mvn package -DskipTests=true
+```
+
 ### Run
 
 ```shell
-mvn  spring-boot:run
+mvn  spring-boot:start
 ```
 
-#### Web Console
-
-```yaml
-URL: http://localhost:8080/login
-Username: admin
-Password: password
-```
-
-<img src="https://github.com/step-by-step-tutorial/springboot-tutorial/blob/main/security-rbac-inmemory/doc/spring-security-inmemory.png"  height="30%" width="30%">
-
-#### Check Status
+### E2eTest
 
 ```shell
-# Access with user credentials
-curl -v -u user:password http://localhost:8080/api/v1/users
+curl -X POST http://localhost:8080/login \
+  -d "username=admin" \
+  -d "password=password" \
+  -v
+
+```
+
+### Stop
+
+```shell
+mvn  spring-boot:stop
+```
+
+## Dockerized
+
+### Deploy
+
+```shell
+# docker command
+mvn clean package
+docker build -t samanalishiri/application:latest .
+docker run \
+	--name application \
+	-p 8080:8080 \
+	-h application \
+	-e APP_HOST=0.0.0.0 \
+	-e APP_PORT=8080 \
+	-itd samanalishiri/application:latest
 ```
 
 ```shell
-# Access with admin credentials
-curl -v -u admin:password http://localhost:8080/api/v1/users
+# docker compose
+mvn clean package
+docker compose --file docker-compose.yml --project-name dev up --build -d
 ```
 
-## Install Application on Docker
-
-Create a file named `docker-compose.yml` with the following configuration.
-
-### Docker Compose
-
-[Dockerfile](Dockerfile)
-
-```dockerfile
-FROM eclipse-temurin:21-jdk-alpine
-
-ARG JAR_PATH=./target
-ARG JAR_NAME=security-rbac-inmemory
-ARG JAR_VERSION=0.0.1-SNAPSHOT
-ARG TARGET_PATH=/app
-ENV APPLICATION=${TARGET_PATH}/application.jar
-ENV PORT=8080
-
-ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
-
-EXPOSE ${PORT}
-ENTRYPOINT java -jar ${APPLICATION}
-```
-
-[docker-compose.yml](docker-compose.yml)
-
-```yaml
-#docker-compose.yml
-version: "3.8"
-
-services:
-  securityauthenticationinmemory:
-    image: samanalishiri/securityauthenticationinmemory:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: securityauthenticationinmemory
-    hostname: securityauthenticationinmemory
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      APP_HOST: "0.0.0.0"
-      APP_PORT: "8080"
-```
-
-### Apply Docker Compose
-
-Execute the following command to install Application.
+### E2eTest
 
 ```shell
-docker compose --file ./docker-compose.yml --project-name securityauthenticationinmemory up --build -d
+curl -X POST http://localhost:8080/login \
+  -d "username=admin" \
+  -d "password=password" \
+  -v
 ```
 
-## Install Application on Kubernetes
-
-Create the following files for installing Application.
-
-### Kube Files
-
-[app-deployment.yml](/kube/app-deployment.yml)
-
-```yaml
-#deployment.yml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: securityauthenticationinmemory
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: securityauthenticationinmemory
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: securityauthenticationinmemory
-    spec:
-      containers:
-        - name: securityauthenticationinmemory
-          image: samanalishiri/securityauthenticationinmemory:latest
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 8080
-          env:
-            - name: APP_HOST
-              value: "0.0.0.0"
-            - name: APP_PORT
-              value: "8080"
-```
-
-[app-service.yml](/kube/app-service.yml)
-
-```yaml
-#service.yml
-apiVersion: v1
-kind: Service
-metadata:
-  name: securityauthenticationinmemory
-spec:
-  selector:
-    app: securityauthenticationinmemory
-  ports:
-    - port: 8080
-      targetPort: 8080
-```
-
-### Apply Kube Files
-
-Execute the following commands to install the tools on Kubernetes.
+### Down
 
 ```shell
-kubectl apply -f ./kube/app-deployment.yml
-kubectl apply -f ./kube/app-service.yml
+docker compose --file docker-compose.yml --project-name dev down
+docker rm application --force
+docker image rm samanalishiri/application:latest
+docker volume prune -f
+```
+
+## Kubernetes
+
+### Deploy
+
+```shell
+mvn clean package
+docker build -t samanalishiri/application:latest . --no-cache
+kubectl apply -f kube-dev.yml
 ```
 
 ### Check Status
 
 ```shell
-kubectl get all
+kubectl get all -n dev
 ```
 
 ### Port Forwarding
 
-<p style="text-align: justify;">
+```shell
+kubectl port-forward service/application 8080:8080 -n dev
+```
 
-In order to connect to Application from localhost through the web browser use the following
-URL [http://localhost:8080](http://localhost:8080).
-
-</p>
+### E2eTest
 
 ```shell
-kubectl port-forward service/securityauthenticationinmemory 8080:8080
+curl -X POST http://localhost:8080/login \
+  -d "username=admin" \
+  -d "password=password" \
+  -v
 ```
 
-## How To Set up Spring Boot
+### Down
 
-### Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-        <exclusions>
-            <exclusion>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-logging</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-    <!--utils-->
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-    </dependency>
-</dependencies>
+```shell
+kubectl delete all --all -n dev
+docker image rm samanalishiri/application:latest
+docker volume prune -f
 ```
 
-### Application Properties
+## UI
+
+* Login: [http://localhost:8080/login](http://localhost:8080/login).
 
 ```yaml
-server:
-  address: ${APP_HOST:0.0.0.0}
-  port: ${APP_PORT:8080}
-```
-
-### Java Config
-
-```java
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-public class SecurityConfig {
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
-                .build();
-    }
-
-}
-
-```
-
-## How To Set up Spring Boot Test
-
-### Dependencies
-
-```xml
-
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-test</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>io.rest-assured</groupId>
-        <artifactId>rest-assured</artifactId>
-        <scope>test</scope>
-    </dependency>
-</dependencies>
-```
-
-## Appendix
-
-### Makefile
-
-```makefile
-build:
-	mvn clean package -DskipTests=true
-
-test:
-	mvn test
-
-run:
-	mvn spring-boot:run
-
-docker-build:
-	docker build -t samanalishiri/securityauthenticationinmemory:latest .
-
-docker-deploy:
-	docker run \
-	--name securityauthenticationinmemory \
-	-p 8080:8080 \
-	-h securityauthenticationinmemory \
-	-e APP_HOST=0.0.0.0 \
-	-e APP_PORT=8080 \
-	-itd samanalishiri/securityauthenticationinmemory:latest
-
-DockerComposeDeploy:
-	docker compose --file ./docker-compose.yml --project-name securityauthenticationinmemory up --build -d
-
-docker-remove-container:
-	docker rm securityauthenticationinmemory --force
-
-DockerRemoveImage:
-	docker image rm samanalishiri/securityauthenticationinmemory:latest
-
-kube-deploy:
-	kubectl apply -f ./kube/app-deployment.yml
-	kubectl apply -f ./kube/app-service.yml
-
-kube-delete:
-	kubectl delete all --all
-
-kube-port-forward-app:
-	kubectl port-forward service/securityauthenticationinmemory 8080:8080
+Username: admin
+Password: password
 ```
 
 ##

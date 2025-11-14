@@ -8,9 +8,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestControllerAdvice
 public class ExceptionApi {
+
+    private static final int GROUP_EXCLUDE_QOUTE = 1;
+
+    private final Pattern pattern = Pattern.compile("'([^']*)'");
 
     @ExceptionHandler(UserExistsException.class)
     public ResponseEntity<Object> handleUserExistsException(UserExistsException ex) {
@@ -25,11 +30,16 @@ public class ExceptionApi {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFoundException(UsernameNotFoundException ex) {
+        var username = "unknown";
+        var matcher = pattern.matcher(ex.getMessage());
+        if (matcher.find()) {
+            username = matcher.group(GROUP_EXCLUDE_QOUTE);
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
                         "status", HttpStatus.NOT_FOUND.value(),
                         "error", "Not Found",
-                        "message", String.format("User with username [%s] not found", ex.getMessage()),
+                        "message", String.format("User with username [%s] not found", username),
                         "timestamp", System.currentTimeMillis()
                 ));
     }
