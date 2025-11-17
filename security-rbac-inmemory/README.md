@@ -132,6 +132,8 @@ curl -X POST http://localhost:8080/login \
 
 ```shell
 kubectl delete all --all -n dev
+kubectl delete secrets dev-credentials -n dev
+kubectl delete configMap dev-config -n dev
 docker image rm samanalishiri/application:latest
 docker volume prune -f
 ```

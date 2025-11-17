@@ -29,9 +29,9 @@ VALUES (1000, 'CREAT', 'admin', CURRENT_TIMESTAMP, 0);
 INSERT INTO user_management.permission (id, name, created_by, created_at, version)
 VALUES (2000, 'READ', 'admin', CURRENT_TIMESTAMP, 0);
 INSERT INTO user_management.permission (id, name, created_by, created_at, version)
-VALUES (2000, 'UPDATE', 'admin', CURRENT_TIMESTAMP, 0);
+VALUES (3000, 'UPDATE', 'admin', CURRENT_TIMESTAMP, 0);
 INSERT INTO user_management.permission (id, name, created_by, created_at, version)
-VALUES (2000, 'DELETE', 'admin', CURRENT_TIMESTAMP, 0);
+VALUES (4000, 'DELETE', 'admin', CURRENT_TIMESTAMP, 0);
 
 -- ========== Role and Permission ==========
 -- ADMIN role with CRUD permission
@@ -62,7 +62,7 @@ INSERT INTO user_management.user_role (user_id, role_id)
 VALUES (1000, 1000);
 INSERT INTO user_management.user_role (user_id, role_id)
 VALUES (1000, 2000);
--- user has USER role
+-- user has the USER role
 INSERT INTO user_management.user_role (user_id, role_id)
 VALUES (2000, 2000);
 -- test has TEST and USER roles

@@ -1,4 +1,4 @@
-name: dev
+name: test
 services:
   application:
     image: samanalishiri/application:latest

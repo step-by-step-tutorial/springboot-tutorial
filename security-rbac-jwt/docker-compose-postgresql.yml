@@ -1,10 +1,9 @@
-version: "3.9"
-
+name: dev
 services:
-  postgres:
+  postgresql:
     image: postgres:13.9-alpine
-    container_name: postgres
-    hostname: postgres
+    container_name: postgresql
+    hostname: postgresql
     restart: always
     ports:
       - "5432:5432"
@@ -23,23 +22,23 @@ services:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: "False"
-  securityrbacjwt:
-    image: samanalishiri/securityrbacjwt:latest
+  application:
+    image: samanalishiri/application:latest
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: securityrbacjwt
-    hostname: securityrbacjwt
+    container_name: application
+    hostname: application
     restart: always
     ports:
       - "8080:8080"
     environment:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
-      APP_PROFILES: postgres,openapibasic
+      APP_PROFILES: postgresql,openapibasic
       DATABASE_USERNAME: user
       DATABASE_PASSWORD: password
-      DATABASE_HOST: postgres
+      DATABASE_HOST: postgresql
       DATABASE_PORT: 5432
       DATABASE_NAME: tutorial_db
       DATABASE_SCHEMA: user_management

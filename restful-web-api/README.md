@@ -76,7 +76,7 @@ mvn  spring-boot:stop
 ```shell
 # docker command
 mvn clean package
-docker build -t samanalishiri/application:latest .:
+docker build -t samanalishiri/application:latest .
 docker run \
 	--name application \
 	-p 8080:8080 \
@@ -166,7 +166,10 @@ postman collection run './e2eTest/postman/spring Boot Tutorial- restful-web-api.
 ### Down
 
 ```shell
+
 kubectl delete all --all -n dev
+kubectl delete secrets dev-credentials -n dev
+kubectl delete configMap dev-config -n dev
 docker image rm samanalishiri/application:latest
 docker volume prune -f
 ```
