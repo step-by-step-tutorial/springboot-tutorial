@@ -10,7 +10,7 @@ This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 * [Dockerized](#dockerized)
 * [Kubernetes](#kubernetes)
 * [UI](#ui)
-* [Kafka](#kafka)
+* [Apache Kafka](#apache-kafka)
 
 ## Getting Started
 
@@ -24,7 +24,7 @@ This tutorial shows how to integrate Apache Kafka in Spring Boot application.
 ### Build
 
 ```shell
-mvn validate clean compile 
+mvn validate clean compile -DskipTests=true 
 ```
 
 ### Test
@@ -135,11 +135,11 @@ docker volume prune -f
 * Kafdrop: [http://localhost:9000](http://localhost:9000)
 * Application: [http://localhost:8080](http://localhost:8080)
 
-## Kafka
+## Apache Kafka
 
 <p style="text-align: justify;">
 
-Apache Kafka is an event streaming platform. It follows a publish / subscribe pattern around streams of events. The
+Apache Kafka is an event streaming platform. It follows the publishing/subscribe pattern around streams of events. The
 Kafka
 supports only Topic. There are a few concepts such as event, stream of events, producer and consumer. Topics can support
 many producers and many consumers it means there is many-to-many relation between producer and consumer based on Topic.

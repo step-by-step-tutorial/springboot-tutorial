@@ -1,4 +1,4 @@
-package com.tutorial.springboot.streaming_kafka;
+package com.tutorial.springboot.streaming_kafka.fixture;
 
 import com.tutorial.springboot.streaming_kafka.service.SourceTopicService;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.joining;
 
 @Component
-public class SampleGenerator {
+public class FixtureGenerator {
 
     private static final int MESSAGE_NUMBER = 10;
 
@@ -17,7 +17,7 @@ public class SampleGenerator {
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    public SampleGenerator(SourceTopicService sourceTopicService) {
+    public FixtureGenerator(SourceTopicService sourceTopicService) {
         for (int i = 0; i < MESSAGE_NUMBER; i++) {
             try {
                 Thread.sleep(100);

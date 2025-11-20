@@ -1,29 +1,11 @@
+server:
+  address: ${APP_HOST:0.0.0.0}
+  port: ${APP_PORT:8080}
 spring:
-  kafka:
-    streams:
-      bootstrap-servers: ${KAFKA_URL:localhost:9092}
-      application-id: streaming-apache-kafka
-      properties:
-        default:
-          key:
-            serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-          value:
-            serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-    consumer:
-      group-id: ${KAFKA_GROUP_ID:main-group}
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+  profiles:
+    active: ${APP_PROFILES:kafka}
 
-# defined by user
+# defined by developer
 topic:
   source: sourceTopic
   sink: sinkTopic
-
----
-spring:
-  config:
-    activate:
-      on-profile: embedded-kafka
-  kafka:
-    streams:
-      bootstrap-servers: ${KAFKA_URL:localhost:9092}
-      application-id: embedded-streaming-apache-kafka

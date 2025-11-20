@@ -11,14 +11,8 @@ import org.springframework.kafka.config.TopicBuilder;
 @EnableKafkaStreams
 public class StreamsConfig {
 
-    @Value("${topic.source}")
-    private String source;
-
-    @Value("${topic.sink}")
-    private String sink;
-
     @Bean
-    public NewTopic sourceTopic() {
+    public NewTopic sourceTopic(@Value("${topic.source}") String source) {
         return TopicBuilder.name(source)
                 .partitions(10)
                 .replicas(1)
@@ -26,7 +20,7 @@ public class StreamsConfig {
     }
 
     @Bean
-    public NewTopic sinkTopic() {
+    public NewTopic sinkTopic(@Value("${topic.sink}") String sink) {
         return TopicBuilder.name(sink)
                 .partitions(5)
                 .replicas(1)

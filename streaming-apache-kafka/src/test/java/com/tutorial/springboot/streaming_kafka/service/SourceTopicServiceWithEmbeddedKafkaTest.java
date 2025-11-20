@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles({"embedded-kafka"})
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
-@DisplayName("unit tests of kafka[embedded] main topic service")
+@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9095", "port=9095"})
 class SourceTopicServiceWithEmbeddedKafkaTest {
 
     @Autowired
@@ -27,7 +26,6 @@ class SourceTopicServiceWithEmbeddedKafkaTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException when given message is null")
     void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final String givenMessage = null;
 
@@ -41,7 +39,6 @@ class SourceTopicServiceWithEmbeddedKafkaTest {
     }
 
     @Test
-    @DisplayName("the message should be pushed to the topic")
     void shouldPushMessageToTopic() {
         final var givenMessage = "hello";
 

@@ -11,14 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of kafka main topic listener")
 class SinkTopicListenerTest {
 
     @InjectMocks
     SinkTopicListener systemUnderTest;
 
     @Test
-    @DisplayName("should throw a NullPointerException when given message is null")
     void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final String givenMessage = null;
         final var givenCorrelationId = "fake correlation Id";
@@ -33,7 +31,6 @@ class SinkTopicListenerTest {
     }
 
     @Test
-    @DisplayName("should throw a NullPointerException when given correlation is null")
     void shouldThrowNullPointerExceptionWhenCorrelationIdIsNull() {
         final var givenMessage = "fake message";
         final String givenCorrelationId = null;
@@ -48,7 +45,6 @@ class SinkTopicListenerTest {
     }
 
     @Test
-    @DisplayName("should processes message successful")
     void shouldSendAcceptedStatusWhenTheMessageWasProcessedSuccessful() {
         final var givenMessage = "fake message";
         final var givenCorrelationId = "fake correlation Id";

@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles({"test"})
-@DisplayName("unit tests of kafka main topic service")
 class SourceTopicServiceTest {
 
     @InjectMocks
@@ -37,7 +36,6 @@ class SourceTopicServiceTest {
     }
 
     @Test
-    @DisplayName("should throw NullPointerException when given message is null")
     void shouldThrowNullPointerExceptionWhenMessageIsNull() {
         final String givenMessage = null;
 
@@ -52,7 +50,6 @@ class SourceTopicServiceTest {
     }
 
     @Test
-    @DisplayName("the message should be pushed to the queue")
     void messageShouldBePushedToTheQueue() {
         final var givenMessage = "fake message";
 
