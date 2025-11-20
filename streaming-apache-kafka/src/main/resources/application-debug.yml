@@ -1,5 +1,0 @@
-logging:
-  level:
-    org.springframework.kafka.config: DEBUG
-    org.springframework.kafka.listener: DEBUG
-    org.springframework.boot.actuate.autoconfigure.tracing: DEBUG

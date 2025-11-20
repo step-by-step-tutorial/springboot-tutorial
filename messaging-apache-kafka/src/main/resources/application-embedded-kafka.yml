@@ -4,4 +4,5 @@ spring:
       name: embedded-topic
     consumer:
       group-id: embedded-group
-    bootstrap-servers: ${KAFKA_URL:localhost:9094}
+    bootstrap-servers: ${KAFKA_URL:localhost:9095}
+
