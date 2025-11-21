@@ -18,7 +18,7 @@ ENV DATABASE_PORT=3306
 ENV DATABASE_NAME=tutorial_db
 ENV KAFKA_TOPIC_NAME=cdc.tutorial_db.example_table
 ENV KAFKA_GROUP_ID=cdc.tutorial_db.main-group
-ENV KAFKA_URL=kafka:9093
+ENV KAFKA_URL=kafka:9094
 ENV TOPIC_PREFIX=cdc
 ENV TABLES=tutorial_db.example_table
 

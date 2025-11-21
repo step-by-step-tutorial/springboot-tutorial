@@ -17,6 +17,11 @@ data:
   MYSQL_USERNAME: dXNlcg==
   # value: password
   MYSQL_PASSWORD: cGFzc3dvcmQ=
+  # application
+  # value: user
+  DATABASE_USERNAME: dXNlcg==
+  # value: password
+  DATABASE_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -24,12 +29,42 @@ metadata:
   name: dev-config
   namespace: dev
 data:
+  # database
   MYSQL_DATABASE: "tutorial_db"
   initdb.sql: |-
     CREATE USER IF NOT EXISTS 'user' IDENTIFIED BY 'password';
     GRANT REPLICATION CLIENT, RELOAD, REPLICATION SLAVE ON *.* TO 'user'@'%';
     GRANT ALL ON `tutorial_db`.* TO 'user'@'%';
     FLUSH PRIVILEGES;
+  # Kafka configs
+  KAFKA_NODE_ID: "1"
+  KAFKA_PROCESS_ROLES: "broker,controller"
+  KAFKA_LISTENERS: "LOCALHOST://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,CONTAINER://0.0.0.0:9094"
+  KAFKA_ADVERTISED_LISTENERS: "LOCALHOST://localhost:9092,CONTAINER://kafka:9094"
+  KAFKA_INTER_BROKER_LISTENER_NAME: "LOCALHOST"
+  KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT"
+  KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+  KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+  KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+  KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+  KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+  KAFKA_NUM_PARTITIONS: "3"
+  # Kafdrop configs
+  KAFKA_BROKERCONNECT: "kafka:9094"
+  JVM_OPTS: "-Xms32M -Xmx64M"
+  # application
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: mysql,kafka,embedded-debezium
+  DATABASE_HOST: mysql
+  DATABASE_PORT: "3306"
+  DATABASE_NAME: tutorial_db
+  KAFKA_TOPIC_NAME: cdc.tutorial_db.example_table
+  KAFKA_GROUP_ID: cdc.tutorial_db.main-group
+  KAFKA_URL: "kafka:9094"
+  TOPIC_PREFIX: cdc
+  TABLES: tutorial_db.example_table
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -71,28 +106,11 @@ spec:
         - image: mysql:8.0
           name: mysql
           imagePullPolicy: "IfNotPresent"
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_ROOT_PASSWORD
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_USERNAME
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dev-credentials
-                  key: MYSQL_PASSWORD
-            - name: MYSQL_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: dev-config
-                  key: MYSQL_DATABASE
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
           ports:
             - name: mysql
               containerPort: 3306
@@ -162,48 +180,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zookeeper
-  namespace: dev
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: zookeeper
-  template:
-    metadata:
-      labels:
-        app: zookeeper
-    spec:
-      containers:
-        - name: zookeeper
-          image: bitnami/zookeeper:3.9.0
-          ports:
-            - containerPort: 2181
-          env:
-            - name: ALLOW_ANONYMOUS_LOGIN
-              value: "yes"
-          volumeMounts:
-            - name: zookeeper-data
-              mountPath: /bitnami
-      volumes:
-        - name: zookeeper-data
-          emptyDir: { }
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: zookeeper-service
-  namespace: dev
-spec:
-  selector:
-    app: zookeeper
-  ports:
-    - port: 2181
-      targetPort: 2181
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: kafka
   namespace: dev
 spec:
@@ -218,36 +194,21 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: bitnami/kafka:3.9.0
+          image: apache/kafka:latest
           ports:
             - containerPort: 9092
             - containerPort: 9093
-          env:
-            - name: KAFKA_CFG_BROKER_ID
-              value: "1"
-            - name: ALLOW_PLAINTEXT_LISTENER
-              value: "yes"
-            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
-              value: "zookeeper-service:2181"
-            - name: KAFKA_CFG_LISTENERS
-              value: "LOCALHOST://:9092,CONTAINER://:9093"
-            - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: "LOCALHOST://localhost:9092,CONTAINER://kafka-service:9093"
-            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
-              value: "LOCALHOST:PLAINTEXT,CONTAINER:PLAINTEXT"
-            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
-              value: "LOCALHOST"
-          volumeMounts:
-            - name: kafka-data
-              mountPath: /bitnami
-      volumes:
-        - name: kafka-data
-          emptyDir: { }
+            - containerPort: 9094
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-service
+  name: kafka
   namespace: dev
 spec:
   selector:
@@ -256,9 +217,12 @@ spec:
     - name: localhost
       port: 9092
       targetPort: 9092
-    - name: container
+    - name: controller
       port: 9093
       targetPort: 9093
+    - name: container
+      port: 9094
+      targetPort: 9094
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -282,7 +246,7 @@ spec:
             - containerPort: 9000
           env:
             - name: KAFKA_BROKERCONNECT
-              value: "kafka-service:9093"
+              value: "kafka:9094"
             - name: JVM_OPTS
               value: "-Xms32M -Xmx64M"
 ---
@@ -322,33 +286,11 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 8080
-          env:
-            - name: APP_HOST
-              value: "0.0.0.0"
-            - name: APP_PORT
-              value: "8080"
-            - name: APP_PROFILES
-              value: mysql,kafka,embedded-debezium
-            - name: DATABASE_USERNAME
-              value: user
-            - name: DATABASE_PASSWORD
-              value: password
-            - name: DATABASE_HOST
-              value: mysql
-            - name: DATABASE_PORT
-              value: "3306"
-            - name: DATABASE_NAME
-              value: tutorial_db
-            - name: KAFKA_TOPIC_NAME
-              value: cdc.tutorial_db.example_table
-            - name: KAFKA_GROUP_ID
-              value: cdc.tutorial_db.main-group
-            - name: KAFKA_URL
-              value: "kafka-service:9093"
-            - name: TOPIC_PREFIX
-              value: cdc
-            - name: TABLES
-              value: tutorial_db.example_table
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
 ---
 apiVersion: v1
 kind: Service

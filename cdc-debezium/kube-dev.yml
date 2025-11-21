@@ -11,7 +11,6 @@ metadata:
   namespace: dev
 type: Opaque
 data:
-  # value: database
   # value: root
   MYSQL_ROOT_PASSWORD: cm9vdA==
   # value: user
