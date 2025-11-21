@@ -134,7 +134,7 @@ kubectl port-forward service/adminer 8084:8084 -n dev
 ```
 
 ```shell
-kubectl port-forward service/kafdrop-service 9000:9000 -n dev
+kubectl port-forward service/kafdrop 9000:9000 -n dev
 ```
 
 ```shell
@@ -233,7 +233,7 @@ Connectors are used for establishing a connection between Debezium, Kafka and a 
     "database.server.name": "mysql",
     "database.whitelist": "tutorial_db",
     "table.include.list": "tutorial_db.example_table",
-    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9094",
     "schema.history.internal.kafka.topic": "schema-changes.db",
     "topic.prefix": "cdc",
     "include.schema.changes": "true",
@@ -291,7 +291,7 @@ curl -i -X POST http://localhost:8083/connectors \
     "database.server.name": "mysql",
     "database.whitelist": "tutorial_db",
     "table.include.list": "tutorial_db.example_table",
-    "schema.history.internal.kafka.bootstrap.servers": "kafka:9093",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9094",
     "schema.history.internal.kafka.topic": "schema-changes.db",
     "topic.prefix": "cdc",
     "include.schema.changes": "true",
