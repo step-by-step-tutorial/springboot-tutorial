@@ -1,13 +1,9 @@
 package com.tutorial.springboot.newsqlcockroachdb;
 
-import com.tutorial.springboot.newsqlcockroachdb.entity.SampleEntity;
-import com.tutorial.springboot.newsqlcockroachdb.repository.SampleRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import com.tutorial.springboot.newsqlcockroachdb.entity.ExampleEntity;
+import com.tutorial.springboot.newsqlcockroachdb.repository.ExampleRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,17 +13,18 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles({"test"})
 @Commit
-class SampleRepositoryTest {
+class ExampleRepositoryTest {
 
     @Autowired
-    SampleRepository systemUnderTest;
+    ExampleRepository systemUnderTest;
 
 
     /**
@@ -36,10 +33,13 @@ class SampleRepositoryTest {
     static class StubFixturesFactory {
         static final LocalDateTime NOW = LocalDateTime.now();
         static final LocalDateTime TOMORROW = LocalDateTime.now().plusDays(1);
-        static final SampleEntity SAMPLE_ENTITY = SampleEntity.create()
-                .setName("name")
-                .setCode(1)
-                .setDatetime(NOW);
+
+        static ExampleEntity newEntity() {
+            return ExampleEntity.create()
+                    .setName("name")
+                    .setCode(1)
+                    .setDatetime(NOW);
+        }
     }
 
     @Nested
@@ -47,7 +47,7 @@ class SampleRepositoryTest {
 
         @Test
         void shouldReturnEntityWithIdBySuccessfulSave() {
-            final var givenEntity = StubFixturesFactory.SAMPLE_ENTITY;
+            final var givenEntity = StubFixturesFactory.newEntity();
 
             final var expectedName = "name";
             final var expectedCode = 1;

@@ -1,0 +1,10 @@
+name: test
+services:
+  cockroachdb:
+    image: cockroachdb/cockroach:v25.4.0
+    container_name: cockroachdb
+    hostname: cockroachdb
+    ports:
+      - "26257:26257"
+      - "8081:8080"
+    command: start-single-node --insecure

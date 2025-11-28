@@ -6,12 +6,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "SAMPLE_TABLE")
-public class SampleEntity {
+@Table(name = "EXAMPLE_TABLE")
+public class ExampleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAMPLE_GEN")
-    @SequenceGenerator(name = "SAMPLE_GEN", sequenceName = "SAMPLE_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EXAMPLE_GEN")
+    @SequenceGenerator(name = "EXAMPLE_GEN", sequenceName = "EXAMPLE_SEQ", allocationSize = 1)
     @Column(name = "ID")
     private Long id;
 
@@ -24,15 +24,15 @@ public class SampleEntity {
     @Column(name = "DATETIME")
     private LocalDateTime datetime;
 
-    public static SampleEntity create() {
-        return new SampleEntity();
+    public static ExampleEntity create() {
+        return new ExampleEntity();
     }
 
     public Long getId() {
         return id;
     }
 
-    public SampleEntity setId(Long id) {
+    public ExampleEntity setId(Long id) {
         this.id = id;
         return this;
     }
@@ -41,7 +41,7 @@ public class SampleEntity {
         return name;
     }
 
-    public SampleEntity setName(String name) {
+    public ExampleEntity setName(String name) {
         this.name = name;
         return this;
     }
@@ -50,7 +50,7 @@ public class SampleEntity {
         return code;
     }
 
-    public SampleEntity setCode(int code) {
+    public ExampleEntity setCode(int code) {
         this.code = code;
         return this;
     }
@@ -59,7 +59,7 @@ public class SampleEntity {
         return datetime;
     }
 
-    public SampleEntity setDatetime(LocalDateTime datetime) {
+    public ExampleEntity setDatetime(LocalDateTime datetime) {
         this.datetime = datetime;
         return this;
     }
@@ -72,8 +72,8 @@ public class SampleEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SampleEntity sampleEntity = (SampleEntity) o;
-        return Objects.equals(id, sampleEntity.id);
+        ExampleEntity exampleEntity = (ExampleEntity) o;
+        return Objects.equals(id, exampleEntity.id);
     }
 
     @Override

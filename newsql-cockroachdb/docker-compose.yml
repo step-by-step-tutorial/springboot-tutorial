@@ -1,8 +1,7 @@
-version: "3.9"
-name: test
+name: dev
 services:
   cockroachdb:
-    image: cockroachdb/cockroach:v25.3.0
+    image: cockroachdb/cockroach:v25.4.0
     container_name: cockroachdb
     hostname: cockroachdb
     ports:
@@ -11,3 +10,24 @@ services:
     command: start-single-node --insecure
 #    volumes:
 #      - "${PWD}/cockroach-data:/cockroach/cockroach-data"
+  application:
+    image: samanalishiri/application:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: application
+    hostname: application
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "8080"
+      APP_PROFILES: cockroachdb
+      DATABASE_HOST: cockroachdb
+      DATABASE_PORT: "26257"
+      DATABASE_DB: defaultdb
+      DATABASE_USER: root
+      DATABASE_PASSWORD: password
+    depends_on:
+      - cockroachdb

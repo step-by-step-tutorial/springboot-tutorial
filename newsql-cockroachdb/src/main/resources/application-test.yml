@@ -1,7 +1,7 @@
 spring:
   datasource:
-    username: ${POSTGRES_USER:root}
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:26257}/${POSTGRES_DB:defaultdb}?sslmode=disable
+    username: ${DATABASE_USER:root}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:26257}/${DATABASE_DB:defaultdb}?sslmode=disable
     driver-class-name: org.postgresql.Driver
   data:
     jpa:

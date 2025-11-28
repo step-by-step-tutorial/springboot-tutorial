@@ -12,19 +12,6 @@
     <artifactId>newsql-cockroachdb</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>NewSQL CockroachDB</name>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
     <properties>
         <java.version>21</java.version>
     </properties>
@@ -45,11 +32,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -60,11 +47,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -72,6 +54,51 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>start-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose-test.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>test</argument>
+                                <argument>up</argument>
+                                <argument>--build</argument>
+                                <argument>-d</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>compose</argument>
+                                <argument>--file</argument>
+                                <argument>${project.basedir}/docker-compose-test.yml</argument>
+                                <argument>--project-name</argument>
+                                <argument>test</argument>
+                                <argument>down</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
