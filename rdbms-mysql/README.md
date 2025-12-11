@@ -93,7 +93,6 @@ docker build -t samanalishiri/application:latest . --no-cache
 kubectl apply -f kube-dev.yml
 ```
 
-
 ### Check Status
 
 ```shell
@@ -113,6 +112,7 @@ kubectl port-forward service/mysql-workbench 3000:3000 -n dev
 ```
 
 ```shell
+# MySQL Workbench
 kubectl port-forward service/mysql-workbench 3001:3001 -n dev
 ```
 
@@ -152,7 +152,8 @@ docker volume prune -f
 
 * MySQL Workbench: [http://localhost:3000](http://localhost:3000)
 * Adminer: [http://localhost:8082](http://localhost:8082)
-* phpMyAdmin: [http://localhost:8081](http://localhost:8081)
+* PhpMyAdmin: [http://localhost:8081](http://localhost:8081)
+* Application: [http://localhost:8080](http://localhost:8080)
 
 ```yaml
 Server: mysql:3306
@@ -160,8 +161,6 @@ Username: user
 Password: password
 Database: tutorial_db
 ```
-
----
 
 ## MySQL
 
@@ -229,7 +228,9 @@ FLUSH PRIVILEGES;
 ```
 
 <p style="text-align: justify;">
+
 For more information about MySQL see the [MySQL](https://www.mysql.com).
+
 </p>
 
 ##
