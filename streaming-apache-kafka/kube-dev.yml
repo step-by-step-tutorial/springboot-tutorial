@@ -37,8 +37,8 @@ data:
   APP_HOST: "0.0.0.0"
   APP_PORT: "8080"
   APP_PROFILES: "kafka"
-  KAFKA_URL: "kafka:9094"
-  KAFKA_GROUP_ID: "main-group"
+  APP_KAFKA_URL: "kafka:9094"
+  APP_KAFKA_GROUP_ID: "main-group"
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -1,7 +1,7 @@
 spring:
   kafka:
     streams:
-      bootstrap-servers: ${KAFKA_URL:localhost:9092}
+      bootstrap-servers: ${APP_KAFKA_URL:localhost:9092}
       application-id: streaming-apache-kafka
       properties:
         default:
@@ -10,5 +10,5 @@ spring:
           value:
             serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     consumer:
-      group-id: ${KAFKA_GROUP_ID:main-group}
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+      group-id: ${APP_KAFKA_GROUP_ID:main-group}
+    bootstrap-servers: ${APP_KAFKA_URL:localhost:9092}

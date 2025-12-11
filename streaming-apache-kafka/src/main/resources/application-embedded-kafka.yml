@@ -1,7 +1,7 @@
 spring:
   kafka:
     streams:
-      bootstrap-servers: ${KAFKA_URL:localhost:9095}
+      bootstrap-servers: ${APP_KAFKA_URL:localhost:9095}
       application-id: embedded-streaming-apache-kafka
     consumer:
-      group-id: ${KAFKA_GROUP_ID:main-group}
+      group-id: ${APP_KAFKA_GROUP_ID:main-group}
