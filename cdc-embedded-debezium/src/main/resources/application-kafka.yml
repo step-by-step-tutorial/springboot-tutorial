@@ -1,7 +1,7 @@
 spring:
   kafka:
     topic:
-      name: ${KAFKA_TOPIC_NAME:cdc.tutorial_db.example_table}
+      name: ${APP_KAFKA_TOPIC_NAME:cdc.tutorial_db.example_table}
     consumer:
-      group-id: ${KAFKA_GROUP_ID:cdc.tutorial_db.main-group}
-    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+      group-id: ${APP_KAFKA_GROUP_ID:cdc.tutorial_db.main-group}
+    bootstrap-servers: ${APP_KAFKA_URL:localhost:9092}

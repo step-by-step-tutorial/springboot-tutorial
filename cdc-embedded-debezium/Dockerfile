@@ -16,11 +16,11 @@ ENV DATABASE_PASSWORD=password
 ENV DATABASE_HOST=mysql
 ENV DATABASE_PORT=3306
 ENV DATABASE_NAME=tutorial_db
-ENV KAFKA_TOPIC_NAME=cdc.tutorial_db.example_table
-ENV KAFKA_GROUP_ID=cdc.tutorial_db.main-group
-ENV KAFKA_URL=kafka:9094
-ENV TOPIC_PREFIX=cdc
-ENV TABLES=tutorial_db.example_table
+ENV APP_KAFKA_TOPIC_NAME=cdc.tutorial_db.example_table
+ENV APP_KAFKA_GROUP_ID=cdc.tutorial_db.main-group
+ENV APP_KAFKA_URL=kafka:9094
+ENV APP_KAFKA_TOPIC_PREFIX=cdc
+ENV APP_DEBEZIUM_TABLES=tutorial_db.example_table
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 

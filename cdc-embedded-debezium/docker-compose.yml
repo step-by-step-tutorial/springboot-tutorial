@@ -82,11 +82,11 @@ services:
       DATABASE_HOST: mysql
       DATABASE_PORT: 3306
       DATABASE_NAME: tutorial_db
-      KAFKA_TOPIC_NAME: cdc.tutorial_db.example_table
-      KAFKA_GROUP_ID: cdc.tutorial_db.main-group
-      KAFKA_URL: kafka:9094
-      TOPIC_PREFIX: cdc
-      TABLES: tutorial_db.example_table
+      APP_KAFKA_TOPIC_NAME: cdc.tutorial_db.example_table
+      APP_KAFKA_GROUP_ID: cdc.tutorial_db.main-group
+      APP_KAFKA_URL: kafka:9094
+      APP_KAFKA_TOPIC_PREFIX: cdc
+      APP_DEBEZIUM_TABLES: tutorial_db.example_table
     depends_on:
       mysql:
         condition: service_healthy
