@@ -2,9 +2,9 @@ spring:
   main:
     banner-mode: OFF
   datasource:
-    username: ${DATABASE_USERNAME:user}
-    password: ${DATABASE_PASSWORD:password}
-    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:tutorial_db}
+    username: ${APP_DATABASE_USERNAME:user}
+    password: ${APP_DATABASE_PASSWORD:password}
+    url: jdbc:postgresql://${APP_DATABASE_HOST:localhost}:${APP_DATABASE_PORT:5432}/${APP_DATABASE_NAME:tutorial_db}
     driver-class-name: org.postgresql.Driver
   data:
     jpa:
@@ -22,7 +22,7 @@ spring:
           create-database-schemas: true
       hibernate:
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        default_schema: ${DATABASE_SCHEMA:user_management}
+        default_schema: ${APP_DATABASE_SCHEMA:user_management}
   sql:
     init:
       mode: always

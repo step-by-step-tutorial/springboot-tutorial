@@ -8,7 +8,7 @@ ENV APPLICATION=${TARGET_PATH}/application.jar
 ENV APP_HOST=0.0.0.0
 ENV APP_PORT=8080
 ENV APP_PROFILES=h2,openapibasic
-ENV DATABASE_NAME=tutorial_db
+ENV APP_DATABASE_NAME=tutorial_db
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 

@@ -75,7 +75,7 @@ docker run \
 	-e APP_HOST=0.0.0.0 \
 	-e APP_PORT=8080 \
 	-e APP_PROFILES=h2,openapibasic \
-	-e DATABASE_NAME:tutorial_db \
+	-e APP_DATABASE_NAME:tutorial_db \
 	-itd samanalishiri/application:latest
 ```
 

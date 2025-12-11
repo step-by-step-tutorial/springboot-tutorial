@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: ${DATABASE_USERNAME:sa}
-    password: ${DATABASE_PASSWORD:}
-    url: jdbc:h2:mem:${DATABASE_NAME:tutorial_db}
+    username: ${APP_DATABASE_USERNAME:sa}
+    password: ${APP_DATABASE_PASSWORD:}
+    url: jdbc:h2:mem:${APP_DATABASE_NAME:tutorial_db}
     driver-class-name: org.h2.Driver
   data:
     jdbc:

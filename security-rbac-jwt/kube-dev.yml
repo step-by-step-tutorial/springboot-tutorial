@@ -11,9 +11,9 @@ metadata:
 type: Opaque
 data:
   # value: user
-  DATABASE_USERNAME: dXNlcg==
+  APP_DATABASE_USERNAME: dXNlcg==
   # value: password
-  DATABASE_PASSWORD: cGFzc3dvcmQ=
+  APP_DATABASE_PASSWORD: cGFzc3dvcmQ=
   # value: user
   POSTGRES_USER: dXNlcg==
   # value: password
@@ -30,10 +30,10 @@ data:
   APP_HOST: "0.0.0.0"
   APP_PORT: "8080"
   APP_PROFILES: postgresql,openapibasic
-  DATABASE_HOST: postgresql
-  DATABASE_PORT: "5432"
-  DATABASE_NAME: tutorial_db
-  DATABASE_SCHEMA: user_management
+  APP_DATABASE_HOST: postgresql
+  APP_DATABASE_PORT: "5432"
+  APP_DATABASE_NAME: tutorial_db
+  APP_DATABASE_SCHEMA: user_management
   POSTGRES_DB: tutorial_db
   PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
   PGADMIN_CONFIG_SERVER_MODE: "False"

@@ -14,9 +14,9 @@ services:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
       APP_PROFILES: h2server,openapibasic
-      DATABASE_HOST: h2server
-      DATABASE_PORT: 9092
-      DATABASE_NAME: tutorial_db
+      APP_DATABASE_HOST: h2server
+      APP_DATABASE_PORT: 9092
+      APP_DATABASE_NAME: tutorial_db
   h2server:
     image: samanalishiri/h2dbserver
     build:
