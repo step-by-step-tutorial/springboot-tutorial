@@ -11,11 +11,16 @@ metadata:
 type: Opaque
 data:
   # value: root
-  mysql-root-password: cm9vdA==
+  MYSQL_ROOT_PASSWORD: cm9vdA==
   # value: user
-  mysql-user: dXNlcg==
+  MYSQL_USER: dXNlcg==
   # value: password
-  mysql-password: cGFzc3dvcmQ=
+  MYSQL_PASSWORD: cGFzc3dvcmQ=
+  # application
+  # value: user
+  APP_DATABASE_USERNAME: dXNlcg==
+  # value: password
+  APP_DATABASE_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -23,13 +28,12 @@ metadata:
   name: dev-config
   namespace: dev
 data:
-  mysql-database: tutorial_db
-  MYSQL_HOST: mysql
-  MYSQL_PORT: '3306'
-  MYSQL_DATABASE: tutorial_db
-  MYSQL_USER: user
-  MYSQL_PASSWORD: password
-  MYSQL_ROOT_PASSWORD: root
+  # Database
+  MYSQL_DATABASE: "tutorial_db"
+  # Application
+  APP_DATABASE_HOST: mysql
+  APP_DATABASE_PORT: '3306'
+  APP_DATABASE_NAME: tutorial_db
   APP_HOST: 0.0.0.0
   APP_PORT: '8080'
   APP_PROFILES: "mysql"
@@ -280,13 +284,6 @@ spec:
                 name: dev-config
             - secretRef:
                 name: dev-credentials
-          volumeMounts:
-            - name: config
-              mountPath: /config
-      volumes:
-        - name: config
-          configMap:
-            name: dev-config
 ---
 apiVersion: v1
 kind: Service

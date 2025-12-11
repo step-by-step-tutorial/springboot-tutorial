@@ -14,14 +14,14 @@ data:
   # value: root
   MYSQL_ROOT_PASSWORD: cm9vdA==
   # value: user
-  MYSQL_USERNAME: dXNlcg==
+  MYSQL_USER: dXNlcg==
   # value: password
   MYSQL_PASSWORD: cGFzc3dvcmQ=
   # application
   # value: user
-  DATABASE_USERNAME: dXNlcg==
+  APP_DATABASE_USERNAME: dXNlcg==
   # value: password
-  DATABASE_PASSWORD: cGFzc3dvcmQ=
+  APP_DATABASE_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -29,7 +29,7 @@ metadata:
   name: dev-config
   namespace: dev
 data:
-  # database
+  # Database
   MYSQL_DATABASE: "tutorial_db"
   initdb.sql: |-
     CREATE USER IF NOT EXISTS 'user' IDENTIFIED BY 'password';
@@ -65,9 +65,9 @@ data:
   APP_HOST: "0.0.0.0"
   APP_PORT: "8080"
   APP_PROFILES: "mysql,kafka,debezium"
-  DATABASE_HOST: "mysql"
-  DATABASE_PORT: "3306"
-  DATABASE_NAME: "tutorial_db"
+  APP_DATABASE_HOST: "mysql"
+  APP_DATABASE_PORT: "3306"
+  APP_DATABASE_NAME: "tutorial_db"
   KAFKA_TOPIC_NAME: "cdc.tutorial_db.example_table"
   KAFKA_GROUP_ID: "cdc.tutorial_db.main-group"
   KAFKA_URL: "kafka:9094"
