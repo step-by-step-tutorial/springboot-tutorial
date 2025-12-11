@@ -10,16 +10,19 @@ metadata:
   namespace: dev
 type: Opaque
 data:
-  # value: user
-  postgres-user: dXNlcg==
-  # value: password
-  postgres-password: cGFzc3dvcmQ=
+  # Database
   # value: user
   POSTGRES_USER: dXNlcg==
   # value: password
   POSTGRES_PASSWORD: cGFzc3dvcmQ=
   # value: password
   PGADMIN_DEFAULT_PASSWORD: cGFzc3dvcmQ=
+  #Application
+  # value: user
+  APP_DATABASE_USERNAME: dXNlcg==
+  # value: password
+  APP_DATABASE_PASSWORD: cGFzc3dvcmQ=
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -27,8 +30,9 @@ metadata:
   name: dev-config
   namespace: dev
 data:
-  POSTGRES_HOST: postgresql
-  POSTGRES_PORT: "5432"
+  APP_DATABASE_HOST: postgresql
+  APP_DATABASE_PORT: "5432"
+  APP_DATABASE_DB: tutorial_db
   POSTGRES_DB: tutorial_db
   PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
   PGADMIN_CONFIG_SERVER_MODE: "False"
