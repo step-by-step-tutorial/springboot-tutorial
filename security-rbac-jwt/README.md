@@ -181,7 +181,7 @@ password: admin
 * Adminer: [http://localhost:8082](http://localhost:8082)
 
 ```yaml
-# PostgreSQL
+# PgAdmin
 Host: postgresql
 Port: 5432
 Maintenance_database: postgres

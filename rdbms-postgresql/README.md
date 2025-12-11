@@ -143,7 +143,19 @@ docker volume prune -f
 
 * PgAdmin: [http://localhost:8081](http://localhost:8081)
 * Adminer: [http://localhost:8082](http://localhost:8082)
+* Application: [http://localhost:8080](http://localhost:8080)
 
+```yaml
+# PgAdminL
+Host: postgresql
+Port: 5432
+Maintenance_database: postgres
+# Adminer
+Server: postgresql:5432
+
+Username: user
+Password: password
+```
 ---
 
 ## PostgreSQL

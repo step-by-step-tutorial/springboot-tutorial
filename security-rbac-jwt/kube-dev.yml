@@ -11,10 +11,6 @@ metadata:
 type: Opaque
 data:
   # value: user
-  postgres-user: dXNlcg==
-  # value: password
-  postgres-password: cGFzc3dvcmQ=
-  # value: user
   DATABASE_USERNAME: dXNlcg==
   # value: password
   DATABASE_PASSWORD: cGFzc3dvcmQ=
