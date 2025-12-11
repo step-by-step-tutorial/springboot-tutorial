@@ -242,7 +242,7 @@ end;
 ### URL Format
 
 ```yaml
-url: jdbc:oracle:thin:${ORACLE_HOST:localhost}:${ORACLE_PORT:1521}/${DATABASE_NAME:xepdb1}
+url: jdbc:oracle:thin:${APP_DATABASE_HOST:localhost}:${APP_DATABASE_PORT:1521}/${APP_DATABASE_NAME:xepdb1}
 ```
 
 ##

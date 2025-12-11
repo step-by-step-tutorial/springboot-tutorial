@@ -10,14 +10,13 @@ metadata:
   namespace: dev
 type: Opaque
 data:
+  #Database
+  ORACLE_PWD: cGFzc3dvcmQ=
+  # APPlication
   # value: system
-  oracle-user: c3lzdGVt
+  APP_DATABASE_USERNAME: c3lzdGVt
   # value: password
-  oracle-password: cGFzc3dvcmQ=
-  # value: system
-  ORACLE_USER: c3lzdGVt
-  # value: password
-  ORACLE_PASSWORD: cGFzc3dvcmQ=
+  APP_DATABASE_PASSWORD: cGFzc3dvcmQ=
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -25,9 +24,10 @@ metadata:
   name: dev-config
   namespace: dev
 data:
-  ORACLE_HOST: oracle
-  ORACLE_PORT: '1521'
-  ORACLE_DATABASE: xepdb1
+  # APPlication
+  APP_DATABASE_HOST: oracle
+  APP_DATABASE_PORT: '1521'
+  APP_DATABASE_NAME: xepdb1
   APP_HOST: "0.0.0.0"
   APP_PORT: "8080"
   APP_PROFILES: "oracle"
