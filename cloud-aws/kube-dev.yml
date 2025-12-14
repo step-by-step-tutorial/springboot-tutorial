@@ -1,0 +1,139 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dev-credentials
+  namespace: dev
+  labels:
+    app: dev
+type: Opaque
+data:
+  # value: user
+  USERNAME: dXNlcg==
+  # value: password
+  PASSWORD: cGFzc3dvcmQ=
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-config
+  namespace: dev
+  labels:
+    app: dev
+data:
+  APP_HOST: "0.0.0.0"
+  APP_PORT: "8080"
+  APP_PROFILES: "aws"
+  DEBUG: "${DEBUG:-0}"
+  SERVICES: "s3,sqs"
+  DEFAULT_REGION: "us-east-1"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localstack
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: localstack
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: localstack
+    spec:
+      containers:
+        - name: localstack
+          image: localstack/localstack:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: gateway
+              containerPort: 4566
+            - name: ext-4510
+              containerPort: 4510
+            - name: ext-4559
+              containerPort: 4559
+          envFrom:
+            - configMapRef:
+                name: dev-config
+          volumeMounts:
+            - name: localstack-data
+              mountPath: /var/lib/localstack
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+      volumes:
+        - name: localstack-data
+          emptyDir: {}
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: localstack
+  namespace: dev
+spec:
+  selector:
+    app: localstack
+  ports:
+    - name: gateway
+      port: 4566
+      targetPort: 4566
+    # Port ranges aren't supported in a Service either; you must enumerate.
+    # Add/remove ports here as needed.
+    - name: ext-4510
+      port: 4510
+      targetPort: 4510
+    - name: ext-4559
+      port: 4559
+      targetPort: 4559
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: application
+    spec:
+      containers:
+        - name: application
+          image: samanalishiri/application:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: dev-config
+            - secretRef:
+                name: dev-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application
+  namespace: dev
+spec:
+  selector:
+    app: application
+  ports:
+    - port: 8080
+      targetPort: 8080
