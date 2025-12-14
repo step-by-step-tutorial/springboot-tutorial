@@ -67,7 +67,7 @@ class S3FacadeTest {
         }
 
         @Test
-        void givenNoInput_whenListOfBucketName_thenReturnsListOfString() {
+        void givenNoInput_whenListOfBucketName_thenReturnsListOfBucketNames() {
             var actual = systemUnderTest.listOfBucketName();
             assertNotNull(actual);
             assertFalse(actual.isEmpty());
@@ -76,14 +76,14 @@ class S3FacadeTest {
         }
 
         @Test
-        void givenBucketName_whenIsBucketExists_thenReturnsTrue() {
+        void givenExistingBucketName_whenIsBucketExists_thenReturnsTrue() {
             var givenName = BUCKET_NAME_1;
             var actual = systemUnderTest.isBucketExists(givenName);
             assertTrue(actual);
         }
 
         @Test
-        void givenBucketName_whenIsBucketExists_thenReturnsFalse() {
+        void givenNonExistingBucketName_whenIsBucketExists_thenReturnsFalse() {
             var givenName = "invalid-bucket-name";
             var actual = systemUnderTest.isBucketExists(givenName);
             assertFalse(actual);
@@ -197,7 +197,7 @@ class S3FacadeTest {
 
 
         @Test
-        void givenBucketNameAndFileName_whenIsFileExists_thenReturnsTrue(){
+        void givenExistingBucketNameAndFileName_whenIsFileExists_thenReturnsTrue() {
             var givenBucketName = BUCKET_NAME;
             var givenFileName = FILE_NAME_1;
 
@@ -206,7 +206,7 @@ class S3FacadeTest {
         }
 
         @Test
-        void givenBucketNameAndFileName_whenIsFileExists_thenReturnsFalse(){
+        void givenBucketNameAndNonExistingFileName_whenIsFileExists_thenReturnsFalse() {
             var givenBucketName = BUCKET_NAME;
             var givenFileName = "invalid-file-name";
 
@@ -215,7 +215,7 @@ class S3FacadeTest {
         }
 
         @Test
-        void givenBucketNameAndFileName_whenListOfFileName_thenReturnsListOfFileName(){
+        void givenBucketName_whenListOfFileName_thenReturnsListOfFileNames() {
             var givenBucketName = BUCKET_NAME;
 
             var actual = systemUnderTest.listOfFileName(givenBucketName);
