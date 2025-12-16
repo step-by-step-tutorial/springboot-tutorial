@@ -76,19 +76,6 @@ docker compose --file ./docker-compose.yml --project-name dev up --build -d
 curl -X GET http://localhost:8080/api/v1/health-check
 ```
 
-```kql
-GET /_cat/indices?v
-
-GET /logstash-2025.02.26/_search
-{
-  "query": {
-    "match_all": {}
-  },
-  "from": 0, 
-  "size": 50
-}
-```
-
 ### Down
 
 ```shell
@@ -104,9 +91,6 @@ docker volume prune -f
 ```shell
 mvn clean package verify -DskipTests=true
 docker build -t samanalishiri/application:latest . --no-cache
-```
-
-```shell
 kubectl apply -f kube-dev.yml
 ```
 
@@ -114,6 +98,18 @@ kubectl apply -f kube-dev.yml
 
 ```shell
 kubectl get all -n dev
+```
+
+```shell
+kubectl describe pod application-??? -n dev
+```
+
+```shell
+kubectl -n dev logs pod/application-??? -c application --previous
+```
+
+```shell
+kubectl -n dev logs deploy/application
 ```
 
 ### Port-Forwarding

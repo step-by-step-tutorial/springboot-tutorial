@@ -1,13 +1,17 @@
 FROM eclipse-temurin:21-jdk-alpine
 
 ARG JAR_PATH=./target
-ARG JAR_NAME=cloud-aws
+ARG JAR_NAME=cloud-aws-s3
 ARG JAR_VERSION=0.0.1-SNAPSHOT
 ARG TARGET_PATH=/app
 ENV APPLICATION=${TARGET_PATH}/application.jar
 ENV APP_HOST="0.0.0.0"
 ENV APP_PORT="8080"
 ENV APP_PROFILES=aws
+ENV AWS_ACCESS_KEY_ID=test
+ENV AWS_SECRET_ACCESS_KEY=test
+ENV AWS_DEFAULT_REGION="us-east-1"
+ENV AWS_S3_ENDPOINT="http://localhost:4566"
 
 ADD ${JAR_PATH}/${JAR_NAME}-${JAR_VERSION}.jar ${TARGET_PATH}/application.jar
 

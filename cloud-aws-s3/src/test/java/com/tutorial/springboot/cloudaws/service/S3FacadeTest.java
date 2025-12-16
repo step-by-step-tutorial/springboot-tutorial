@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.UUID;
 
-import static com.tutorial.springboot.cloudaws.TestIoUtils.createTestInputstream;
+import static com.tutorial.springboot.cloudaws.TestFixtureFactory.createTestInputstream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest

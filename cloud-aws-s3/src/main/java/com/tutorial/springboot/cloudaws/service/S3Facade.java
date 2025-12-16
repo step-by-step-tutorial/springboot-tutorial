@@ -51,6 +51,10 @@ public class S3Facade {
         template.deleteBucket(name);
     }
 
+    public void deleteAllBuckets() {
+        listOfBucketName().forEach(this::deleteBucketWithFiles);
+    }
+
     public Optional<S3Resource> uploadFile(String bucketName, String fileName, InputStream file) {
         return Optional.of(template.upload(bucketName, fileName, file, ObjectMetadata.builder().build()));
     }
@@ -69,6 +73,12 @@ public class S3Facade {
 
     public void deleteFile(String bucketName, String fileName) {
         template.deleteObject(bucketName, fileName);
+    }
+
+    public void deleteAllFiles(String bucketName) {
+        template.listObjects(bucketName, "").forEach(resource -> {
+            template.deleteObject(bucketName, resource.getFilename());
+        });
     }
 
 }

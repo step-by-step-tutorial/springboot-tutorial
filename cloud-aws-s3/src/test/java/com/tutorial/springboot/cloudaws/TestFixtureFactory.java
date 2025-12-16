@@ -4,9 +4,9 @@ import com.tutorial.springboot.cloudaws.util.IoUtils;
 
 import java.io.InputStream;
 
-public final class TestIoUtils {
+public final class TestFixtureFactory {
 
-    private TestIoUtils() {
+    private TestFixtureFactory() {
     }
 
     public static InputStream createTestInputstream() {

@@ -3,15 +3,17 @@ services:
   localstack:
     container_name: localstack
     hostname: localstack
-    image: localstack/localstack
+    image: localstack/localstack:latest
     ports:
-      - "127.0.0.1:4566:4566"            # LocalStack Gateway
-      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # external services port range
     environment:
       # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
       DEBUG: ${DEBUG:-0}
       SERVICES: "s3,sqs"
-      DEFAULT_REGION: "us-east-1"
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: "us-east-1"
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -29,6 +31,8 @@ services:
       APP_HOST: "0.0.0.0"
       APP_PORT: "8080"
       APP_PROFILES: aws
-    depends_on:
-      localstack:
-        condition: service_healthy
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: "us-east-1"
+      AWS_S3_ENDPOINT: http://localstack:4566
+

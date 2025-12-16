@@ -9,9 +9,9 @@
         <relativePath/>
     </parent>
     <groupId>com.tutorial.springboot</groupId>
-    <artifactId>cloud-aws</artifactId>
+    <artifactId>cloud-aws-s3</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Cloud AWS</name>
+    <name>Cloud AWS S3</name>
     <properties>
         <java.version>21</java.version>
     </properties>

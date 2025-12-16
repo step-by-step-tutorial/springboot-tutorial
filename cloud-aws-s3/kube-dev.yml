@@ -12,10 +12,15 @@ metadata:
     app: dev
 type: Opaque
 data:
+  # echo -n 'test' | base64
   # value: user
   USERNAME: dXNlcg==
   # value: password
   PASSWORD: cGFzc3dvcmQ=
+  # test
+  AWS_ACCESS_KEY_ID: dGVzdA==
+  # test
+  AWS_SECRET_ACCESS_KEY: dGVzdA==
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -25,12 +30,13 @@ metadata:
   labels:
     app: dev
 data:
+  # Application config
   APP_HOST: "0.0.0.0"
   APP_PORT: "8080"
   APP_PROFILES: "aws"
-  DEBUG: "${DEBUG:-0}"
   SERVICES: "s3,sqs"
-  DEFAULT_REGION: "us-east-1"
+  AWS_DEFAULT_REGION: "us-east-1"
+  AWS_S3_ENDPOINT: "http://localstack:4566"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,7 +58,7 @@ spec:
       containers:
         - name: localstack
           image: localstack/localstack:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: "IfNotPresent"
           ports:
             - name: gateway
               containerPort: 4566
@@ -63,6 +69,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: dev-config
+            - secretRef:
+                name: dev-credentials
           volumeMounts:
             - name: localstack-data
               mountPath: /var/lib/localstack
@@ -70,7 +78,7 @@ spec:
               mountPath: /var/run/docker.sock
       volumes:
         - name: localstack-data
-          emptyDir: {}
+          emptyDir: { }
         - name: docker-sock
           hostPath:
             path: /var/run/docker.sock
@@ -88,8 +96,6 @@ spec:
     - name: gateway
       port: 4566
       targetPort: 4566
-    # Port ranges aren't supported in a Service either; you must enumerate.
-    # Add/remove ports here as needed.
     - name: ext-4510
       port: 4510
       targetPort: 4510
