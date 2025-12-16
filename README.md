@@ -1,11 +1,11 @@
 # <p align="center">Spring Boot Tutorial</p>
 
-Spring Boot is an agile framework to use modules of Spring framework in fast and easy configuration way. For
+Spring Boot is an agile framework to use modules of the Springframework in a fast and easy configuration way. For
 more information refer to [Spring Boot documentation](https://spring.io/projects/spring-boot)
 
-This tutorial provides many best practises and examples include documentation.
+This tutorial provides best practises and examples include documentation.
 
-**In order to create a preconfigured project based on Spring Boot use the following link.**
+**To create a preconfigured project based on the Spring Boot, use the following link.**
 
 * [Spring Boot Generator](https://start.spring.io)
 
@@ -26,6 +26,7 @@ This tutorial provides many best practises and examples include documentation.
 * [step: nosql-redis-reactive](nosql-redis-reactive)
 * [step: nosql-mongodb](nosql-mongodb)
 * [step: nosql-mongodb-reactive](nosql-mongodb-reactive)
+* [step: newsql-cockroachdb](newsql-cockroachdb)
 * [step: messaging-apache-active-mq (artemis)](messaging-apache-artemis-mq)
 * [step: messaging-rabbit-mq](messaging-rabbit-mq)
 * [step: messaging-apache-kafka](messaging-apache-kafka)
@@ -46,6 +47,7 @@ This tutorial provides many best practises and examples include documentation.
     * JWT
     * CORS
 * step: security-rbac-web
+    * RBAC
     * remember-me
     * CSRF
     * XSS
@@ -58,6 +60,7 @@ This tutorial provides many best practises and examples include documentation.
     * oauth-password
     * oauth-client-credentials
     * oauth-Implicit
+* [step: cloud-aws-s3](cloud-aws-s3)
 
 ## Getting Started
 
