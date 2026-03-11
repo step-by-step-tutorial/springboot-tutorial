@@ -1,4 +1,4 @@
-# <p align="center"> Integration of Spring boot with AWS S3</p>
+# <p align="center"> Integration of Spring boot with AWS SQS</p>
 
 [awspring.io](https://awspring.io/)
 
@@ -148,4 +148,4 @@ rm -rf ./volume
 
 ##
 
-**<p align="center"> [Top](#integration-of-spring-boot-with-aws-s3) </p>**
+**<p align="center"> [Top](#integration-of-spring-boot-with-aws-sqs) </p>**

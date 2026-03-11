@@ -61,6 +61,7 @@ This tutorial provides best practises and examples include documentation.
     * oauth-client-credentials
     * oauth-Implicit
 * [step: cloud-aws-s3](cloud-aws-s3)
+* [step: cloud-aws-sqs](cloud-aws-sqs)
 
 ## Getting Started
 
