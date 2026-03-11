@@ -82,6 +82,7 @@ curl -X GET http://localhost:8080/api/v1/health-check
 docker compose --file docker-compose.yml --project-name dev down
 docker image rm samanalishiri/application:latest
 docker volume prune -f
+rm -rf ./volume
 ```
 
 ## Kubernetes
@@ -101,7 +102,9 @@ kubectl get all -n dev
 ```
 
 ```shell
-kubectl describe pod application-??? -n dev
+POD_NAME=application
+POD_FULL_NAME=$(kubectl get pods -n dev | grep $POD_NAME | awk '{print $1}')
+kubectl describe pod $POD_FULL_NAME -n dev
 ```
 
 ```shell
@@ -134,6 +137,7 @@ kubectl delete secrets dev-credentials -n dev
 kubectl delete configMap dev-config -n dev
 docker image rm samanalishiri/application:latest
 docker volume prune -f
+rm -rf ./volume
 ```
 
 ## UI
