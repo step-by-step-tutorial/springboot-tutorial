@@ -105,11 +105,13 @@ kubectl describe pod application-??? -n dev
 ```
 
 ```shell
-kubectl -n dev logs pod/application-??? -c application --previous
+POD_NAME=application
+POD_FULL_NAME=$(kubectl get pods -n dev | grep $POD_NAME | awk '{print $1}')
+kubectl logs pod/$POD_FULL_NAME -c application --previous -n dev
 ```
 
 ```shell
-kubectl -n dev logs deploy/application
+kubectl logs deploy/application -n dev
 ```
 
 ### Port-Forwarding
