@@ -13,13 +13,13 @@ mvn -f nosql-redis/pom.xml clean
 mvn -f nosql-redis-reactive/pom.xml clean
 mvn -f nosql-mongodb/pom.xml clean
 mvn -f nosql-mongodb-reactive/pom.xml clean
+mvn -f newsql-cockroachdb/pom.xml clean
 mvn -f messaging-apache-artemis-mq/pom.xml clean
 mvn -f messaging-rabbit-mq/pom.xml clean
 mvn -f messaging-apache-kafka/pom.xml clean
 mvn -f messaging-redis/pom.xml clean
 mvn -f messaging-pulsar/pom.xml clean
 mvn -f streaming-apache-kafka/pom.xml clean
-mvn -f streaming-redis/pom.xml clean
 mvn -f cdc-debezium/pom.xml clean
 mvn -f cdc-embedded-debezium/pom.xml clean
 mvn -f log-aggregation-elk/pom.xml clean
@@ -27,3 +27,5 @@ mvn -f observability-grafana-stack/pom.xml clean
 mvn -f observability-jaeger/pom.xml clean
 mvn -f security-rbac-inmemory/pom.xml clean
 mvn -f security-rbac-jwt/pom.xml clean
+mvn -f cloud-aws-s3/pom.xml clean
+mvn -f cloud-aws-sqs/pom.xml clean

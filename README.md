@@ -74,15 +74,21 @@ This tutorial provides best practises and examples include documentation.
 
 ### Clean Repository
 
-[clean-all.sh](clean-all.sh)
+```shell
+sh clean-all.sh
+```
 
 ### Clean Docker
 
-[docker-clean.sh](docker-clean.sh)
+```shell
+sh docker-clean.sh
+```
 
 ### Build and Test
 
-[build-all.sh](build-all.sh)
+```shell
+sh build-all.sh
+```
 
 ##
 
