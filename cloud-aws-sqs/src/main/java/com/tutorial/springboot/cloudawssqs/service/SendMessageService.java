@@ -26,9 +26,9 @@ public class SendMessageService {
     public void sendMessage(String message) {
         var correlationId = UUID.randomUUID().toString();
         sqsTemplate.send(to -> to.queue(queueName)
-                .header("correlationId", correlationId)
+                .header("CorrelationId", correlationId)
                 .payload(message));
-        logger.info("Message sent to {}: {} with correlation ID: {}", queueName, message, correlationId);
+        logger.info("Message sent to: Queue={}, Payload={}, Correlation ID={}", queueName, message, correlationId);
     }
 
 }

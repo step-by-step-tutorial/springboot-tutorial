@@ -14,6 +14,6 @@ public class MessageListener {
 
     @SqsListener("${app.queue.name}")
     public void receive(@Payload String message, @Header(name = "CorrelationId", required = false) String correlationId) {
-        logger.info("Received message: Body={}, Correlation ID={}", message, correlationId);
+        logger.info("Received message: Payload={}, Correlation ID={}", message, correlationId);
     }
 }
