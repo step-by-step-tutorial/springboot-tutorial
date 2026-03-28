@@ -8,4 +8,6 @@ spring:
         static: ${AWS_DEFAULT_REGION:us-east-1}
       sqs:
         endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4566}
-        path-style-access-enabled: true
+app:
+  queue:
+    name: ${APP_QUEUE_NAME:example-queue}
